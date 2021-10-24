@@ -19,11 +19,11 @@ class SectionBoundaries(models.Model):
 
 class Section(models.Model):
     name = models.CharField(max_length=100)
-    gym = models.ForeignKey(Gym, on_delete=models.SET_NULL)
-    boundaries = models.ForeignKey(SectionBoundaries, on_delete=models.SET_NULL)
+    gym = models.ForeignKey(Gym, null=True, on_delete=models.SET_NULL)
+    boundaries = models.ForeignKey(SectionBoundaries, null=True, on_delete=models.SET_NULL)
 
 
 class Wall(models.Model):
     x = models.FloatField()
     y = models.FloatField()
-    section = models.ForeignKey(Section, on_delete=models.SET_NULL)
+    section = models.ForeignKey(Section, null=True, on_delete=models.SET_NULL)
