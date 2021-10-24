@@ -5,7 +5,7 @@ gyms = {
     'Studio Bloc': {
         'form_id': '1hz8f7__kzXCkZ7kOOfCHS4Kvfx4IC-nEixxIr_JvfP8',
         'sheet_id': '1OlM81rKZBlqCAVAemjsnDK0_YuJ_ykHQ-NybkzPr_aM',
-        'gid': '1830339156',
+        'sheet_gid': '1830339156',
         'font_size': 6,
         'sections': {
             'Q1': {
@@ -44,7 +44,7 @@ gyms = {
     'Boulder Island': {
         'form_id': '1EvUP1ubU7ftcI-OdJNxD7ypCcHNkg1_5upXQTMIQtIw',
         'sheet_id': '13OkSrXIaBmNzQCj17V2VjFXSPUe9rPHB_rmhwPfk6bk',
-        'gid': '509309612',
+        'sheet_gid': '509309612',
         'font_size': 5,
         'sections': {
             'Almenhof': {
