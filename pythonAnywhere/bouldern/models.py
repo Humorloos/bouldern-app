@@ -1,13 +1,20 @@
+from pathlib import Path
+
 from django.db import models
+
+from .constants import RESOURCES_PATH
 
 
 class Gym(models.Model):
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=128)
     form_id = models.CharField(max_length=44)
     sheet_id = models.CharField(max_length=44)
     sheet_gid = models.CharField(max_length=10)
     font_size = models.IntegerField()
-    gym_plan = models.FilePathField()
+    gym_plan = models.ImageField(max_length=256)
+
+    def __str__(self):
+        return self.name
 
 
 class SectionBoundaries(models.Model):
