@@ -33,6 +33,7 @@ ALLOWED_HOSTS = [
 # Application definition
 
 INSTALLED_APPS = [
+    'pythonAnywhere.bouldern.apps.BouldernConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
