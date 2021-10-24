@@ -14,8 +14,13 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
+
+from googleCalendarApp.constants import CALENDAR_URI
+from pythonAnywhere.bouldern.constants import BOULDERN_URI
 
 urlpatterns = [
+    path(f'{BOULDERN_URI}/', include('pythonAnywhere.bouldern.urls')),
+    path(f'{CALENDAR_URI}/', include('pythonAnywhere.calendarApp.urls')),
     path('admin/', admin.site.urls),
 ]
