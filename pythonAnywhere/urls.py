@@ -13,11 +13,22 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+import sys
+from pathlib import Path
+
 from django.contrib import admin
 from django.urls import path, include
 
 from googleCalendarApp.constants import CALENDAR_URI
 from pythonAnywhere.bouldern.constants import BOULDERN_URI
+
+sys.path = list({path for path in [str(Path(__file__).parent.parent.parent.joinpath(project_name)) for project_name in [
+    'googleCalendarApp',
+    'GoogleApiHelper',
+    'bouldernFormsApp',
+    'pythonAnywhere',
+    'bouldern'
+]] + sys.path})
 
 urlpatterns = [
     path(f'{BOULDERN_URI}/', include('pythonAnywhere.bouldern.urls')),
