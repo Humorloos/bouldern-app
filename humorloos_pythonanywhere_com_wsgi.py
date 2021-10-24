@@ -2,9 +2,10 @@
 # web application at http://<your-username>.pythonanywhere.com/
 # It works by setting the variable 'application' to a WSGI handler of some
 # description.
-#
-# The below has been auto-generated for your Flask project
 
+# +++++++++++ DJANGO +++++++++++
+# To use your own Django app use code like this:
+import os
 import sys
 from pathlib import Path
 
@@ -19,5 +20,8 @@ sys.path = list({path for path in [str(user_home.joinpath(project_name)) for pro
 ]] + sys.path})
 print(sys.path)
 
-# import flask app but need to call it "application" for WSGI to work
-from flask_app import app as application  # noqa
+os.environ['DJANGO_SETTINGS_MODULE'] = 'mysite.settings'
+
+from django.core.wsgi import get_wsgi_application
+
+application = get_wsgi_application()
