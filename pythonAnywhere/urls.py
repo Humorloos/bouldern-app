@@ -16,22 +16,27 @@ Including another URLconf
 import sys
 from pathlib import Path
 
+from django.conf.urls import url
 from django.contrib import admin
 from django.urls import path, include
+from django.views.generic import RedirectView
 
 from googleCalendarApp.constants import CALENDAR_URI
 from pythonAnywhere.bouldern.constants import BOULDERN_URI
 
-sys.path = list({path for path in [str(Path(__file__).parent.parent.parent.joinpath(project_name)) for project_name in [
-    'googleCalendarApp',
-    'GoogleApiHelper',
-    'bouldernFormsApp',
-    'pythonAnywhere',
-    'bouldern'
-]] + sys.path})
+sys.path = list({path for path in [
+    str(Path(__file__).parent.parent.parent / project_name)
+    for project_name in [
+        'googleCalendarApp',
+        'GoogleApiHelper',
+        'bouldernFormsApp',
+        'pythonAnywhere',
+        'bouldern'
+    ]] + sys.path})
 
-urlpatterns = [
-    path(f'{BOULDERN_URI}/', include('pythonAnywhere.bouldern.urls')),
-    path(f'{CALENDAR_URI}/', include('pythonAnywhere.calendarApp.urls')),
-    path('admin/', admin.site.urls),
-]
+urlpatterns = \
+    [path(f'{BOULDERN_URI}/', include('pythonAnywhere.bouldern.urls')),
+     path(f'{CALENDAR_URI}/', include('pythonAnywhere.calendarApp.urls')),
+     path('admin/', admin.site.urls),
+     url(r'^favicon\.ico$',
+         RedirectView.as_view(url='/static/images/favicon.ico')), ]
