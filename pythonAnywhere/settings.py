@@ -121,6 +121,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     PROJECT_DIR / 'static',
+    PROJECT_DIR / 'bouldern' / 'static',
 ]
 
 # Default primary key field type
