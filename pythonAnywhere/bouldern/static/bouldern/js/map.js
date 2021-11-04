@@ -11,22 +11,24 @@ const projection = new ol.proj.Projection({
     extent: extent,
 });
 
-const map = new ol.Map({
-    layers: [
-        new ol.layer.Image({
-            source: new ol.source.ImageStatic({
-                attributions: '© <a href="https://xkcd.com/license.html">xkcd</a>',
-                url: 'https://imgs.xkcd.com/comics/online_communities.png',
-                projection: projection,
-                imageExtent: extent,
+function MapWidget(options) {
+    const map = new ol.Map({
+        layers: [
+            new ol.layer.Image({
+                source: new ol.source.ImageStatic({
+                    attributions: '© <a href="https://xkcd.com/license.html">xkcd</a>',
+                    url: options.url,
+                    projection: projection,
+                    imageExtent: extent,
+                }),
             }),
+        ],
+        target: 'map',
+        view: new ol.View({
+            projection: projection,
+            center: ol.extent.getCenter(extent),
+            zoom: 2,
+            maxZoom: 8,
         }),
-    ],
-    target: 'map',
-    view: new ol.View({
-        projection: projection,
-        center: ol.extent.getCenter(extent),
-        zoom: 2,
-        maxZoom: 8,
-    }),
-});
+    });
+}
