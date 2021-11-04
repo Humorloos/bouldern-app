@@ -1,8 +1,5 @@
-import pandas as pd
 from matplotlib import pyplot as plt
-from matplotlib.colors import to_rgba_array
 
-from bouldern.color_lookup import color_lookup
 from bouldern.constants import FIGURES_DIR
 from bouldern.gyms import gyms
 

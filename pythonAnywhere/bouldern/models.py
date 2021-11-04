@@ -1,8 +1,5 @@
-from pathlib import Path
-
+from django.contrib.gis.db.models import PointField
 from django.db import models
-
-from .constants import RESOURCES_PATH
 
 
 class Gym(models.Model):
@@ -27,10 +24,10 @@ class SectionBoundaries(models.Model):
 class Section(models.Model):
     name = models.CharField(max_length=100)
     gym = models.ForeignKey(Gym, null=True, on_delete=models.SET_NULL)
-    boundaries = models.ForeignKey(SectionBoundaries, null=True, on_delete=models.SET_NULL)
+    boundaries = models.ForeignKey(SectionBoundaries, null=True,
+                                   on_delete=models.SET_NULL)
 
 
 class Wall(models.Model):
-    x = models.FloatField()
-    y = models.FloatField()
+    position = PointField()
     section = models.ForeignKey(Section, null=True, on_delete=models.SET_NULL)
