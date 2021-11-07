@@ -30,8 +30,7 @@ sys.path = list({path for path in [
         'googleCalendarApp',
         'GoogleApiHelper',
         'bouldernFormsApp',
-        'pythonAnywhere',
-        'bouldern'
+        'pythonAnywhere'
     ]] + sys.path})
 
 urlpatterns = \

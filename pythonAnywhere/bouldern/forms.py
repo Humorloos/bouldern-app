@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.gis.forms import PointField
 
-from widgets import GymMapWidget
+from .widgets import GymMapWidget
 
 
 class GymMapForm(forms.Form):

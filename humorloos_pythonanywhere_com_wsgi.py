@@ -15,8 +15,7 @@ sys.path = list({path for path in [str(user_home.joinpath(project_name)) for pro
     'googleCalendarApp',
     'GoogleApiHelper',
     'bouldernFormsApp',
-    'pythonAnywhere',
-    'bouldern'
+    'pythonAnywhere'
 ]] + sys.path})
 print(sys.path)
 

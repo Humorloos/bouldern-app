@@ -9,12 +9,24 @@ https://docs.djangoproject.com/en/3.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
-
+import sys
 from pathlib import Path
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+USER_HOME = BASE_DIR.parent
 PROJECT_DIR = BASE_DIR / 'pythonAnywhere'
+
+sys.path = \
+    list({path for path in [
+        str(USER_HOME / project_name) for project_name in [
+            'googleCalendarApp',
+            'GoogleApiHelper'
+        ]] + sys.path})
+print(f'PATH: {sys.path}')
+
+DOMAIN_NAME = 'humorloos.pythonanywhere.com'
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
@@ -23,10 +35,10 @@ PROJECT_DIR = BASE_DIR / 'pythonAnywhere'
 SECRET_KEY = 'django-insecure-_5^ci&h4*+d6^ovcl-x9u-bzd3om!2mo-iubr-*3pri^=zg=$('
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = [
-    'humorloos.pythonanywhere.com',
+    DOMAIN_NAME,
     '127.0.0.1',
 ]
 
@@ -34,7 +46,7 @@ ALLOWED_HOSTS = [
 # Application definition
 
 INSTALLED_APPS = [
-    'bouldern.apps.BouldernConfig',
+    'pythonAnywhere.bouldern.apps.BouldernConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -124,10 +136,14 @@ STATICFILES_DIRS = [
     PROJECT_DIR / 'bouldern' / 'static',
 ]
 
+# noinspection PyUnresolvedReferences
+STATIC_ROOT = USER_HOME / 'static'
+print('static root: ' + str(STATIC_ROOT.absolute()))
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-GDAL_LIBRARY_PATH = str(
-    BASE_DIR / 'venv' / 'Lib' / 'site-packages' / 'osgeo' / 'gdal302.dll')
+# GDAL_LIBRARY_PATH = str(
+#     BASE_DIR / 'venv' / 'Lib' / 'site-packages' / 'osgeo' / 'gdal302.dll')
