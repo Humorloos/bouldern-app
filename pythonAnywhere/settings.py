@@ -35,7 +35,7 @@ DOMAIN_NAME = 'humorloos.pythonanywhere.com'
 SECRET_KEY = 'django-insecure-_5^ci&h4*+d6^ovcl-x9u-bzd3om!2mo-iubr-*3pri^=zg=$('
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = [
     DOMAIN_NAME,
