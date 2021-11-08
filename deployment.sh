@@ -6,6 +6,7 @@ git reset --hard origin/$1
 # perform django migration task
 workon humorloos.pythonanywhere.com
 python manage.py migrate
+python manage.py collectstatic
 
 # restart web application
 touch /var/www/humorloos_pythonanywhere_com_wsgi.py
