@@ -1,0 +1,18 @@
+version: v1.0
+name: First pipeline example
+agent:
+  machine:
+    type: e1-standard-2
+    os_image: ubuntu1804
+
+blocks:
+  - name: "Dummy"
+    task:
+      jobs:
+      - name: Dummy
+        commands:
+          - checkout
+          - echo "dummy"
+promotions:
+  - name: Deploy
+    pipeline_file: deploy.yml
