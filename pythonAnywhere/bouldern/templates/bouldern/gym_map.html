@@ -8,6 +8,6 @@
 {% load static %}
 <script>
     module = MapWidget({
-        url: "{% static 'bouldern/images/studio_bloc/hallenplan.png' %}",
+        url: "{% static 'bouldern/images/'|add:gym|add:'/hallenplan.png'%}",
     });
 </script>
