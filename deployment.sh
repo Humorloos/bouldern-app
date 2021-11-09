@@ -4,7 +4,8 @@ git fetch --all
 git reset --hard origin/$1
 
 # perform django migration task
-workon humorloos.pythonanywhere.com
+source ~/.env
+source ~/.virtualenvs/humorloos.pythonanywhere.com/bin/activate
 python manage.py migrate
 python manage.py collectstatic --noinput
 
