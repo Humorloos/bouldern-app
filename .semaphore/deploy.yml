@@ -9,6 +9,7 @@ blocks:
     task:
       secrets:
         - name: pythonanywhere-credentials
+        - name: env
       env_vars:
         - name: SSH_USER
           value: Humorloos
@@ -21,5 +22,5 @@ blocks:
             - ssh-keyscan -H ssh.pythonanywhere.com >> ~/.ssh/known_hosts
             - ssh-add ~/.ssh/id_rsa_pa
             - cd ~
-            - sftp ${SSH_USER}@ssh.pythonanywhere.com <<< $'put deploy.sh'
+            - sftp ${SSH_USER}@ssh.pythonanywhere.com <<< $'put deploy.sh\n put .env'
             - ssh ${SSH_USER}@ssh.pythonanywhere.com bash deploy.sh $SEMAPHORE_GIT_BRANCH
