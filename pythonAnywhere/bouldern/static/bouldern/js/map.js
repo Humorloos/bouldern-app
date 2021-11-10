@@ -6,28 +6,17 @@
 // the image extent in pixels.
 
 function MapWidget(options) {
-    const extent = [0, 0, options.map_width, options.map_height];
-    const projection = new ol.proj.Projection({
-        code: 'xkcd-image',
-        units: 'pixels',
-        extent: extent,
-    });
+    const projection = options.base_layer.getSource().getProjection();
+    const extent = projection.getExtent();
     const source = new ol.source.Vector();
     const map = new ol.Map({
         layers: [
-            new ol.layer.Image({
-                source: new ol.source.ImageStatic({
-                    attributions: '© <a href="https://xkcd.com/license.html">xkcd</a>',
-                    url: options.url,
-                    projection: projection,
-                    imageExtent: extent,
-                }),
-            }),
+            options.base_layer,
             new ol.layer.Vector({
                 source: source
             })
         ],
-        target: 'map',
+        target: options.map_id,
         view: new ol.View({
             projection: projection,
             center: ol.extent.getCenter(extent),
