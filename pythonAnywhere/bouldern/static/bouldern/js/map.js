@@ -12,7 +12,8 @@ function MapWidget(options) {
         units: 'pixels',
         extent: extent,
     });
-    new ol.Map({
+    const source = new ol.source.Vector();
+    const map = new ol.Map({
         layers: [
             new ol.layer.Image({
                 source: new ol.source.ImageStatic({
@@ -22,6 +23,9 @@ function MapWidget(options) {
                     imageExtent: extent,
                 }),
             }),
+            new ol.layer.Vector({
+                source: source
+            })
         ],
         target: 'map',
         view: new ol.View({
@@ -31,4 +35,10 @@ function MapWidget(options) {
             maxZoom: 8,
         }),
     });
+    map.addInteraction(
+        new ol.interaction.Draw({
+            type: "Point",
+            source: source,
+            condition: event => ol.extent.containsCoordinate(extent, event.coordinate),
+        }))
 }
