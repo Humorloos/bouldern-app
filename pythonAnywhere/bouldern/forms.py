@@ -13,6 +13,6 @@ class GymMapForm(Form):
         map_width, map_height = Image.open(
             find(f'bouldern/images/{gym}/hallenplan.png')).size
         self.fields['gym_map'] = PointField(
-            label='Gym Map',
             widget=GymMapWidget(attrs={
-                'map_width': map_width, 'map_height': map_height, 'gym': gym}))
+                'map_width': map_width, 'map_height': map_height, 'gym': gym,
+                'disabled': True}))

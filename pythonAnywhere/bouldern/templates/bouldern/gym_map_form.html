@@ -4,8 +4,7 @@
 <body>
 <form action="/bouldern/{{ gym }}/map/" method="post">
     {% csrf_token %}
-    <input type="submit" value="Submit">
+    {{ form.media }}
+    {{ form }}
 </form>
-{{ form.media }}
-{{ form }}
 </body>
