@@ -7,6 +7,8 @@
     const jsonFormat = new ol.format.GeoJSON();
 
     function MapWidget(options) {
+        this.options = options
+
         this.content = document.getElementById('popup-content');
         this.container = document.getElementById('popup');
         this.closer = document.getElementById('popup-closer');
@@ -76,9 +78,18 @@
             feature.on('change', function () {
                 self.serializeFeatures();
             });
-
-            boulders.lastElementChild.value =
-                jsonFormat.writeGeometry(feature.getGeometry())
+            const lastBoulder = boulders.lastElementChild;
+            lastBoulder.value = jsonFormat.writeGeometry(feature.getGeometry());
+            const lastBoulderIdx = lastBoulder.name.match(`(?<=${self.options.prefix}-)\\d*(?=-coordinates)`)[0];
+            const nextBoulderName = `${self.options.prefix}-${parseInt(lastBoulderIdx) + 1}-coordinates`;
+            const nextBoulder = document.createElement("input");
+            nextBoulder.type = 'text'
+            nextBoulder.name = nextBoulderName;
+            nextBoulder.setAttribute("geom_type", "POINT");
+            nextBoulder.id = 'id_' + nextBoulderName;
+            document.getElementById(`id_${self.options.prefix}-TOTAL_FORMS`).value =
+                parseInt(document.getElementById(`id_${self.options.prefix}-TOTAL_FORMS`).value) + 1;
+            boulders.appendChild(nextBoulder);
         });
 
         // Set handler for opening popup on draw

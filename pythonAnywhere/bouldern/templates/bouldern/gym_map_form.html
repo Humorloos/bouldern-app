@@ -38,6 +38,7 @@
         url: "{% static 'bouldern/images/'|add:gym|add:'/hallenplan.png' %}",
         map_width: {{ map_width }},
         map_height: {{ map_height }},
+        prefix: '{{ formset.prefix }}',
     });
 </script>
 
