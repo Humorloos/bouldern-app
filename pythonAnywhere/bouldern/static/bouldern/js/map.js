@@ -10,6 +10,10 @@
         const projection = options.base_layer.getSource().getProjection();
         const extent = projection.getExtent();
         this.options = options;
+        this.content = document.getElementById('popup-content');
+        this.container = document.getElementById('popup');
+        this.closer = document.getElementById('popup-closer');
+
 
         // Initialize map
         this.map = new ol.Map({
@@ -23,19 +27,12 @@
             }),
         });
 
-        // Add icon drawing interaction
+        // Overlays
         this.featureCollection = new ol.Collection();
         const source = new ol.source.Vector({
             features: this.featureCollection,
             useSpatialIndex: false // improves performance
         });
-        this.map.addInteraction(
-            new ol.interaction.Draw({
-                type: "Point",
-                source: source,
-                condition: event => ol.extent.containsCoordinate(extent, event.coordinate),
-            }))
-
         // This is where icons are drawn on
         this.featureOverlay = new ol.layer.Vector({
             map: this.map,
@@ -44,7 +41,25 @@
             updateWhileInteracting: true,
         });
 
-        // Set handler for newly added and modified features
+        // Popover showing the position the user clicked
+        this.popover = new ol.Overlay({
+            element: this.container,
+            autoPan: true,
+            autoPanAnimation: {
+                duration: 250,
+            },
+        });
+        this.map.addOverlay(this.popover);
+
+        // Add icon drawing interaction
+        this.drawInteraction = new ol.interaction.Draw({
+            type: "Point",
+            source: source,
+            condition: event => ol.extent.containsCoordinate(extent, event.coordinate),
+        });
+        this.map.addInteraction(this.drawInteraction)
+
+        // Set handler for serializing newly added and modified features
         const self = this;
         this.featureCollection.on('add', function (event) {
             const feature = event.element;
@@ -53,6 +68,23 @@
             });
             self.serializeFeatures();
         });
+
+        // Set handler for opening popup on draw
+        this.drawInteraction.on('drawend', event => {
+            const coordinate = event.feature.getGeometry().getCoordinates();
+            self.content.innerHTML = '<p>You clicked here:</p><code>' + coordinate + '</code>';
+            self.popover.setPosition(coordinate);
+        })
+
+        /**
+         * Add a click handler to hide the popup.
+         * @return {boolean} Don't follow the href.
+         */
+        this.closer.onclick = function () {
+          self.popover.setPosition(undefined);
+          self.closer.blur();
+          return false;
+        };
     }
 
     MapWidget.prototype.serializeFeatures = function () {
