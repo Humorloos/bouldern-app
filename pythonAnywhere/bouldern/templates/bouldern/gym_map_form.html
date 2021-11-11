@@ -21,32 +21,19 @@
     {{ formset }}
 </form>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/ol3/4.6.5/ol.js"></script>
-<script src="{% static 'bouldern/js/map.js' %}"></script>
 <div id="{{ gym }}_div_map">
     <div id="{{ gym }}_map"></div>
-    <textarea id="{{ gym }}" class="vSerializedField required" cols="150" rows="10" name="{{ gym }}"></textarea>
-    <script>
-        const extent = [0, 0, {{ map_width }}, {{ map_height }}];
-        const base_layer = new ol.layer.Image({
-            source: new ol.source.ImageStatic({
-                url: "{% static 'bouldern/images/'|add:gym|add:'/hallenplan.png' %}",
-                projection: new ol.proj.Projection({
-                    code: 'xkcd-image',
-                    units: 'pixels',
-                    extent: extent,
-                }),
-                imageExtent: extent,
-            }),
-        })
-        const options = {
-            base_layer: base_layer,
-            id: '{{ gym }}',
-            map_id: '{{ gym }}_map',
-        };
-        const {{ module }} =
-        new MapWidget(options);
-    </script>
 </div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ol3/4.6.5/ol.js"></script>
+<script src="{% static 'bouldern/js/map.js' %}"></script>
+<script>
+    const {{ module }} =
+    new MapWidget({
+        gym: '{{ gym }}',
+        url: "{% static 'bouldern/images/'|add:gym|add:'/hallenplan.png' %}",
+        map_width: {{ map_width }},
+        map_height: {{ map_height }},
+    });
+</script>
 
 </body>

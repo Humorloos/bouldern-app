@@ -7,18 +7,26 @@
     const jsonFormat = new ol.format.GeoJSON();
 
     function MapWidget(options) {
-        const projection = options.base_layer.getSource().getProjection();
-        const extent = projection.getExtent();
-        this.options = options;
         this.content = document.getElementById('popup-content');
         this.container = document.getElementById('popup');
         this.closer = document.getElementById('popup-closer');
-
+        const extent = [0, 0, options.map_width, options.map_height];
+        const projection = new ol.proj.Projection({
+            code: 'xkcd-image',
+            units: 'pixels',
+            extent: extent,
+        });
 
         // Initialize map
         this.map = new ol.Map({
-            layers: [this.options.base_layer],
-            target: options.map_id,
+            layers: [new ol.layer.Image({
+                source: new ol.source.ImageStatic({
+                    url: options.url,
+                    projection: projection,
+                    imageExtent: extent,
+                }),
+            })],
+            target: options.gym + '_map',
             view: new ol.View({
                 projection: projection,
                 center: ol.extent.getCenter(extent),
