@@ -66,7 +66,8 @@
             feature.on('change', function () {
                 self.serializeFeatures();
             });
-            self.serializeFeatures();
+            document.getElementById(`id_form-${self.featureCollection.getLength() - 1}-coordinates`).value =
+                jsonFormat.writeGeometry(feature.getGeometry())
         });
 
         // Set handler for opening popup on draw
@@ -81,17 +82,11 @@
          * @return {boolean} Don't follow the href.
          */
         this.closer.onclick = function () {
-          self.popover.setPosition(undefined);
-          self.closer.blur();
-          return false;
+            self.popover.setPosition(undefined);
+            self.closer.blur();
+            return false;
         };
     }
-
-    MapWidget.prototype.serializeFeatures = function () {
-        const geometry = new ol.geom.MultiPoint(
-            this.featureOverlay.getSource().getFeatures().map(feature => feature.getGeometry().getCoordinates()))
-        document.getElementById(this.options.id).value = jsonFormat.writeGeometry(geometry);
-    };
 
     window.MapWidget = MapWidget;
 }
