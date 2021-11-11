@@ -74,7 +74,7 @@
             feature.on('change', function () {
                 self.serializeFeatures();
             });
-            document.getElementById(`id_form-${self.featureCollection.getLength() - 1}-coordinates`).value =
+            document.getElementById(`id_boulder-${self.featureCollection.getLength() - 1}-coordinates`).value =
                 jsonFormat.writeGeometry(feature.getGeometry())
         });
 

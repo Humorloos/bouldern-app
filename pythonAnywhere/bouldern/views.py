@@ -26,7 +26,7 @@ def gym_map(request, gym: str):
 
     # if a GET (or any other method) we'll create a blank form
     else:
-        formset = GymMapFormSet()
+        formset = GymMapFormSet(prefix='boulder')
 
     map_width, map_height = Image.open(
         find(f'bouldern/images/{gym}/hallenplan.png')).size
