@@ -31,3 +31,7 @@ class Section(models.Model):
 class Wall(models.Model):
     position = PointField()
     section = models.ForeignKey(Section, null=True, on_delete=models.SET_NULL)
+
+
+class Boulder(models.Model):
+    coordinates = PointField()
