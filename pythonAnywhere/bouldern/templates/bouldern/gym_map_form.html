@@ -1,19 +1,16 @@
 {% load static %}
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <link rel="stylesheet" href="{% static 'bouldern/css/gym_map.css' %}">
+    <style>
+        #{{ gym }}_map {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
     <title></title>
 </head>
 <body>
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<style>
-    #{{ gym }}_map {
-        width: 100%;
-        height: 100%;
-    }
-
-    {#    TODO: move to static and use <link rel="stylesheet" href="{{ STATIC_URL }}style.css"> in wrapper instead#}
-    {% include 'bouldern/gym_map.css' %}
-</style>
-
 <form action="/bouldern/{{ gym }}/map/" method="post">
     {% csrf_token %}
     <div id="popup" class="ol-popup">
