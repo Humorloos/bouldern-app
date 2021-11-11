@@ -78,18 +78,18 @@
             feature.on('change', function () {
                 self.serializeFeatures();
             });
-            const lastBoulder = boulders.lastElementChild;
-            lastBoulder.value = jsonFormat.writeGeometry(feature.getGeometry());
-            const lastBoulderIdx = lastBoulder.name.match(`(?<=${self.options.prefix}-)\\d*(?=-coordinates)`)[0];
-            const nextBoulderName = `${self.options.prefix}-${parseInt(lastBoulderIdx) + 1}-coordinates`;
+
+            const nextBoulderName = `${self.options.prefix}-${boulders.childElementCount}-coordinates`;
             const nextBoulder = document.createElement("input");
             nextBoulder.type = 'text'
             nextBoulder.name = nextBoulderName;
             nextBoulder.setAttribute("geom_type", "POINT");
             nextBoulder.id = 'id_' + nextBoulderName;
+            nextBoulder.value = jsonFormat.writeGeometry(feature.getGeometry());
+            boulders.appendChild(nextBoulder);
+
             document.getElementById(`id_${self.options.prefix}-TOTAL_FORMS`).value =
                 parseInt(document.getElementById(`id_${self.options.prefix}-TOTAL_FORMS`).value) + 1;
-            boulders.appendChild(nextBoulder);
         });
 
         // Set handler for opening popup on draw
@@ -103,6 +103,7 @@
          * Add a click handler to hide the popup.
          * @return {boolean} Don't follow the href.
          */
+        //todo: remove feature that triggered this popover
         this.closer.onclick = function () {
             self.popover.setPosition(undefined);
             self.closer.blur();
