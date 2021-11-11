@@ -10,6 +10,8 @@
         this.content = document.getElementById('popup-content');
         this.container = document.getElementById('popup');
         this.closer = document.getElementById('popup-closer');
+        this.boulders = document.getElementById('boulders');
+
         const extent = [0, 0, options.map_width, options.map_height];
         const projection = new ol.proj.Projection({
             code: 'xkcd-image',
@@ -74,7 +76,8 @@
             feature.on('change', function () {
                 self.serializeFeatures();
             });
-            document.getElementById(`id_boulder-${self.featureCollection.getLength() - 1}-coordinates`).value =
+
+            boulders.lastElementChild.value =
                 jsonFormat.writeGeometry(feature.getGeometry())
         });
 

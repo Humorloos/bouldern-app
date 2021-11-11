@@ -18,7 +18,12 @@
         <div id="popup-content"></div>
         <input type="submit" value="Submit">
     </div>
-    {{ formset }}
+    {{ formset.management_form }}
+    <div id="boulders">
+        {% for form in formset %}
+            {{ form.coordinates }}
+        {% endfor %}
+    </div>
 </form>
 
 <div id="{{ gym }}_div_map">
