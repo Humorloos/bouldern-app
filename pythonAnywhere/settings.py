@@ -27,13 +27,12 @@ sys.path = \
             'googleCalendarApp',
             'GoogleApiHelper'
         ]] + sys.path})
-print(f'PATH: {sys.path}')
 
 DOMAIN_NAME = 'humorloos.pythonanywhere.com'
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
-Env.read_env(USER_HOME / ".env")
+Env.read_env(str(USER_HOME / ".env"))
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = env('SECRET_KEY')
@@ -144,12 +143,9 @@ STATICFILES_DIRS = [
 ]
 
 STATIC_ROOT = USER_HOME / 'static'
-print('static root: ' + str(STATIC_ROOT.absolute()))
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# GDAL_LIBRARY_PATH = str(
-#     BASE_DIR / 'venv' / 'Lib' / 'site-packages' / 'osgeo' / 'gdal302.dll')
