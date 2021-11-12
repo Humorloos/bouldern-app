@@ -1,4 +1,4 @@
-from django.forms import ModelForm, formset_factory, TextInput
+from django.forms import ModelForm, formset_factory, TextInput, BaseFormSet
 
 from .models import Boulder
 
@@ -12,4 +12,9 @@ class BoulderForm(ModelForm):
         }
 
 
-GymMapFormSet = formset_factory(BoulderForm, extra=1)
+class BaseGymMapFormSet(BaseFormSet):
+    def __init__(self, **kwargs):
+        super().__init__(prefix='boulder', **kwargs)
+
+
+GymMapFormSet = formset_factory(BoulderForm, extra=0)
