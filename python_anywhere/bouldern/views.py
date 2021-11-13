@@ -1,7 +1,7 @@
+"""Module containing the views of the bouldern app"""
 from PIL import Image
 from django.contrib.staticfiles.finders import find
-from django.forms import BaseFormSet
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, HttpResponseNotFound
 from django.shortcuts import render
 from django.urls import reverse
 
@@ -9,10 +9,14 @@ from .forms import GymMapFormSet, BoulderForm
 
 
 def index(request):
-    return HttpResponse("Hello, world. You're at the bouldern index.")
+    """Index page view"""
+    if request.method == 'GET':
+        return HttpResponse("Hello, world. You're at the bouldern index.")
+    return HttpResponseNotFound()
 
 
 def gym_map(request, gym: str):
+    """Gym map view"""
     # if this is a POST request we need to process the form data
     if request.method == 'POST':
         # create a form instance and populate it with data from the request:
