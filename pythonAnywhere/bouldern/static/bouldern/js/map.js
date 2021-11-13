@@ -103,7 +103,6 @@
          * Add a click handler to hide the popup.
          * @return {boolean} Don't follow the href.
          */
-        //todo: remove feature that triggered this popover
         this.closer.onclick = function () {
             self.popover.setPosition(undefined);
             self.closer.blur();

@@ -7,6 +7,7 @@ git reset --hard origin/$1
 source ~/.env
 source ~/.virtualenvs/humorloos.pythonanywhere.com/bin/activate
 pip install -r requirements.txt --upgrade
+python manage.py makemigrations
 python manage.py migrate
 python manage.py collectstatic --noinput
 
