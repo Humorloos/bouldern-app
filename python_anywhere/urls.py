@@ -14,7 +14,6 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 import sys
-from pathlib import Path
 
 from django.conf.urls import url
 from django.contrib import admin
@@ -23,14 +22,10 @@ from django.views.generic import RedirectView
 
 from googleCalendarApp.constants import CALENDAR_URI
 from python_anywhere.bouldern.constants import BOULDERN_URI
+from python_anywhere.settings import USER_HOME
 
-sys.path = list({path for path in [
-    str(Path(__file__).parent.parent.parent / project_name)
-    for project_name in [
-        'googleCalendarApp',
-        'GoogleApiHelper',
-        'python_anywhere'
-    ]] + sys.path})
+sys.path = list({str(USER_HOME / project_name) for project_name in
+                 ['googleCalendarApp', 'GoogleApiHelper'] + sys.path})
 
 urlpatterns = \
     [path(f'{BOULDERN_URI}/', include('python_anywhere.bouldern.urls')),
