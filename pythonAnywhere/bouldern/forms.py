@@ -1,18 +1,20 @@
-from PIL import Image
-from django.contrib.gis.forms import PointField
-from django.contrib.staticfiles.finders import find
-from django.forms import Form
+from django.forms import ModelForm, formset_factory, TextInput, BaseFormSet
 
-from .widgets import GymMapWidget
+from .models import Boulder
 
 
-class GymMapForm(Form):
+class BoulderForm(ModelForm):
+    class Meta:
+        model = Boulder
+        fields = ['coordinates']
+        widgets = {
+            'coordinates': TextInput,
+        }
 
-    def __init__(self, gym, **kwargs):
-        super().__init__(**kwargs)
-        map_width, map_height = Image.open(
-            find(f'bouldern/images/{gym}/hallenplan.png')).size
-        self.fields['gym_map'] = PointField(
-            label='Gym Map',
-            widget=GymMapWidget(attrs={
-                'map_width': map_width, 'map_height': map_height, 'gym': gym}))
+
+class BaseGymMapFormSet(BaseFormSet):
+    def __init__(self, **kwargs):
+        super().__init__(prefix='boulder', **kwargs)
+
+
+GymMapFormSet = formset_factory(BoulderForm, extra=0)
