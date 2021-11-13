@@ -2,3 +2,4 @@
 /db.sqlite3
 /ssh key/
 /.env
+/python_anywhere/bouldern/migrations/
