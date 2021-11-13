@@ -5,27 +5,73 @@ agent:
     type: e1-standard-2
     os_image: ubuntu1804
 
+auto_cancel:
+  running:
+    when: "branch != 'master'"
+
 blocks:
-  - name: "Run Code Analysis"
-      task:
-        # This block executes code analysis tests with pylint.
-        prologue:
+  - name: "Install Dependencies"
+    task:
+      secrets:
+        - name: private-repo
+      jobs:
+        - name: pip
           commands:
+            # Get the latest version of our source code from GitHub:
+            # See https://docs.semaphoreci.com/article/54-toolbox-reference#checkout
             - checkout
-            # At this point, the cache contains the downloaded packages ...
+            # Restore dependencies from cache. This command will not fail in
+            # case of a cache miss. In case of a cache hit, pip can use it
+            # to speed up the installation.
+            # For more info on caching, see https://docs.semaphoreci.com/article/149-caching
             - cache restore
-            # ... so pip does the installation much faster.
-            - pip install -r requirements.txt --cache-dir .pip_cache
-        jobs:
-          - name: Pylint
-            commands:
-              # list out files that are in directory and working tree
-              # grep -v will exclude the files being considered for pylint
-              # grep -E will matches files having .py extension
-              # This command will help to pass required python files to pylint along with pylint_djanog plugin
-              # Pylint with -E option will display only if there is any error
-              - git ls-files | grep -v 'migrations' | grep -v 'settings.py' | grep -v 'manage.py' | grep -E '.py$' |
-                xargs pylint -E --load-plugins=pylint_django
+            # install GDAL from ubuntugis/ppa
+            # echo -ne '\n' | for automatically accepting with [ENTER]
+            - echo -ne '\n' | sudo add-apt-repository ppa:ubuntugis/ppa
+            - sudo apt-get update
+            # yes for automatically answering with y
+            - yes | sudo apt-get install libgdal-dev gdal-bin
+            - export CPLUS_INCLUDE_PATH=/usr/include/gdal
+            - export C_INCLUDE_PATH=/usr/include/gdal
+            # Install other python dependencies.
+            # If not found in the cache, pip will download them.
+            - pip download --cache-dir .pip_cache -r requirements.txt
+            # Persist downloaded packages for future jobs.
+            - cache store
+        - name: github repositories
+          commands:
+            # Correct premissions since they are too open by default:
+            - chmod 0600 ~/.ssh/id_rsa_semaphoreci
+            # Add the key to the ssh agent:
+            - ssh-add ~/.ssh/id_rsa_semaphoreci
+            - git clone git@github.com:Humorloos/GoogleApiHelper.git
+            - git clone git@github.com:Humorloos/googleCalendarApp.git
+  - name: "Run Code Analysis"
+    task:
+      secrets:
+        - name: env
+      # This block executes code analysis tests with pylint.
+      prologue:
+        commands:
+          - checkout
+          # At this point, the cache contains the downloaded packages ...
+          - cache restore
+          - sem-version python 3.9
+          # ... so pip does the installation much faster.
+          - pip install -r requirements.txt --cache-dir .pip_cache
+          # setuptools >= 58.0.0 currently (2021-11-14) don't work with gdal, so we need to downgrade to 57.5.0
+          - pip install setuptools==57.5.0
+          # install gdal from local sources
+          - pip3 install --global-option=build_ext --global-option="-I /usr/include/gdal" GDAL==`gdal-config --version`
+      jobs:
+        - name: Pylint
+          commands:
+            # list out files that are in directory and working tree
+            # grep -v will exclude the files being considered for pylint
+            # grep -E will matches files having .py extension
+            # This command will help to pass required python files to pylint along with pylint_djanog plugin
+            # Pylint with -E option will display only if there is any error
+            - pylint python_anywhere --load-plugins=pylint_django
 promotions:
   - name: Deploy
     pipeline_file: deploy.yml
