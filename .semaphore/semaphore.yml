@@ -6,26 +6,62 @@ agent:
     os_image: ubuntu1804
 
 blocks:
-  - name: "Run Code Analysis"
-      task:
-        # This block executes code analysis tests with pylint.
-        prologue:
+  - name: "Install Dependencies"
+    task:
+      secrets:
+        - name: private-repo
+      prologue:
+        commands:
+          # Set the python version.
+          # See https://docs.semaphoreci.com/article/132-sem-service-managing-databases-and-services-on-linux
+          # Install Linux dependencies.
+          - sudo apt update
+          - sudo apt install python3.9
+      jobs:
+        - name: pip
+          commands:
+            # Get the latest version of our source code from GitHub:
+            # See https://docs.semaphoreci.com/article/54-toolbox-reference#checkout
+            - checkout
+            # Restore dependencies from cache. This command will not fail in
+            # case of a cache miss. In case of a cache hit, pip can use it
+            # to speed up the installation.
+            # For more info on caching, see https://docs.semaphoreci.com/article/149-caching
+            - cache restore
+            # Install python dependencies.
+            # If not found in the cache, pip will download them.
+            - pip download --cache-dir .pip_cache -r requirements.txt
+            # Persist downloaded packages for future jobs.
+            - cache store
+        - name: github repositories
           commands:
             - checkout
-            # At this point, the cache contains the downloaded packages ...
             - cache restore
-            # ... so pip does the installation much faster.
-            - pip install -r requirements.txt --cache-dir .pip_cache
-        jobs:
-          - name: Pylint
-            commands:
-              # list out files that are in directory and working tree
-              # grep -v will exclude the files being considered for pylint
-              # grep -E will matches files having .py extension
-              # This command will help to pass required python files to pylint along with pylint_djanog plugin
-              # Pylint with -E option will display only if there is any error
-              - git ls-files | grep -v 'migrations' | grep -v 'settings.py' | grep -v 'manage.py' | grep -E '.py$' |
-                xargs pylint -E --load-plugins=pylint_django
+            # Correct premissions since they are too open by default:
+            - chmod 0600 ~/.ssh/id_rsa_semaphoreci
+            # Add the key to the ssh agent:
+            - ssh-add ~/.ssh/id_rsa_semaphoreci
+            - git clone https://github.com/Humorloos/GoogleApiHelper.git
+            - git clone https://github.com/Humorloos/googleCalendarApp.git
+  - name: "Run Code Analysis"
+    task:
+      # This block executes code analysis tests with pylint.
+      prologue:
+        commands:
+          - checkout
+          # At this point, the cache contains the downloaded packages ...
+          - cache restore
+          # ... so pip does the installation much faster.
+          - pip install -r requirements.txt --cache-dir .pip_cache
+      jobs:
+        - name: Pylint
+          commands:
+            # list out files that are in directory and working tree
+            # grep -v will exclude the files being considered for pylint
+            # grep -E will matches files having .py extension
+            # This command will help to pass required python files to pylint along with pylint_djanog plugin
+            # Pylint with -E option will display only if there is any error
+            - pylint python_anywhere --load-plugins=pylint_django
 promotions:
   - name: Deploy
     pipeline_file: deploy.yml
