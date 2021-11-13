@@ -1,3 +1,7 @@
+"""This file contains a lookup table for boulder colors. Most of the colors
+ were taken from the list at
+ https://lukeboyle.com/blog/posts/google-calendar-api-color-id"""
+
 color_lookup = {
     'Rot': {'hex': '#d60000',
             'calendar_id': 11},
