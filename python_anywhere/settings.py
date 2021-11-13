@@ -21,12 +21,8 @@ PROJECT_DIR = Path(__file__).resolve().parent
 BASE_DIR = PROJECT_DIR.parent
 USER_HOME = BASE_DIR.parent
 
-sys.path = \
-    list({path for path in [
-        str(USER_HOME / project_name) for project_name in [
-            'googleCalendarApp',
-            'GoogleApiHelper'
-        ]] + sys.path})
+sys.path = list({str(USER_HOME / project_name) for project_name in
+                 ['googleCalendarApp', 'GoogleApiHelper'] + sys.path})
 
 DOMAIN_NAME = 'humorloos.pythonanywhere.com'
 
@@ -148,4 +144,3 @@ STATIC_ROOT = USER_HOME / 'static'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
