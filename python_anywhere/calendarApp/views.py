@@ -2,7 +2,7 @@ from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 
 from googleCalendarApp.calendar_handler import CalendarHandler
-from pythonAnywhere.calendarApp.constants import CHANNEL_ID_KEY
+from python_anywhere.calendarApp.constants import CHANNEL_ID_KEY
 
 
 @csrf_exempt

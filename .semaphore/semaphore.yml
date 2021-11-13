@@ -6,13 +6,26 @@ agent:
     os_image: ubuntu1804
 
 blocks:
-  - name: "Dummy"
-    task:
-      jobs:
-      - name: Dummy
-        commands:
-          - checkout
-          - echo "dummy"
+  - name: "Run Code Analysis"
+      task:
+        # This block executes code analysis tests with pylint.
+        prologue:
+          commands:
+            - checkout
+            # At this point, the cache contains the downloaded packages ...
+            - cache restore
+            # ... so pip does the installation much faster.
+            - pip install -r requirements.txt --cache-dir .pip_cache
+        jobs:
+          - name: Pylint
+            commands:
+              # list out files that are in directory and working tree
+              # grep -v will exclude the files being considered for pylint
+              # grep -E will matches files having .py extension
+              # This command will help to pass required python files to pylint along with pylint_djanog plugin
+              # Pylint with -E option will display only if there is any error
+              - git ls-files | grep -v 'migrations' | grep -v 'settings.py' | grep -v 'manage.py' | grep -E '.py$' |
+                xargs pylint -E --load-plugins=pylint_django
 promotions:
   - name: Deploy
     pipeline_file: deploy.yml

@@ -1,4 +1,4 @@
-"""pythonAnywhere URL Configuration
+"""python_anywhere URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/3.2/topics/http/urls/
@@ -22,20 +22,19 @@ from django.urls import path, include
 from django.views.generic import RedirectView
 
 from googleCalendarApp.constants import CALENDAR_URI
-from pythonAnywhere.bouldern.constants import BOULDERN_URI
+from python_anywhere.bouldern.constants import BOULDERN_URI
 
 sys.path = list({path for path in [
     str(Path(__file__).parent.parent.parent / project_name)
     for project_name in [
         'googleCalendarApp',
         'GoogleApiHelper',
-        'bouldernFormsApp',
-        'pythonAnywhere'
+        'python_anywhere'
     ]] + sys.path})
 
 urlpatterns = \
-    [path(f'{BOULDERN_URI}/', include('pythonAnywhere.bouldern.urls')),
-     path(f'{CALENDAR_URI}/', include('pythonAnywhere.calendarApp.urls')),
+    [path(f'{BOULDERN_URI}/', include('python_anywhere.bouldern.urls')),
+     path(f'{CALENDAR_URI}/', include('python_anywhere.calendarApp.urls')),
      path('admin/', admin.site.urls),
      url(r'^favicon\.ico$',
          RedirectView.as_view(url='/static/images/favicon.ico')), ]
