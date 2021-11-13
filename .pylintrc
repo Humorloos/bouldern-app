@@ -141,10 +141,10 @@ disable=print-statement,
         exception-escape,
         comprehension-escape,
         too-few-public-methods,
-	too-many-ancestors
-	line-too-long
-	arguments-differ
-	invalid-name
+	    too-many-ancestors,
+	    line-too-long,
+	    arguments-differ,
+	    invalid-name
 
 # Enable the message, report, category or checker with the given id(s). You can
 # either give multiple identifier separated by comma (,) or put this option
@@ -565,3 +565,6 @@ min-public-methods=2
 # Exceptions that will emit a warning when being caught. Defaults to
 # "Exception".
 overgeneral-exceptions=Exception
+
+[DJANGO]
+django-settings-module=python_anywhere.settings
