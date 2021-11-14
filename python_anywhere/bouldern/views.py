@@ -1,11 +1,10 @@
 """Module containing the views of the bouldern app"""
-from PIL import Image
-from django.contrib.staticfiles.finders import find
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseNotFound
 from django.shortcuts import render
 from django.urls import reverse
 
 from .forms import GymMapFormSet, BoulderForm
+from .models import Gym
 
 
 def index(request):
@@ -34,14 +33,10 @@ def gym_map(request, gym: str):
     else:
         formset = GymMapFormSet()
 
-    map_width, map_height = Image.open(
-        find(f'bouldern/images/{gym}/hallenplan.png')).size
-
     context = {
         'formset': formset,
         'gym': gym,
         'module': f'geodjango_{gym}',
-        'map_width': map_width,
-        'map_height': map_height
+        'gym_map': Gym.objects.filter(name=gym).only('map').get().map
     }
     return render(request, 'bouldern/gym_map_form.html', context)
