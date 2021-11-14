@@ -7,13 +7,13 @@ from pathlib import Path
 
 def main():
     """Run administrative tasks."""
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'pythonAnywhere.settings')
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'python_anywhere.settings')
     sys.path = \
         list({path for path in [
             str(Path(__file__).parent.parent / project_name) for project_name in [
                 'googleCalendarApp',
                 'GoogleApiHelper',
-                'pythonAnywhere'
+                'python_anywhere'
             ]] + sys.path})
     print(f'PATH: {sys.path}')
     try:
