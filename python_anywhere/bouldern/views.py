@@ -28,7 +28,7 @@ def gym_map(request, gym: str):
                 form.save()
             # redirect to a new URL: (in my case the same, but empty again)
             return HttpResponseRedirect(
-                reverse('bouldern:map', kwargs={'gym': gym}))
+                reverse(gym_map, kwargs={'gym': gym}))
 
     # if a GET (or any other method) we'll create a blank form
     else:
