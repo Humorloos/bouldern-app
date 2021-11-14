@@ -4,7 +4,7 @@ from django.shortcuts import render
 from django.urls import reverse
 
 from .forms import GymMapFormSet, BoulderForm
-from .models import Gym
+from .models import Boulder, Gym
 
 
 def index(request):
@@ -31,7 +31,8 @@ def gym_map(request, gym: str):
 
     # if a GET (or any other method) we'll create a blank form
     else:
-        formset = GymMapFormSet()
+        formset = GymMapFormSet(
+            queryset=Boulder.objects.filter(gym__name__exact=gym))
 
     context = {
         'formset': formset,

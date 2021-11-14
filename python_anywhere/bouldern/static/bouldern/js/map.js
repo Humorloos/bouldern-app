@@ -13,6 +13,7 @@
         this.container = document.getElementById('popup');
         this.closer = document.getElementById('popup-closer');
         this.boulders = document.getElementById('boulders');
+        this.totalFormsElement = document.getElementById(`id_${this.options.prefix}-TOTAL_FORMS`);
 
         const extent = [0, 0, options.map_width, options.map_height];
         const projection = new ol.proj.Projection({
@@ -75,21 +76,11 @@
         const self = this;
         this.featureCollection.on('add', function (event) {
             const feature = event.element;
-            feature.on('change', function () {
-                self.serializeFeatures();
-            });
 
-            const nextBoulderName = `${self.options.prefix}-${boulders.childElementCount}-coordinates`;
-            const nextBoulder = document.createElement("input");
-            nextBoulder.type = 'text'
-            nextBoulder.name = nextBoulderName;
-            nextBoulder.setAttribute("geom_type", "POINT");
-            nextBoulder.id = 'id_' + nextBoulderName;
-            nextBoulder.value = jsonFormat.writeGeometry(feature.getGeometry());
-            boulders.appendChild(nextBoulder);
+            const nextBoulder = self.serialize(feature);
 
-            document.getElementById(`id_${self.options.prefix}-TOTAL_FORMS`).value =
-                parseInt(document.getElementById(`id_${self.options.prefix}-TOTAL_FORMS`).value) + 1;
+            self.popover['feature'] = feature
+            self.popover['field'] = nextBoulder
         });
 
         // Set handler for opening popup on draw
@@ -108,6 +99,20 @@
             self.closer.blur();
             return false;
         };
+    }
+
+    MapWidget.prototype.serialize = function(feature) {
+        const nextBoulderName = `${this.options.prefix}-${this.boulders.childElementCount}-coordinates`;
+        const nextBoulder = document.createElement("input");
+        nextBoulder.type = 'text'
+        nextBoulder.name = nextBoulderName;
+        nextBoulder.setAttribute("geom_type", "POINT");
+        nextBoulder.id = 'id_' + nextBoulderName;
+        nextBoulder.value = jsonFormat.writeGeometry(feature.getGeometry());
+        this.boulders.appendChild(nextBoulder);
+
+        this.totalFormsElement.value = parseInt(this.totalFormsElement.value) + 1;
+        return nextBoulder;
     }
 
     window.MapWidget = MapWidget;
