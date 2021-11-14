@@ -1,4 +1,4 @@
-"""pythonAnywhere URL Configuration
+"""python_anywhere URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/3.2/topics/http/urls/
@@ -14,7 +14,6 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 import sys
-from pathlib import Path
 
 from django.conf.urls import url
 from django.contrib import admin
@@ -22,20 +21,15 @@ from django.urls import path, include
 from django.views.generic import RedirectView
 
 from googleCalendarApp.constants import CALENDAR_URI
-from pythonAnywhere.bouldern.constants import BOULDERN_URI
+from python_anywhere.bouldern.constants import BOULDERN_URI
+from python_anywhere.settings import USER_HOME
 
-sys.path = list({path for path in [
-    str(Path(__file__).parent.parent.parent / project_name)
-    for project_name in [
-        'googleCalendarApp',
-        'GoogleApiHelper',
-        'bouldernFormsApp',
-        'pythonAnywhere'
-    ]] + sys.path})
+sys.path = list({str(USER_HOME / project_name) for project_name in
+                 ['googleCalendarApp', 'GoogleApiHelper'] + sys.path})
 
 urlpatterns = \
-    [path(f'{BOULDERN_URI}/', include('pythonAnywhere.bouldern.urls')),
-     path(f'{CALENDAR_URI}/', include('pythonAnywhere.calendarApp.urls')),
+    [path(f'{BOULDERN_URI}/', include('python_anywhere.bouldern.urls')),
+     path(f'{CALENDAR_URI}/', include('python_anywhere.calendar_app.urls')),
      path('admin/', admin.site.urls),
      url(r'^favicon\.ico$',
          RedirectView.as_view(url='/static/images/favicon.ico')), ]
