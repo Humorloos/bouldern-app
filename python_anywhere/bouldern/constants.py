@@ -1,3 +1,5 @@
+"""This module contains constants for the bouldern app"""
+
 from pathlib import Path
 
 TARGET_DIR = Path(__file__).parent.parent.joinpath('target')
