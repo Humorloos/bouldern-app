@@ -1,6 +1,6 @@
 """Database models of bouldern app"""
 from django.contrib.gis.db.models import PointField
-from django.db.models import Model, CharField, ImageField
+from django.db.models import Model, CharField, ImageField, ForeignKey, SET_NULL
 
 
 class Gym(Model):
@@ -14,3 +14,4 @@ class Gym(Model):
 class Boulder(Model):
     """A boulder in a gym"""
     coordinates = PointField()
+    gym = ForeignKey(Gym, on_delete=SET_NULL, null=True)

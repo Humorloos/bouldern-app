@@ -15,6 +15,8 @@
         this.boulders = document.getElementById('boulders');
         this.totalFormsElement = document.getElementById(`id_${this.options.prefix}-TOTAL_FORMS`);
 
+        this.getBoulderCoordinates = () => this.boulders.querySelectorAll("[geom_type]");
+
         const extent = [0, 0, options.map_width, options.map_height];
         const projection = new ol.proj.Projection({
             code: 'xkcd-image',
@@ -64,6 +66,11 @@
         });
         this.map.addOverlay(this.popover);
 
+    //    Populate with initial features
+        this.getBoulderCoordinates().forEach(
+            child => source.addFeature(jsonFormat.readFeature(child.value))
+        )
+
         // Add icon drawing interaction
         this.drawInteraction = new ol.interaction.Draw({
             type: "Point",
@@ -102,7 +109,7 @@
     }
 
     MapWidget.prototype.serialize = function(feature) {
-        const nextBoulderName = `${this.options.prefix}-${this.boulders.childElementCount}-coordinates`;
+        const nextBoulderName = `${this.options.prefix}-${this.getBoulderCoordinates().length}-coordinates`;
         const nextBoulder = document.createElement("input");
         nextBoulder.type = 'text'
         nextBoulder.name = nextBoulderName;

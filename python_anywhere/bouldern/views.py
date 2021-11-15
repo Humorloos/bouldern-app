@@ -16,10 +16,13 @@ def index(request):
 
 def gym_map(request, gym: str):
     """Gym map view"""
+    gym_object = Gym.objects.filter(name=gym).get()
     # if this is a POST request we need to process the form data
     if request.method == 'POST':
         # create a form instance and populate it with data from the request:
-        formset: GymMapFormSet = GymMapFormSet(data=request.POST)
+        formset: GymMapFormSet = GymMapFormSet(
+            form_kwargs={'gym': gym_object},
+            data=request.POST)
         # check whether it's valid:
         if formset.is_valid():
             form: BoulderForm
@@ -31,13 +34,14 @@ def gym_map(request, gym: str):
 
     # if a GET (or any other method) we'll create a blank form
     else:
-        formset = GymMapFormSet(
-            queryset=Boulder.objects.filter(gym__name__exact=gym))
+        formset = GymMapFormSet(form_kwargs={'gym': gym_object},
+                                queryset=Boulder.objects.filter(
+                                    gym__name__exact=gym))
 
     context = {
         'formset': formset,
         'gym': gym,
         'module': f'geodjango_{gym}',
-        'gym_map': Gym.objects.filter(name=gym).only('map').get().map
+        'gym_map': gym_object.map
     }
     return render(request, 'bouldern/gym_map_form.html', context)

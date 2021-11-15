@@ -21,7 +21,7 @@
     {{ formset.management_form }}
     <div id="boulders">
         {% for form in formset %}
-            {{ form.coordinates }}
+            {{ form }}
         {% endfor %}
     </div>
     <div id="{{ gym }}_div_map">
