@@ -19,9 +19,14 @@
         <input type="submit" value="Submit">
     </div>
     {{ formset.management_form }}
-    <div id="boulders">
+    <div id="boulder-forms">
         {% for form in formset %}
-            {{ form }}
+            {{ form.id }}
+        {% endfor %}
+    </div>
+    <div id="boulder-coordinates">
+        {% for form in formset %}
+            {{ form.coordinates }}
         {% endfor %}
     </div>
     <div id="{{ gym }}_div_map">
@@ -40,5 +45,4 @@
         prefix: '{{ formset.prefix }}',
     });
 </script>
-
 </body>
