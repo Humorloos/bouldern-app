@@ -4,6 +4,7 @@ from django.db.models import Model, CharField, ImageField, ForeignKey, SET_NULL
 
 
 class Gym(Model):
+    """A bouldering gym"""
     name = CharField(max_length=128)
     map = ImageField(max_length=256, upload_to='bouldern/gym_maps/')
 

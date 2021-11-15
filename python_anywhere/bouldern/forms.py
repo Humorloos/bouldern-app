@@ -5,7 +5,6 @@ from .models import Boulder
 from .widgets import CoordinatesWidget
 
 
-# Todo: replace with modelform_factory() (https://docs.djangoproject.com/en/3.2/topics/forms/modelforms/#modelform-factory-function)
 class BoulderForm(ModelForm):
     """Form that contains all data related to single boulders in a gym"""
 
