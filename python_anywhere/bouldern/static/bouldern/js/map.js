@@ -9,13 +9,11 @@
     function MapWidget(options) {
         this.options = options
 
-        this.content = document.getElementById('popup-content');
-        this.container = document.getElementById('popup');
+        this.popover_content = document.getElementById('popup-content');
+        this.popover_container = document.getElementById('popup');
         this.closer = document.getElementById('popup-closer');
-        this.boulders = document.getElementById('boulders');
+        this.boulderCoordinates = document.getElementById('boulder-coordinates');
         this.totalFormsElement = document.getElementById(`id_${this.options.prefix}-TOTAL_FORMS`);
-
-        this.getBoulderCoordinates = () => this.boulders.querySelectorAll("[geom_type]");
 
         const extent = [0, 0, options.map_width, options.map_height];
         const projection = new ol.proj.Projection({
@@ -58,7 +56,7 @@
 
         // Popover showing the position the user clicked
         this.popover = new ol.Overlay({
-            element: this.container,
+            element: this.popover_container,
             autoPan: true,
             autoPanAnimation: {
                 duration: 250,
@@ -66,8 +64,8 @@
         });
         this.map.addOverlay(this.popover);
 
-    //    Populate with initial features
-        this.getBoulderCoordinates().forEach(
+        //    Populate with initial features
+        Array.from(this.boulderCoordinates.children).forEach(
             child => source.addFeature(jsonFormat.readFeature(child.value))
         )
 
@@ -93,7 +91,7 @@
         // Set handler for opening popup on draw
         this.drawInteraction.on('drawend', event => {
             const coordinate = event.feature.getGeometry().getCoordinates();
-            self.content.innerHTML = '<p>You clicked here:</p><code>' + coordinate + '</code>';
+            self.popover_content.innerHTML = '<p>You clicked here:</p><code>' + coordinate + '</code>';
             self.popover.setPosition(coordinate);
         })
 
@@ -101,26 +99,40 @@
          * Add a click handler to hide the popup.
          * @return {boolean} Don't follow the href.
          */
-        this.closer.onclick = function () {
+        this.closePopover = function () {
+            self.featureCollection.remove(self.popover.feature)
+            self.serializeFeatures();
             self.popover.setPosition(undefined);
             self.closer.blur();
             return false;
-        };
+        }
+        this.closer.onclick = this.closePopover
+
+        document.body.addEventListener('keyup', function (event) {
+            if (event.key === "Escape") {
+                self.closePopover()
+            }
+        });
     }
 
-    MapWidget.prototype.serialize = function(feature) {
-        const nextBoulderName = `${this.options.prefix}-${this.getBoulderCoordinates().length}-coordinates`;
+    MapWidget.prototype.serializeFeatures = function () {
+        this.boulderCoordinates.innerHTML = '';
+        this.totalFormsElement.value = 0;
+        this.featureCollection.forEach(feature => this.serialize(feature));
+    };
+
+    MapWidget.prototype.serialize = function (feature) {
+        const nextBoulderName = `${this.options.prefix}-${this.boulderCoordinates.childElementCount}-coordinates`;
         const nextBoulder = document.createElement("input");
         nextBoulder.type = 'text'
         nextBoulder.name = nextBoulderName;
         nextBoulder.setAttribute("geom_type", "POINT");
         nextBoulder.id = 'id_' + nextBoulderName;
         nextBoulder.value = jsonFormat.writeGeometry(feature.getGeometry());
-        this.boulders.appendChild(nextBoulder);
+        this.boulderCoordinates.appendChild(nextBoulder);
 
         this.totalFormsElement.value = parseInt(this.totalFormsElement.value) + 1;
         return nextBoulder;
     }
-
     window.MapWidget = MapWidget;
 }
