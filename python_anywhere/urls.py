@@ -16,13 +16,14 @@ Including another URLconf
 import sys
 
 from django.conf.urls import url
+from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
 from django.views.generic import RedirectView
 
 from googleCalendarApp.constants import CALENDAR_URI
 from python_anywhere.bouldern.constants import BOULDERN_URI
-from python_anywhere.settings import USER_HOME
+from python_anywhere.settings import USER_HOME, DEBUG, MEDIA_URL, MEDIA_ROOT
 
 sys.path = list({str(USER_HOME / project_name) for project_name in
                  ['googleCalendarApp', 'GoogleApiHelper'] + sys.path})
@@ -33,3 +34,6 @@ urlpatterns = \
      path('admin/', admin.site.urls),
      url(r'^favicon\.ico$',
          RedirectView.as_view(url='/static/images/favicon.ico')), ]
+
+if DEBUG:
+    urlpatterns += static(MEDIA_URL, document_root=MEDIA_ROOT)

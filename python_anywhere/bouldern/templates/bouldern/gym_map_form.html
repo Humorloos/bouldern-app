@@ -21,7 +21,7 @@
     {{ formset.management_form }}
     <div id="boulders">
         {% for form in formset %}
-            {{ form.coordinates }}
+            {{ form }}
         {% endfor %}
     </div>
     <div id="{{ gym }}_div_map">
@@ -34,9 +34,9 @@
     const {{ module }} =
     new MapWidget({
         gym: '{{ gym }}',
-        url: "{% static 'bouldern/images/'|add:gym|add:'/hallenplan.png' %}",
-        map_width: {{ map_width }},
-        map_height: {{ map_height }},
+        url: '{{ gym_map.url }}',
+        map_width: {{ gym_map.width }},
+        map_height: {{ gym_map.height }},
         prefix: '{{ formset.prefix }}',
     });
 </script>
