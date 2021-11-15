@@ -1,0 +1,5 @@
+- model: bouldern.Gym
+  pk: 1
+  fields:
+    name: generic_gym
+    map: bouldern/gym_maps/generic_gym.png
