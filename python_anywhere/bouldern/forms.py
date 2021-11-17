@@ -1,8 +1,18 @@
 """This module contains forms for the bouldern app"""
+from colorfield.widgets import ColorWidget
 from django.forms import ModelForm, modelformset_factory, BaseModelFormSet
 
-from .models import Boulder
+from .models import Boulder, Color
 from .widgets import CoordinatesWidget
+
+
+class ColorForm(ModelForm):
+    """Form for adding new colors"""
+
+    class Meta:
+        model = Color
+        fields = ['name', 'color']
+        widgets = {'color': ColorWidget}
 
 
 class BoulderForm(ModelForm):
@@ -13,7 +23,6 @@ class BoulderForm(ModelForm):
         self.fields['gym'].disabled = True
 
     class Meta:
-        """Configures the Boulder model for this form"""
         model = Boulder
         fields = ['coordinates', 'gym']
         widgets = {
