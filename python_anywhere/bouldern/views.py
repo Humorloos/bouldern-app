@@ -18,7 +18,6 @@ def index(request):
 class AddColor(View):
     """View for adding new colors"""
     form_class = ColorForm
-    template_name = 'bouldern/color_form.html'
 
     def post(self, request):
         """
@@ -34,13 +33,12 @@ class AddColor(View):
             # redirect to a new URL: (in my case the same, but empty again)
         return HttpResponseRedirect(reverse(index))
 
+
+class AddGym(View):
+    template_name = 'bouldern/color_form.html'
+
     def get(self, request):
-        """
-        Gets a rendered color form
-        :param request: incoming get request
-        :return: rendered color form
-        """
-        form = self.form_class()
+        form = ColorForm()
         context = {'form': form}
         return render(request, self.template_name, context)
 
