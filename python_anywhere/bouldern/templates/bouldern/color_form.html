@@ -1,0 +1,13 @@
+{% load static %}
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title></title>
+</head>
+<body>
+<form action="/bouldern/add-color/" method="post">
+    {% csrf_token %}
+    {{ form }}
+    {{ form.media }}
+    <input type="submit" value="Submit">
+</form>
+</body>
