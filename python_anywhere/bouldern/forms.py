@@ -7,6 +7,8 @@ from .widgets import CoordinatesWidget
 
 
 class ColorForm(ModelForm):
+    """Form for adding new colors"""
+
     class Meta:
         model = Color
         fields = ['name', 'color']
@@ -21,7 +23,6 @@ class BoulderForm(ModelForm):
         self.fields['gym'].disabled = True
 
     class Meta:
-        """Configures the Boulder model for this form"""
         model = Boulder
         fields = ['coordinates', 'gym']
         widgets = {

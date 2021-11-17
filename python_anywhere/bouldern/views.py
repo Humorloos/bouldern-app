@@ -16,19 +16,30 @@ def index(request):
 
 
 class AddColor(View):
+    """View for adding new colors"""
     form_class = ColorForm
     template_name = 'bouldern/color_form.html'
 
     def post(self, request):
+        """
+        Verifies incoming color forms and persists them if valid
+        :param request: incoming request with color form
+        :return: redirect response to bouldern index
+        """
         # create a form instance and populate it with data from the request:
         form = self.form_class(request.POST)
         # check whether it's valid:
         if form.is_valid():
             form.save()
             # redirect to a new URL: (in my case the same, but empty again)
-            return HttpResponseRedirect(reverse(index))
+        return HttpResponseRedirect(reverse(index))
 
     def get(self, request):
+        """
+        Gets a rendered color form
+        :param request: incoming get request
+        :return: rendered color form
+        """
         form = self.form_class()
         context = {'form': form}
         return render(request, self.template_name, context)
