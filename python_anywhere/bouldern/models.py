@@ -6,7 +6,7 @@ from django.db.models import Model, CharField, ImageField, ForeignKey, SET_NULL
 
 class Color(Model):
     """Color of holds or difficulty levels"""
-    name = CharField(max_length=128)
+    name = CharField(max_length=128, unique=True)
     color = ColorField(default='#FF0000')
 
 
