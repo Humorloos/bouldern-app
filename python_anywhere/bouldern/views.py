@@ -4,7 +4,7 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.views import View
 
-from .forms import GymMapFormSet, BoulderForm, ColorForm
+from .forms import GymMapFormSet, BoulderForm, ColorForm, GymForm
 from .models import Boulder, Gym
 
 
@@ -36,6 +36,7 @@ class AddGym(View):
     """View for adding new gyms"""
     name = 'add_gym'
     template_name = 'bouldern/gym_form.html'
+    form_class = GymForm
 
     def get(self, request):
         """
@@ -43,9 +44,21 @@ class AddGym(View):
         :param request: incoming get request
         :return: response with the rendered gym form
         """
+        form = self.form_class()
         color_form = ColorForm()
-        context = {'color_form': color_form}
+        context = {
+            'color_form': color_form,
+            'form': form
+        }
         return render(request, self.template_name, context)
+
+    def post(self, request):
+        form = self.form_class(data=request.POST, files=request.FILES)
+        # check whether it's valid:
+        if form.is_valid():
+            form.save()
+            # redirect to a new URL: (in my case the same, but empty again)
+            return HttpResponseRedirect(reverse(index))
 
 
 def gym_map(request, gym: str):

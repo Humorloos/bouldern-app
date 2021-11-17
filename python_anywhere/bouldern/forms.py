@@ -2,8 +2,14 @@
 from colorfield.widgets import ColorWidget
 from django.forms import ModelForm, modelformset_factory, BaseModelFormSet
 
-from .models import Boulder, Color
+from .models import Boulder, Color, Gym
 from .widgets import CoordinatesWidget
+
+
+class GymForm(ModelForm):
+    class Meta:
+        model = Gym
+        fields = ['name', 'map']
 
 
 class ColorForm(ModelForm):

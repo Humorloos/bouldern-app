@@ -4,6 +4,12 @@
     <title></title>
 </head>
 <body>
+<form action="/bouldern/add-gym/" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form }}
+    {{ form.media }}
+    <input type="submit" value="Submit">
+</form>
 <!-- Modal HTML embedded directly into document -->
 <div id="ex1" class="modal">
     {% include 'bouldern/color_form.html' with form=color_form %}
