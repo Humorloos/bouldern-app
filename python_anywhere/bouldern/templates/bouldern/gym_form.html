@@ -7,7 +7,12 @@
 <form action="/bouldern/add-gym/" method="post" enctype="multipart/form-data">
     {% csrf_token %}
     {{ form }}
+{#    Todo: check if this is required#}
     {{ form.media }}
+    <h3>Difficulty Levels</h3>
+    {% for difficulty_level_form in difficulty_level_formset %}
+        <div>{{ difficulty_level_form }}</div>
+    {% endfor %}
     <input type="submit" value="Submit">
 </form>
 <!-- Modal HTML embedded directly into document -->

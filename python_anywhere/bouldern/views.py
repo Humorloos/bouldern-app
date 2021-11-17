@@ -4,7 +4,8 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.views import View
 
-from .forms import GymMapFormSet, BoulderForm, ColorForm, GymForm
+from .forms import GymMapFormSet, BoulderForm, ColorForm, GymForm, \
+    DifficultyLevelFormset
 from .models import Boulder, Gym
 
 
@@ -44,10 +45,12 @@ class AddGym(View):
         :param request: incoming get request
         :return: response with the rendered gym form
         """
+        difficulty_level_formset = DifficultyLevelFormset()
         form = self.form_class()
         color_form = ColorForm()
         context = {
             'color_form': color_form,
+            'difficulty_level_formset': difficulty_level_formset,
             'form': form
         }
         return render(request, self.template_name, context)
