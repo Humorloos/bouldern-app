@@ -2,8 +2,9 @@
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseNotFound
 from django.shortcuts import render
 from django.urls import reverse
+from django.views import View
 
-from .forms import GymMapFormSet, BoulderForm
+from .forms import GymMapFormSet, BoulderForm, ColorForm
 from .models import Boulder, Gym
 
 
@@ -12,6 +13,25 @@ def index(request):
     if request.method == 'GET':
         return HttpResponse("Hello, world. You're at the bouldern index.")
     return HttpResponseNotFound()
+
+
+class AddColor(View):
+    form_class = ColorForm
+    template_name = 'bouldern/color_form.html'
+
+    def post(self, request):
+        # create a form instance and populate it with data from the request:
+        form = self.form_class(request.POST)
+        # check whether it's valid:
+        if form.is_valid():
+            form.save()
+            # redirect to a new URL: (in my case the same, but empty again)
+            return HttpResponseRedirect(reverse(index))
+
+    def get(self, request):
+        form = self.form_class()
+        context = {'form': form}
+        return render(request, self.template_name, context)
 
 
 def gym_map(request, gym: str):
