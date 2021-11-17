@@ -33,10 +33,16 @@ class AddColor(View):
 
 
 class AddGym(View):
+    """View for adding new gyms"""
     name = 'add_gym'
     template_name = 'bouldern/gym_form.html'
 
     def get(self, request):
+        """
+        Gets the rendered gym form
+        :param request: incoming get request
+        :return: response with the rendered gym form
+        """
         color_form = ColorForm()
         context = {'color_form': color_form}
         return render(request, self.template_name, context)
