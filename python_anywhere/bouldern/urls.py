@@ -1,9 +1,10 @@
 """URL mappings for bouldern app"""
 from django.urls import path
 
-from . import views
+from .views import index, gym_map, AddColor
 
 urlpatterns = [
-    path('', views.index, name='index'),
-    path('<str:gym>/map/', views.gym_map, name='map'),
+    path('', index, name='index'),
+    path('<str:gym>/map/', gym_map, name='map'),
+    path('add-color/', AddColor.as_view(), name='add_color'),
 ]
