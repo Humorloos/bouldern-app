@@ -46,21 +46,22 @@ class AddGym(View):
         :return: response with the rendered gym form
         """
         difficulty_level_formset = DifficultyLevelFormset()
-        form = self.form_class()
+        gym_form = self.form_class()
         color_form = ColorForm()
         context = {
             'color_form': color_form,
             'difficulty_level_formset': difficulty_level_formset,
-            'form': form
+            'gym_form': gym_form
         }
         return render(request, self.template_name, context)
 
     def post(self, request):
-        form = self.form_class(data=request.POST, files=request.FILES)
-        difficulty_level_formset = DifficultyLevelFormset(data=request.POST, instance=form.instance)
+        gym_form = self.form_class(data=request.POST, files=request.FILES)
+        difficulty_level_formset = DifficultyLevelFormset(
+            data=request.POST, instance=gym_form.instance)
         # check whether it's valid:
-        if form.is_valid() and difficulty_level_formset.is_valid():
-            form.save()
+        if gym_form.is_valid() and difficulty_level_formset.is_valid():
+            gym_form.save()
             for difficulty_level_form in difficulty_level_formset:
                 difficulty_level_form.save()
             # redirect to a new URL: (in my case the same, but empty again)
