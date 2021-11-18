@@ -16,12 +16,9 @@ class GymForm(ModelForm):
 
 class ColorForm(ModelForm):
     """Form for adding new colors"""
-
     class Meta:
         model = Color
         fields = ['name', 'color']
-        # Todo: check if it is really necessary to declare this
-        widgets = {'color': ColorWidget}
 
 
 class DifficultyLevelForm(ModelForm):
