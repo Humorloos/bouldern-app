@@ -11,7 +11,10 @@
     {{ form.media }}
     <h3>Difficulty Levels</h3>
     {% for difficulty_level_form in difficulty_level_formset %}
-        <div>{{ difficulty_level_form }}</div>
+        <div>
+            {{ difficulty_level_form }}
+            {{ difficulty_level_form.media }}
+        </div>
     {% endfor %}
     <input type="submit" value="Submit">
 </form>

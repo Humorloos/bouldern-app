@@ -10,6 +10,9 @@ class Color(Model):
     name = CharField(max_length=128, unique=True)
     color = ColorField(default='#FF0000')
 
+    def __str__(self):
+        return self.name
+
 
 class Gym(Model):
     """A bouldering gym"""
