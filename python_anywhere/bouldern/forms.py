@@ -30,7 +30,7 @@ class DifficultyLevelForm(ModelForm):
                    'level': HiddenInput}
 
 
-class DifficultyLevelFormset(BaseInlineFormSet):
+class BaseDifficultyLevelFormset(BaseInlineFormSet):
     """Base class for difficulty level form set"""
     def __init__(self, **kwargs):
         super().__init__(initial=[{'level': 0}], **kwargs)
@@ -40,7 +40,7 @@ DifficultyLevelFormset = inlineformset_factory(
     parent_model=Gym,
     model=DifficultyLevel,
     form=DifficultyLevelForm,
-    formset=DifficultyLevelFormset,
+    formset=BaseDifficultyLevelFormset,
     extra=1,
     can_delete=False,
 )
