@@ -57,11 +57,16 @@ class AddGym(View):
 
     def post(self, request):
         form = self.form_class(data=request.POST, files=request.FILES)
+        difficulty_level_formset = DifficultyLevelFormset(data=request.POST, instance=form.instance)
         # check whether it's valid:
-        if form.is_valid():
+        if form.is_valid() and difficulty_level_formset.is_valid():
             form.save()
+            for difficulty_level_form in difficulty_level_formset:
+                difficulty_level_form.save()
             # redirect to a new URL: (in my case the same, but empty again)
             return HttpResponseRedirect(reverse(index))
+        else:
+            return HttpResponseRedirect(reverse(self.name))
 
 
 def gym_map(request, gym: str):

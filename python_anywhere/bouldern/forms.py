@@ -1,6 +1,7 @@
 """This module contains forms for the bouldern app"""
 from colorfield.widgets import ColorWidget
-from django.forms import ModelForm, modelformset_factory, BaseModelFormSet
+from django.forms import ModelForm, modelformset_factory, BaseModelFormSet, \
+    HiddenInput, BaseInlineFormSet
 from django.forms import inlineformset_factory
 
 from .models import Boulder, Gym, Color, DifficultyLevel
@@ -24,20 +25,23 @@ class ColorForm(ModelForm):
 
 
 class DifficultyLevelForm(ModelForm):
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.fields['color'].required = False
-
     class Meta:
         model = DifficultyLevel
-        fields = ['color']
-        widgets = {'color': DifficultyLevelWidget}
+        fields = ['color', 'level']
+        widgets = {'color': DifficultyLevelWidget,
+                   'level': HiddenInput}
 
+
+class DifficultyLevelFormset(BaseInlineFormSet):
+    def __init__(self, **kwargs):
+        super().__init__(initial=[{'level': 0}], **kwargs)
 
 DifficultyLevelFormset = inlineformset_factory(
     parent_model=Gym,
     model=DifficultyLevel,
     form=DifficultyLevelForm,
+    formset=DifficultyLevelFormset,
+    extra=1,
 )
 
 

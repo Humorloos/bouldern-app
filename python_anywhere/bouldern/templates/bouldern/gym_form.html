@@ -10,6 +10,7 @@
 {#    Todo: check if this is required#}
     {{ form.media }}
     <h3>Difficulty Levels</h3>
+    {{ difficulty_level_formset.management_form }}
     {% for difficulty_level_form in difficulty_level_formset %}
         <div>
             {{ difficulty_level_form }}
