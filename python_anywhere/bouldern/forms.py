@@ -1,18 +1,49 @@
 """This module contains forms for the bouldern app"""
-from colorfield.widgets import ColorWidget
-from django.forms import ModelForm, modelformset_factory, BaseModelFormSet
+from django.forms import ModelForm, modelformset_factory, BaseModelFormSet, \
+    HiddenInput, BaseInlineFormSet
+from django.forms import inlineformset_factory
 
-from .models import Boulder, Color
-from .widgets import CoordinatesWidget
+from .models import Boulder, Gym, Color, DifficultyLevel
+from .widgets import CoordinatesWidget, DifficultyLevelWidget
+
+
+class GymForm(ModelForm):
+    """Form for adding new bouldering gyms"""
+    class Meta:
+        model = Gym
+        fields = ['name', 'map']
 
 
 class ColorForm(ModelForm):
     """Form for adding new colors"""
-
     class Meta:
         model = Color
         fields = ['name', 'color']
-        widgets = {'color': ColorWidget}
+
+
+class DifficultyLevelForm(ModelForm):
+    """Form for adding new difficulty levels"""
+    class Meta:
+        model = DifficultyLevel
+        fields = ['color', 'level']
+        widgets = {'color': DifficultyLevelWidget,
+                   'level': HiddenInput}
+
+
+class BaseDifficultyLevelFormset(BaseInlineFormSet):
+    """Base class for difficulty level form set"""
+    def __init__(self, **kwargs):
+        super().__init__(initial=[{'level': 0}], **kwargs)
+
+
+DifficultyLevelFormset = inlineformset_factory(
+    parent_model=Gym,
+    model=DifficultyLevel,
+    form=DifficultyLevelForm,
+    formset=BaseDifficultyLevelFormset,
+    extra=1,
+    can_delete=False,
+)
 
 
 class BoulderForm(ModelForm):
