@@ -34,7 +34,7 @@ class AddColor(View):
 
 
 class AddGym(View):
-    """View for adding new gyms"""
+    """View for adding new gyms with their specific difficulty levels"""
     name = 'add_gym'
     template_name = 'bouldern/gym_form.html'
     form_class = GymForm
@@ -56,6 +56,12 @@ class AddGym(View):
         return render(request, self.template_name, context)
 
     def post(self, request):
+        """
+        Verifies incoming gym form and difficulty level formset and persists
+        the data if it is valid.
+        :param request: incoming post request with form data
+        :return: redirect to index if form was valid, else redirect to gym form
+        """
         gym_form = self.form_class(data=request.POST, files=request.FILES)
         difficulty_level_formset = DifficultyLevelFormset(
             data=request.POST, instance=gym_form.instance)
@@ -66,8 +72,7 @@ class AddGym(View):
                 difficulty_level_form.save()
             # redirect to a new URL: (in my case the same, but empty again)
             return HttpResponseRedirect(reverse(index))
-        else:
-            return HttpResponseRedirect(reverse(self.name))
+        return HttpResponseRedirect(reverse(self.name))
 
 
 def gym_map(request, gym: str):

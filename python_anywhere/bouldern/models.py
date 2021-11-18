@@ -24,6 +24,7 @@ class Gym(Model):
 
 
 class DifficultyLevel(Model):
+    """A difficulty level in a gym"""
     level = PositiveSmallIntegerField()
     color = ForeignKey(Color, on_delete=SET_NULL, null=True)
     gym = ForeignKey(Gym, on_delete=SET_NULL, null=True)
