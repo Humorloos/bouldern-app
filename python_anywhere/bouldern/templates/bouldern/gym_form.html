@@ -1,9 +1,25 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.css"/>
     <title></title>
 </head>
 <body>
+<form action="/bouldern/add-gym/" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ gym_form }}
+    <h3>Difficulty Levels</h3>
+    {{ difficulty_level_formset.management_form }}
+    <div id="difficulty-levels">
+        {% for difficulty_level_form in difficulty_level_formset %}
+            <div id="difficulty-level">
+                {{ difficulty_level_form }}
+                {{ difficulty_level_form.media }}
+            </div>
+        {% endfor %}
+    </div>
+    <button type="button" id="add-level-button">Add Level</button>
+    <input type="submit" value="Submit">
+</form>
 <!-- Modal HTML embedded directly into document -->
 <div id="ex1" class="modal">
     {% include 'bouldern/color_form.html' with form=color_form %}
