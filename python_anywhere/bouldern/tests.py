@@ -1,3 +1,4 @@
+"""Tests for bouldern app"""
 from django.test import TestCase
 from django.urls import reverse
 from factory import Faker, Iterator
@@ -5,10 +6,12 @@ from factory.django import DjangoModelFactory, ImageField
 
 from python_anywhere.bouldern.models import Gym, DifficultyLevel, Color
 from python_anywhere.bouldern.views import AddGym
-from settings import BASE_DIR
+from python_anywhere.settings import BASE_DIR
 
 
 class GymFactory(DjangoModelFactory):
+    """Factory for building gym instances"""
+
     class Meta:
         model = Gym
 
@@ -17,6 +20,8 @@ class GymFactory(DjangoModelFactory):
 
 
 class ColorFactory(DjangoModelFactory):
+    """Factory for building color instances"""
+
     class Meta:
         model = Color
 
@@ -25,6 +30,8 @@ class ColorFactory(DjangoModelFactory):
 
 
 class DifficultyLevelFactory(DjangoModelFactory):
+    """Factory for building difficulty level instances"""
+
     class Meta:
         model = DifficultyLevel
 
@@ -32,8 +39,11 @@ class DifficultyLevelFactory(DjangoModelFactory):
     color = Iterator(Color.objects.all())
 
 
-class GymFormTest(TestCase):
+class AddGymTest(TestCase):
+    """Test class for AddGym view"""
+
     def test_post(self):
+        """Test that post method works correctly"""
         # Given
         n_difficulty_levels = 3
         difficulty_level_range = range(n_difficulty_levels)
@@ -63,5 +73,10 @@ class GymFormTest(TestCase):
             self.assertIn(difficulty_level.level - 1, difficulty_level_range)
 
     def assert_correct_gym(self, gym, payload):
+        """
+        Assert that provided gym is equal to gym described in payload
+        :param gym: gym to compare
+        :param payload: payload from post request containing gym specifications
+        """
         self.assertEqual(gym.name, payload['name'])
         self.assertEqual(gym.map.size, payload['map'].size)
