@@ -10,6 +10,7 @@ pip install -r requirements.txt --upgrade
 python manage.py makemigrations
 python manage.py migrate
 python manage.py collectstatic --noinput
+python manage.py test
 
 # restart web application
 touch /var/www/humorloos_pythonanywhere_com_wsgi.py
