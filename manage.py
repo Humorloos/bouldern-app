@@ -16,6 +16,7 @@ def main():
                 'python_anywhere'
             ]] + sys.path})
     print(f'PATH: {sys.path}')
+    print(os.listdir(Path(__file__).parent.parent / 'GoogleApiHelper'))
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:
