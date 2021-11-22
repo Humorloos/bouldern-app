@@ -3,8 +3,8 @@ from django.forms import ModelForm, modelformset_factory, BaseModelFormSet, \
     HiddenInput, BaseInlineFormSet
 from django.forms import inlineformset_factory
 
-from .models import Boulder, Gym, Color, DifficultyLevel
-from .widgets import CoordinatesWidget, DifficultyLevelWidget
+from python_anywhere.bouldern.models import Boulder, Gym, Color, DifficultyLevel
+from python_anywhere.bouldern.widgets import CoordinatesWidget, DifficultyLevelWidget
 
 
 class GymForm(ModelForm):

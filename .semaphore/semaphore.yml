@@ -1,5 +1,5 @@
 version: v1.0
-name: First pipeline example
+name: Python Anywhere Pipeline
 agent:
   machine:
     type: e1-standard-2
@@ -67,12 +67,56 @@ blocks:
       jobs:
         - name: Pylint
           commands:
-            # list out files that are in directory and working tree
-            # grep -v will exclude the files being considered for pylint
-            # grep -E will matches files having .py extension
-            # This command will help to pass required python files to pylint along with pylint_djanog plugin
-            # Pylint with -E option will display only if there is any error
             - pylint python_anywhere --load-plugins=pylint_django
+  - name: "Run Tests"
+    dependencies: ["Install Dependencies"]
+    task:
+      secrets:
+        - name: env
+        - name: private-repo
+      # This block executes code analysis tests with pylint.
+      prologue:
+        commands:
+          # Install private repository dependencies
+          # Correct permissions since they are too open by default:
+          - chmod 0600 ~/.ssh/id_rsa_semaphoreci
+          # Add the key to the ssh agent:
+          - ssh-add ~/.ssh/id_rsa_semaphoreci
+          # clone repos
+          - git clone git@github.com:Humorloos/GoogleApiHelper.git
+          - git clone git@github.com:Humorloos/googleCalendarApp.git
+          - checkout
+          # At this point, the cache contains the downloaded packages ...
+          - cache restore
+          - sem-version python 3.9
+          # ... so pip does the installation much faster.
+          - pip install -r requirements.txt --cache-dir .pip_cache
+          # setuptools >= 58.0.0 currently (2021-11-14) don't work with gdal, so we need to downgrade to 57.5.0
+          - pip install setuptools==57.5.0
+          # install GDAL from ubuntugis/ppa
+          # echo -ne '\n' | for automatically accepting with [ENTER]
+          - echo -ne '\n' | sudo add-apt-repository ppa:ubuntugis/ppa
+          - sudo apt-get update
+          # -y for automatically answering with y
+          - sudo apt-get install -y libgdal-dev gdal-bin
+          - export CPLUS_INCLUDE_PATH=/usr/include/gdal
+          - export C_INCLUDE_PATH=/usr/include/gdal
+          # install gdal from local sources
+          - pip3 install --global-option=build_ext --global-option="-I /usr/include/gdal" GDAL==`gdal-config --version`
+          # install spatialite
+          - cd ..
+          - wget https://www.gaia-gis.it/gaia-sins/libspatialite-sources/libspatialite-4.3.0.tar.gz
+          - tar xaf libspatialite-4.3.0.tar.gz
+          - cd libspatialite-4.3.0
+          - ./configure
+          - make
+          - sudo make install
+          - cd ..
+          - cache store
+      jobs:
+        - name: Integration tests
+          commands:
+            - python manage.py test bouldern
 promotions:
   - name: Deploy
     pipeline_file: deploy.yml
