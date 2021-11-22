@@ -145,6 +145,10 @@ MEDIA_URL = '/media/'
 
 MEDIA_ROOT = BASE_DIR / 'media'
 
+# Spatialite
+if not DEBUG:
+    SPATIALITE_LIBRARY_PATH = '/usr/local/lib/mod_spatialite.dylib'
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
