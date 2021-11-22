@@ -4,9 +4,9 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.views import View
 
-from .forms import GymMapFormSet, BoulderForm, ColorForm, GymForm, \
+from python_anywhere.bouldern.forms import GymMapFormSet, BoulderForm, ColorForm, GymForm, \
     DifficultyLevelFormset
-from .models import Boulder, Gym
+from python_anywhere.bouldern.models import Boulder, Gym
 
 
 def index(request):
