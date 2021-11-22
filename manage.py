@@ -13,7 +13,8 @@ def main():
             str(Path(__file__).parent.parent / project_name) for project_name in [
                 'googleCalendarApp',
                 'GoogleApiHelper',
-                'python_anywhere'
+                'bouldern-app',
+                Path('bouldern-app') / 'python_anywhere',
             ]] + sys.path})
     print(f'PATH: {sys.path}')
     try:
