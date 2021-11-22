@@ -103,6 +103,11 @@ blocks:
           - export C_INCLUDE_PATH=/usr/include/gdal
           # install gdal from local sources
           - pip3 install --global-option=build_ext --global-option="-I /usr/include/gdal" GDAL==`gdal-config --version`
+          # install spatialite
+          - wget https://www.gaia-gis.it/gaia-sins/libspatialite-sources/libspatialite-4.3.0.tar.gz
+          - tar xaf libspatialite-4.3.0.tar.gz
+          - cd libspatialite-4.3.0
+          - ./configure
           - cache store
       jobs:
         - name: Integration tests
