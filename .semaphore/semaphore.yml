@@ -108,6 +108,7 @@ blocks:
           - tar xaf libspatialite-4.3.0.tar.gz
           - cd libspatialite-4.3.0
           - ./configure
+          - cd ..
           - cache store
       jobs:
         - name: Integration tests
