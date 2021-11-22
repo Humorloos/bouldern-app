@@ -108,6 +108,8 @@ blocks:
           - tar xaf libspatialite-4.3.0.tar.gz
           - cd libspatialite-4.3.0
           - ./configure
+          - make
+          - sudo make install
           - cd ..
           - cache store
       jobs:
