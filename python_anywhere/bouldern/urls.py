@@ -1,7 +1,7 @@
 """URL mappings for bouldern app"""
 from django.urls import path
 
-from .views import index, gym_map, AddGym, AddColor
+from python_anywhere.bouldern.views import index, gym_map, AddGym, AddColor
 
 urlpatterns = [
     path('', index, name='index'),
