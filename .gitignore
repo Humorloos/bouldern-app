@@ -4,3 +4,4 @@
 /.env
 /python_anywhere/bouldern/migrations/
 /media/
+/.env_semaphore
