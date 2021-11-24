@@ -9,6 +9,8 @@ https://docs.djangoproject.com/en/3.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
+import os
+
 import sys
 from pathlib import Path
 
@@ -26,6 +28,11 @@ sys.path = list({str(USER_HOME / project_name) for project_name in
 
 DOMAIN_NAME = 'humorloos.pythonanywhere.com'
 
+print('#################### debug info here ###################')
+print('.env path: ' + str(USER_HOME / ".env"))
+print('files in USER_HOME: ' + str(os.listdir(USER_HOME)))
+with open(USER_HOME / ".env", 'r') as file_in:
+    print('.env content: ' + file_in.read())
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 Env.read_env(str(USER_HOME / ".env"))
