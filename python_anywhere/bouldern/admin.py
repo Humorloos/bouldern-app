@@ -1,7 +1,7 @@
 """This file is the home of model representations in the admin interface"""
 from django.contrib import admin
 
-from .models import Boulder, Gym, Color, DifficultyLevel
+from python_anywhere.bouldern.models import Boulder, Gym, Color, DifficultyLevel
 
 admin.site.register(Color)
 admin.site.register(Boulder)
