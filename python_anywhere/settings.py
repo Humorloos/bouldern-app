@@ -141,6 +141,8 @@ STATICFILES_DIRS = [
 
 STATIC_ROOT = USER_HOME / 'static'
 
+STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.ManifestStaticFilesStorage'
+
 MEDIA_URL = '/media/'
 
 MEDIA_ROOT = BASE_DIR / 'media'
