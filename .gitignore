@@ -1,7 +1,7 @@
 /venv/
 /db.sqlite3
 /ssh key/
-/.env
 /python_anywhere/bouldern/migrations/
 /media/
 /.env_semaphore
+/.env_production
