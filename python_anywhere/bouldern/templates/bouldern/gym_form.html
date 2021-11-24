@@ -1,9 +1,17 @@
+{% load static %}
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.css"/>
     <title></title>
 </head>
 <body>
+<h1>Testing Vue...</h1>
+<div id="app"></div>
+
+<script type="text/javascript" src="{% static 'src/vue/dist/js/chunk-vendors.js' %}"></script>
+<script type="text/javascript" src="{% static 'src/vue/dist/js/app.js' %}"></script>
+<link href="{% static 'src/vue/dist/css/app.css' %}" rel=stylesheet>
+
 <form action="/bouldern/add-gym/" method="post" enctype="multipart/form-data">
     {% csrf_token %}
     {{ gym_form }}
