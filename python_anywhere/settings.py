@@ -26,6 +26,7 @@ sys.path = list({str(USER_HOME / project_name) for project_name in
 
 DOMAIN_NAME = 'humorloos.pythonanywhere.com'
 
+print(str(USER_HOME / ".env"))
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 Env.read_env(str(USER_HOME / ".env"))
