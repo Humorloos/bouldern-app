@@ -1,0 +1,50 @@
+{
+  "status": "done",
+  "assets": {
+    "img/logo.png": {
+      "name": "img/logo.png",
+      "path": "C:\\Users\\lloos\\OneDrive - bwedu\\Projects\\bouldern-app\\python_anywhere\\static\\vue\\img\\logo.png",
+      "publicPath": "http://localhost:8080/img/logo.png"
+    },
+    "js/chunk-vendors.js": {
+      "name": "js/chunk-vendors.js",
+      "path": "C:\\Users\\lloos\\OneDrive - bwedu\\Projects\\bouldern-app\\python_anywhere\\static\\vue\\js\\chunk-vendors.js",
+      "publicPath": "http://localhost:8080/js/chunk-vendors.js"
+    },
+    "js/index.js": {
+      "name": "js/index.js",
+      "path": "C:\\Users\\lloos\\OneDrive - bwedu\\Projects\\bouldern-app\\python_anywhere\\static\\vue\\js\\index.js",
+      "publicPath": "http://localhost:8080/js/index.js"
+    },
+    "js/vue_app_01.js": {
+      "name": "js/vue_app_01.js",
+      "path": "C:\\Users\\lloos\\OneDrive - bwedu\\Projects\\bouldern-app\\python_anywhere\\static\\vue\\js\\vue_app_01.js",
+      "publicPath": "http://localhost:8080/js/vue_app_01.js"
+    },
+    "js/vue_app_02.js": {
+      "name": "js/vue_app_02.js",
+      "path": "C:\\Users\\lloos\\OneDrive - bwedu\\Projects\\bouldern-app\\python_anywhere\\static\\vue\\js\\vue_app_02.js",
+      "publicPath": "http://localhost:8080/js/vue_app_02.js"
+    },
+    "favicon.ico": {
+      "name": "favicon.ico",
+      "path": "C:\\Users\\lloos\\OneDrive - bwedu\\Projects\\bouldern-app\\python_anywhere\\static\\vue\\favicon.ico",
+      "publicPath": "http://localhost:8080/favicon.ico"
+    }
+  },
+  "chunks": {
+    "index": [
+      "js/chunk-vendors.js",
+      "js/index.js"
+    ],
+    "vue_app_01": [
+      "js/chunk-vendors.js",
+      "js/vue_app_01.js"
+    ],
+    "vue_app_02": [
+      "js/chunk-vendors.js",
+      "js/vue_app_02.js"
+    ]
+  },
+  "publicPath": "http://localhost:8080/"
+}
