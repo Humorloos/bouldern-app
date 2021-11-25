@@ -41,7 +41,6 @@ const convertDatasetToTyped = (dataset) => {
                 case "Boolean":
                     dataset[key] = dataset[key] === 'true'
                     break;
-                // TODO: Add additional datatype conversions
                 default: //do nothing
             }
             delete dataset[datatypeKey];
