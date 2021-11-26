@@ -50,6 +50,7 @@ SESSION_COOKIE_SECURE = True
 INSTALLED_APPS = [
     'python_anywhere.bouldern.apps.BouldernConfig',
     'colorfield',
+    'webpack_loader',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -157,3 +158,17 @@ except ImproperlyConfigured:
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# vue
+VUE_FRONTEND_DIR = BASE_DIR / 'frontend'
+
+WEBPACK_LOADER = {
+    'DEFAULT': {
+        'CACHE': not DEBUG,
+        'BUNDLE_DIR_NAME': 'vue/',  # must end with slash
+        'STATS_FILE': VUE_FRONTEND_DIR / 'webpack-stats.json',
+        'POLL_INTERVAL': 0.1,
+        'TIMEOUT': None,
+        'IGNORE': [r'.+\.hot-update.js', r'.+\.map']
+    }
+}
