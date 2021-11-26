@@ -6,14 +6,6 @@ const pages = {
         entry: "./src/index.js",
         chunks: ["chunk-vendors"],
     },
-    'vue_app_01': {
-        entry: './src/main.js',
-        chunks: ['chunk-vendors']
-    },
-    'vue_app_02': {
-        entry: './src/newhampshir.js',
-        chunks: ['chunk-vendors']
-    },
 }
 
 const path = require('path');
