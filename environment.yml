@@ -27,6 +27,7 @@ dependencies:
   - django=3.2.9=pyhd8ed1ab_0
   - django-colorfield=0.4.5=pyhd8ed1ab_0
   - django-environ=0.4.5=py_1
+  - django-webpack-loader=1.4.1=pyhd8ed1ab_0
   - expat=2.4.1=h39d44d4_0
   - factory_boy=3.2.1=pyhd8ed1ab_0
   - faker=9.8.2=pyhd8ed1ab_0
