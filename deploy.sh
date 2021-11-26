@@ -5,10 +5,13 @@ git reset --hard origin/$1
 
 # compile vue files
 cd frontend
+echo "setting up npm"
 source ~/nvm/nvm.sh
 nvm use node
 export NODE_OPTIONS=--openssl-legacy-provider
+echo "installing node packages"
 npm ci
+echo "compiling vue files"
 npm run build
 cd ..
 
