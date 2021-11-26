@@ -1,10 +1,10 @@
 import {createApp} from "vue";
 import {createStore} from "vuex";
 import createPersistedState from "vuex-persistedstate";
+import $ from "jquery";
 
 export const createAppInEl = (options, store, selector) => {
-    const mountEl = document.querySelector(selector);
-    const app = createApp(options, convertDatasetToTyped({...mountEl.dataset}));
+    const app = createApp(options, convertDatasetToTyped($(selector).data()));
     app.use(store);
     app.mount(selector);
     return app;
