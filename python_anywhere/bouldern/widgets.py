@@ -17,8 +17,3 @@ class DifficultyLevelWidget(Select):
     colors
     """
     option_template_name = 'bouldern/difficulty_level_select_option.html'
-
-    class Media:
-        js = (
-            'https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0/jquery.min.js',
-            'bouldern/js/difficulty_level_widget.js')
