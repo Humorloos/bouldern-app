@@ -1,11 +1,14 @@
-import {createApp} from "vue";
+import {createApp} from "vue/dist/vue.esm-bundler";
 import {createStore} from "vuex";
 import createPersistedState from "vuex-persistedstate";
 import $ from "jquery";
 
-export const createAppInEl = (options, store, selector) => {
+export const createAppInEl = (options, store, selector, components) => {
     const app = createApp(options, convertDatasetToTyped($(selector).data()));
-    app.use(store);
+    if (store != null) {
+        app.use(store);
+    }
+    components.forEach(component => app.component(component.name, component))
     app.mount(selector);
     return app;
 }
