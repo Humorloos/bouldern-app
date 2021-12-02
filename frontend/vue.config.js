@@ -2,8 +2,8 @@
 const BundleTracker = require("webpack-bundle-tracker");
 
 const pages = {
-    "index": {
-        entry: "./src/index.js",
+    "gym_form": {
+        entry: "./src/gym_form.js",
         chunks: ["chunk-vendors"],
     },
 }
