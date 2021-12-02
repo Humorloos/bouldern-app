@@ -33,7 +33,7 @@ urlpatterns = \
      path(f'{CALENDAR_URI}/', include('python_anywhere.calendar_app.urls')),
      path('admin/', admin.site.urls),
      url(r'^favicon\.ico$',
-         RedirectView.as_view(url='/static/images/favicon.ico')), ]
+         RedirectView.as_view(url='/static/vue/favicon.ico')), ]
 
 if DEBUG:
     urlpatterns += static(MEDIA_URL, document_root=MEDIA_ROOT)

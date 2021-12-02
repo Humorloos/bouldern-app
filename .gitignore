@@ -4,3 +4,4 @@
 /media/
 /.env_semaphore
 /.env_production
+/python_anywhere/static/vue/
