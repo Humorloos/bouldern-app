@@ -1,10 +1,8 @@
 <template>
-  <div class="my-modal">
-    <div id="ex1" class="modal">
-      <slot></slot>
-    </div>
-    <a href="#ex1" rel="modal:open">New Color</a>
+  <div id="modal-content" class="modal">
+    <slot></slot>
   </div>
+  <a href="#modal-content" rel="modal:open">New Color</a>
 </template>
 
 <script>
@@ -13,7 +11,3 @@ export default {
   name: "Modal",
 }
 </script>
-
-<style scoped>
-
-</style>

@@ -11,4 +11,4 @@ let store = createSharedStore({
 // Create and mount our apps
 createAppInEl(HelloWorld, store, "#hello_world_a", []);
 createAppInEl(HelloWorld, store, "#hello_world_b", []);
-createAppInEl({}, null, "#my-modal", [Modal]);
+createAppInEl({}, null, "#app", [Modal]);
