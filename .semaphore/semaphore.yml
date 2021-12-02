@@ -4,18 +4,15 @@ agent:
   machine:
     type: e1-standard-2
     os_image: ubuntu1804
-
+auto_cancel:
+  running:
+    when: branch != 'master'
 global_job_config:
   # Connect secret to all jobs in the pipeline
   secrets:
     - name: env
-
-auto_cancel:
-  running:
-    when: "branch != 'master'"
-
 blocks:
-  - name: "Install Dependencies"
+  - name: Install Dependencies
     dependencies: []
     task:
       jobs:
@@ -35,8 +32,9 @@ blocks:
             - pip download --cache-dir .pip_cache -r requirements.txt
             # Persist downloaded packages for future jobs.
             - cache store
-  - name: "Run Code Analysis"
-    dependencies: ["Install Dependencies"]
+  - name: Run Code Analysis
+    dependencies:
+      - Install Dependencies
     task:
       secrets:
         - name: private-repo
@@ -47,8 +45,9 @@ blocks:
         - name: Pylint
           commands:
             - pylint python_anywhere --load-plugins=pylint_django
-  - name: "Run Tests"
-    dependencies: ["Install Dependencies"]
+  - name: Run Tests
+    dependencies:
+      - Install Dependencies
     task:
       secrets:
         - name: private-repo
@@ -64,3 +63,5 @@ blocks:
 promotions:
   - name: Deploy
     pipeline_file: deploy.yml
+    auto_promote:
+      when: branch = 'master' AND result = 'passed'
