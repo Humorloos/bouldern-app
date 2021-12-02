@@ -17,8 +17,7 @@
             {% endfor %}
         </template>
     </gym-form>
-    {#Todo: change tag names all to lower case#}
-    <Modal>{% include 'bouldern/color_form.html' with form=color_form %}</Modal>
+    <modal>{% include 'bouldern/color_form.html' with form=color_form %}</modal>
 </div>
 {{ difficulty_level_formset.0.media }}
 {{ color_form.media }}

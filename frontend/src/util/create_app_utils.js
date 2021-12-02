@@ -3,7 +3,6 @@ import {createStore} from "vuex";
 import createPersistedState from "vuex-persistedstate";
 import $ from "jquery";
 
-    //Todo: figure out options data type and add datatypes to function
 export const createAppInEl = (options, store, selector, components) => {
     const app = createApp(options, convertDatasetToTyped($(selector).data()));
     if (store != null) {
