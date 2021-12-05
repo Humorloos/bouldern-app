@@ -8,10 +8,12 @@
     <button type="button" id="add-level-button">Add Level</button>
     <input type="submit" value="Submit">
   </form>
+  <v-select :options="['Promos', 'Adverts', 'Others']" :filterable="false"></v-select>
 </template>
 
 <script>
 import $ from "jquery";
+import vSelect from "vue-select"
 
 $(document).ready(function () {
   const $difficultyLevelSelect = $('select');
@@ -44,5 +46,8 @@ $(document).ready(function () {
 });
 export default {
   name: "gym-form",
+  components: {
+    vSelect
+  }
 }
 </script>
