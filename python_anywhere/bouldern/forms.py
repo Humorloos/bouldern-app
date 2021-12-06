@@ -1,14 +1,16 @@
 """This module contains forms for the bouldern app"""
 from django.forms import ModelForm, modelformset_factory, BaseModelFormSet, \
-    HiddenInput, BaseInlineFormSet
+    HiddenInput, BaseInlineFormSet, ModelChoiceField
 from django.forms import inlineformset_factory
 
 from python_anywhere.bouldern.models import Boulder, Gym, Color, DifficultyLevel
-from python_anywhere.bouldern.widgets import CoordinatesWidget, DifficultyLevelWidget
+from python_anywhere.bouldern.widgets import CoordinatesWidget, \
+    DifficultyLevelWidget
 
 
 class GymForm(ModelForm):
     """Form for adding new bouldering gyms"""
+
     class Meta:
         model = Gym
         fields = ['name', 'map']
@@ -16,6 +18,7 @@ class GymForm(ModelForm):
 
 class ColorForm(ModelForm):
     """Form for adding new colors"""
+
     class Meta:
         model = Color
         fields = ['name', 'color']
@@ -23,15 +26,18 @@ class ColorForm(ModelForm):
 
 class DifficultyLevelForm(ModelForm):
     """Form for adding new difficulty levels"""
+    color = ModelChoiceField(Color.objects.all(), empty_label=None,
+                             widget=DifficultyLevelWidget)
+
     class Meta:
         model = DifficultyLevel
-        fields = ['color', 'level']
-        widgets = {'color': DifficultyLevelWidget,
-                   'level': HiddenInput}
+        fields = ['level']
+        widgets = {'level': HiddenInput}
 
 
 class BaseDifficultyLevelFormset(BaseInlineFormSet):
     """Base class for difficulty level form set"""
+
     def __init__(self, **kwargs):
         super().__init__(initial=[{'level': 0}], **kwargs)
 
