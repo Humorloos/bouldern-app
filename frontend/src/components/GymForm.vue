@@ -8,7 +8,7 @@
     <button type="button" id="add-level-button">Add Level</button>
     <input type="submit" value="Submit">
   </form>
-  <v-select :options="['Promos', 'Adverts', 'Others']" :filterable="false"></v-select>
+  <v-select :options="['Promos', 'Adverts', 'Others']" :searchable="false"></v-select>
 </template>
 
 <script>
