@@ -51,3 +51,20 @@ export default {
   }
 }
 </script>
+
+<style>
+/*!*.vs__dropdown-option {*!*/
+/*.vs__dropdown-option .vs__selected {*/
+/*  align-items: center;*/
+/*  display: flex;*/
+/*}*/
+.vs__selected::before {
+  background-color: purple;
+  border-radius: 50%;
+  content: " ";
+  display: flex;
+  margin-right: 8px;
+  height: 10px;
+  width: 10px;
+}
+</style>
