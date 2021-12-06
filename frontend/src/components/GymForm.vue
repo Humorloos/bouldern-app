@@ -45,39 +45,5 @@ $(document).ready(function () {
 export default {
   //Todo: check if GymForm is automatically matched to gym-form and name is unnecessary
   name: "gym-form",
-  data: function () {
-    return {
-      options: [
-        {
-          label: 'Promos',
-          style: {'color': 'purple'}
-        },
-        {
-          label: 'Adverts',
-          style: {'color': 'purple'}
-        },
-        {
-          label: 'Others',
-          style: {'color': 'purple'}
-        },
-        {
-          label: 'Custom',
-          style: {'color': 'yellow'}
-        },
-      ]
-    }
-  }
 }
 </script>
-
-<style>
-.vs__selected::before {
-  background-color: purple;
-  border-radius: 50%;
-  content: " ";
-  display: flex;
-  margin-right: 8px;
-  height: 10px;
-  width: 10px;
-}
-</style>
