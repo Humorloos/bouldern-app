@@ -9,8 +9,10 @@
     <input type="submit" value="Submit">
   </form>
   <v-select :options="options" :searchable="false">
+    <template #option="option">
+      <span :style="option.style">{{ option.label }}</span>
+    </template>
   </v-select>
-  {{ text }}
 </template>
 
 <script>
@@ -53,23 +55,22 @@ export default {
   },
   data: function () {
     return {
-      text: "my text",
       options: [
         {
           label: 'Promos',
-          color: 'purple'
+          style: {'color': 'purple'}
         },
         {
           label: 'Adverts',
-          color: 'purple'
+          style: {'color': 'purple'}
         },
         {
           label: 'Others',
-          color: 'purple'
+          style: {'color': 'purple'}
         },
         {
           label: 'Custom',
-          color: 'purple'
+          style: {'color': 'yellow'}
         },
       ]
     }
@@ -78,16 +79,6 @@ export default {
 </script>
 
 <style>
-/*.vs__dropdown-
-option {*/
-.vs__dropdown-option {
-  /*TODO: see https://vue-select.org/guide/slots.html*/
-}
-
-/*.difficulty-level-option {*/
-/*  color: purple !important;*/
-/*}*/
-
 .vs__selected::before {
   background-color: purple;
   border-radius: 50%;
