@@ -8,7 +8,9 @@
     <button type="button" id="add-level-button">Add Level</button>
     <input type="submit" value="Submit">
   </form>
-  <v-select :options="['Promos', 'Adverts', 'Others']" :searchable="false"></v-select>
+  <v-select :options="options" :searchable="false">
+  </v-select>
+  {{ text }}
 </template>
 
 <script>
@@ -48,16 +50,44 @@ export default {
   name: "gym-form",
   components: {
     vSelect
+  },
+  data: function () {
+    return {
+      text: "my text",
+      options: [
+        {
+          label: 'Promos',
+          color: 'purple'
+        },
+        {
+          label: 'Adverts',
+          color: 'purple'
+        },
+        {
+          label: 'Others',
+          color: 'purple'
+        },
+        {
+          label: 'Custom',
+          color: 'purple'
+        },
+      ]
+    }
   }
 }
 </script>
 
 <style>
-/*!*.vs__dropdown-option {*!*/
-/*.vs__dropdown-option .vs__selected {*/
-/*  align-items: center;*/
-/*  display: flex;*/
+/*.vs__dropdown-
+option {*/
+.vs__dropdown-option {
+  /*TODO: see https://vue-select.org/guide/slots.html*/
+}
+
+/*.difficulty-level-option {*/
+/*  color: purple !important;*/
 /*}*/
+
 .vs__selected::before {
   background-color: purple;
   border-radius: 50%;
