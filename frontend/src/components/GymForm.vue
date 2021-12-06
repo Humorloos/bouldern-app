@@ -8,16 +8,10 @@
     <button type="button" id="add-level-button">Add Level</button>
     <input type="submit" value="Submit">
   </form>
-  <v-select :options="options" :searchable="false">
-    <template #option="option">
-      <span :style="option.style">{{ option.label }}</span>
-    </template>
-  </v-select>
 </template>
 
 <script>
 import $ from "jquery";
-import vSelect from "vue-select"
 
 $(document).ready(function () {
   const $difficultyLevelSelect = $('select');
@@ -49,10 +43,8 @@ $(document).ready(function () {
   })
 });
 export default {
+  //Todo: check if GymForm is automatically matched to gym-form and name is unnecessary
   name: "gym-form",
-  components: {
-    vSelect
-  },
   data: function () {
     return {
       options: [

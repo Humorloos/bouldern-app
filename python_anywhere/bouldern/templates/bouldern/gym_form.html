@@ -17,6 +17,44 @@
             {% endfor %}
         </template>
     </gym-form>
+    <difficulty-level-select v-bind:options="[
+        {
+          label: 'Promos',
+          style: {'color': 'purple'}
+        },
+        {
+          label: 'Adverts',
+          style: {'color': 'purple'}
+        },
+        {
+          label: 'Others',
+          style: {'color': 'purple'}
+        },
+        {
+          label: 'Custom',
+          style: {'color': 'yellow'}
+        },
+      ]">
+    </difficulty-level-select>
+    <difficulty-level-select v-bind:options="[
+        {
+          label: 'Promos',
+          style: {'color': 'purple'}
+        },
+        {
+          label: 'Adverts',
+          style: {'color': 'purple'}
+        },
+        {
+          label: 'Others',
+          style: {'color': 'purple'}
+        },
+        {
+          label: 'Custom',
+          style: {'color': 'yellow'}
+        },
+      ]">
+    </difficulty-level-select>
     <modal>{% include 'bouldern/color_form.html' with form=color_form %}</modal>
 </div>
 {{ difficulty_level_formset.0.media }}
