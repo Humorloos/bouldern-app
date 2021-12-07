@@ -8,9 +8,9 @@
 </head>
 <body>
 <div id="app">
-    <gym-form :difficulty-level-selects="{{ difficulty_level_formset|serialize }}">
+    <gym-form :initial-difficulty-level-selects="{{ difficulty_level_formset|serialize }}">
         <template #gym-form>{% csrf_token %}{{ gym_form }}</template>
-        <template #difficulty-levels>{{ difficulty_level_formset }}</template>
+        <template #difficulty-levels>{{ difficulty_level_formset.management_form }}</template>
     </gym-form>
     <modal>{% include 'bouldern/color_form.html' with form=color_form %}</modal>
 </div>

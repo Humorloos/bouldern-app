@@ -13,5 +13,6 @@ def serialize(formset):
             'style': {'color': choice[0].instance.color},
             'value': choice[0].value
         } for choice in form.fields['color'].choices],
-        'id': form.auto_id % form.prefix}
-        for form in formset.forms])
+        'id': form.auto_id % form.prefix,
+        'html': str(form)}
+        for form in formset])

@@ -1,12 +1,16 @@
 <template>
-  <v-select :options="options" :searchable="false" v-model="activeColor" :id="id">
-    <template #option="option">
-      <span :style="option.style">{{ option.label }}</span>
-    </template>
-  </v-select>
+  <div id="difficulty_level">
+    <div v-html="htmlFields"></div>
+    <v-select :options="options" :searchable="false" v-model="activeColor" :id="id">
+      <template #option="option">
+        <span :style="option.style">{{ option.label }}</span>
+      </template>
+    </v-select>
+  </div>
 </template>
 
 <script>
+//TODO: fix / remove close button on right of select widget
 import vSelect from "vue-select"
 
 export default {
@@ -17,6 +21,7 @@ export default {
   props: {
     options: Object,
     id: String,
+    htmlFields: String,
   },
   data() {
     return {activeColor: {label: "", style: {color: 'white'}}}
