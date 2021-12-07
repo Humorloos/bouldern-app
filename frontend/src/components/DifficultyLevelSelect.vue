@@ -1,5 +1,5 @@
 <template>
-  <v-select :options="options" :searchable="false" v-model="activeColor">
+  <v-select :options="options" :searchable="false" v-model="activeColor" :id="id">
     <template #option="option">
       <span :style="option.style">{{ option.label }}</span>
     </template>
@@ -16,6 +16,7 @@ export default {
   },
   props: {
     options: Object,
+    id: String,
   },
   data() {
     return {activeColor: {label: "", style: {color: 'white'}}}
