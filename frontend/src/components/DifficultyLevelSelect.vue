@@ -1,7 +1,13 @@
 <template>
-  <div id="difficulty_level">
-    <div v-html="htmlFields"></div>
-    <v-select :options="options" :searchable="false" :clearable="false" v-model="activeColor" :id="id">
+  <div id="difficulty-level">
+    <slot></slot>
+    <input
+        type="hidden"
+        :name="colorFieldName"
+        :id="colorFieldId"
+        :value="activeColor.value"
+    >
+    <v-select :options="options" :searchable="false" :clearable="false" v-model="activeColor">
       <template #option="option">
         <span :style="option.style">{{ option.label }}</span>
       </template>
@@ -19,12 +25,25 @@ export default {
   },
   props: {
     options: Object,
-    id: String,
-    htmlFields: String,
+    prefix: String,
   },
   data() {
-    return {activeColor: {label: "", style: {color: 'white'}}}
+    return {
+      activeColor: {
+        label: "",
+        style: {color: 'white'},
+        value: -1,
+      }
+    }
   },
+  computed: {
+    colorFieldName() {
+      return this.prefix + "-color"
+    },
+    colorFieldId() {
+      return "id_" + this.colorFieldName
+    },
+  }
 }
 </script>
 

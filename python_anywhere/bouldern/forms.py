@@ -30,7 +30,7 @@ class DifficultyLevelForm(ModelForm):
 
     class Meta:
         model = DifficultyLevel
-        fields = ['level']
+        fields = ['level', 'color']
         widgets = {'level': HiddenInput}
 
 

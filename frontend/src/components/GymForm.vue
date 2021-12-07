@@ -4,13 +4,18 @@
     <h3>Difficulty Levels</h3>
     <div id="difficulty-levels">
       <slot name="difficulty-levels"></slot>
+      <input
+          type="hidden"
+          name="difficultylevel_set-TOTAL_FORMS"
+          id="id_difficultylevel_set-TOTAL_FORMS"
+          :value="totalForms"
+      >
       <difficulty-level-select
           v-for="difficultyLevelSelect in difficultyLevelSelects"
           :options="difficultyLevelSelect.options"
-          :id="difficultyLevelSelect.id"
-          :html-fields="difficultyLevelSelect.html"
-          :key="difficultyLevelSelect.id"
-      ></difficulty-level-select>
+          :prefix="difficultyLevelSelect.prefix"
+          :key="difficultyLevelSelect.prefix"
+      ><div v-html="difficultyLevelSelect.html"></div></difficulty-level-select>
     </div>
     <button type="button" id="add-level-button" @click="addDifficultySelect">Add Level</button>
     <input type="submit" value="Submit">
@@ -30,23 +35,24 @@ export default {
   },
   data() {
     return {
-      difficultyLevelSelects: this.initialDifficultyLevelSelects
+      difficultyLevelSelects: this.initialDifficultyLevelSelects,
     };
   },
   computed: {
-    nextLevel() {
+    totalForms() {
       return this.difficultyLevelSelects.length;
-    }
+    },
   },
   methods: {
     addDifficultySelect() {
       const difficultyLevelSelect = {...this.difficultyLevelSelects[0]};
-      difficultyLevelSelect.html = this.updateId(difficultyLevelSelect.html);
-      difficultyLevelSelect.id = this.updateId(difficultyLevelSelect.id);
+      difficultyLevelSelect.html = this.updateId(difficultyLevelSelect.html)
+          .replace('value="0"', `value="${this.totalForms}"`);
+      difficultyLevelSelect.prefix = this.updateId(difficultyLevelSelect.prefix)
       this.difficultyLevelSelects.push(difficultyLevelSelect);
     },
     updateId(text) {
-      return text.replaceAll("difficultylevel_set-0", 'difficultylevel_set-' + this.nextLevel);
+      return text.replaceAll("difficultylevel_set-0", 'difficultylevel_set-' + this.totalForms);
     }
   }
 }
