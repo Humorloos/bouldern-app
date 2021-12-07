@@ -1,7 +1,7 @@
 <template>
   <div id="difficulty_level">
     <div v-html="htmlFields"></div>
-    <v-select :options="options" :searchable="false" v-model="activeColor" :id="id">
+    <v-select :options="options" :searchable="false" :clearable="false" v-model="activeColor" :id="id">
       <template #option="option">
         <span :style="option.style">{{ option.label }}</span>
       </template>
@@ -10,7 +10,6 @@
 </template>
 
 <script>
-//TODO: fix / remove close button on right of select widget
 import vSelect from "vue-select"
 
 export default {
