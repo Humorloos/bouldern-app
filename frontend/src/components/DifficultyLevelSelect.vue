@@ -14,7 +14,7 @@
 import vSelect from "vue-select"
 
 export default {
-  name: "difficulty-level-select",
+  name: "DifficultyLevelSelect",
   components: {
     vSelect
   },

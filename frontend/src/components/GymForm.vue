@@ -21,8 +21,7 @@
 import DifficultyLevelSelect from "@/components/DifficultyLevelSelect";
 
 export default {
-  //Todo: check if GymForm is automatically matched to gym-form and name is unnecessary
-  name: "gym-form",
+  name: "GymForm",
   components: {
     DifficultyLevelSelect,
   },

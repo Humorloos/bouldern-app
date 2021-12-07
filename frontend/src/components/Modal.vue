@@ -8,6 +8,6 @@
 <script>
 require('jquery-modal');
 export default {
-  name: "modal",
+  name: "Modal",
 }
 </script>
