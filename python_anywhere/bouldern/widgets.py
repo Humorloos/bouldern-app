@@ -1,5 +1,5 @@
 """This module contains custom widgets for bouldern app"""
-from django.forms import TextInput, Select
+from django.forms import TextInput
 
 
 class CoordinatesWidget(TextInput):
@@ -9,11 +9,3 @@ class CoordinatesWidget(TextInput):
 
     def format_value(self, value):
         return value.geojson
-
-
-class DifficultyLevelWidget(Select):
-    """
-    Widget for choosing a difficulty level from a dropdown showing the level's
-    colors
-    """
-    option_template_name = 'bouldern/difficulty_level_select_option.html'
