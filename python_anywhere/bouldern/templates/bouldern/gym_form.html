@@ -1,5 +1,5 @@
 {% load render_bundle from webpack_loader %}
-{% load difficulty_level_serializer %}
+{% load gym_form_serializers %}
 
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
@@ -8,7 +8,7 @@
 </head>
 <body>
 <div id="app">
-    <gym-form :initial-difficulty-level-selects="{{ difficulty_level_formset|serialize }}">
+    <gym-form :initial-difficulty-level-selects="{{ difficulty_level_formset|difficulty_level_select_data }}">
         <template #gym-form>{% csrf_token %}{{ gym_form }}</template>
         <template #difficulty-levels>
             {{ difficulty_level_formset.management_form|without_total_forms }}
