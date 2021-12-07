@@ -4,8 +4,7 @@ from django.forms import ModelForm, modelformset_factory, BaseModelFormSet, \
 from django.forms import inlineformset_factory
 
 from python_anywhere.bouldern.models import Boulder, Gym, Color, DifficultyLevel
-from python_anywhere.bouldern.widgets import CoordinatesWidget, \
-    DifficultyLevelWidget
+from python_anywhere.bouldern.widgets import CoordinatesWidget
 
 
 class GymForm(ModelForm):
@@ -27,7 +26,7 @@ class ColorForm(ModelForm):
 class DifficultyLevelForm(ModelForm):
     """Form for adding new difficulty levels"""
     color = ModelChoiceField(Color.objects.all(), empty_label=None,
-                             widget=DifficultyLevelWidget)
+                             widget=HiddenInput)
 
     class Meta:
         model = DifficultyLevel

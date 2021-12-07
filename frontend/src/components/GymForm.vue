@@ -4,6 +4,12 @@
     <h3>Difficulty Levels</h3>
     <div id="difficulty-levels">
       <slot name="difficulty-levels"></slot>
+      <difficulty-level-select
+          v-for="difficultyLevelSelect in difficultyLevelSelects"
+          :options="difficultyLevelSelect.options"
+          :id="difficultyLevelSelect.id"
+          :key="difficultyLevelSelect.id"
+      ></difficulty-level-select>
     </div>
     <button type="button" id="add-level-button">Add Level</button>
     <input type="submit" value="Submit">
@@ -12,6 +18,7 @@
 
 <script>
 import $ from "jquery";
+import DifficultyLevelSelect from "@/components/DifficultyLevelSelect";
 
 $(document).ready(function () {
   const $difficultyLevelSelect = $('select');
@@ -45,5 +52,11 @@ $(document).ready(function () {
 export default {
   //Todo: check if GymForm is automatically matched to gym-form and name is unnecessary
   name: "gym-form",
+  components: {
+    DifficultyLevelSelect,
+  },
+  props: {
+    difficultyLevelSelects: Object,
+  }
 }
 </script>

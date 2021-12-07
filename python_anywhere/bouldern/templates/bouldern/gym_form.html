@@ -1,4 +1,6 @@
 {% load render_bundle from webpack_loader %}
+{% load difficulty_level_serializer %}
+
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.css"/>
@@ -6,16 +8,9 @@
 </head>
 <body>
 <div id="app">
-    <gym-form>
+    <gym-form :difficulty-level-selects="{{ difficulty_level_formset|serialize }}">
         <template #gym-form>{% csrf_token %}{{ gym_form }}</template>
-        <template #difficulty-levels>
-            {{ difficulty_level_formset.management_form }}
-            {% for difficulty_level_form in difficulty_level_formset %}
-                <div id="difficulty-level">
-                    {{ difficulty_level_form }}
-                </div>
-            {% endfor %}
-        </template>
+        <template #difficulty-levels>{{ difficulty_level_formset }}</template>
     </gym-form>
     <modal>{% include 'bouldern/color_form.html' with form=color_form %}</modal>
 </div>
