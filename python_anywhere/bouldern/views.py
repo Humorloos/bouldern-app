@@ -1,19 +1,12 @@
 """Module containing the views of the bouldern app"""
-from django.http import HttpResponse, HttpResponseRedirect, HttpResponseNotFound
+from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 from django.views import View
 
-from python_anywhere.bouldern.forms import GymMapFormSet, BoulderForm, ColorForm, GymForm, \
-    DifficultyLevelFormset
+from python_anywhere.bouldern.forms import GymMapFormSet, BoulderForm, \
+    ColorForm, GymForm, DifficultyLevelFormset
 from python_anywhere.bouldern.models import Boulder, Gym
-
-
-def index(request):
-    """Index page view"""
-    if request.method == 'GET':
-        return HttpResponse("Hello, world. You're at the bouldern index.")
-    return HttpResponseNotFound()
 
 
 class AddColor(View):
