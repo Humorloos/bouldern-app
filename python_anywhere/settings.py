@@ -172,6 +172,8 @@ WEBPACK_LOADER = {
     }
 }
 
-# Login
+# Login / Logout
 
 LOGIN_REDIRECT_URL = '/bouldern'
+
+LOGOUT_REDIRECT_URL = '/bouldern'

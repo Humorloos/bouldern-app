@@ -6,6 +6,7 @@
 {% block content %}
     {% if user.is_authenticated %}
         Hello, {{ user.username }}. You're at the bouldern index.
+        <p><a href="{% url 'logout' %}">Log Out</a></p>
     {% else %}
         <p>You are not logged in</p>
         <a href="{% url 'login' %}">Log In</a>

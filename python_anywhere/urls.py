@@ -18,7 +18,6 @@ import sys
 from django.conf.urls import url
 from django.conf.urls.static import static
 from django.contrib import admin
-from django.contrib.auth.views import LoginView
 from django.urls import path, include
 from django.views.generic import RedirectView
 
@@ -29,14 +28,14 @@ from python_anywhere.settings import USER_HOME, DEBUG, MEDIA_URL, MEDIA_ROOT
 sys.path = list({str(USER_HOME / project_name) for project_name in
                  ['googleCalendarApp', 'GoogleApiHelper'] + sys.path})
 
-urlpatterns = \
-    [path(f'{BOULDERN_URI}/', include('python_anywhere.bouldern.urls')),
-     path(f'{CALENDAR_URI}/', include('python_anywhere.calendar_app.urls')),
-     path('admin/', admin.site.urls),
-     path('accounts/login/',
-          LoginView.as_view(template_name='login.html')),
-     url(r'^favicon\.ico$',
-         RedirectView.as_view(url='/static/vue/favicon.ico')), ]
+urlpatterns = [
+    path(f'{BOULDERN_URI}/', include('python_anywhere.bouldern.urls')),
+    path(f'{CALENDAR_URI}/', include('python_anywhere.calendar_app.urls')),
+    path('admin/', admin.site.urls),
+    path('accounts/', include('django.contrib.auth.urls')),
+    url(r'^favicon\.ico$',
+        RedirectView.as_view(url='/static/vue/favicon.ico')),
+]
 
 if DEBUG:
     urlpatterns += static(MEDIA_URL, document_root=MEDIA_ROOT)
