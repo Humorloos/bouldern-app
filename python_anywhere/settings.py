@@ -24,17 +24,16 @@ USER_HOME = BASE_DIR.parent
 sys.path = list({str(USER_HOME / project_name) for project_name in
                  ['googleCalendarApp', 'GoogleApiHelper'] + sys.path})
 
-DOMAIN_NAME = 'humorloos.pythonanywhere.com'
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 Env.read_env(str(USER_HOME / ".env"))
 
-# SECURITY WARNING: keep the secret key used in production secret!
+# Security
+
 SECRET_KEY = env('SECRET_KEY')
 
-# SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env('DEBUG')
+
+DOMAIN_NAME = 'humorloos.pythonanywhere.com'
 
 ALLOWED_HOSTS = [
     DOMAIN_NAME,
@@ -159,7 +158,7 @@ except ImproperlyConfigured:
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# vue
+# Vue
 VUE_FRONTEND_DIR = BASE_DIR / 'frontend'
 
 WEBPACK_LOADER = {
