@@ -32,6 +32,7 @@ urlpatterns = [
     path(f'{BOULDERN_URI}/', include('python_anywhere.bouldern.urls')),
     path(f'{CALENDAR_URI}/', include('python_anywhere.calendar_app.urls')),
     path('admin/', admin.site.urls),
+    path('accounts/', include('python_anywhere.accounts.urls')),
     path('accounts/', include('django.contrib.auth.urls')),
     url(r'^favicon\.ico$',
         RedirectView.as_view(url='/static/vue/favicon.ico')),
