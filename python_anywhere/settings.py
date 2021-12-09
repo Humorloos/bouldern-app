@@ -47,8 +47,7 @@ SESSION_COOKIE_SECURE = True
 # Application definition
 
 INSTALLED_APPS = [
-    # TODO: check if I can remove the last 2 parts here
-    'python_anywhere.bouldern.apps.BouldernConfig',
+    'python_anywhere.bouldern',
     'python_anywhere.accounts',
     'colorfield',
     'webpack_loader',
