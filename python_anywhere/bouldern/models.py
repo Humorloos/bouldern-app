@@ -5,8 +5,6 @@ from django.db.models import Model, CharField, ImageField, ForeignKey, SET_NULL,
     PositiveSmallIntegerField
 
 
-# todo: define managed mixin (for now with created at and created by) for use in all user-created content: https://stackoverflow.com/a/25817237/12566791
-
 class Color(Model):
     """Color of holds or difficulty levels"""
     name = CharField(max_length=128, unique=True)
