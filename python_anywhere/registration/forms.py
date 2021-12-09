@@ -1,6 +1,6 @@
 from django.contrib.auth.forms import UserCreationForm, UsernameField
 
-from python_anywhere.accounts.models import User
+from python_anywhere.registration.models import User
 
 
 class EmailUserCreationForm(UserCreationForm):

@@ -48,7 +48,7 @@ SESSION_COOKIE_SECURE = True
 
 INSTALLED_APPS = [
     'python_anywhere.bouldern',
-    'python_anywhere.accounts',
+    'python_anywhere.registration',
     'colorfield',
     'webpack_loader',
     'django.contrib.admin',
@@ -179,4 +179,4 @@ LOGIN_REDIRECT_URL = '/bouldern'
 
 LOGOUT_REDIRECT_URL = '/bouldern'
 
-AUTH_USER_MODEL = 'accounts.User'
+AUTH_USER_MODEL = 'registration.User'
