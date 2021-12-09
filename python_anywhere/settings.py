@@ -174,8 +174,10 @@ WEBPACK_LOADER = {
     }
 }
 
-# Login / Logout
-
+# Authentication
+# todo: check if this can be replaced by the app name
 LOGIN_REDIRECT_URL = '/bouldern'
 
 LOGOUT_REDIRECT_URL = '/bouldern'
+
+AUTH_USER_MODEL = 'accounts.User'
