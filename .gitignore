@@ -1,6 +1,7 @@
 /db.sqlite3
 /ssh key/
 /python_anywhere/bouldern/migrations/
+/python_anywhere/registration/migrations/
 /media/
 /.env_semaphore
 /.env_production
