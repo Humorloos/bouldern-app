@@ -24,17 +24,15 @@ USER_HOME = BASE_DIR.parent
 sys.path = list({str(USER_HOME / project_name) for project_name in
                  ['googleCalendarApp', 'GoogleApiHelper'] + sys.path})
 
-DOMAIN_NAME = 'humorloos.pythonanywhere.com'
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 Env.read_env(str(USER_HOME / ".env"))
 
-# SECURITY WARNING: keep the secret key used in production secret!
+# Security
+
 SECRET_KEY = env('SECRET_KEY')
 
-# SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env('DEBUG')
+
+DOMAIN_NAME = 'humorloos.pythonanywhere.com'
 
 ALLOWED_HOSTS = [
     DOMAIN_NAME,
@@ -48,7 +46,8 @@ SESSION_COOKIE_SECURE = True
 # Application definition
 
 INSTALLED_APPS = [
-    'python_anywhere.bouldern.apps.BouldernConfig',
+    'python_anywhere.bouldern',
+    'python_anywhere.registration',
     'colorfield',
     'webpack_loader',
     'django.contrib.admin',
@@ -75,7 +74,7 @@ ROOT_URLCONF = 'python_anywhere.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [PROJECT_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -159,7 +158,7 @@ except ImproperlyConfigured:
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# vue
+# Vue
 VUE_FRONTEND_DIR = BASE_DIR / 'frontend'
 
 WEBPACK_LOADER = {
@@ -172,3 +171,12 @@ WEBPACK_LOADER = {
         'IGNORE': [r'.+\.hot-update.js', r'.+\.map']
     }
 }
+
+# Authentication
+BOULDERN_URL_SEGMENT = 'bouldern'
+
+LOGIN_REDIRECT_URL = '/' + BOULDERN_URL_SEGMENT
+
+LOGOUT_REDIRECT_URL = '/' + BOULDERN_URL_SEGMENT
+
+AUTH_USER_MODEL = 'registration.User'
