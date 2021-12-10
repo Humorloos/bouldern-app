@@ -29,7 +29,7 @@ sys.path = list({str(USER_HOME / project_name) for project_name in
                  ['googleCalendarApp', 'GoogleApiHelper'] + sys.path})
 
 urlpatterns = [
-    path(BOULDERN_URL_SEGMENT, include('python_anywhere.bouldern.urls')),
+    path(f'{BOULDERN_URL_SEGMENT}/', include('python_anywhere.bouldern.urls')),
     path(f'{CALENDAR_URI}/', include('python_anywhere.calendar_app.urls')),
     path('admin/', admin.site.urls),
     path('registration/', include('python_anywhere.registration.urls')),

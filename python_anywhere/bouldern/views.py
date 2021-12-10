@@ -64,7 +64,7 @@ class AddGym(View):
             for difficulty_level_form in difficulty_level_formset:
                 difficulty_level_form.save()
             # redirect to a new URL: (in my case the same, but empty again)
-            return HttpResponseRedirect(reverse(index))
+            return HttpResponseRedirect(reverse('index'))
         return HttpResponseRedirect(reverse(self.name))
 
 
