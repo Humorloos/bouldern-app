@@ -24,7 +24,6 @@ USER_HOME = BASE_DIR.parent
 sys.path = list({str(USER_HOME / project_name) for project_name in
                  ['googleCalendarApp', 'GoogleApiHelper'] + sys.path})
 
-
 Env.read_env(str(USER_HOME / ".env"))
 
 # Security
@@ -174,9 +173,10 @@ WEBPACK_LOADER = {
 }
 
 # Authentication
-# todo: check if this can be replaced by the app name
-LOGIN_REDIRECT_URL = '/bouldern'
+BOULDERN_URL_SEGMENT = 'bouldern'
 
-LOGOUT_REDIRECT_URL = '/bouldern'
+LOGIN_REDIRECT_URL = '/' + BOULDERN_URL_SEGMENT
+
+LOGOUT_REDIRECT_URL = '/' + BOULDERN_URL_SEGMENT
 
 AUTH_USER_MODEL = 'registration.User'
