@@ -22,8 +22,7 @@ from django.urls import path, include
 from django.views.generic import RedirectView
 
 from googleCalendarApp.constants import CALENDAR_URI
-from python_anywhere.settings import USER_HOME, DEBUG, MEDIA_URL, MEDIA_ROOT
-from settings import BOULDERN_URL_SEGMENT
+from python_anywhere.settings import USER_HOME, DEBUG, MEDIA_URL, MEDIA_ROOT, BOULDERN_URL_SEGMENT
 
 sys.path = list({str(USER_HOME / project_name) for project_name in
                  ['googleCalendarApp', 'GoogleApiHelper'] + sys.path})

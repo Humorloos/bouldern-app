@@ -1,9 +1,10 @@
-from django.contrib.auth.base_user import AbstractBaseUser
-from django.contrib.auth.models import PermissionsMixin, AbstractUser
+"""This file contains models for the registration app"""
+from django.contrib.auth.models import AbstractUser
 from django.db.models import EmailField, CharField
 
 
 class User(AbstractUser):
+    """Custom user class with identifying email field"""
     username = CharField(max_length=30, unique=False)
     email = EmailField(max_length=255, unique=True)
     USERNAME_FIELD = 'email'
