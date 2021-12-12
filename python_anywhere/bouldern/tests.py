@@ -1,32 +1,10 @@
 """Tests for bouldern app"""
 from django.test import TestCase
 from django.urls import reverse
-from factory import Faker
-from factory.django import DjangoModelFactory, ImageField
 
-from python_anywhere.bouldern.models import Gym, DifficultyLevel, Color
+from python_anywhere.bouldern.factories import ColorFactory, GymFactory
+from python_anywhere.bouldern.models import Gym, DifficultyLevel
 from python_anywhere.bouldern.views import AddGym
-from python_anywhere.settings import BASE_DIR
-
-
-class GymFactory(DjangoModelFactory):
-    """Factory for building gym instances"""
-
-    class Meta:
-        model = Gym
-
-    name = Faker('company')
-    map = ImageField(from_path=BASE_DIR / 'resources' / 'generic_gym.png')
-
-
-class ColorFactory(DjangoModelFactory):
-    """Factory for building color instances"""
-
-    class Meta:
-        model = Color
-
-    name = Faker('first_name')
-    color = Faker('color')
 
 
 class AddGymTest(TestCase):
