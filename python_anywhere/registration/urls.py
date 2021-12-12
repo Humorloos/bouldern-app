@@ -3,8 +3,9 @@
 # registration/urls.py
 from django.urls import path
 
-from .views import SignUpView
+from python_anywhere.registration.views import SignUpView, UserDeleteView
 
 urlpatterns = [
     path('signup/', SignUpView.as_view(), name='signup'),
+    path('quit/', UserDeleteView.as_view(), name='quit'),
 ]
