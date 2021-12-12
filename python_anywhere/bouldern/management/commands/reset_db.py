@@ -1,7 +1,5 @@
 """Custom django command for resetting database to default state"""
 
-import os
-import re
 from subprocess import call
 
 from django.core.management import BaseCommand
@@ -10,7 +8,7 @@ from factory.django import ImageField
 from python_anywhere.bouldern.factories import ColorFactory, GymFactory, DifficultyLevelFactory
 from python_anywhere.bouldern.management.commands._default_colors import default_colors
 from python_anywhere.registration.factories import UserFactory
-from python_anywhere.settings import DATABASES, BASE_DIR, PROJECT_DIR, env
+from python_anywhere.settings import BASE_DIR, env
 
 
 class Command(BaseCommand):
