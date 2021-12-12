@@ -2,22 +2,10 @@
 
 from django.test import TestCase
 from django.urls import reverse
-from factory import PostGenerationMethodCall
-from factory.django import DjangoModelFactory
 
+from python_anywhere.registration.factories import UserFactory
 from python_anywhere.registration.models import User
 from python_anywhere.registration.views import UserDeleteView
-
-
-class UserFactory(DjangoModelFactory):
-    """Factory for building difficulty level instances"""
-
-    class Meta:
-        model = User
-
-    email = 'testmail@mailprovider.com'
-    username = 'myUserName'
-    password = PostGenerationMethodCall('set_password', 'password')
 
 
 class DeleteUserTest(TestCase):
