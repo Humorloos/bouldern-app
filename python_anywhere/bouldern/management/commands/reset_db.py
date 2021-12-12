@@ -18,18 +18,8 @@ class Command(BaseCommand):
     help = 'Resets database to default state'
 
     def handle(self, *args, **options):
-        if os.path.exists(DATABASES['default']['NAME']):
-            os.remove(DATABASES['default']['NAME'])
-
-        for app in ['bouldern', 'registration']:
-            migrations_dir = PROJECT_DIR / app / 'migrations'
-            for filename in os.listdir(migrations_dir):
-                if re.search(r'^\d{4}_.*\.py$', filename) is not None:
-                    os.remove(migrations_dir / filename)
-
         manage_args = ['python', 'manage.py']
-        call(manage_args + ['makemigrations'], cwd=BASE_DIR)
-        call(manage_args + ['migrate'], cwd=BASE_DIR)
+        call(manage_args + ['flush', '--no-input'], cwd=BASE_DIR)
 
         # create super user
         UserFactory(email=env('ADMIN_EMAIL'),
