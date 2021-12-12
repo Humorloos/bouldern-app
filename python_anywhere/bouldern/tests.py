@@ -1,7 +1,7 @@
 """Tests for bouldern app"""
 from django.test import TestCase
 from django.urls import reverse
-from factory import Faker, Iterator
+from factory import Faker
 from factory.django import DjangoModelFactory, ImageField
 
 from python_anywhere.bouldern.models import Gym, DifficultyLevel, Color
@@ -27,16 +27,6 @@ class ColorFactory(DjangoModelFactory):
 
     name = Faker('first_name')
     color = Faker('color')
-
-
-class DifficultyLevelFactory(DjangoModelFactory):
-    """Factory for building difficulty level instances"""
-
-    class Meta:
-        model = DifficultyLevel
-
-    level = 0
-    color = Iterator(Color.objects.all())
 
 
 class AddGymTest(TestCase):
