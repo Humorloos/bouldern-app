@@ -1,10 +1,12 @@
+"""Tests for registration app"""
+
 from django.test import TestCase
 from django.urls import reverse
 from factory import PostGenerationMethodCall
 from factory.django import DjangoModelFactory
 
 from python_anywhere.registration.models import User
-from registration.views import UserDeleteView
+from python_anywhere.registration.views import UserDeleteView
 
 
 class UserFactory(DjangoModelFactory):
@@ -19,8 +21,12 @@ class UserFactory(DjangoModelFactory):
 
 
 class DeleteUserTest(TestCase):
+    """Test for DeleteUser view"""
 
     def test_delete(self):
+        """
+        Test that requesting delete user view results in deletion of calling user
+        """
         # given
         password = 'OAwIYQRCdiplaCIwEEcn'
         user = UserFactory(password=password)
