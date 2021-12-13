@@ -32,21 +32,11 @@ blocks:
             - pip download --cache-dir .pip_cache -r requirements.txt
             # Persist downloaded packages for future jobs.
             - cache store
+        - name: private repositories
+          commands:
+            - checkout
             # Clone private repositories and cache them if not already cached
             - . ./.semaphore/private_repos.sh
-  - name: Run Code Analysis
-    dependencies:
-      - Install Dependencies
-    task:
-      secrets:
-        - name: private-repo
-      # This block executes code analysis tests with pylint.
-      prologue:
-        commands_file: code_analysis_prologue.sh
-      jobs:
-        - name: Pylint
-          commands:
-            - pylint python_anywhere --load-plugins=pylint_django
   - name: Run Tests
     dependencies:
       - Install Dependencies
@@ -57,11 +47,14 @@ blocks:
       prologue:
         commands_file: tests_prologue.sh
       jobs:
+        - name: Pylint
+          commands:
+            - pylint python_anywhere --load-plugins=pylint_django
         - name: Integration tests
           commands:
-            - python manage.py makemigrations bouldern
-            - python manage.py migrate bouldern
-            - python manage.py test bouldern
+            - python manage.py makemigrations
+            - python manage.py migrate
+            - python manage.py test
 promotions:
   - name: Deploy
     pipeline_file: deploy.yml
