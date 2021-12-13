@@ -19,7 +19,6 @@ describe('The register app', () => {
         cy.get('#id_password1').type(Cypress.env('password'))
         cy.get('#id_password2').type(Cypress.env('password'))
         cy.get('#submit_button').contains('Sign Up').click()
-        // cy.pause()
 
         // Log in after signing up
         cy.enterCredentialsAndLogin()
@@ -32,7 +31,6 @@ describe('The register app', () => {
         cy.contains("You're at the bouldern index")
     })
     it('lets users delete their account', () => {
-        // cy.pause()
         cy.get('#delete_account').click()
         cy.verifyLogInWithInvalidUser()
     })
