@@ -52,9 +52,9 @@ blocks:
             - pylint python_anywhere --load-plugins=pylint_django
         - name: Integration tests
           commands:
-            - python manage.py makemigrations bouldern
-            - python manage.py migrate bouldern
-            - python manage.py test bouldern
+            - python manage.py makemigrations
+            - python manage.py migrate
+            - python manage.py test
 promotions:
   - name: Deploy
     pipeline_file: deploy.yml
