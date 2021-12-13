@@ -34,6 +34,7 @@ blocks:
             - cache store
         - name: private repositories
           commands:
+            - checkout
             # Clone private repositories and cache them if not already cached
             - . ./.semaphore/private_repos.sh
   - name: Run Tests
