@@ -1,3 +1,4 @@
+checkout
 # Install private repository dependencies
 GoogleApiHelper_cached=$(cache has_key GoogleApiHelper | grep -q "exists")
 googleCalendarApp_cached=$(cache has_key googleCalendarApp | grep -q "exists")
