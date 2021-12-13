@@ -1,6 +1,7 @@
+# restore private repositories
+cache restore googleCalendarApp,GoogleApiHelper
 checkout
-# clone private repositories
-. ./.semaphore/private_repos.sh
+#. ./.semaphore/private_repos.sh
 # install gdal
 . ./.semaphore/install_gdal.sh
 # install pip dependencies
