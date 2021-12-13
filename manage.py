@@ -16,7 +16,6 @@ def main():
                 'bouldern-app',
                 Path('bouldern-app') / 'python_anywhere',
             ]] + sys.path})
-    print(f'PATH: {sys.path}')
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:
