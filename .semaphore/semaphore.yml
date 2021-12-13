@@ -32,6 +32,8 @@ blocks:
             - pip download --cache-dir .pip_cache -r requirements.txt
             # Persist downloaded packages for future jobs.
             - cache store
+        - name: private repositories
+          commands:
             # Clone private repositories and cache them if not already cached
             - . ./.semaphore/private_repos.sh
   - name: Run Code Analysis
