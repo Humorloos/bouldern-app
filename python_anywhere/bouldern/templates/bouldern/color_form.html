@@ -1,5 +1,6 @@
 {#This form does not contain form.media, to use it, make sure to include form.media in context#}
 {% load static %}
+<!--suppress HtmlUnknownTarget -->
 <form action="/bouldern/add-color/" method="post">
     {% csrf_token %}
     {{ form }}
