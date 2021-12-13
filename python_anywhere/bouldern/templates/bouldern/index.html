@@ -6,6 +6,7 @@
 {% block content %}
     {% if user.is_authenticated %}
         Hello, {{ user.username }}. You're at the bouldern index.
+        <!--suppress HtmlUnknownTarget -->
         <p><a href="{% url 'logout' %}">Log Out</a></p>
         <form action="/registration/quit/" method="post">
             {% csrf_token %}
