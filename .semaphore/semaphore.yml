@@ -37,6 +37,11 @@ blocks:
             - checkout
             # Clone private repositories and cache them if not already cached
             - . ./.semaphore/private_repos.sh
+        - name: spatialite
+          commands:
+            - checkout
+            # Clone private repositories and cache them if not already cached
+            - . ./.semaphore/install_spatialite.sh
   - name: Run Tests
     dependencies:
       - Install Dependencies
