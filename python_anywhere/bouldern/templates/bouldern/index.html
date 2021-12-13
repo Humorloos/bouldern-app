@@ -9,7 +9,7 @@
         <p><a href="{% url 'logout' %}">Log Out</a></p>
         <form action="/registration/quit/" method="post">
             {% csrf_token %}
-            <input type="submit" value="Delete Account">
+            <input type="submit" value="Delete Account" id="delete_account">
         </form>
     {% else %}
         <p>You are not logged in</p>
