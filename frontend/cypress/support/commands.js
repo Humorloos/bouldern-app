@@ -23,3 +23,24 @@
 //
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
+import 'cypress-file-upload';
+
+
+Cypress.Commands.add('enterCredentialsAndLogin', () => {
+    cy.get('#id_username')
+        .type(Cypress.env('email'))
+        .should('have.value', Cypress.env('email'))
+    cy.get('#id_password').type(Cypress.env('password'))
+
+    cy.get('#submit_button').contains('Log In').click()
+})
+
+Cypress.Commands.add('logInViaLogInLink', () => {
+    cy.contains('You are not logged in')
+    cy.contains('Log In').click()
+
+    cy.url()
+        .should('include', '/registration/login')
+
+    cy.enterCredentialsAndLogin();
+})

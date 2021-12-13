@@ -1,1 +1,10 @@
-{}
+{
+  "env": {
+    "username": "testUser",
+    "email": "testEmail@mailprovider.com",
+    "password": "testPassword",
+    "colorName": "TestColor",
+    "gymName": "testGym",
+    "host": "http://127.0.0.1:8000"
+  }
+}

@@ -30,8 +30,9 @@ class Command(BaseCommand):
         colors = [ColorFactory(name=name, color=color) for name, color in default_colors.items()]
 
         # add generic gym
-        generic_gym = GymFactory(name='generic_gym',
-                                 map=ImageField(from_path=BASE_DIR / 'resources' / 'generic_gym.png'))
+        generic_gym = GymFactory(
+            name='generic_gym',
+            map=ImageField(from_path=BASE_DIR / 'frontend' / 'cypress' / 'fixtures' / 'generic_gym.png'))
 
         # add difficulty levels for generic gym
         for level, color in enumerate(colors[:7]):
