@@ -4,7 +4,7 @@ from factory import Faker, Iterator
 from factory.django import DjangoModelFactory, ImageField
 
 from python_anywhere.bouldern.models import Color, Gym, DifficultyLevel
-from python_anywhere.settings import BASE_DIR
+from python_anywhere.settings import RESOURCES_DIR
 
 
 class ColorFactory(DjangoModelFactory):
@@ -24,7 +24,7 @@ class GymFactory(DjangoModelFactory):
         model = Gym
 
     name = Faker('company')
-    map = ImageField(from_path=BASE_DIR / 'resources' / 'generic_gym.png')
+    map = ImageField(from_path=RESOURCES_DIR / 'generic_gym.png')
 
 
 class DifficultyLevelFactory(DjangoModelFactory):

@@ -20,6 +20,7 @@ env = Env(DEBUG=(bool, False))
 PROJECT_DIR = Path(__file__).resolve().parent
 BASE_DIR = PROJECT_DIR.parent
 USER_HOME = BASE_DIR.parent
+RESOURCES_DIR = BASE_DIR / 'frontend' / 'cypress' / 'fixtures'
 
 sys.path = list({str(USER_HOME / project_name) for project_name in
                  ['googleCalendarApp', 'GoogleApiHelper'] + sys.path})
