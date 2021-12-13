@@ -14,3 +14,10 @@
 // ***********************************************************
 
 import './commands'
+
+before(() => {
+    cy.exec('cd .. && python manage.py reset_db')
+})
+beforeEach(() => {
+    Cypress.Cookies.preserveOnce('sessionid', 'csrftoken')
+})

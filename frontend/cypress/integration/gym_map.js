@@ -1,11 +1,7 @@
-before(() => {
-    cy.exec('cd .. && python manage.py reset_db')
-})
-
 describe('The register app', () => {
     it('lets users add new colors', () => {
         // add gym
-        cy.visit(`${Cypress.env('HOST')}/bouldern/add-gym`)
+        cy.visit(`${Cypress.env('host')}/bouldern/add-gym`)
         cy.contains('New Color').click()
         cy.get('div.jquery-modal #id_name').type(Cypress.env('colorName'));
         cy.get('#id_color').click()
@@ -23,14 +19,16 @@ describe('The register app', () => {
         cy.get('#difficulty-level:nth-of-type(2)').click()
         cy.contains('Yellow').click()
         cy.contains('Submit').click()
-        cy.contains("You're at the bouldern index")
+        cy.contains("You are not logged in")
     })
     it('can add boulders to gyms', () => {
         cy.visit(`${Cypress.env('host')}/bouldern/${Cypress.env('gymName')}/map`)
-        cy.get('#testGym_div_map').click(350, 150)
-        cy.pause()
-
-        cy.get('#delete_account').click()
-
+        cy.get('#testGym_div_map').click(340, 150)
+        cy.contains('You clicked here')
+        cy.get('#popup-closer').click()
+        cy.get('#testGym_div_map').click(340, 210)
+        cy.contains('Submit').click()
+        cy.get('#id_boulder-0-coordinates')
+            .should('have.value', '{ "type": "Point", "coordinates": [ 279.2724609375, 898.63671875 ] }')
     })
 })

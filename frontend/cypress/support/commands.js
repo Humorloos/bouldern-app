@@ -44,3 +44,9 @@ Cypress.Commands.add('logInViaLogInLink', () => {
 
     cy.enterCredentialsAndLogin();
 })
+
+Cypress.Commands.add('verifyLogInWithInvalidUser', () => {
+    cy.logInViaLogInLink();
+
+    cy.contains('Please enter a correct email and password.')
+})
