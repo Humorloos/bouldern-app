@@ -10,12 +10,16 @@ if ! $GoogleApiHelper_cached || ! $googleCalendarApp_cached; then
   cd ..
   # clone repos if necessary
   if ! $GoogleApiHelper_cached; then
+    echo "Installing and caching private repository GoogleApiHelper"
     git clone git@github.com:Humorloos/GoogleApiHelper.git
     cache store GoogleApiHelper ~/GoogleApiHelper
   fi
   if ! $googleCalendarApp_cached; then
+    echo "Installing and caching private repository googleCalendarApp"
     git clone git@github.com:Humorloos/googleCalendarApp.git
     cache store googleCalendarApp ~/googleCalendarApp
   fi
   cd bouldern-app || exit
+else
+  echo "Private repositories already in cache, skipping installation"
 fi
