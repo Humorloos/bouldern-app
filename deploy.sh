@@ -1,10 +1,10 @@
 # pull updated version of branch from repo
-cd humorloos.pythonanywhere.com
+cd humorloos.pythonanywhere.com || exit
 git fetch --all
-git reset --hard origin/$1
+git reset --hard origin/"$1"
 
 # compile vue files
-cd frontend
+cd frontend || exit
 echo "setting up npm"
 source ~/nvm/nvm.sh
 nvm use node

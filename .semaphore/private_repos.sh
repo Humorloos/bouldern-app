@@ -7,4 +7,4 @@ ssh-add ~/.ssh/id_rsa_semaphoreci
 # clone repos
 git clone git@github.com:Humorloos/GoogleApiHelper.git
 git clone git@github.com:Humorloos/googleCalendarApp.git
-cd bouldern-app
+cd bouldern-app || exit
