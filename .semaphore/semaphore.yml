@@ -37,6 +37,11 @@ blocks:
             - checkout
             # Clone private repositories and cache them if not already cached
             - . ./.semaphore/private_repos.sh
+        - name: usr
+          commands:
+            - checkout
+            # Install gdal and spatialite and cache whole /usr directory
+            - . ./.semaphore/install_gdal_and_spatialite.sh
   - name: Run Tests
     dependencies:
       - Install Dependencies
