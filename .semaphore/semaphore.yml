@@ -84,9 +84,25 @@ blocks:
             - pylint python_anywhere --load-plugins=pylint_django
         - name: Integration tests
           commands:
-            - python manage.py makemigrations
-            - python manage.py migrate
             - python manage.py test
+  - name: Run E2E Tests
+      # This block executes code analysis with pylint and backend integration
+      # tests.
+    dependencies:
+      - Install Frontend Dependencies
+      - Install Backend Dependencies
+    task:
+      secrets:
+        - name: private-repo
+      prologue:
+        commands_file: e2e_prologue.sh
+      jobs:
+        - name: E2E Tests
+          commands:
+            - python manage.py runserver
+            - cd frontend
+            - npm run serve
+            - npx cypress run
 promotions:
   - name: Deploy
     pipeline_file: deploy.yml
