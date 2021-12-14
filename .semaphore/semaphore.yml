@@ -15,12 +15,12 @@ blocks:
   - name: Install Dependencies
     dependencies: []
     task:
+      prologue:
+        commands:
+          - checkout
       jobs:
         - name: pip
           commands:
-            # Get the latest version of our source code from GitHub:
-            # See https://docs.semaphoreci.com/article/54-toolbox-reference#checkout
-            - checkout
             # Restore dependencies from cache. This command will not fail in
             # case of a cache miss. In case of a cache hit, pip can use it
             # to speed up the installation.
@@ -34,12 +34,10 @@ blocks:
             - cache store
         - name: private repositories
           commands:
-            - checkout
             # Clone private repositories and cache them if not already cached
             - . ./.semaphore/private_repos.sh
         - name: usr
           commands:
-            - checkout
             # Install gdal and spatialite and cache whole /usr directory
             - . ./.semaphore/install_gdal_and_spatialite.sh
   - name: Run Tests
@@ -50,7 +48,7 @@ blocks:
         - name: private-repo
       # This block executes code analysis tests with pylint.
       prologue:
-        commands_file: tests_prologue.sh
+        commands_file: prologue.sh
       jobs:
         - name: Pylint
           commands:

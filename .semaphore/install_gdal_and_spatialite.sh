@@ -20,6 +20,7 @@ if ! cache has_key usr_directory | grep -q "exists"; then
   sudo make install
   cd ../bouldern-app || exit
   echo "caching /usr"
+  cache store usr_directory /usr
 else
   echo "/usr already in cache, skipping installation"
 fi
