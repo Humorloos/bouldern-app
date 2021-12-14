@@ -15,12 +15,12 @@ blocks:
   - name: Install Dependencies
     dependencies: []
     task:
+      prologue:
+        commands:
+          - checkout
       jobs:
         - name: pip
           commands:
-            # Get the latest version of our source code from GitHub:
-            # See https://docs.semaphoreci.com/article/54-toolbox-reference#checkout
-            - checkout
             # Restore dependencies from cache. This command will not fail in
             # case of a cache miss. In case of a cache hit, pip can use it
             # to speed up the installation.
@@ -32,21 +32,14 @@ blocks:
             - pip download --cache-dir .pip_cache -r requirements.txt
             # Persist downloaded packages for future jobs.
             - cache store
+        - name: private repositories
+          commands:
             # Clone private repositories and cache them if not already cached
             - . ./.semaphore/private_repos.sh
-  - name: Run Code Analysis
-    dependencies:
-      - Install Dependencies
-    task:
-      secrets:
-        - name: private-repo
-      # This block executes code analysis tests with pylint.
-      prologue:
-        commands_file: code_analysis_prologue.sh
-      jobs:
-        - name: Pylint
+        - name: usr
           commands:
-            - pylint python_anywhere --load-plugins=pylint_django
+            # Install gdal and spatialite and cache whole /usr directory
+            - . ./.semaphore/install_gdal_and_spatialite.sh
   - name: Run Tests
     dependencies:
       - Install Dependencies
@@ -55,13 +48,16 @@ blocks:
         - name: private-repo
       # This block executes code analysis tests with pylint.
       prologue:
-        commands_file: tests_prologue.sh
+        commands_file: prologue.sh
       jobs:
+        - name: Pylint
+          commands:
+            - pylint python_anywhere --load-plugins=pylint_django
         - name: Integration tests
           commands:
-            - python manage.py makemigrations bouldern
-            - python manage.py migrate bouldern
-            - python manage.py test bouldern
+            - python manage.py makemigrations
+            - python manage.py migrate
+            - python manage.py test
 promotions:
   - name: Deploy
     pipeline_file: deploy.yml
