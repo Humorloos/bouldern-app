@@ -1,13 +1,24 @@
-"""This script contains factories for building model instances of the bouldern app"""
+"""
+This script contains factories for building model instances of the bouldern app
+"""
 
 from factory import Faker, Iterator
 from factory.django import DjangoModelFactory, ImageField
 
-from python_anywhere.bouldern.models import Color, Gym, DifficultyLevel
+from python_anywhere.bouldern.models import Color, Gym, DifficultyLevel, UGC
+from python_anywhere.registration.models import User
 from python_anywhere.settings import RESOURCES_DIR
 
 
-class ColorFactory(DjangoModelFactory):
+class UGCFactory(DjangoModelFactory):
+    class Meta:
+        model = UGC
+        abstract = True
+
+    created_by = User.objects.get(pk=1)
+
+
+class ColorFactory(UGCFactory):
     """Factory for building color instances"""
 
     class Meta:
@@ -17,7 +28,7 @@ class ColorFactory(DjangoModelFactory):
     color = Faker('color')
 
 
-class GymFactory(DjangoModelFactory):
+class GymFactory(UGCFactory):
     """Factory for building gym instances"""
 
     class Meta:
@@ -27,7 +38,7 @@ class GymFactory(DjangoModelFactory):
     map = ImageField(from_path=RESOURCES_DIR / 'generic_gym.png')
 
 
-class DifficultyLevelFactory(DjangoModelFactory):
+class DifficultyLevelFactory(UGCFactory):
     """Factory for building difficulty level instances"""
 
     class Meta:

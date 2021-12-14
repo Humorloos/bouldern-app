@@ -48,5 +48,4 @@ class Boulder(UGC):
     coordinates = PointField()
     gym = ForeignKey(Gym, on_delete=SET_NULL, null=True)
 
-# todo: set created_by in reset_db
 # todo: find other places where content is created and set created_by there
