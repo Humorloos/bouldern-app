@@ -1,13 +1,18 @@
 <template>
   <div id="difficulty-level">
-    <slot></slot>
+    <slot />
     <input
-        type="hidden"
-        :name="colorFieldName"
-        :id="colorFieldId"
-        :value="activeColor.value"
+      :id="colorFieldId"
+      type="hidden"
+      :name="colorFieldName"
+      :value="activeColor.value"
     >
-    <v-select :options="options" :searchable="false" :clearable="false" v-model="activeColor">
+    <v-select
+      v-model="activeColor"
+      :options="options"
+      :searchable="false"
+      :clearable="false"
+    >
       <template #option="option">
         <span :style="option.style">{{ option.label }}</span>
       </template>
@@ -16,38 +21,47 @@
 </template>
 
 <script>
-import vSelect from "vue-select"
+import vSelect from 'vue-select';
 
 export default {
-  name: "DifficultyLevelSelect",
+  name: 'DifficultyLevelSelect',
   components: {
-    vSelect
+    vSelect,
   },
   props: {
-    options: Object,
-    prefix: String,
+    options: {
+      type: Object,
+      default: function() {
+        return {};
+      },
+    },
+    prefix: {
+      type: String,
+      default: '',
+    },
   },
   data() {
     return {
       activeColor: {
-        label: "",
+        label: '',
         style: {color: 'white'},
         value: -1,
-      }
-    }
+      },
+    };
   },
   computed: {
     colorFieldName() {
-      return this.prefix + "-color"
+      return this.prefix + '-color';
     },
     colorFieldId() {
-      return "id_" + this.colorFieldName
+      return 'id_' + this.colorFieldName;
     },
-  }
-}
+  },
+};
 </script>
 
 <style>
+/*noinspection CssUnusedSymbol*/
 .vs__selected::before {
   /*noinspection CssInvalidFunction*/
   background-color: v-bind("activeColor.style.color");
