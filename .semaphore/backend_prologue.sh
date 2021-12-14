@@ -6,3 +6,6 @@ sudo -E cache restore usr_directory
 checkout
 # install pip dependencies
 . ./.semaphore/install_pip_dependencies.sh
+
+python manage.py makemigrations
+python manage.py migrate
