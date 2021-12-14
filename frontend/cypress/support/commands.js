@@ -14,11 +14,13 @@
 //
 //
 // -- This is a child command --
-// Cypress.Commands.add("drag", { prevSubject: 'element'}, (subject, options) => { ... })
+// Cypress.Commands
+// .add("drag", { prevSubject: 'element'}, (subject, options) => { ... })
 //
 //
 // -- This is a dual command --
-// Cypress.Commands.add("dismiss", { prevSubject: 'optional'}, (subject, options) => { ... })
+// Cypress.Commands
+// .add("dismiss", { prevSubject: 'optional'}, (subject, options) => { ... })
 //
 //
 // -- This will overwrite an existing command --
@@ -27,26 +29,26 @@ import 'cypress-file-upload';
 
 
 Cypress.Commands.add('enterCredentialsAndLogin', () => {
-    cy.get('#id_username')
-        .type(Cypress.env('email'))
-        .should('have.value', Cypress.env('email'))
-    cy.get('#id_password').type(Cypress.env('password'))
+  cy.get('#id_username')
+      .type(Cypress.env('email'))
+      .should('have.value', Cypress.env('email'));
+  cy.get('#id_password').type(Cypress.env('password'));
 
-    cy.get('#submit_button').contains('Log In').click()
-})
+  cy.get('#submit_button').contains('Log In').click();
+});
 
 Cypress.Commands.add('logInViaLogInLink', () => {
-    cy.contains('You are not logged in')
-    cy.contains('Log In').click()
+  cy.contains('You are not logged in');
+  cy.contains('Log In').click();
 
-    cy.url()
-        .should('include', '/registration/login')
+  cy.url()
+      .should('include', '/registration/login');
 
-    cy.enterCredentialsAndLogin();
-})
+  cy.enterCredentialsAndLogin();
+});
 
 Cypress.Commands.add('verifyLogInWithInvalidUser', () => {
-    cy.logInViaLogInLink();
+  cy.logInViaLogInLink();
 
-    cy.contains('Please enter a correct email and password.')
-})
+  cy.contains('Please enter a correct email and password.');
+});

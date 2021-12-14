@@ -12,7 +12,24 @@ global_job_config:
   secrets:
     - name: env
 blocks:
-  - name: Install Dependencies
+  - name: Install Frontend Dependencies
+    dependencies: []
+    task:
+      prologue:
+        commands:
+          - checkout
+          - nvm use
+          - node --version
+          - npm --version
+      jobs:
+        - name: npm install and cache
+          commands:
+            - cd frontend
+            - cache restore node_modules
+            - npm install
+            # Persist downloaded packages for future jobs.
+            - cache store node_modules node_modules
+  - name: Install Backend Dependencies
     dependencies: []
     task:
       prologue:
@@ -40,15 +57,27 @@ blocks:
           commands:
             # Install gdal and spatialite and cache whole /usr directory
             - . ./.semaphore/install_gdal_and_spatialite.sh
-  - name: Run Tests
+  - name: Run Frontend Tests
     dependencies:
-      - Install Dependencies
+      - Install Frontend Dependencies
+    task:
+      prologue:
+        commands_file: frontend_prologue.sh
+      # This block executes code analysis with ESLint
+      jobs:
+        - name: ESLint
+          commands:
+            - npx eslint .
+  - name: Run Backend Tests
+      # This block executes code analysis with pylint and backend integration
+      # tests.
+    dependencies:
+      - Install Backend Dependencies
     task:
       secrets:
         - name: private-repo
-      # This block executes code analysis tests with pylint.
       prologue:
-        commands_file: prologue.sh
+        commands_file: backend_prologue.sh
       jobs:
         - name: Pylint
           commands:

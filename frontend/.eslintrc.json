@@ -1,0 +1,14 @@
+{
+  "env": {
+    "node": true
+  },
+  "extends": [
+    "eslint:recommended",
+    "google",
+    "plugin:vue/vue3-recommended"
+  ],
+  "rules": {
+    //  We need v-html for django - vue integration
+    "vue/no-v-html": 0
+  }
+}

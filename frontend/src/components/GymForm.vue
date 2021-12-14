@@ -1,37 +1,57 @@
 <template>
-  <form action="/bouldern/add-gym/" method="post" enctype="multipart/form-data">
-    <slot name="gym-form"></slot>
+  <form
+    action="/bouldern/add-gym/"
+    method="post"
+    enctype="multipart/form-data"
+  >
+    <slot name="gym-form" />
     <h3>Difficulty Levels</h3>
     <div id="difficulty-levels">
-      <slot name="difficulty-levels"></slot>
+      <slot name="difficulty-levels" />
       <input
-          type="hidden"
-          name="difficultylevel_set-TOTAL_FORMS"
-          id="id_difficultylevel_set-TOTAL_FORMS"
-          :value="totalForms"
+        id="id_difficultylevel_set-TOTAL_FORMS"
+        type="hidden"
+        name="difficultylevel_set-TOTAL_FORMS"
+        :value="totalForms"
       >
       <difficulty-level-select
-          v-for="difficultyLevelSelect in difficultyLevelSelects"
-          :options="difficultyLevelSelect.options"
-          :prefix="difficultyLevelSelect.prefix"
-          :key="difficultyLevelSelect.prefix"
-      ><div v-html="difficultyLevelSelect.html"></div></difficulty-level-select>
+        v-for="difficultyLevelSelect in difficultyLevelSelects"
+        :key="difficultyLevelSelect.prefix"
+        :options="difficultyLevelSelect.options"
+        :prefix="difficultyLevelSelect.prefix"
+      >
+        <div v-html="difficultyLevelSelect.html" />
+      </difficulty-level-select>
     </div>
-    <button type="button" id="add-level-button" @click="addDifficultySelect">Add Level</button>
-    <input type="submit" value="Submit">
+    <button
+      id="add-level-button"
+      type="button"
+      @click="addDifficultySelect"
+    >
+      Add Level
+    </button>
+    <input
+      type="submit"
+      value="Submit"
+    >
   </form>
 </template>
 
 <script>
-import DifficultyLevelSelect from "@/components/DifficultyLevelSelect";
+import DifficultyLevelSelect from '@/components/DifficultyLevelSelect';
 
 export default {
-  name: "GymForm",
+  name: 'GymForm',
   components: {
     DifficultyLevelSelect,
   },
   props: {
-    initialDifficultyLevelSelects: Array,
+    initialDifficultyLevelSelects: {
+      type: Array,
+      default: function() {
+        return [];
+      },
+    },
   },
   data() {
     return {
@@ -48,12 +68,14 @@ export default {
       const difficultyLevelSelect = {...this.difficultyLevelSelects[0]};
       difficultyLevelSelect.html = this.updateId(difficultyLevelSelect.html)
           .replace('value="0"', `value="${this.totalForms}"`);
-      difficultyLevelSelect.prefix = this.updateId(difficultyLevelSelect.prefix)
+      difficultyLevelSelect.prefix = this
+          .updateId(difficultyLevelSelect.prefix);
       this.difficultyLevelSelects.push(difficultyLevelSelect);
     },
     updateId(text) {
-      return text.replaceAll("difficultylevel_set-0", 'difficultylevel_set-' + this.totalForms);
-    }
-  }
-}
+      return text.replaceAll(
+          'difficultylevel_set-0', 'difficultylevel_set-' + this.totalForms);
+    },
+  },
+};
 </script>
