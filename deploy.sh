@@ -4,13 +4,13 @@ git fetch --all
 git reset --hard origin/"$1"
 
 # compile vue files
-cd frontend || exit
 echo "setting up npm"
 source ~/nvm/nvm.sh
 nvm use node
 export NODE_OPTIONS=--openssl-legacy-provider
+cd frontend || exit
 echo "installing node packages"
-npm ci
+npm install
 echo "compiling vue files"
 npm run build
 cd ..
