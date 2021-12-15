@@ -12,6 +12,7 @@ global_job_config:
     commands:
       - set -x
       - checkout
+      - NPM_KEY=npm-$SEMAPHORE_GIT_BRANCH-$(checksum frontend/package-lock.json)-$(checksum .semaphore/semaphore.yml)
   # Connect secret to all jobs in the pipeline
   secrets:
     - name: env
@@ -22,8 +23,6 @@ blocks:
       prologue:
         commands:
           - nvm use
-          - node --version
-          - npm --version
       jobs:
         - name: npm install and cache
           priority:
@@ -31,10 +30,10 @@ blocks:
             when: "true"
           commands:
             - cd frontend
-            - cache restore node_modules
-            - npm install
+            - cache restore $NPM_KEY
+            - npm ci
             # Persist downloaded packages for future jobs.
-            - cache store node_modules node_modules
+            - cache store $NPM_KEY ~/.npm
   - name: Install Backend Dependencies
     dependencies: []
     task:
@@ -126,8 +125,6 @@ blocks:
             - python manage.py runserver > django_server.log &
             - cd frontend || exit
             - VUE_LOGFILE=vue_server.log
-            # see https://community.atlassian.com/t5/Bitbucket-questions/Module-not-found-Error-Can-t-resolve-cypress-file-upload-in-opt/qaq-p/1184319
-            - npm update
             - SEARCH_PATTERN='DONE'
             - npm run serve > ${VUE_LOGFILE} &
             - tail -f -n0 ${VUE_LOGFILE} | grep -qe "${SEARCH_PATTERN}"
@@ -137,3 +134,5 @@ promotions:
     pipeline_file: deploy.yml
     auto_promote:
       when: branch = 'master' AND result = 'passed'
+# todo: fix npm update problem
+# todo: configure django to print output to file, current solution is not working (file stays empty)
