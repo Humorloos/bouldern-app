@@ -29,7 +29,9 @@ blocks:
           commands:
             - cd frontend
             - cache restore node_modules
+            - npm update
             - npm install
+#            todo: check why I still have to update after this
             # Persist downloaded packages for future jobs.
             - cache store node_modules node_modules
   - name: Install Backend Dependencies
@@ -101,7 +103,6 @@ blocks:
           commands:
             - python manage.py runserver &
             - cd frontend || exit
-            - npm update
             - FILE_TO_WATCH=watchfile.out
             - SEARCH_PATTERN='DONE'
             - npm run serve > ${FILE_TO_WATCH} &
