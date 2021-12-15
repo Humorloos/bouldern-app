@@ -6,7 +6,7 @@ cache restore GoogleApiHelper
 cache restore gdal_files
 sudo cp -r /home/semaphore/gdal_files/usr /
 
-cd ~/bouldern-app || exit
+cd $PROJECT_DIR || exit
 
 # install pip dependencies
 . ./.semaphore/install_pip_dependencies.sh
