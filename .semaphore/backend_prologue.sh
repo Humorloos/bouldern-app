@@ -1,6 +1,10 @@
-#before checkout
-
 # restore private repositories
+cd ~/bouldern-app/frontend || exit
+# todo: check if moving npm ci here breaks pipeline,
+# last time it did not work in frontend_prologue
+#  last time it worked just before installing pip dependencies
+npm ci
+cd ..
 cd ~ || exit
 cache restore googleCalendarApp
 cache restore GoogleApiHelper
