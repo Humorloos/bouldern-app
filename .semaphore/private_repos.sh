@@ -19,7 +19,7 @@ if ! $GoogleApiHelper_cached || ! $googleCalendarApp_cached; then
     git clone git@github.com:Humorloos/googleCalendarApp.git
     cache store googleCalendarApp ~/googleCalendarApp
   fi
-  cd $PROJECT_DIR || exit
+  cd "$PROJECT_DIR" || exit
 else
   echo "Private repositories already in cache, skipping installation"
 fi
