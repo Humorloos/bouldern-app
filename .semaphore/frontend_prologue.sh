@@ -2,5 +2,5 @@ checkout
 
 nvm use
 cd frontend || exit
-# restore node_modules
-cache restore node_modules
+# restore npm
+cache restore "$NPM_KEY"
