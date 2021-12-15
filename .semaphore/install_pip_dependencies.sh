@@ -5,3 +5,4 @@ sem-version python 3.9
 pip install -r requirements.txt --cache-dir .pip_cache
 # install gdal from local sources
 pip install --global-option=build_ext --global-option="-I /usr/include/gdal" GDAL=="$(gdal-config --version)"
+#todo: set cypress priority over eslint in pipeline
