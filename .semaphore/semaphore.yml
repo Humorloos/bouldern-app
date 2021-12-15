@@ -102,15 +102,14 @@ blocks:
       jobs:
         - name: E2E Tests
           commands:
-            - python manage.py runserver &
+            - python manage.py runserver > django_server.log &
             - cd frontend || exit
             - VUE_LOGFILE=vue_server.log
             # see https://community.atlassian.com/t5/Bitbucket-questions/Module-not-found-Error-Can-t-resolve-cypress-file-upload-in-opt/qaq-p/1184319
             - npm update
-            - FILE_TO_WATCH=watchfile.out
             - SEARCH_PATTERN='DONE'
-            - npm run serve > ${FILE_TO_WATCH} &
-            - tail -f -n0 ${FILE_TO_WATCH} | grep -qe "${SEARCH_PATTERN}"
+            - npm run serve > ${VUE_LOGFILE} &
+            - tail -f -n0 ${VUE_LOGFILE} | grep -qe "${SEARCH_PATTERN}"
             - npx cypress run
 promotions:
   - name: Deploy
