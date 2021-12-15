@@ -133,7 +133,7 @@ blocks:
           - value: 4
             when: "true"
           commands:
-            - python manage.py runserver > django_server.log &
+            - python manage.py runserver &
             - cd frontend || exit
             - VUE_LOGFILE=vue_server.log
             - SEARCH_PATTERN='DONE'
