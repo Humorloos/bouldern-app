@@ -8,6 +8,10 @@ auto_cancel:
   running:
     when: branch != 'master'
 global_job_config:
+  prologue:
+    commands:
+      - set -x
+      - checkout
   # Connect secret to all jobs in the pipeline
   secrets:
     - name: env
@@ -17,24 +21,19 @@ blocks:
     task:
       prologue:
         commands:
-          - checkout
           - nvm use
-          - node --version
-          - npm --version
       jobs:
         - name: npm install and cache
           commands:
             - cd frontend
-            - cache restore node_modules
-            - npm install
+            - NPM_KEY=npm-$SEMAPHORE_GIT_BRANCH-$(checksum package-lock.json)-$(checksum ~/bouldern-app/.semaphore/semaphore.yml)
+            - cache restore $NPM_KEY
+            - npm ci
             # Persist downloaded packages for future jobs.
-            - cache store node_modules node_modules
+            - cache store $NPM_KEY ~/.npm
   - name: Install Backend Dependencies
     dependencies: []
     task:
-      prologue:
-        commands:
-          - checkout
       jobs:
         - name: pip
           commands:
@@ -52,11 +51,11 @@ blocks:
         - name: private repositories
           commands:
             # Clone private repositories and cache them if not already cached
-            - . ./.semaphore/private_repos.sh
+            - . .semaphore/private_repos.sh
         - name: usr
           commands:
             # Install gdal and spatialite and cache whole /usr directory
-            - . ./.semaphore/install_gdal_and_spatialite.sh
+            - . .semaphore/install_gdal_and_spatialite.sh
   - name: Run Frontend Tests
     dependencies:
       - Install Frontend Dependencies
@@ -84,11 +83,34 @@ blocks:
             - pylint python_anywhere --load-plugins=pylint_django
         - name: Integration tests
           commands:
-            - python manage.py makemigrations
-            - python manage.py migrate
             - python manage.py test
+  - name: Run E2E Tests
+      # This block executes code analysis with pylint and backend integration
+      # tests.
+    dependencies:
+      - Install Frontend Dependencies
+      - Install Backend Dependencies
+    task:
+      secrets:
+        - name: private-repo
+      prologue:
+        commands_file: e2e_prologue.sh
+      jobs:
+        - name: E2E Tests
+          commands:
+            - python manage.py runserver > django_server.log &
+            - cd frontend || exit
+            - VUE_LOGFILE=vue_server.log
+            # see https://community.atlassian.com/t5/Bitbucket-questions/Module-not-found-Error-Can-t-resolve-cypress-file-upload-in-opt/qaq-p/1184319
+            - npm update
+            - SEARCH_PATTERN='DONE'
+            - npm run serve > ${VUE_LOGFILE} &
+            - tail -f -n0 ${VUE_LOGFILE} | grep -qe "${SEARCH_PATTERN}"
+            - npx cypress run
 promotions:
   - name: Deploy
     pipeline_file: deploy.yml
     auto_promote:
       when: branch = 'master' AND result = 'passed'
+# todo: fix npm update problem
+# todo: configure django to print output to file, current solution is not working (file stays empty)
