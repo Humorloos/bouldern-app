@@ -1,5 +1,3 @@
-#before checkout
-
 # restore private repositories
 cd ~ || exit
 cache restore googleCalendarApp
@@ -11,5 +9,8 @@ cd ~/bouldern-app || exit
 # install pip dependencies
 . ./.semaphore/install_pip_dependencies.sh
 
+cd frontend || exit
+npm ci
+cd ..
 python manage.py makemigrations
 python manage.py migrate
