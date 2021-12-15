@@ -99,9 +99,9 @@ blocks:
       jobs:
         - name: E2E Tests
           commands:
-            - python manage.py runserver &
+            - python manage.py runserver > django_server.log &
             - cd frontend || exit
-            - FILE_TO_WATCH=watchfile.out
+            - FILE_TO_WATCH=vue_server.log
             - SEARCH_PATTERN='DONE'
             - npm run serve > ${FILE_TO_WATCH} &
             - tail -f -n0 ${FILE_TO_WATCH} | grep -qe "${SEARCH_PATTERN}"
