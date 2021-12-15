@@ -26,6 +26,9 @@ blocks:
           - npm --version
       jobs:
         - name: npm install and cache
+          priority:
+          - value: 4
+            when: "true"
           commands:
             - cd frontend
             - cache restore node_modules
@@ -42,6 +45,9 @@ blocks:
           - checkout
       jobs:
         - name: pip
+          priority:
+          - value: 4
+            when: "true"
           commands:
             # Restore dependencies from cache. This command will not fail in
             # case of a cache miss. In case of a cache hit, pip can use it
@@ -55,10 +61,16 @@ blocks:
             # Persist downloaded packages for future jobs.
             - cache store
         - name: private repositories
+          priority:
+          - value: 4
+            when: "true"
           commands:
             # Clone private repositories and cache them if not already cached
             - . .semaphore/private_repos.sh
         - name: gdal and spatialite
+          priority:
+          - value: 4
+            when: "true"
           commands:
             # Install gdal and spatialite and cache whole /usr directory
             - . .semaphore/install_gdal_and_spatialite.sh
@@ -71,6 +83,9 @@ blocks:
       # This block executes code analysis with ESLint
       jobs:
         - name: ESLint
+          priority:
+          - value: 1
+            when: "true"
           commands:
             - npx eslint .
   - name: Run Backend Tests
@@ -83,9 +98,15 @@ blocks:
         commands_file: backend_prologue.sh
       jobs:
         - name: Pylint
+          priority:
+          - value: 2
+            when: "true"
           commands:
             - pylint python_anywhere --load-plugins=pylint_django
         - name: Integration tests
+          priority:
+          - value: 3
+            when: "true"
           commands:
             - python manage.py test
   - name: Run E2E Tests
@@ -101,6 +122,9 @@ blocks:
         commands_file: e2e_prologue.sh
       jobs:
         - name: E2E Tests
+          priority:
+          - value: 4
+            when: "true"
           commands:
             - python manage.py runserver > django_server.log &
             - cd frontend || exit
