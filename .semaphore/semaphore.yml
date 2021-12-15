@@ -111,6 +111,10 @@ blocks:
             - npm run serve > ${VUE_LOGFILE} &
             - tail -f -n0 ${VUE_LOGFILE} | grep -qe "${SEARCH_PATTERN}"
             - npx cypress run
+            - artifact push job ~/bouldern-app/django_server.log
+            - artifact push job ~/bouldern-app/frontend/vue_server.log
+            - artifact push job ~/bouldern-app/frontend/cypress/videos
+
 promotions:
   - name: Deploy
     pipeline_file: deploy.yml
