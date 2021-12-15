@@ -101,7 +101,6 @@ blocks:
           commands:
             - python manage.py runserver &
             - cd frontend || exit
-            - npm update
             - FILE_TO_WATCH=watchfile.out
             - SEARCH_PATTERN='DONE'
             - npm run serve > ${FILE_TO_WATCH} &
