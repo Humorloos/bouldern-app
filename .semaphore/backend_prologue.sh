@@ -13,4 +13,3 @@ cd $PROJECT_DIR || exit
 
 python manage.py makemigrations
 python manage.py migrate
-# todo: cache cypress binary like in https://github.com/cypress-io/cypress-example-kitchensink/blob/master/basic/.semaphore.yml
