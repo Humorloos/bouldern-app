@@ -18,7 +18,7 @@ if ! cache has_key usr_directory | grep -q "exists"; then
   ./configure
   make
   sudo make install
-  cd ../bouldern-app || exit
+  cd $PROJECT_DIR || exit
   echo "caching /usr"
   cache store usr_directory /usr
 else
