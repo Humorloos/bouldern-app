@@ -1,4 +1,4 @@
-describe('The register app', () => {
+describe('The bouldern app', () => {
   it('lets users add new colors', () => {
     // add gym
     cy.visit(`${Cypress.env('host')}/bouldern/add-gym`);
@@ -36,9 +36,8 @@ describe('The register app', () => {
     cy.get('#testGym_div_map').click(340, 210);
     cy.contains('Submit').click();
     cy.get('#id_boulder-0-coordinates')
-        .should('have.value', '{ ' +
+        .should('include', '{ ' +
             '"type": "Point", ' +
-            '"coordinates": [ 279.2724609375, 898.63671875 ]' +
-            ' }');
+            '"coordinates": ');
   });
 });
