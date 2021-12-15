@@ -10,7 +10,7 @@ auto_cancel:
 global_job_config:
   env_vars:
     - name: PROJECT_DIR
-      value: ~/bouldern-app
+      value: /home/semaphore/bouldern-app
   prologue:
     commands:
       - set -x
