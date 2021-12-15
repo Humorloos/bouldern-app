@@ -22,16 +22,15 @@ blocks:
       prologue:
         commands:
           - nvm use
-          - node --version
-          - npm --version
       jobs:
         - name: npm install and cache
           commands:
             - cd frontend
-            - cache restore node_modules
-            - npm install
+            - NPM_KEY=npm-$SEMAPHORE_GIT_BRANCH-$(checksum package-lock.json)-$(checksum ~/bouldern-app/.semaphore/semaphore.yml)
+            - cache restore $NPM_KEY
+            - npm ci
             # Persist downloaded packages for future jobs.
-            - cache store node_modules node_modules
+            - cache store $NPM_KEY ~/.npm
   - name: Install Backend Dependencies
     dependencies: []
     task:
@@ -113,3 +112,5 @@ promotions:
     pipeline_file: deploy.yml
     auto_promote:
       when: branch = 'master' AND result = 'passed'
+# todo: fix npm update problem
+# todo: configure django to print output to file, current solution is not working (file stays empty)
