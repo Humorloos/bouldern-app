@@ -1,5 +1,3 @@
-#before checkout
-
 # restore private repositories
 cd ~ || exit
 cache restore googleCalendarApp
@@ -15,3 +13,4 @@ cd ~/bouldern-app || exit
 
 python manage.py makemigrations
 python manage.py migrate
+# todo: cache cypress binary like in https://github.com/cypress-io/cypress-example-kitchensink/blob/master/basic/.semaphore.yml
