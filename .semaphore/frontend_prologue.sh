@@ -1,4 +1,7 @@
 checkout
+
+
+# after checkout ---
 nvm use
 node --version
 npm --version
