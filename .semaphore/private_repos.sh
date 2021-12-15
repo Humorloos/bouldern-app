@@ -21,5 +21,5 @@ else
     git clone git@github.com:Humorloos/googleCalendarApp.git
     cache store googleCalendarApp ~/googleCalendarApp
   fi
-  cd $PROJECT_DIR || exit
+  cd "$PROJECT_DIR" || exit
 fi
