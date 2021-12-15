@@ -5,4 +5,5 @@ cd $FRONTEND_DIR || exit
 # last time it worked just at the beginning of backend_prologue.sh
 # restore npm
 cache restore "$NPM_KEY"
+cache restore "$CYPRESS_KEY"
 npm ci
