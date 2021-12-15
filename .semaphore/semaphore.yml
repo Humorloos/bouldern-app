@@ -8,11 +8,15 @@ auto_cancel:
   running:
     when: branch != 'master'
 global_job_config:
+  env_vars:
+    - name: PROJECT_DIR
+      value: ~/bouldern-app
   prologue:
     commands:
       - set -x
       - checkout
       - NPM_KEY=npm-$SEMAPHORE_GIT_BRANCH-$(checksum frontend/package-lock.json)-$(checksum .semaphore/semaphore.yml)
+      - FRONTEND_DIR=$PROJECT_DIR/frontend
   # Connect secret to all jobs in the pipeline
   secrets:
     - name: env
@@ -129,9 +133,9 @@ blocks:
             - npm run serve > ${VUE_LOGFILE} &
             - tail -f -n0 ${VUE_LOGFILE} | grep -qe "${SEARCH_PATTERN}"
             - npx cypress run
-            - artifact push job ~/bouldern-app/django_server.log
-            - artifact push job ~/bouldern-app/frontend/vue_server.log
-            - artifact push job ~/bouldern-app/frontend/cypress/videos
+            - artifact push job $PROJECT_DIR/django_server.log
+            - artifact push job $FRONTEND_DIR/vue_server.log
+            - artifact push job $FRONTEND_DIR/cypress/videos
 
 promotions:
   - name: Deploy
