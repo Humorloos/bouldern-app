@@ -1,3 +1,3 @@
 . .semaphore/frontend_prologue.sh
-cd ~/bouldern-app || exit
+cd "$PROJECT_DIR" || exit
 . .semaphore/backend_prologue.sh
