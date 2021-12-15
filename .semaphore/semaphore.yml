@@ -15,7 +15,7 @@ global_job_config:
     commands:
       - set -x
       - checkout
-      - FRONTEND_DIR=$PROJECT_DIR/frontend
+      - FRONTEND_DIR="$PROJECT_DIR"/frontend
       - CACHE_SUFFIX=$SEMAPHORE_GIT_BRANCH-$(checksum frontend/package-lock.json)-$(checksum .semaphore/semaphore.yml)
       - NPM_KEY=npm-$CACHE_SUFFIX
       - CYPRESS_KEY=cypress-$CACHE_SUFFIX
@@ -140,9 +140,9 @@ blocks:
             - npm run serve > ${VUE_LOGFILE} &
             - tail -f -n0 ${VUE_LOGFILE} | grep -qe "${SEARCH_PATTERN}"
             - npx cypress run
-            - artifact push job $PROJECT_DIR/django_server.log
-            - artifact push job $FRONTEND_DIR/vue_server.log
-            - artifact push job $FRONTEND_DIR/cypress/videos
+            - artifact push job "$PROJECT_DIR"/django_server.log
+            - artifact push job "$FRONTEND_DIR"/vue_server.log
+            - artifact push job "$FRONTEND_DIR"/cypress/videos
 
 promotions:
   - name: Deploy

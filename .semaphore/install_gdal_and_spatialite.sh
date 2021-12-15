@@ -17,7 +17,7 @@ if ! cache has_key gdal_files | grep -q "exists"; then
   ./configure
   make
   sudo make install
-  cd $PROJECT_DIR || exit
+  cd "$PROJECT_DIR" || exit
 
   # copy all files in gdal_files to gdal_paths folder for caching
   while read -r p; do
