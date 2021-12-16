@@ -1,7 +1,5 @@
-checkout
 nvm use
-node --version
-npm --version
-cd frontend || exit
-# restore node_modules
-cache restore node_modules
+cd "$FRONTEND_DIR" || exit
+cache restore "$NPM_KEY"
+cache restore "$CYPRESS_KEY"
+npm ci
