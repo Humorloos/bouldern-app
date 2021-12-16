@@ -11,27 +11,32 @@ global_job_config:
   # Connect secret to all jobs in the pipeline
   secrets:
     - name: env
+  prologue:
+    commands:
+      - set -x
 blocks:
-  - name: Install Frontend Dependencies
-    dependencies: []
-    task:
-      prologue:
-        commands:
-          - checkout
-          - nvm use
-          - node --version
-          - npm --version
-      jobs:
-        - name: npm install and cache
-          commands:
-            - cd frontend
-            - cache restore node_modules
-            - npm install
-            # Persist downloaded packages for future jobs.
-            - cache store node_modules node_modules
+#  - name: Install Frontend Dependencies
+#    dependencies: []
+#    task:
+#      prologue:
+#        commands:
+#          - checkout
+#          - nvm use
+#          - node --version
+#          - npm --version
+#      jobs:
+#        - name: npm install and cache
+#          commands:
+#            - cd frontend
+#            - cache restore node_modules
+#            - npm install
+#            # Persist downloaded packages for future jobs.
+#            - cache store node_modules node_modules
   - name: Install Backend Dependencies
     dependencies: []
     task:
+      secrets:
+        - name: private-repo
       prologue:
         commands:
           - checkout
@@ -53,29 +58,27 @@ blocks:
           commands:
             # Clone private repositories and cache them if not already cached
             - . ./.semaphore/private_repos.sh
-        - name: usr
+        - name: gdal and spatialite
           commands:
             # Install gdal and spatialite and cache whole /usr directory
             - . ./.semaphore/install_gdal_and_spatialite.sh
-  - name: Run Frontend Tests
-    dependencies:
-      - Install Frontend Dependencies
-    task:
-      prologue:
-        commands_file: frontend_prologue.sh
-      # This block executes code analysis with ESLint
-      jobs:
-        - name: ESLint
-          commands:
-            - npx eslint .
+#  - name: Run Frontend Tests
+#    dependencies:
+#      - Install Frontend Dependencies
+#    task:
+#      prologue:
+#        commands_file: frontend_prologue.sh
+#      # This block executes code analysis with ESLint
+#      jobs:
+#        - name: ESLint
+#          commands:
+#            - npx eslint .
   - name: Run Backend Tests
       # This block executes code analysis with pylint and backend integration
       # tests.
     dependencies:
       - Install Backend Dependencies
     task:
-      secrets:
-        - name: private-repo
       prologue:
         commands_file: backend_prologue.sh
       jobs:
