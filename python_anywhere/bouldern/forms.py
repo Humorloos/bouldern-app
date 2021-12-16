@@ -7,7 +7,14 @@ from python_anywhere.bouldern.models import Boulder, Gym, Color, DifficultyLevel
 from python_anywhere.bouldern.widgets import CoordinatesWidget
 
 
-class GymForm(ModelForm):
+class UGCForm(ModelForm):
+    def save_for_user(self, user):
+        ugc = super().save()
+        ugc.created_by = user
+        ugc.save()
+
+
+class GymForm(UGCForm):
     """Form for adding new bouldering gyms"""
 
     class Meta:
@@ -23,7 +30,7 @@ class ColorForm(ModelForm):
         fields = ['name', 'color']
 
 
-class DifficultyLevelForm(ModelForm):
+class DifficultyLevelForm(UGCForm):
     """Form for adding new difficulty levels"""
     color = ModelChoiceField(Color.objects.all(), empty_label=None,
                              widget=HiddenInput)
