@@ -15,23 +15,23 @@ global_job_config:
     commands:
       - set -x
 blocks:
-#  - name: Install Frontend Dependencies
-#    dependencies: []
-#    task:
-#      prologue:
-#        commands:
-#          - checkout
-#          - nvm use
-#          - node --version
-#          - npm --version
-#      jobs:
-#        - name: npm install and cache
-#          commands:
-#            - cd frontend
-#            - cache restore node_modules
-#            - npm install
-#            # Persist downloaded packages for future jobs.
-#            - cache store node_modules node_modules
+  - name: Install Frontend Dependencies
+    dependencies: []
+    task:
+      prologue:
+        commands:
+          - checkout
+          - nvm use
+          - node --version
+          - npm --version
+      jobs:
+        - name: npm install and cache
+          commands:
+            - cd frontend
+            - cache restore node_modules
+            - npm install
+            # Persist downloaded packages for future jobs.
+            - cache store node_modules node_modules
   - name: Install Backend Dependencies
     dependencies: []
     task:
@@ -62,17 +62,17 @@ blocks:
           commands:
             # Install gdal and spatialite and cache whole /usr directory
             - . ./.semaphore/install_gdal_and_spatialite.sh
-#  - name: Run Frontend Tests
-#    dependencies:
-#      - Install Frontend Dependencies
-#    task:
-#      prologue:
-#        commands_file: frontend_prologue.sh
-#      # This block executes code analysis with ESLint
-#      jobs:
-#        - name: ESLint
-#          commands:
-#            - npx eslint .
+  - name: Run Frontend Tests
+    dependencies:
+      - Install Frontend Dependencies
+    task:
+      prologue:
+        commands_file: frontend_prologue.sh
+      # This block executes code analysis with ESLint
+      jobs:
+        - name: ESLint
+          commands:
+            - npx eslint .
   - name: Run Backend Tests
       # This block executes code analysis with pylint and backend integration
       # tests.
