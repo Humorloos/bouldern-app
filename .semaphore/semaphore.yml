@@ -11,27 +11,37 @@ global_job_config:
   # Connect secret to all jobs in the pipeline
   secrets:
     - name: env
+  env_vars:
+    - name: PROJECT_DIR
+      value: /home/semaphore/bouldern-app
   prologue:
     commands:
       - set -x
+      - checkout
+      - FRONTEND_DIR="$PROJECT_DIR"/frontend
+      - CACHE_SUFFIX=$SEMAPHORE_GIT_BRANCH-$(checksum frontend/package-lock.json)-$(checksum .semaphore/semaphore.yml)
+      - NPM_KEY=npm-$CACHE_SUFFIX
+      - CYPRESS_KEY=cypress-$CACHE_SUFFIX
 blocks:
   - name: Install Frontend Dependencies
     dependencies: []
     task:
       prologue:
         commands:
-          - checkout
           - nvm use
-          - node --version
-          - npm --version
       jobs:
         - name: npm install and cache
+          priority:
+          - value: 4
+            when: "true"
           commands:
             - cd frontend
-            - cache restore node_modules
-            - npm install
-            # Persist downloaded packages for future jobs.
-            - cache store node_modules node_modules
+            - cache restore $NPM_KEY
+            - cache restore $CYPRESS_KEY
+            - npm ci
+            # Cache NPM dependencies and Cypress binary
+            - cache store $NPM_KEY ~/.npm
+            - cache store $CYPRESS_KEY ~/.cache/Cypress
   - name: Install Backend Dependencies
     dependencies: []
     task:
@@ -42,6 +52,9 @@ blocks:
           - checkout
       jobs:
         - name: pip
+          priority:
+          - value: 4
+            when: "true"
           commands:
             # Restore dependencies from cache. This command will not fail in
             # case of a cache miss. In case of a cache hit, pip can use it
@@ -55,13 +68,19 @@ blocks:
             # Persist downloaded packages for future jobs.
             - cache store
         - name: private repositories
+          priority:
+          - value: 4
+            when: "true"
           commands:
             # Clone private repositories and cache them if not already cached
-            - . ./.semaphore/private_repos.sh
+            - . .semaphore/private_repos.sh
         - name: gdal and spatialite
+          priority:
+          - value: 4
+            when: "true"
           commands:
             # Install gdal and spatialite and cache whole /usr directory
-            - . ./.semaphore/install_gdal_and_spatialite.sh
+            - . .semaphore/install_gdal_and_spatialite.sh
   - name: Run Frontend Tests
     dependencies:
       - Install Frontend Dependencies
@@ -71,6 +90,9 @@ blocks:
       # This block executes code analysis with ESLint
       jobs:
         - name: ESLint
+          priority:
+          - value: 1
+            when: "true"
           commands:
             - npx eslint .
   - name: Run Backend Tests
@@ -83,15 +105,48 @@ blocks:
         commands_file: backend_prologue.sh
       jobs:
         - name: Pylint
+          priority:
+          - value: 2
+            when: "true"
           commands:
             - pylint python_anywhere --load-plugins=pylint_django
         - name: Integration tests
+          priority:
+          - value: 3
+            when: "true"
           commands:
-            - python manage.py makemigrations
-            - python manage.py migrate
             - python manage.py test
+  - name: Run E2E Tests
+      # This block executes code analysis with pylint and backend integration
+      # tests.
+    dependencies:
+      - Install Frontend Dependencies
+      - Install Backend Dependencies
+    task:
+      secrets:
+        - name: private-repo
+      prologue:
+        commands_file: e2e_prologue.sh
+      jobs:
+        - name: E2E Tests
+          priority:
+          - value: 4
+            when: "true"
+          commands:
+            - python manage.py runserver &
+            - cd frontend || exit
+            - VUE_LOGFILE=vue_server.log
+            - SEARCH_PATTERN='DONE'
+            - npm run serve > ${VUE_LOGFILE} &
+            - tail -f -n0 ${VUE_LOGFILE} | grep -qe "${SEARCH_PATTERN}"
+            - npx cypress run
+            - artifact push job "$PROJECT_DIR"/django_server.log
+            - artifact push job "$FRONTEND_DIR"/vue_server.log
+            - artifact push job "$FRONTEND_DIR"/cypress/videos
+
 promotions:
   - name: Deploy
     pipeline_file: deploy.yml
     auto_promote:
       when: branch = 'master' AND result = 'passed'
+# todo: configure django to print output to file, current solution is not working (file stays empty)
