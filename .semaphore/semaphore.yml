@@ -39,23 +39,23 @@ blocks:
         commands:
           - checkout
       jobs:
-#        - name: pip
-#          commands:
-#            # Restore dependencies from cache. This command will not fail in
-#            # case of a cache miss. In case of a cache hit, pip can use it
-#            # to speed up the installation.
-#            # For more info on caching, see https://docs.semaphoreci.com/article/149-caching
-#            - cache restore
-#            # Install other python dependencies.
-#            # If not found in the cache, pip will download them.
-#            - sem-version python 3.9
-#            - pip download --cache-dir .pip_cache -r requirements.txt
-#            # Persist downloaded packages for future jobs.
-#            - cache store
-#        - name: private repositories
-#          commands:
-#            # Clone private repositories and cache them if not already cached
-#            - . ./.semaphore/private_repos.sh
+        - name: pip
+          commands:
+            # Restore dependencies from cache. This command will not fail in
+            # case of a cache miss. In case of a cache hit, pip can use it
+            # to speed up the installation.
+            # For more info on caching, see https://docs.semaphoreci.com/article/149-caching
+            - cache restore
+            # Install other python dependencies.
+            # If not found in the cache, pip will download them.
+            - sem-version python 3.9
+            - pip download --cache-dir .pip_cache -r requirements.txt
+            # Persist downloaded packages for future jobs.
+            - cache store
+        - name: private repositories
+          commands:
+            # Clone private repositories and cache them if not already cached
+            - . ./.semaphore/private_repos.sh
         - name: usr
           commands:
             # Install gdal and spatialite and cache whole /usr directory
@@ -71,20 +71,20 @@ blocks:
 #        - name: ESLint
 #          commands:
 #            - npx eslint .
-#  - name: Run Backend Tests
-#      # This block executes code analysis with pylint and backend integration
-#      # tests.
-#    dependencies:
-#      - Install Backend Dependencies
-#    task:
-#      secrets:
-#        - name: private-repo
-#      prologue:
-#        commands_file: backend_prologue.sh
-#      jobs:
-#        - name: Pylint
-#          commands:
-#            - pylint python_anywhere --load-plugins=pylint_django
+  - name: Run Backend Tests
+      # This block executes code analysis with pylint and backend integration
+      # tests.
+    dependencies:
+      - Install Backend Dependencies
+    task:
+      secrets:
+        - name: private-repo
+      prologue:
+        commands_file: backend_prologue.sh
+      jobs:
+        - name: Pylint
+          commands:
+            - pylint python_anywhere --load-plugins=pylint_django
 #        - name: Integration tests
 #          commands:
 #            - python manage.py makemigrations
