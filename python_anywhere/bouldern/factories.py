@@ -1,13 +1,16 @@
 """
 This script contains factories for building model instances of the bouldern app
 """
-
-from factory import Faker, Iterator
+from factory import Iterator, Faker
 from factory.django import DjangoModelFactory, ImageField
 
-from python_anywhere.bouldern.models import Color, Gym, DifficultyLevel, UGC
+from python_anywhere.bouldern.models import Color, Gym, DifficultyLevel, UGC, \
+    Boulder
+from python_anywhere.bouldern.providers import GeoProvider
 from python_anywhere.registration.models import User
 from python_anywhere.settings import RESOURCES_DIR
+
+Faker.add_provider(GeoProvider)
 
 
 class UGCFactory(DjangoModelFactory):
@@ -24,7 +27,7 @@ class ColorFactory(UGCFactory):
     class Meta:
         model = Color
 
-    name = Faker('first_name')
+    name = Faker('color_name')
     color = Faker('color')
 
 
@@ -47,3 +50,13 @@ class DifficultyLevelFactory(UGCFactory):
     level = 0
     color = Iterator(Color.objects.all())
     gym = Iterator(Color.objects.all())
+
+
+class BoulderFactory(UGCFactory):
+    """Factory for building boulders"""
+
+    class Meta:
+        model = Boulder
+
+    coordinates = Faker('point')
+    gym = Gym.objects.first()
