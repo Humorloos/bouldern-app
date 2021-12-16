@@ -29,3 +29,9 @@ if ! cache has_key gdal_files | grep -q "exists"; then
 else
   echo "gdal_files already in cache, skipping installation"
 fi
+
+# download gdal python package
+cache restore
+sem-version python 3.9
+pip download --global-option=build_ext --global-option="-I /usr/include/gdal" --cache-dir .pip_cache GDAL=="$(gdal-config --version)"
+cache store
