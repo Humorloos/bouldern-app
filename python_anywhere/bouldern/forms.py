@@ -58,7 +58,7 @@ DifficultyLevelFormset = inlineformset_factory(
 )
 
 
-class BoulderForm(ModelForm):
+class BoulderForm(UGCForm):
     """Form that contains all data related to single boulders in a gym"""
 
     def __init__(self, gym, **kwargs):

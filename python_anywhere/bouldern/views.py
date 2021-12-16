@@ -1,4 +1,5 @@
 """Module containing the views of the bouldern app"""
+from django.core.handlers.wsgi import WSGIRequest
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
@@ -68,7 +69,7 @@ class AddGym(View):
         return HttpResponseRedirect(reverse(self.name))
 
 
-def gym_map(request, gym_name: str):
+def gym_map(request: WSGIRequest, gym_name: str):
     """Gym map view"""
     gym = Gym.objects.filter(name=gym_name).get()
     # if this is a POST request we need to process the form data
@@ -81,16 +82,16 @@ def gym_map(request, gym_name: str):
         if formset.is_valid():
             form: BoulderForm
             for form in formset.forms:
-                form.save()
+                form.save_for_user(request.user)
             # redirect to a new URL: (in my case the same, but empty again)
             return HttpResponseRedirect(
-                reverse(gym_map, kwargs={'gym': gym_name}))
+                reverse(gym_map, kwargs={'gym_name': gym_name}))
 
     # if a GET (or any other method) we'll create a blank form
     else:
-        formset = GymMapFormSet(form_kwargs={'gym': gym},
-                                queryset=Boulder.objects.filter(
-                                    gym__name__exact=gym_name))
+        formset = GymMapFormSet(
+            form_kwargs={'gym': gym},
+            queryset=Boulder.objects.filter(gym__name__exact=gym_name))
 
     context = {
         'formset': formset,
