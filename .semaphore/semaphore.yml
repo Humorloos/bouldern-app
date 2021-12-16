@@ -115,7 +115,7 @@ blocks:
           - value: 3
             when: "true"
           commands:
-            - python manage.py test
+            - pytest
   - name: Run E2E Tests
       # This block executes code analysis with pylint and backend integration
       # tests.
