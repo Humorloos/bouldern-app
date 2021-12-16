@@ -65,6 +65,7 @@ blocks:
             # If not found in the cache, pip will download them.
             - sem-version python 3.9
             - pip download --cache-dir .pip_cache -r requirements.txt
+            - pip download --cache-dir .pip_cache GDAL=="$(gdal-config --version)"
             # Persist downloaded packages for future jobs.
             - cache store
         - name: private repositories
