@@ -11,6 +11,9 @@ global_job_config:
   # Connect secret to all jobs in the pipeline
   secrets:
     - name: env
+  prologue:
+    commands:
+      - set -x
 blocks:
   - name: Install Frontend Dependencies
     dependencies: []
@@ -32,6 +35,8 @@ blocks:
   - name: Install Backend Dependencies
     dependencies: []
     task:
+      secrets:
+        - name: private-repo
       prologue:
         commands:
           - checkout
@@ -53,7 +58,7 @@ blocks:
           commands:
             # Clone private repositories and cache them if not already cached
             - . ./.semaphore/private_repos.sh
-        - name: usr
+        - name: gdal and spatialite
           commands:
             # Install gdal and spatialite and cache whole /usr directory
             - . ./.semaphore/install_gdal_and_spatialite.sh
@@ -74,8 +79,6 @@ blocks:
     dependencies:
       - Install Backend Dependencies
     task:
-      secrets:
-        - name: private-repo
       prologue:
         commands_file: backend_prologue.sh
       jobs:
