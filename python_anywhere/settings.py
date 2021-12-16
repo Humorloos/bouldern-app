@@ -16,9 +16,11 @@ from environ import Env, ImproperlyConfigured
 
 env = Env(DEBUG=(bool, False))
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
+# directory of python_anywhere project
 PROJECT_DIR = Path(__file__).resolve().parent
+# directory of bouldern-app
 BASE_DIR = PROJECT_DIR.parent
+# parent directory of bouldern-app
 USER_HOME = BASE_DIR.parent
 RESOURCES_DIR = BASE_DIR / 'frontend' / 'cypress' / 'fixtures'
 
@@ -181,3 +183,23 @@ LOGIN_REDIRECT_URL = '/' + BOULDERN_URL_SEGMENT
 LOGOUT_REDIRECT_URL = '/' + BOULDERN_URL_SEGMENT
 
 AUTH_USER_MODEL = 'registration.User'
+
+# Logging
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': BASE_DIR / 'django_server.log',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['file'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    },
+}
