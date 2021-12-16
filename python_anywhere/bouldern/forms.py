@@ -8,7 +8,12 @@ from python_anywhere.bouldern.widgets import CoordinatesWidget
 
 
 class UGCForm(ModelForm):
+    """Abstract form for simplifying saving UGC"""
     def save_for_user(self, user):
+        """
+        Sets the provided user for this form and saves it
+        :param user: user that filled in the form
+        """
         ugc = super().save()
         ugc.created_by = user
         ugc.save()

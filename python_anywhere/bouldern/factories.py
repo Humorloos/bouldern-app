@@ -14,6 +14,7 @@ Faker.add_provider(GeoProvider)
 
 
 class UGCFactory(DjangoModelFactory):
+    """Abstract factory, serves as superclass for all UGC subclasses"""
     class Meta:
         model = UGC
         abstract = True

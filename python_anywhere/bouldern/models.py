@@ -8,6 +8,7 @@ from python_anywhere.registration.models import User
 
 
 class UGC(Model):
+    """Abstract model for user-generated content"""
     created_at = DateTimeField(auto_now_add=True)
     created_by = ForeignKey(User, on_delete=SET_NULL, null=True)
 
