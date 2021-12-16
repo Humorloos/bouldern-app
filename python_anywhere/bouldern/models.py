@@ -47,5 +47,3 @@ class Boulder(UGC):
     """A boulder in a gym"""
     coordinates = PointField()
     gym = ForeignKey(Gym, on_delete=SET_NULL, null=True)
-
-# todo: find other places where content is created and set created_by there
