@@ -35,6 +35,8 @@ blocks:
   - name: Install Backend Dependencies
     dependencies: []
     task:
+      secrets:
+        - name: private-repo
       prologue:
         commands:
           - checkout
@@ -77,8 +79,6 @@ blocks:
     dependencies:
       - Install Backend Dependencies
     task:
-      secrets:
-        - name: private-repo
       prologue:
         commands_file: backend_prologue.sh
       jobs:
