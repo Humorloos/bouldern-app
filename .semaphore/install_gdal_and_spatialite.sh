@@ -7,11 +7,8 @@ if ! cache has_key gdal_files | grep -q "exists"; then
   sudo apt-get update
   # -y for automatically answering with y
   sudo apt-get install -y libgdal-dev=2.4.2+dfsg-1~bionic0 gdal-bin=2.4.2+dfsg-1~bionic0
-  # todo: check if this is necessary
-  export CPLUS_INCLUDE_PATH=/usr/include/gdal
-  export C_INCLUDE_PATH=/usr/include/gdal
 
-  # install spatialite
+  # install spatialite, this requires installing gdal first
   echo "installing spatialite"
   cd ..
   wget https://www.gaia-gis.it/gaia-sins/libspatialite-sources/libspatialite-4.3.0.tar.gz
