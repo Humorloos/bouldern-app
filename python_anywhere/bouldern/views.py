@@ -60,9 +60,9 @@ class AddGym(View):
             data=request.POST, instance=gym_form.instance)
         # check whether it's valid:
         if gym_form.is_valid() and difficulty_level_formset.is_valid():
-            gym_form.save()
+            gym_form.save_for_user(request.user)
             for difficulty_level_form in difficulty_level_formset:
-                difficulty_level_form.save()
+                difficulty_level_form.save_for_user(request.user)
             # redirect to a new URL: (in my case the same, but empty again)
             return HttpResponseRedirect(reverse('index'))
         return HttpResponseRedirect(reverse(self.name))
