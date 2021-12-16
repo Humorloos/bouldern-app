@@ -22,7 +22,7 @@ class AddColor(View):
         """
         form = self.form_class(request.POST)
         if form.is_valid():
-            form.save()
+            form.save_for_user(request.user)
         return HttpResponseRedirect(reverse(AddGym.name))
 
 

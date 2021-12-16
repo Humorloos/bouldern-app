@@ -61,3 +61,28 @@ class AddGymTest(TestCase):
         self.assertEqual(gym.name, payload['name'])
         self.assertEqual(gym.map.size, payload['map'].size)
         self.assertEqual(gym.created_by, user)
+
+
+class AddColorTest(TestCase):
+    """Test class for AddColor view"""
+
+    def test_post(self):
+        """Test that post method works correctly"""
+        # Given
+        # login
+        password = Faker().password()
+        user = UserFactory(password=password)
+        self.client.login(username=user.email, password=password)
+
+        payload = {key: ColorFactory.stub().__dict__[key]
+                   for key in ['color', 'name']}
+
+        # When
+        response = self.client.post(reverse(AddColor.name), data=payload)
+
+        # Then
+        color = Color.objects.first()
+        self.assertEqual(color.name, payload['name'])
+        self.assertEqual(color.color, payload['color'])
+        self.assertEqual(color.created_by, user)
+        self.assertEqual(response.url, reverse(AddGym.name))

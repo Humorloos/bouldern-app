@@ -22,7 +22,7 @@ class GymForm(UGCForm):
         fields = ['name', 'map']
 
 
-class ColorForm(ModelForm):
+class ColorForm(UGCForm):
     """Form for adding new colors"""
 
     class Meta:
