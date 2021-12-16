@@ -29,3 +29,19 @@ if ! cache has_key gdal_files | grep -q "exists"; then
 else
   echo "gdal_files already in cache, skipping installation"
 fi
+
+# Restore dependencies from cache. This command will not fail in
+# case of a cache miss. In case of a cache hit, pip can use it
+# to speed up the installation.
+# For more info on caching, see https://docs.semaphoreci.com/article/149-caching
+cache restore
+# Install other python dependencies.
+# If not found in the cache, pip will download them.
+sem-version python 3.9
+pip download --cache-dir .pip_cache -r requirements.txt
+pip install setuptools==57.5.0 --cache-dir .pip_cache
+#            todo: extract GDAL version to env var
+PATH=$PATH:/usr/bin/gdal-config
+pip download --cache-dir .pip_cache GDAL==2.4.2
+# Persist downloaded packages for future jobs.
+cache store
