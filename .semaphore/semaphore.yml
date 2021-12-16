@@ -11,24 +11,27 @@ global_job_config:
   # Connect secret to all jobs in the pipeline
   secrets:
     - name: env
+  prologue:
+    commands:
+      - set -x
 blocks:
-  - name: Install Frontend Dependencies
-    dependencies: []
-    task:
-      prologue:
-        commands:
-          - checkout
-          - nvm use
-          - node --version
-          - npm --version
-      jobs:
-        - name: npm install and cache
-          commands:
-            - cd frontend
-            - cache restore node_modules
-            - npm install
-            # Persist downloaded packages for future jobs.
-            - cache store node_modules node_modules
+#  - name: Install Frontend Dependencies
+#    dependencies: []
+#    task:
+#      prologue:
+#        commands:
+#          - checkout
+#          - nvm use
+#          - node --version
+#          - npm --version
+#      jobs:
+#        - name: npm install and cache
+#          commands:
+#            - cd frontend
+#            - cache restore node_modules
+#            - npm install
+#            # Persist downloaded packages for future jobs.
+#            - cache store node_modules node_modules
   - name: Install Backend Dependencies
     dependencies: []
     task:
@@ -36,38 +39,38 @@ blocks:
         commands:
           - checkout
       jobs:
-        - name: pip
-          commands:
-            # Restore dependencies from cache. This command will not fail in
-            # case of a cache miss. In case of a cache hit, pip can use it
-            # to speed up the installation.
-            # For more info on caching, see https://docs.semaphoreci.com/article/149-caching
-            - cache restore
-            # Install other python dependencies.
-            # If not found in the cache, pip will download them.
-            - sem-version python 3.9
-            - pip download --cache-dir .pip_cache -r requirements.txt
-            # Persist downloaded packages for future jobs.
-            - cache store
-        - name: private repositories
-          commands:
-            # Clone private repositories and cache them if not already cached
-            - . ./.semaphore/private_repos.sh
+#        - name: pip
+#          commands:
+#            # Restore dependencies from cache. This command will not fail in
+#            # case of a cache miss. In case of a cache hit, pip can use it
+#            # to speed up the installation.
+#            # For more info on caching, see https://docs.semaphoreci.com/article/149-caching
+#            - cache restore
+#            # Install other python dependencies.
+#            # If not found in the cache, pip will download them.
+#            - sem-version python 3.9
+#            - pip download --cache-dir .pip_cache -r requirements.txt
+#            # Persist downloaded packages for future jobs.
+#            - cache store
+#        - name: private repositories
+#          commands:
+#            # Clone private repositories and cache them if not already cached
+#            - . ./.semaphore/private_repos.sh
         - name: usr
           commands:
             # Install gdal and spatialite and cache whole /usr directory
             - . ./.semaphore/install_gdal_and_spatialite.sh
-  - name: Run Frontend Tests
-    dependencies:
-      - Install Frontend Dependencies
-    task:
-      prologue:
-        commands_file: frontend_prologue.sh
-      # This block executes code analysis with ESLint
-      jobs:
-        - name: ESLint
-          commands:
-            - npx eslint .
+#  - name: Run Frontend Tests
+#    dependencies:
+#      - Install Frontend Dependencies
+#    task:
+#      prologue:
+#        commands_file: frontend_prologue.sh
+#      # This block executes code analysis with ESLint
+#      jobs:
+#        - name: ESLint
+#          commands:
+#            - npx eslint .
   - name: Run Backend Tests
       # This block executes code analysis with pylint and backend integration
       # tests.
@@ -82,11 +85,11 @@ blocks:
         - name: Pylint
           commands:
             - pylint python_anywhere --load-plugins=pylint_django
-        - name: Integration tests
-          commands:
-            - python manage.py makemigrations
-            - python manage.py migrate
-            - python manage.py test
+#        - name: Integration tests
+#          commands:
+#            - python manage.py makemigrations
+#            - python manage.py migrate
+#            - python manage.py test
 promotions:
   - name: Deploy
     pipeline_file: deploy.yml
