@@ -1,10 +1,12 @@
 """Tests for bouldern app"""
+
 from django.test import TestCase
 from django.urls import reverse
+from faker import Faker
 
 from python_anywhere.bouldern.factories import ColorFactory, GymFactory
-from python_anywhere.bouldern.models import Gym, DifficultyLevel
-from python_anywhere.bouldern.views import AddGym
+from python_anywhere.bouldern.models import Gym, DifficultyLevel, Color
+from python_anywhere.bouldern.views import AddGym, AddColor
 from python_anywhere.registration.factories import UserFactory
 
 
@@ -15,7 +17,7 @@ class AddGymTest(TestCase):
         """Test that post method works correctly"""
         # Given
         # login
-        password = 'OAwIYQRCdiplaCIwEEcn'
+        password = Faker().password()
         user = UserFactory(password=password)
         self.client.login(username=user.email, password=password)
 
@@ -34,7 +36,7 @@ class AddGymTest(TestCase):
                         for key in ['map', 'name']})
 
         # When
-        self.client.post(reverse(AddGym.name), data=payload)
+        response = self.client.post(reverse(AddGym.name), data=payload)
 
         # Then
         gym = Gym.objects.first()
@@ -47,6 +49,7 @@ class AddGymTest(TestCase):
             self.assertIn(difficulty_level.color, colors)
             self.assertIn(difficulty_level.level - 1, difficulty_level_range)
             self.assertEqual(difficulty_level.created_by, user)
+        self.assertEqual(response.url, reverse('index'))
 
     def assert_correct_gym(self, gym, payload, user):
         """
