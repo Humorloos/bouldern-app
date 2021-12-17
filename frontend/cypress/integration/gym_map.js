@@ -1,6 +1,7 @@
 describe('The bouldern app', () => {
   it('lets users add new colors', () => {
     // add gym
+    cy.registerAndLogin();
     cy.visit(`${Cypress.env('host')}/bouldern/add-gym`);
     cy.contains('New Color').click();
     cy.get('div.jquery-modal #id_name').type(Cypress.env('colorName'));
@@ -26,7 +27,8 @@ describe('The bouldern app', () => {
     cy.get('#difficulty-level:nth-of-type(2)').click();
     cy.contains('Yellow').click();
     cy.contains('Submit').click();
-    cy.contains('You are not logged in');
+    cy.contains(`Hello, ${Cypress.env('username')}. ` +
+        `You're at the bouldern index.`);
   });
   it('can add boulders to gyms', () => {
     cy.visit(`${Cypress.env('host')}/bouldern/${Cypress.env('gymName')}/map`);
