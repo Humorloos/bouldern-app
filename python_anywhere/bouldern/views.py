@@ -1,4 +1,5 @@
 """Module containing the views of the bouldern app"""
+from django.core.handlers.wsgi import WSGIRequest
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
@@ -22,7 +23,7 @@ class AddColor(View):
         """
         form = self.form_class(request.POST)
         if form.is_valid():
-            form.save()
+            form.save_for_user(request.user)
         return HttpResponseRedirect(reverse(AddGym.name))
 
 
@@ -60,42 +61,42 @@ class AddGym(View):
             data=request.POST, instance=gym_form.instance)
         # check whether it's valid:
         if gym_form.is_valid() and difficulty_level_formset.is_valid():
-            gym_form.save()
+            gym_form.save_for_user(request.user)
             for difficulty_level_form in difficulty_level_formset:
-                difficulty_level_form.save()
+                difficulty_level_form.save_for_user(request.user)
             # redirect to a new URL: (in my case the same, but empty again)
             return HttpResponseRedirect(reverse('index'))
         return HttpResponseRedirect(reverse(self.name))
 
 
-def gym_map(request, gym: str):
+def gym_map(request: WSGIRequest, gym_name: str):
     """Gym map view"""
-    gym_object = Gym.objects.filter(name=gym).get()
+    gym = Gym.objects.filter(name=gym_name).get()
     # if this is a POST request we need to process the form data
     if request.method == 'POST':
         # create a form instance and populate it with data from the request:
         formset: GymMapFormSet = GymMapFormSet(
-            form_kwargs={'gym': gym_object},
+            form_kwargs={'gym': gym},
             data=request.POST)
         # check whether it's valid:
         if formset.is_valid():
             form: BoulderForm
             for form in formset.forms:
-                form.save()
+                form.save_for_user(request.user)
             # redirect to a new URL: (in my case the same, but empty again)
             return HttpResponseRedirect(
-                reverse(gym_map, kwargs={'gym': gym}))
+                reverse(gym_map, kwargs={'gym_name': gym_name}))
 
     # if a GET (or any other method) we'll create a blank form
     else:
-        formset = GymMapFormSet(form_kwargs={'gym': gym_object},
-                                queryset=Boulder.objects.filter(
-                                    gym__name__exact=gym))
+        formset = GymMapFormSet(
+            form_kwargs={'gym': gym},
+            queryset=Boulder.objects.filter(gym__name__exact=gym_name))
 
     context = {
         'formset': formset,
-        'gym': gym,
-        'module': f'geodjango_{gym}',
-        'gym_map': gym_object.map
+        'gym': gym_name,
+        'module': f'geodjango_{gym_name}',
+        'gym_map': gym.map
     }
     return render(request, 'bouldern/gym_map_form.html', context)

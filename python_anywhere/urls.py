@@ -15,14 +15,14 @@ Including another URLconf
 """
 import sys
 
-from django.conf.urls import url
 from django.conf.urls.static import static
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, re_path
 from django.views.generic import RedirectView
 
 from googleCalendarApp.constants import CALENDAR_URI
-from python_anywhere.settings import USER_HOME, DEBUG, MEDIA_URL, MEDIA_ROOT, BOULDERN_URL_SEGMENT
+from python_anywhere.settings import USER_HOME, DEBUG, MEDIA_URL, MEDIA_ROOT, \
+    BOULDERN_URL_SEGMENT
 
 sys.path = list({str(USER_HOME / project_name) for project_name in
                  ['googleCalendarApp', 'GoogleApiHelper'] + sys.path})
@@ -33,8 +33,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('registration/', include('python_anywhere.registration.urls')),
     path('registration/', include('django.contrib.auth.urls')),
-    url(r'^favicon\.ico$',
-        RedirectView.as_view(url='/static/vue/favicon.ico')),
+    re_path(r'^favicon\.ico$',
+            RedirectView.as_view(url='/static/vue/favicon.ico')),
 ]
 
 if DEBUG:

@@ -115,7 +115,7 @@ blocks:
           - value: 3
             when: "true"
           commands:
-            - python manage.py test
+            - pytest
   - name: Run E2E Tests
       # This block executes code analysis with pylint and backend integration
       # tests.
@@ -140,6 +140,9 @@ blocks:
             - npm run serve > ${VUE_LOGFILE} &
             - tail -f -n0 ${VUE_LOGFILE} | grep -qe "${SEARCH_PATTERN}"
             - npx cypress run
+      epilogue:
+        always:
+          commands:
             - artifact push job "$PROJECT_DIR"/django_server.log
             - artifact push job "$FRONTEND_DIR"/vue_server.log
             - artifact push job "$FRONTEND_DIR"/cypress/videos
