@@ -19,7 +19,7 @@ class UGCFactory(DjangoModelFactory):
         model = UGC
         abstract = True
 
-    created_by = User.objects.get(pk=1)
+    created_by = User.objects.first()
 
 
 class ColorFactory(UGCFactory):
