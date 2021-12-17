@@ -1,6 +1,9 @@
-"""This script contains factories for building model instances of the registration app"""
+"""
+This script contains factories for building model instances of the registration
+app
+"""
 
-from factory import PostGenerationMethodCall
+from factory import PostGenerationMethodCall, Faker
 from factory.django import DjangoModelFactory
 
 from python_anywhere.registration.models import User
@@ -12,8 +15,8 @@ class UserFactory(DjangoModelFactory):
     class Meta:
         model = User
 
-    email = 'testmail@mailprovider.com'
-    username = 'myUserName'
+    email = Faker('email')
+    username = Faker('user_name')
     password = PostGenerationMethodCall('set_password', 'password')
 
     is_superuser = False
