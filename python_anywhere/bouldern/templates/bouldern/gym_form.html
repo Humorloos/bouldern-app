@@ -9,6 +9,7 @@
                 {{ difficulty_level_formset.management_form|without_total_forms }}
             </template>
         </gym-form>
+{#      todo: I think this line is duplicate, check if I can remove it#}
         {{ difficulty_level_formset.management_form|without_total_forms }}
         <modal>{% include 'bouldern/color_form.html' with form=color_form %}</modal>
     </div>
