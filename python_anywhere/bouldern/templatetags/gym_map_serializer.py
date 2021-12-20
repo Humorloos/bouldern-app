@@ -17,7 +17,6 @@ def gym_map_data(gym_map: ImageFieldFile):
 
 @register.filter
 def boulder_coordinates(formset):
-    print('')
-    # todo: implement this
-    return json.dumps([])
+
+        return json.dumps([form.initial['coordinates'].geojson for form in formset])
 
