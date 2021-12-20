@@ -27,7 +27,7 @@ def test_gym_map(client):
 
     from python_anywhere.bouldern.factories import BoulderFactory
     boulders_payload = {f'{boulder_prefix}{i}-coordinates': BoulderFactory.stub(
-        gym=gym).coordinates for i in range(n_boulders)}
+        gym=gym).coordinates.geojson for i in range(n_boulders)}
     payload.update(boulders_payload)
 
     # When
