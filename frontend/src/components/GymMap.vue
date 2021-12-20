@@ -223,8 +223,6 @@ export default {
     closePopover() {
       this.featureCollection.remove(this.popover.feature);
       this.popover.setPosition(undefined);
-      // todo: figure out if this is necessary
-      // this.closer.blur();
       return false;
     },
   },
