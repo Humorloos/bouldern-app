@@ -159,28 +159,6 @@ export default {
       });
       return draw;
     },
-    map() {
-      // Initialize map
-      const map = new Map({
-        layers: [new Image({
-          source: new ImageStatic({
-            url: this.gymMapProperties.path,
-            projection: this.projection,
-            imageExtent: this.extent,
-          }),
-        })],
-        target: this.$refs['map-root'],
-        view: new View({
-          projection: this.projection,
-          center: getCenter(this.extent),
-          zoom: 1,
-          maxZoom: 8,
-        }),
-      });
-      map.addOverlay(this.popover);
-      map.addInteraction(this.drawInteraction);
-      return map;
-    },
     source() {
       const source = new VectorSource({
         features: this.featureCollection,
@@ -192,14 +170,36 @@ export default {
               this.jsonFormat.readFeature(coordinates)));
       return source;
     },
-    // This is where icons are drawn on
-    featureOverlay() {
-      return new VectorLayer({
-        map: this.map,
-        source: this.source,
-        updateWhileAnimating: true,
-        updateWhileInteracting: true,
+    map() {
+      // Initialize map
+      const map = new Map({
+        layers: [
+          // This layer contains the map image
+          new Image({
+            source: new ImageStatic({
+              url: this.gymMapProperties.path,
+              projection: this.projection,
+              imageExtent: this.extent,
+            }),
+          }),
+          // This layer is where icons are drawn on
+          new VectorLayer({
+            source: this.source,
+            updateWhileAnimating: true,
+            updateWhileInteracting: true,
+          }),
+        ],
+        target: this.$refs['map-root'],
+        view: new View({
+          projection: this.projection,
+          center: getCenter(this.extent),
+          zoom: 1,
+          maxZoom: 8,
+        }),
       });
+      map.addOverlay(this.popover);
+      map.addInteraction(this.drawInteraction);
+      return map;
     },
   },
   mounted() {
