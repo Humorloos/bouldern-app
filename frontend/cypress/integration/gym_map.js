@@ -32,12 +32,11 @@ describe('The bouldern app', () => {
   });
   it('can add boulders to gyms', () => {
     cy.visit(`${Cypress.env('host')}/bouldern/${Cypress.env('gymName')}/map`);
-    cy.get('#testGym_div_map').click(340, 150);
+    cy.get('#map-root').click(340, 150);
     cy.contains('You clicked here');
     cy.get('#popup-closer').click();
-    cy.get('#testGym_div_map').click(340, 210);
+    cy.get('#map-root').click(340, 210);
     cy.contains('Submit').click();
-    cy.debug();
     cy.get('#id_boulder-0-coordinates')
         .should('have.attr', 'value')
         .then(((value) => {
