@@ -44,11 +44,9 @@
       :name="boulderName(index)"
       :value="jsonFormat.writeGeometry(coordinates)"
       geom_type="POINT"
-      type="text"
+      type="hidden"
     >
   </form>
-
-  <span>this is the gym map for gym {{ gymName }}</span>
 </template>
 
 <script>
@@ -148,6 +146,17 @@ export default {
         extent: this.extent,
       });
     },
+    source() {
+      const source = new VectorSource({
+        features: this.featureCollection,
+        useSpatialIndex: false, // improves performance
+      });
+      // Populate with initial features
+      this.initialBoulderCoordinates.forEach(
+          (coordinates) => source.addFeature(
+              this.jsonFormat.readFeature(coordinates)));
+      return source;
+    },
     // Add icon drawing interaction
     drawInteraction() {
       const draw = new Draw({
@@ -162,17 +171,6 @@ export default {
         this.popover.setPosition(coordinate);
       });
       return draw;
-    },
-    source() {
-      const source = new VectorSource({
-        features: this.featureCollection,
-        useSpatialIndex: false, // improves performance
-      });
-      // Populate with initial features
-      this.initialBoulderCoordinates.forEach(
-          (coordinates) => source.addFeature(
-              this.jsonFormat.readFeature(coordinates)));
-      return source;
     },
     map() {
       // Initialize map
@@ -228,10 +226,9 @@ export default {
   },
 };
 </script>
-<!--todo: make sure features are kept and serialized properly-->
 <style scoped>
 #map-root {
   width: 100%;
-  height: 100%;
+  height: 99%;
 }
 </style>
