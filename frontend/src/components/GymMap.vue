@@ -42,7 +42,7 @@
       :id="boulderId(index)"
       :key="index"
       :name="boulderName(index)"
-      :value="coordinates"
+      :value="jsonFormat.writeGeometry(coordinates)"
       geom_type="POINT"
       type="text"
     >
@@ -97,7 +97,7 @@ export default {
     return {
       jsonFormat: new GeoJSON(),
       selectedCoordinate: 'none yet',
-      boulderCoordinates: this.initialBoulderCoordinates,
+      boulderCoordinates: [],
     };
   },
   computed: {
@@ -125,9 +125,13 @@ export default {
       const self = this;
       // Set handler for serializing newly added and modified features
       featureCollection.on('add', function(event) {
-        self.boulderCoordinates.push(
-            self.jsonFormat.writeGeometry(event.element.getGeometry()));
+        self.boulderCoordinates.push(event.element.getGeometry());
         self.popover['feature'] = event.element;
+      });
+      // Set handler for serializing newly added and modified features
+      featureCollection.on('remove', function(event) {
+        self.boulderCoordinates.splice(
+            self.boulderCoordinates.indexOf(event.element.getGeometry()), 1);
       });
       return featureCollection;
     },
@@ -165,7 +169,7 @@ export default {
         useSpatialIndex: false, // improves performance
       });
       // Populate with initial features
-      this.boulderCoordinates.forEach(
+      this.initialBoulderCoordinates.forEach(
           (coordinates) => source.addFeature(
               this.jsonFormat.readFeature(coordinates)));
       return source;
