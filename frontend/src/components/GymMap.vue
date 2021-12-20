@@ -42,7 +42,7 @@
       :id="boulderId(index)"
       :key="index"
       :name="boulderName(index)"
-      :value="jsonFormat.writeGeometry(coordinates)"
+      :value="coordinates"
       geom_type="POINT"
       type="text"
     >
@@ -125,6 +125,8 @@ export default {
       const self = this;
       // Set handler for serializing newly added and modified features
       featureCollection.on('add', function(event) {
+        self.boulderCoordinates.push(
+            self.jsonFormat.writeGeometry(event.element.getGeometry()));
         self.popover['feature'] = event.element;
       });
       return featureCollection;
