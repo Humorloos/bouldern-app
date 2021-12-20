@@ -2,18 +2,18 @@
 {% load render_bundle from webpack_loader %}
 {% load gym_form_serializers %}
 {% block content %}
-    <div id="app">
-        <gym-form :initial-difficulty-level-selects="{{ difficulty_level_formset|difficulty_level_select_data }}">
-            <template #gym-form>{% csrf_token %}{{ gym_form }}</template>
-            <template #difficulty-levels>
-                {{ difficulty_level_formset.management_form|without_total_forms }}
-            </template>
-        </gym-form>
-{#      todo: I think this line is duplicate, check if I can remove it#}
+  <div id="app">
+    <gym-form
+      :initial-difficulty-level-selects="{{ difficulty_level_formset|difficulty_level_select_data }}"
+    >
+      <template #gym-form>{% csrf_token %}{{ gym_form }}</template>
+      <template #difficulty-levels>
         {{ difficulty_level_formset.management_form|without_total_forms }}
-        <modal>{% include 'bouldern/color_form.html' with form=color_form %}</modal>
-    </div>
-    {{ difficulty_level_formset.0.media }}
-    {{ color_form.media }}
-    {% render_bundle 'gym_form' %}
+      </template>
+    </gym-form>
+    <modal>{% include 'bouldern/color_form.html' with form=color_form %}</modal>
+  </div>
+  {{ difficulty_level_formset.0.media }}
+  {{ color_form.media }}
+  {% render_bundle 'gym_form' %}
 {% endblock %}
