@@ -20,12 +20,9 @@
       <template #csrf>{% csrf_token %}</template>
       <template #management-form>
         {{ formset.management_form|without_total_forms }}
-{#      todo: move this to vue#}
-        <div id="boulder-forms">
-          {% for form in formset %}
-            {{ form.id }}
-          {% endfor %}
-        </div>
+        {% for form in formset %}
+          {{ form.id }}
+        {% endfor %}
       </template>
     </gym-map>
   </div>
