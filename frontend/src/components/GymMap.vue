@@ -39,9 +39,9 @@
 
     <input
       v-for="(coordinates, index) in boulderCoordinates"
-      :id="boulderId(index)"
+      :id="getBoulderId(index)"
       :key="index"
-      :name="boulderName(index)"
+      :name="getBoulderName(index)"
       :value="jsonFormat.writeGeometry(coordinates)"
       geom_type="POINT"
       type="hidden"
@@ -208,11 +208,11 @@ export default {
     this.map;
   },
   methods: {
-    boulderName(index) {
+    getBoulderName(index) {
       return `${this.prefix}-${index}-coordinates`;
     },
-    boulderId(index) {
-      return `id_${this.boulderName(index)}`;
+    getBoulderId(index) {
+      return `id_${this.getBoulderName(index)}`;
     },
     /**
      * Add a click handler to hide the popup.
