@@ -10,4 +10,4 @@ class GeoProvider(Provider):
         Provides a point in geojson format with random latitude and longitude
         :return: the point in geojson format
         """
-        return Point(self.latlng()).geojson
+        return Point(self.latlng())
