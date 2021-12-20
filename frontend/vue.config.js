@@ -6,6 +6,10 @@ const pages = {
     entry: './src/gym_form.js',
     chunks: ['chunk-vendors'],
   },
+  'gym_map': {
+    entry: './src/gym_map.js',
+    chunks: ['chunk-vendors'],
+  },
 };
 
 const path = require('path');
