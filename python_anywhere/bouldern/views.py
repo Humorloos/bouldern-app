@@ -72,6 +72,7 @@ class AddGym(View):
 
 
 class AddGymRest(ListCreateAPIView):
+    """Rest API for adding gyms"""
     name = 'add_gym_rest'
     queryset = Gym.objects.all()
     serializer_class = GymSerializer
