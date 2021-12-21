@@ -4,12 +4,12 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 from django.views import View
-from rest_framework.generics import ListCreateAPIView
+from rest_framework.generics import ListCreateAPIView, CreateAPIView
 
 from python_anywhere.bouldern.forms import GymMapFormSet, BoulderForm, \
     ColorForm, GymForm, DifficultyLevelFormset
-from python_anywhere.bouldern.models import Boulder, Gym
-from python_anywhere.bouldern.serializers import GymSerializer
+from python_anywhere.bouldern.models import Boulder, Gym, Color
+from python_anywhere.bouldern.serializers import GymSerializer, ColorSerializer
 
 
 class AddColor(View):
@@ -27,6 +27,16 @@ class AddColor(View):
         if form.is_valid():
             form.save_for_user(request.user)
         return HttpResponseRedirect(reverse(AddGym.name))
+
+
+class AddColorRest(CreateAPIView):
+    """REST API for adding colors"""
+    name = 'add_color_rest'
+    queryset = Color.objects.all()
+    serializer_class = ColorSerializer
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
 
 
 class AddGym(View):

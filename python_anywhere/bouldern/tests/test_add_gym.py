@@ -1,7 +1,5 @@
-import pytest
 from django.urls import reverse
 from faker import Faker
-from rest_framework.test import APIClient
 
 from python_anywhere.bouldern.models import Gym, DifficultyLevel
 from python_anywhere.bouldern.views import AddGym, AddGymRest
@@ -61,16 +59,6 @@ def test_add_gym(client, db):
         assert difficulty_level.level - 1 in difficulty_level_range
         assert difficulty_level.created_by == user
     assert response.url == reverse('index')
-
-
-@pytest.fixture()
-def logged_in_client(db):
-    # login
-    password = Faker().password()
-    user = UserFactory(password=password)
-    client = APIClient()
-    client.login(username=user.email, password=password)
-    yield client, user
 
 
 def test_add_gym_rest(logged_in_client):
