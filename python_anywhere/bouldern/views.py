@@ -4,10 +4,12 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 from django.views import View
+from rest_framework.generics import ListCreateAPIView
 
 from python_anywhere.bouldern.forms import GymMapFormSet, BoulderForm, \
     ColorForm, GymForm, DifficultyLevelFormset
 from python_anywhere.bouldern.models import Boulder, Gym
+from python_anywhere.bouldern.serializers import GymSerializer
 
 
 class AddColor(View):
@@ -67,6 +69,16 @@ class AddGym(View):
             # redirect to a new URL: (in my case the same, but empty again)
             return HttpResponseRedirect(reverse('index'))
         return HttpResponseRedirect(reverse(self.name))
+
+
+class AddGymRest(ListCreateAPIView):
+    """Rest API for adding gyms"""
+    name = 'add_gym_rest'
+    queryset = Gym.objects.all()
+    serializer_class = GymSerializer
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
 
 
 def gym_map(request: WSGIRequest, gym_name: str):
