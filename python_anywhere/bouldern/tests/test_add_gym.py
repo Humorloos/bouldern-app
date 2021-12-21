@@ -1,8 +1,10 @@
+import pytest
 from django.urls import reverse
 from faker import Faker
+from rest_framework.test import APIClient
 
 from python_anywhere.bouldern.models import Gym, DifficultyLevel
-from python_anywhere.bouldern.views import AddGym
+from python_anywhere.bouldern.views import AddGym, AddGymRest
 from python_anywhere.registration.factories import UserFactory
 
 
@@ -59,3 +61,29 @@ def test_add_gym(client, db):
         assert difficulty_level.level - 1 in difficulty_level_range
         assert difficulty_level.created_by == user
     assert response.url == reverse('index')
+
+
+@pytest.fixture()
+def logged_in_client(db):
+    # login
+    password = Faker().password()
+    user = UserFactory(password=password)
+    client = APIClient()
+    client.login(username=user.email, password=password)
+    yield client, user
+
+
+def test_add_gym_rest(logged_in_client):
+    """Test that post method works correctly"""
+    # Given
+    from python_anywhere.bouldern.factories import GymFactory
+    payload = {key: GymFactory.stub().__dict__[key]
+               for key in ['map', 'name']}
+    client, user = logged_in_client
+
+    # When
+    client.post(reverse(AddGymRest.name), data=payload, format='multipart')
+
+    # Then
+    gym = Gym.objects.first()
+    assert_correct_gym(gym, payload, user)
