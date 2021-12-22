@@ -85,6 +85,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'python_anywhere.middleware.MoveJWTRefreshCookieIntoTheBody'
 ]
 
 ROOT_URLCONF = 'python_anywhere.urls'
