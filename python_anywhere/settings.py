@@ -39,8 +39,13 @@ DOMAIN_NAME = 'humorloos.pythonanywhere.com'
 
 ALLOWED_HOSTS = [
     DOMAIN_NAME,
-    '127.0.0.1',
 ]
+
+# in debug, add django and vue dev server to allowed hosts
+if DEBUG:
+    ALLOWED_HOSTS += [
+        '127.0.0.1',
+    ]
 
 CSRF_COOKIE_SECURE = True
 
