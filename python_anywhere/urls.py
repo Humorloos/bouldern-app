@@ -28,13 +28,14 @@ sys.path = list({str(USER_HOME / project_name) for project_name in
                  ['googleCalendarApp', 'GoogleApiHelper'] + sys.path})
 
 urlpatterns = [
+    path('admin/', admin.site.urls),
     path(f'{BOULDERN_URL_SEGMENT}/', include('python_anywhere.bouldern.urls')),
     path(f'{CALENDAR_URI}/', include('python_anywhere.calendar_app.urls')),
-    path('admin/', admin.site.urls),
-    path('registration/', include('python_anywhere.registration.urls')),
-    path('registration/', include('django.contrib.auth.urls')),
     re_path(r'^favicon\.ico$',
             RedirectView.as_view(url='/static/vue/favicon.ico')),
+    path('registration/', include('python_anywhere.registration.urls')),
+    path('registration/', include('django.contrib.auth.urls')),
+    path('registration/rest/', include('dj_rest_auth.urls')),
 ]
 
 if DEBUG:

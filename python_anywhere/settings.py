@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     'python_anywhere.registration',
     'colorfield',
     'webpack_loader',
+    'dj_rest_auth',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -65,6 +66,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'python_anywhere.bouldern',
+    'python_anywhere.registration',
+    'rest_framework',
+    'rest_framework.authtoken',
+    'webpack_loader',
 ]
 
 MIDDLEWARE = [
@@ -208,3 +214,14 @@ LOGGING = {
         },
     },
 }
+
+# Rest
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'dj_rest_auth.jwt_auth.JWTCookieAuthentication',
+    )
+}
+REST_USE_JWT = True
+JWT_AUTH_COOKIE = 'auth-token'
+# todo: check if we really need this
+JWT_AUTH_REFRESH_COOKIE = 'refresh-token'
