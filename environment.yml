@@ -162,4 +162,6 @@ dependencies:
   - yarl=1.7.2=py39hb82d6ee_1
   - zlib=1.2.11=h8ffe710_1013
   - zstd=1.5.0=h6255e5f_0
+  - pip:
+    - django-sslserver==0.22
 prefix: C:\Users\Lukas\miniconda3\envs\pythonAnywhere
