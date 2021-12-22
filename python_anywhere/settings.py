@@ -35,7 +35,7 @@ SECRET_KEY = env('SECRET_KEY')
 
 DEBUG = env('DEBUG')
 
-DOMAIN_NAME = 'humorloos.pythonanywhere.com'
+DOMAIN_NAME = 'api.humorloos.pythonanywhere.com'
 
 ALLOWED_HOSTS = [
     DOMAIN_NAME,
@@ -50,6 +50,9 @@ if DEBUG:
 CSRF_COOKIE_SECURE = True
 
 SESSION_COOKIE_SECURE = True
+
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOWED_ORIGINS = [f'https://{DOMAIN_NAME}']
 
 # Application definition
 
@@ -70,6 +73,7 @@ INSTALLED_APPS = [
     'python_anywhere.registration',
     'rest_framework',
     'rest_framework.authtoken',
+    'sslserver',
     'webpack_loader',
 ]
 
@@ -218,10 +222,16 @@ LOGGING = {
 # Rest
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'dj_rest_auth.jwt_auth.JWTCookieAuthentication',
-    )
+        'rest_framework.authentication.TokenAuthentication',
+        'dj_rest_auth.jwt_auth.JWTCookieAuthentication'
+    ),
+    'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated'
+    ]
 }
 REST_USE_JWT = True
 JWT_AUTH_COOKIE = 'auth-token'
-# todo: check if we really need this
 JWT_AUTH_REFRESH_COOKIE = 'refresh-token'
+REST_SESSION_LOGIN = False
+JWT_AUTH_SECURE = True
