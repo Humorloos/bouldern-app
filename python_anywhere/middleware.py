@@ -1,3 +1,6 @@
+"""
+source: https://github.com/iMerica/dj-rest-auth/issues/97#issuecomment-739942573
+"""
 import json
 import logging
 
