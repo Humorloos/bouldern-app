@@ -22,7 +22,7 @@ module.exports = {
       // signals to django-webpack-loader to fall back to Django's standard
       // static finder behavior
       '' :
-      'http://localhost:8080/', // in development, use own webpack development server
+      'https://localhost:8080/', // in development, use own webpack development server
   outputDir: path.resolve(__dirname, '../python_anywhere/static/vue/'),
   chainWebpack: (config) => {
     // extract vendor javascripts into single shared bundle to allow browsers to
@@ -58,12 +58,12 @@ module.exports = {
         .set('__STATIC__', 'static');
 
     config.devServer
-        .public('http://localhost:8080')
+        .public('https://localhost:8080')
         .host('localhost')
         .port(8080)
         .hotOnly(true)
         .watchOptions({poll: 1000})
-        .https(false)
+        .https(true) // https is needed for dj-rest-auth
         .headers({'Access-Control-Allow-Origin': ['*']});
   },
 };
