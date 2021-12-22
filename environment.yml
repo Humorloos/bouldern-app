@@ -24,6 +24,7 @@ dependencies:
   - colorama=0.4.4=pyh9f0ad1d_0
   - cryptography=35.0.0=py39h7bc7c5c_2
   - curl=7.80.0=h789b8ee_0
+  - dj-rest-auth=2.2.1=pyhd8ed1ab_0
   - django=3.2.9=pyhd8ed1ab_0
   - django-colorfield=0.4.5=pyhd8ed1ab_0
   - django-environ=0.4.5=py_1
