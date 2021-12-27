@@ -51,16 +51,14 @@ CSRF_COOKIE_SECURE = True
 
 SESSION_COOKIE_SECURE = True
 
-CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOWED_ORIGINS = [f'https://{DOMAIN_NAME}']
+CORS_ORIGIN_ALLOW_ALL = False
+if DEBUG:
+    CORS_ORIGIN_WHITELIST = (f'https://{VUE_DEV_SERVER_DOMAIN_NAME}',)
 
 # Application definition
 
 INSTALLED_APPS = [
-    'python_anywhere.bouldern',
-    'python_anywhere.registration',
     'colorfield',
-    'webpack_loader',
     'dj_rest_auth',
     'django.contrib.admin',
     'django.contrib.auth',
