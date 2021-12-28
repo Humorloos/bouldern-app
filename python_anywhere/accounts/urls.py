@@ -1,9 +1,9 @@
-"""URL mappings for registration app"""
+"""URL mappings for accounts app"""
 
-# registration/urls.py
+# accounts/urls.py
 from django.urls import path
 
-from python_anywhere.registration.views import SignUpView, UserDeleteView
+from python_anywhere.accounts.views import SignUpView, UserDeleteView
 
 urlpatterns = [
     path('signup/', SignUpView.as_view(), name='signup'),

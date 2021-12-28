@@ -3,9 +3,9 @@ import pytest
 from django.urls import reverse
 from faker import Faker
 
-from python_anywhere.registration.factories import UserFactory
-from python_anywhere.registration.models import User
-from python_anywhere.registration.views import UserDeleteView
+from python_anywhere.accounts.factories import UserFactory
+from python_anywhere.accounts.models import User
+from python_anywhere.accounts.views import UserDeleteView
 
 
 def test_delete(client, db):
