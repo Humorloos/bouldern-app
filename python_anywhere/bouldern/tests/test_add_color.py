@@ -3,7 +3,7 @@ from faker import Faker
 
 from python_anywhere.bouldern.models import Color
 from python_anywhere.bouldern.views import AddGym, AddColor, AddColorRest
-from python_anywhere.registration.factories import UserFactory
+from python_anywhere.accounts.factories import UserFactory
 
 
 def test_add_color(client, db):

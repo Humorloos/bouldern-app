@@ -4,7 +4,7 @@ from django.contrib.gis.db.models import PointField
 from django.db.models import Model, CharField, ImageField, ForeignKey, \
     SET_NULL, PositiveSmallIntegerField, DateTimeField
 
-from python_anywhere.registration.models import User
+from python_anywhere.accounts.models import User
 
 
 class UGC(Model):
