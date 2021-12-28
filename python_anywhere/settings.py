@@ -61,6 +61,7 @@ if DEBUG:
 INSTALLED_APPS = [
     'allauth',
     'allauth.account',
+    'allauth.socialaccount',
     'colorfield',
     'dj_rest_auth',
     'dj_rest_auth.registration',
