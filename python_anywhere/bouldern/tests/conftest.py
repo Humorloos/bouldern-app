@@ -2,7 +2,7 @@ import pytest
 from faker import Faker
 from rest_framework.test import APIClient
 
-from python_anywhere.registration.factories import UserFactory
+from python_anywhere.accounts.factories import UserFactory
 
 
 @pytest.fixture()

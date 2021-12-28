@@ -5,6 +5,7 @@
     "password": "testPassword",
     "colorName": "TestColor",
     "gymName": "testGym",
-    "host": "http://127.0.0.1:8000"
+    "host": "https://127.0.0.1:8000",
+    "hostVue": "https://127.0.0.1:8080"
   }
 }

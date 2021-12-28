@@ -34,35 +34,55 @@ Env.read_env(str(USER_HOME / ".env"))
 SECRET_KEY = env('SECRET_KEY')
 
 DEBUG = env('DEBUG')
-
-DOMAIN_NAME = 'humorloos.pythonanywhere.com'
+HOST_NAME = '127.0.0.1'
+DOMAIN_NAME = 'api.humorloos.pythonanywhere.com'
+VUE_DEV_SERVER_DOMAIN_NAME = f'{HOST_NAME}:8080'
 
 ALLOWED_HOSTS = [
     DOMAIN_NAME,
-    '127.0.0.1',
 ]
+
+# in debug, add django and vue dev server to allowed hosts
+if DEBUG:
+    ALLOWED_HOSTS += [
+        '127.0.0.1',
+    ]
 
 CSRF_COOKIE_SECURE = True
 
 SESSION_COOKIE_SECURE = True
 
+CORS_ORIGIN_ALLOW_ALL = False
+if DEBUG:
+    CORS_ORIGIN_WHITELIST = (f'https://{VUE_DEV_SERVER_DOMAIN_NAME}',)
+
 # Application definition
 
 INSTALLED_APPS = [
-    'python_anywhere.bouldern',
-    'python_anywhere.registration',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
     'colorfield',
-    'webpack_loader',
+    'dj_rest_auth',
+    'dj_rest_auth.registration',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.gis',
-    'django.contrib.sessions',
     'django.contrib.messages',
+    'django.contrib.sessions',
+    'django.contrib.sites',
     'django.contrib.staticfiles',
+    'python_anywhere.bouldern',
+    'python_anywhere.accounts',
+    'rest_framework',
+    'rest_framework.authtoken',
+    'sslserver',
+    'webpack_loader',
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -70,6 +90,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'python_anywhere.middleware.MoveJWTRefreshCookieIntoTheBody'
 ]
 
 ROOT_URLCONF = 'python_anywhere.urls'
@@ -182,24 +203,33 @@ LOGIN_REDIRECT_URL = '/' + BOULDERN_URL_SEGMENT
 
 LOGOUT_REDIRECT_URL = '/' + BOULDERN_URL_SEGMENT
 
-AUTH_USER_MODEL = 'registration.User'
+AUTH_USER_MODEL = 'accounts.User'
+
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_EMAIL_VERIFICATION = 'none'
+
+JWT_AUTH_REFRESH_COOKIE = 'refresh-token'
 
 # Logging
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'handlers': {
-        'file': {
-            'level': 'DEBUG',
-            'class': 'logging.FileHandler',
-            'filename': BASE_DIR / 'django_server.log',
+if not DEBUG:
+    LOGGING = {
+        'version': 1,
+        'disable_existing_loggers': False,
+        'handlers': {
+            'file': {
+                'level': 'DEBUG',
+                'class': 'logging.FileHandler',
+                'filename': BASE_DIR / 'django_server.log',
+            },
         },
-    },
-    'loggers': {
-        'django': {
-            'handlers': ['file'],
-            'level': 'DEBUG',
-            'propagate': True,
+        'loggers': {
+            'django': {
+                'handlers': ['file'],
+                'level': 'DEBUG',
+                'propagate': True,
+            },
         },
-    },
-}
+    }
+
+# Site settings
+SITE_ID = 1

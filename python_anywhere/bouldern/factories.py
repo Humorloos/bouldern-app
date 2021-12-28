@@ -7,7 +7,7 @@ from factory.django import DjangoModelFactory, ImageField
 from python_anywhere.bouldern.models import Color, Gym, DifficultyLevel, UGC, \
     Boulder
 from python_anywhere.bouldern.providers import GeoProvider
-from python_anywhere.registration.models import User
+from python_anywhere.accounts.models import User
 from python_anywhere.settings import RESOURCES_DIR
 
 Faker.add_provider(GeoProvider)
