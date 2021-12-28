@@ -5,8 +5,8 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse_lazy, reverse
 from django.views.generic import CreateView, DeleteView
 
-from python_anywhere.registration.forms import EmailUserCreationForm
-from python_anywhere.registration.models import User
+from python_anywhere.accounts.forms import EmailUserCreationForm
+from python_anywhere.accounts.models import User
 
 
 class SignUpView(CreateView):

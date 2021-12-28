@@ -34,8 +34,9 @@ Env.read_env(str(USER_HOME / ".env"))
 SECRET_KEY = env('SECRET_KEY')
 
 DEBUG = env('DEBUG')
-
+HOST_NAME = 'humorloos.pythonanywhere.com'
 DOMAIN_NAME = 'api.humorloos.pythonanywhere.com'
+VUE_DEV_SERVER_DOMAIN_NAME = f'{HOST_NAME}:8080'
 
 ALLOWED_HOSTS = [
     DOMAIN_NAME,
@@ -58,17 +59,21 @@ if DEBUG:
 # Application definition
 
 INSTALLED_APPS = [
+    'allauth',
+    'allauth.account',
     'colorfield',
     'dj_rest_auth',
+    'dj_rest_auth.registration',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.gis',
-    'django.contrib.sessions',
     'django.contrib.messages',
+    'django.contrib.sessions',
+    'django.contrib.sites',
     'django.contrib.staticfiles',
     'python_anywhere.bouldern',
-    'python_anywhere.registration',
+    'python_anywhere.accounts',
     'rest_framework',
     'rest_framework.authtoken',
     'sslserver',
@@ -76,6 +81,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -196,7 +202,7 @@ LOGIN_REDIRECT_URL = '/' + BOULDERN_URL_SEGMENT
 
 LOGOUT_REDIRECT_URL = '/' + BOULDERN_URL_SEGMENT
 
-AUTH_USER_MODEL = 'registration.User'
+AUTH_USER_MODEL = 'accounts.User'
 
 # Logging
 if not DEBUG:
@@ -235,3 +241,4 @@ JWT_AUTH_COOKIE = 'auth-token'
 JWT_AUTH_REFRESH_COOKIE = 'refresh-token'
 REST_SESSION_LOGIN = False
 JWT_AUTH_SECURE = True
+JWT_AUTH_RETURN_EXPIRATION = True

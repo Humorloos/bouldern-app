@@ -6,7 +6,7 @@ app
 from factory import PostGenerationMethodCall, Faker
 from factory.django import DjangoModelFactory
 
-from python_anywhere.registration.models import User
+from python_anywhere.accounts.models import User
 
 
 class UserFactory(DjangoModelFactory):

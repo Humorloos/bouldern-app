@@ -8,4 +8,4 @@ class AccountsConfig(AppConfig):
     Configuration for registration app
     """
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'python_anywhere.registration'
+    name = 'python_anywhere.accounts'
