@@ -205,6 +205,11 @@ LOGOUT_REDIRECT_URL = '/' + BOULDERN_URL_SEGMENT
 
 AUTH_USER_MODEL = 'accounts.User'
 
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_EMAIL_VERIFICATION = 'none'
+
+JWT_AUTH_REFRESH_COOKIE = 'refresh-token'
+
 # Logging
 if not DEBUG:
     LOGGING = {
@@ -226,25 +231,6 @@ if not DEBUG:
         },
     }
 
-# Rest
-REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework.authentication.TokenAuthentication',
-        'dj_rest_auth.jwt_auth.JWTCookieAuthentication'
-    ),
-    'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated'
-    ]
-}
-REST_USE_JWT = True
-JWT_AUTH_COOKIE = 'auth-token'
-JWT_AUTH_REFRESH_COOKIE = 'refresh-token'
-REST_SESSION_LOGIN = False
-JWT_AUTH_SECURE = True
-JWT_AUTH_RETURN_EXPIRATION = True
-
+# Site settings
 SITE_ID = 1
 
-ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_EMAIL_VERIFICATION = 'none'
