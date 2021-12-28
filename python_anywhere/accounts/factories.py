@@ -1,12 +1,12 @@
 """
-This script contains factories for building model instances of the registration
+This script contains factories for building model instances of the accounts
 app
 """
 
 from factory import PostGenerationMethodCall, Faker
 from factory.django import DjangoModelFactory
 
-from python_anywhere.registration.models import User
+from python_anywhere.accounts.models import User
 
 
 class UserFactory(DjangoModelFactory):
