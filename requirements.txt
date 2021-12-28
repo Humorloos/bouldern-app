@@ -1,8 +1,13 @@
+dj-rest-auth~=2.2.1
 Django~=3.2.9
+django-allauth~=0.41.0
 django-colorfield~=0.4.5
+django-cors-headers~=3.10.1
 django-environ~=0.4.5
+django-sslserver~=0.22
 django-webpack-loader~=1.4.1
 djangorestframework~=3.13.1
+djangorestframework-simplejwt~=4.5.0
 factory-boy~=3.2.1
 google-api-python-client~=2.30.0
 google-auth-oauthlib~=0.4.6
@@ -10,5 +15,8 @@ pandas~=1.3.4
 Pillow~=8.4.0
 pylint-django~=2.4.4
 pytest-django~=4.5.2
+# pyjwt==1.7.1 because older versions cause error described here:
+# https://stackoverflow.com/questions/67089855/str-object-has-no-attribute-decode-on-djangorestframework-simplejwt
+pyjwt==1.7.1
 # setuptools >= 58.0.0 currently (2021-11-14) don't work with gdal, so we need 57.5.0
 setuptools==57.5.0

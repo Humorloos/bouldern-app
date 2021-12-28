@@ -1,5 +1,6 @@
 name: pythonAnywhere
 channels:
+  - bioconda
   - conda-forge
   - defaults
 dependencies:
@@ -7,16 +8,16 @@ dependencies:
   - asgiref=3.4.1=pyhd8ed1ab_0
   - astroid=2.8.5=py39hcbf5309_0
   - async-timeout=3.0.1=py_1000
-  - atomicwrites=1.4.0=py_0
+  - atomicwrites=1.4.0=pyh9f0ad1d_0
   - attrs=21.2.0=pyhd8ed1ab_0
   - blinker=1.4=py_1
   - boost-cpp=1.74.0=h5b4e17d_5
   - brotlipy=0.7.0=py39hb82d6ee_1003
   - bzip2=1.0.8=h8ffe710_4
-  - ca-certificates=2021.10.26=haa95532_2
+  - ca-certificates=2021.10.8=h5b45459_0
   - cachetools=4.2.4=pyhd8ed1ab_0
   - cairo=1.16.0=hb19e0ff_1008
-  - certifi=2021.10.8=py39haa95532_0
+  - certifi=2021.10.8=py39hcbf5309_1
   - cffi=1.15.0=py39h0878f49_0
   - cfitsio=3.470=h0af3d06_7
   - chardet=4.0.0=py39hcbf5309_2
@@ -24,11 +25,16 @@ dependencies:
   - colorama=0.4.4=pyh9f0ad1d_0
   - cryptography=35.0.0=py39h7bc7c5c_2
   - curl=7.80.0=h789b8ee_0
+  - defusedxml=0.7.1=pyhd8ed1ab_0
+  - dj-rest-auth=2.2.1=pyhd8ed1ab_0
   - django=3.2.9=pyhd8ed1ab_0
+  - django-allauth=0.41.0=py_0
   - django-colorfield=0.4.5=pyhd8ed1ab_0
+  - django-cors-headers=3.10.1=pyhd8ed1ab_0
   - django-environ=0.4.5=py_1
   - django-webpack-loader=1.4.1=pyhd8ed1ab_0
   - djangorestframework=3.13.1=pyhd8ed1ab_0
+  - djangorestframework_simplejwt=4.4.0=py_0
   - expat=2.4.1=h39d44d4_0
   - factory_boy=3.2.1=pyhd8ed1ab_0
   - faker=9.8.2=pyhd8ed1ab_0
@@ -56,7 +62,7 @@ dependencies:
   - httplib2=0.20.2=pyhd8ed1ab_1
   - icu=68.2=h0e60522_0
   - idna=2.10=pyh9f0ad1d_0
-  - iniconfig=1.1.1=pyhd3eb1b0_0
+  - iniconfig=1.1.1=pyh9f0ad1d_0
   - intel-openmp=2021.4.0=h57928b3_3556
   - isort=5.10.1=pyhd8ed1ab_0
   - jbig=2.1=h8d14728_2003
@@ -91,41 +97,41 @@ dependencies:
   - lz4-c=1.9.3=h8ffe710_1
   - mccabe=0.6.1=py_1
   - mkl=2021.4.0=h0e2418a_729
-  - more-itertools=8.12.0=pyhd3eb1b0_0
+  - more-itertools=8.12.0=pyhd8ed1ab_0
   - multidict=5.2.0=py39hb82d6ee_1
   - numpy=1.21.4=py39h6635163_0
   - oauthlib=3.1.1=pyhd8ed1ab_0
   - olefile=0.46=pyh9f0ad1d_1
   - openjpeg=2.4.0=hb211442_1
-  - openssl=1.1.1l=h2bbff1b_0
-  - packaging=21.3=pyhd3eb1b0_0
+  - openssl=1.1.1l=h8ffe710_0
+  - packaging=21.3=pyhd8ed1ab_0
   - pandas=1.3.4=py39h2e25243_1
   - pcre=8.45=h0e60522_0
   - pillow=8.4.0=py39h916092e_0
   - pip=21.3.1=pyhd8ed1ab_0
   - pixman=0.40.0=h8ffe710_0
   - platformdirs=2.3.0=pyhd8ed1ab_0
-  - pluggy=0.13.1=py39haa95532_0
+  - pluggy=1.0.0=py39hcbf5309_2
   - poppler=21.09.0=h24fffdf_3
   - poppler-data=0.4.11=hd8ed1ab_0
   - postgresql=13.3=h1c22c4f_3
   - proj=8.1.0=h1cfcee9_1
   - protobuf=3.19.1=py39h415ef7b_1
-  - py=1.10.0=pyhd3eb1b0_0
+  - py=1.11.0=pyh6c4a22f_0
   - pyasn1=0.4.8=py_0
   - pyasn1-modules=0.2.7=py_0
   - pycparser=2.21=pyhd8ed1ab_0
-  - pyjwt=2.3.0=pyhd8ed1ab_0
   - pylint=2.11.1=pyhd8ed1ab_0
   - pylint-django=2.4.4=pyhd8ed1ab_0
   - pylint-plugin-utils=0.6=pyhd8ed1ab_0
   - pyopenssl=21.0.0=pyhd8ed1ab_0
   - pyparsing=3.0.6=pyhd8ed1ab_0
   - pysocks=1.7.1=py39hcbf5309_4
-  - pytest=6.2.4=py39haa95532_2
+  - pytest=6.2.5=py39hcbf5309_1
   - pytest-django=4.5.2=pyhd8ed1ab_0
   - python=3.9.7=h7840368_3_cpython
   - python-dateutil=2.8.2=pyhd8ed1ab_0
+  - python3-openid=3.2.0=pyhd8ed1ab_0
   - python_abi=3.9=2_cp39
   - pytz=2021.3=pyhd8ed1ab_0
   - pyu2f=0.1.5=pyhd8ed1ab_0
@@ -160,4 +166,7 @@ dependencies:
   - yarl=1.7.2=py39hb82d6ee_1
   - zlib=1.2.11=h8ffe710_1013
   - zstd=1.5.0=h6255e5f_0
-prefix: C:\Users\Lukas\miniconda3\envs\pythonAnywhere
+  - pip:
+    - django-sslserver==0.22
+    - pyjwt==1.7.1
+prefix: C:\Users\lloos\anaconda3\envs\pythonAnywhere

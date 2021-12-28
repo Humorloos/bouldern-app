@@ -15,3 +15,12 @@
 - gdal does not work with setuptools>=58.0.0, so we need to downgrade it `pip install setuptools==57.5.0`
 - install gdal from local sources
 `pip install --global-option=build_ext --global-option="-I /usr/include/gdal" GDAL==$(gdal-config --version)`
+
+### setting up local django backend (on Windows)
+- Add following 2 lines to "C:\Windows\System32\drivers\etc\hosts":
+  ```
+    127.0.0.1     api.humorloos.pythonanywhere.com
+    127.0.0.1     humorloos.pythonanywhere.com
+  ```
+- run `runsslserver`
+- now django backend can be accessed at https://api.humorloos.pythonanywhere.com:8000
