@@ -53,9 +53,7 @@ Cypress.Commands.add('verifyLogInWithInvalidUser', () => {
   cy.contains('Please enter a correct email and password.');
 });
 
-Cypress.Commands.add('registerAndLogin', () => {
-  cy.visit(`${Cypress.env('host')}/registration/signup`);
-
+Cypress.Commands.add('register', () => {
   cy.get('#id_username')
       .type(Cypress.env('username'))
       .should('have.value', Cypress.env('username'));
@@ -65,6 +63,12 @@ Cypress.Commands.add('registerAndLogin', () => {
   cy.get('#id_password1').type(Cypress.env('password'));
   cy.get('#id_password2').type(Cypress.env('password'));
   cy.get('#submit_button').contains('Sign Up').click();
+});
+
+Cypress.Commands.add('registerAndLogin', () => {
+  cy.visit(`${Cypress.env('host')}/registration/signup`);
+
+  cy.register();
 
   cy.enterCredentialsAndLogin();
 });

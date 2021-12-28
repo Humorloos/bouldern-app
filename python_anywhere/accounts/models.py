@@ -1,4 +1,4 @@
-"""This file contains models for the registration app"""
+"""This file contains models for the accounts app"""
 from django.contrib.auth.models import AbstractUser
 from django.db.models import EmailField, CharField
 
