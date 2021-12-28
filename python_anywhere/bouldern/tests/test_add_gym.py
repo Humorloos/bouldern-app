@@ -1,9 +1,9 @@
 from django.urls import reverse
 from faker import Faker
 
-from python_anywhere.bouldern.models import Gym, DifficultyLevel
-from python_anywhere.bouldern.views import AddGym, AddGymRest
 from python_anywhere.accounts.factories import UserFactory
+from python_anywhere.bouldern.models import Gym, DifficultyLevel
+from python_anywhere.bouldern.views import AddGym
 
 
 def assert_correct_gym(gym, payload, user):
