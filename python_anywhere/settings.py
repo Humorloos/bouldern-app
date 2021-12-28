@@ -233,4 +233,3 @@ if not DEBUG:
 
 # Site settings
 SITE_ID = 1
-
