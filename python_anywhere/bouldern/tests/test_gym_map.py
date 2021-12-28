@@ -5,7 +5,7 @@ from faker import Faker
 
 from python_anywhere.bouldern.models import Boulder
 from python_anywhere.bouldern.views import gym_map
-from python_anywhere.registration.factories import UserFactory
+from python_anywhere.accounts.factories import UserFactory
 
 
 @pytest.mark.django_db
