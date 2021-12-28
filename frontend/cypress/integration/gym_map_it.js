@@ -1,6 +1,7 @@
 describe('The bouldern app', () => {
   it('lets users add new colors', () => {
     // add gym
+    // todo: run npx browserslist@latest --update-db
     cy.registerAndLogin();
     cy.visit(`${Cypress.env('host')}/bouldern/add-gym`);
     cy.contains('New Color').click();
