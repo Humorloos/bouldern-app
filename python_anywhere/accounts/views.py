@@ -1,6 +1,6 @@
-"""This file contains views for the registration app"""
+"""This file contains views for the accounts app"""
 
-# registration/views.py
+# accounts/views.py
 from django.http import HttpResponseRedirect
 from django.urls import reverse_lazy, reverse
 from django.views.generic import CreateView, DeleteView

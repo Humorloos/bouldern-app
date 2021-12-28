@@ -1,5 +1,5 @@
 """
-This script contains factories for building model instances of the registration
+This script contains factories for building model instances of the accounts
 app
 """
 
