@@ -3,7 +3,7 @@ from faker import Faker
 
 from python_anywhere.accounts.factories import UserFactory
 from python_anywhere.bouldern.models import Gym, DifficultyLevel
-from python_anywhere.bouldern.views import AddGym
+from python_anywhere.bouldern.views import AddGym, AddGymRest
 
 
 def assert_correct_gym(gym, payload, user):
@@ -70,23 +70,7 @@ def test_add_gym_rest(logged_in_client):
     client, user = logged_in_client
 
     # When
-    client.post(reverse(AddGymRest.name), data=payload, format='multipart')
-
-    # Then
-    gym = Gym.objects.first()
-    assert_correct_gym(gym, payload, user)
-
-
-def test_add_gym_rest(logged_in_client):
-    """Test that post method works correctly"""
-    # Given
-    from python_anywhere.bouldern.factories import GymFactory
-    payload = {key: GymFactory.stub().__dict__[key]
-               for key in ['map', 'name']}
-    client, user = logged_in_client
-
-    # When
-    client.post(reverse(AddGymRest.name), data=payload, format='multipart')
+    response = client.post(reverse(AddGymRest.name), data=payload, format='multipart')
 
     # Then
     gym = Gym.objects.first()
