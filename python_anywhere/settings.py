@@ -211,7 +211,7 @@ ACCOUNT_EMAIL_VERIFICATION = 'none'
 JWT_AUTH_REFRESH_COOKIE = 'refresh-token'
 
 # Logging
-if not DEBUG:
+if env('PIPELINE'):
     LOGGING = {
         'version': 1,
         'disable_existing_loggers': False,
