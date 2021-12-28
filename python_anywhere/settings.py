@@ -34,7 +34,7 @@ Env.read_env(str(USER_HOME / ".env"))
 SECRET_KEY = env('SECRET_KEY')
 
 DEBUG = env('DEBUG')
-HOST_NAME = 'humorloos.pythonanywhere.com'
+HOST_NAME = '127.0.0.1'
 DOMAIN_NAME = 'api.humorloos.pythonanywhere.com'
 VUE_DEV_SERVER_DOMAIN_NAME = f'{HOST_NAME}:8080'
 
@@ -245,3 +245,6 @@ JWT_AUTH_SECURE = True
 JWT_AUTH_RETURN_EXPIRATION = True
 
 SITE_ID = 1
+
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_EMAIL_VERIFICATION = 'none'

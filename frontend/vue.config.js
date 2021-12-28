@@ -38,7 +38,7 @@ module.exports = {
         // signals to django-webpack-loader to fall back to Django's standard
         // static finder behavior
         '' :
-        'https://localhost:8080/', // in development, use own webpack development server
+        'https://127.0.0.1:8080/', // in development, use own webpack development server
   outputDir: path.resolve(__dirname, '../python_anywhere/static/vue/'),
   chainWebpack: (config) => {
     // extract vendor javascripts into single shared bundle to allow browsers to
@@ -74,8 +74,8 @@ module.exports = {
         .set('__STATIC__', 'static');
 
     config.devServer
-        .public('https://localhost:8080')
-        .host('localhost')
+        .public('https://127.0.0.1:8080')
+        .host('127.0.0.1')
         .port(8080)
         .hotOnly(true)
         .watchOptions({poll: 1000})
