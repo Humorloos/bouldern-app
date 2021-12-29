@@ -22,4 +22,4 @@ blocks:
             - ssh-add ~/.ssh/id_rsa_pa
             - cd ~
             - sftp ${SSH_USER}@ssh.pythonanywhere.com <<< $'put bouldern-app/deploy.sh deploy.sh\n put .env_production .env'
-            - ssh ${SSH_USER}@ssh.pythonanywhere.com bash deploy.sh $SEMAPHORE_GIT_BRANCH
+            - ssh ${SSH_USER}@ssh.pythonanywhere.com bash deploy.sh ${SEMAPHORE_GIT_PR_BRANCH-master}
