@@ -21,6 +21,7 @@ from django.urls import path, include, re_path
 from django.views.generic import RedirectView
 
 from googleCalendarApp.constants import CALENDAR_URI
+from python_anywhere.bouldern.views import index
 from python_anywhere.settings import USER_HOME, DEBUG, MEDIA_URL, MEDIA_ROOT, \
     BOULDERN_URL_SEGMENT
 
@@ -41,3 +42,6 @@ urlpatterns = [
 
 if DEBUG:
     urlpatterns += static(MEDIA_URL, document_root=MEDIA_ROOT)
+else:
+    urlpatterns += path('/', index, name='index')
+
