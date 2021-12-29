@@ -8,6 +8,8 @@ declare namespace Cypress {
 
         verifyLogInWithInvalidUser(): Chainable<null>;
 
+        register(): Chainable<null>;
+
         registerAndLogin(): Chainable<null>;
     }
 }
