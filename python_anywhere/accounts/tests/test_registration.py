@@ -6,8 +6,8 @@ from python_anywhere.accounts.factories import UserFactory
 from python_anywhere.accounts.models import User
 
 
-def test_add_gym_rest(db):
-    """Test that post method works correctly"""
+def test_register(db):
+    """Test that users can register"""
     # Given
     client = APIClient()
     password = Faker().password()
