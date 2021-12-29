@@ -37,7 +37,8 @@ Env.read_env(str(USER_HOME / ".env"))
 
 SECRET_KEY = env('SECRET_KEY')
 
-DEBUG = env('DEBUG')
+DEVELOPMENT = env('DEBUG')
+DEBUG = DEVELOPMENT
 HOST_NAME = '127.0.0.1'
 DOMAIN_NAME = 'humorloos.pythonanywhere.com'
 VUE_DEV_SERVER_DOMAIN_NAME = f'{HOST_NAME}:8080'
@@ -47,7 +48,7 @@ ALLOWED_HOSTS = [
 ]
 
 # in debug, add django and vue dev server to allowed hosts
-if DEBUG:
+if DEVELOPMENT:
     ALLOWED_HOSTS += [
         '127.0.0.1',
     ]
@@ -57,7 +58,7 @@ CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
 
 CORS_ORIGIN_ALLOW_ALL = False
-if DEBUG:
+if DEVELOPMENT:
     CORS_ORIGIN_WHITELIST = (f'https://{VUE_DEV_SERVER_DOMAIN_NAME}',)
 
 # Application definition
@@ -192,7 +193,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Vue
 WEBPACK_LOADER = {
     'DEFAULT': {
-        'CACHE': not DEBUG,
+        'CACHE': not DEVELOPMENT,
         'BUNDLE_DIR_NAME': 'vue/',  # must end with slash
         'STATS_FILE': VUE_FRONTEND_DIR / 'webpack-stats.json',
         'POLL_INTERVAL': 0.1,
