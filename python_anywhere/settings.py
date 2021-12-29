@@ -23,6 +23,10 @@ BASE_DIR = PROJECT_DIR.parent
 # parent directory of bouldern-app
 USER_HOME = BASE_DIR.parent
 RESOURCES_DIR = BASE_DIR / 'frontend' / 'cypress' / 'fixtures'
+# directory of vue frontend
+VUE_FRONTEND_DIR = BASE_DIR / 'frontend'
+# target of vue sources when building for production
+VUE_OUTPUT_DIR = VUE_FRONTEND_DIR / 'dist'
 
 sys.path = list({str(USER_HOME / project_name) for project_name in
                  ['googleCalendarApp', 'GoogleApiHelper'] + sys.path})
@@ -98,7 +102,10 @@ ROOT_URLCONF = 'python_anywhere.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [PROJECT_DIR / 'templates'],
+        'DIRS': [
+            PROJECT_DIR / 'templates',
+            VUE_OUTPUT_DIR,
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -159,7 +166,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
-    PROJECT_DIR / 'static',
+    VUE_OUTPUT_DIR / 'static',
     PROJECT_DIR / 'bouldern' / 'static',
 ]
 
@@ -183,8 +190,6 @@ except ImproperlyConfigured:
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Vue
-VUE_FRONTEND_DIR = BASE_DIR / 'frontend'
-
 WEBPACK_LOADER = {
     'DEFAULT': {
         'CACHE': not DEBUG,
