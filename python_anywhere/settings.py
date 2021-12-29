@@ -39,7 +39,7 @@ SECRET_KEY = env('SECRET_KEY')
 
 DEVELOPMENT = env('DEBUG')
 DEBUG = DEVELOPMENT
-HOST_NAME = '127.0.0.1'
+HOST_NAME = 'localhost'
 DOMAIN_NAME = 'humorloos.pythonanywhere.com'
 VUE_DEV_SERVER_DOMAIN_NAME = f'{HOST_NAME}:8080'
 
@@ -50,7 +50,7 @@ ALLOWED_HOSTS = [
 # in debug, add django and vue dev server to allowed hosts
 if DEVELOPMENT:
     ALLOWED_HOSTS += [
-        '127.0.0.1',
+        HOST_NAME,
     ]
 
 CSRF_COOKIE_SECURE = True
