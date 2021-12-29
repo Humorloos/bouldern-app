@@ -16,6 +16,7 @@ blocks:
       jobs:
         - name: Deploy to PythonAnywhere
           commands:
+            - set -x
             - checkout
             - chmod 0600 ~/.ssh/id_rsa_pa
             - ssh-keyscan -H ssh.pythonanywhere.com >> ~/.ssh/known_hosts
