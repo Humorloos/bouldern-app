@@ -122,3 +122,12 @@ def gym_map(request: WSGIRequest, gym_name: str):
         'gym_map': gym.map
     }
     return render(request, 'bouldern/gym_map_form.html', context)
+
+
+def index(request):
+    """
+    View for vue frontend index page
+    :param request: Incoming http request
+    :return: rendered vue index page
+    """
+    return render(request, template_name='index.html')
