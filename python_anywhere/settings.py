@@ -35,7 +35,7 @@ SECRET_KEY = env('SECRET_KEY')
 
 DEBUG = env('DEBUG')
 HOST_NAME = '127.0.0.1'
-DOMAIN_NAME = 'api.humorloos.pythonanywhere.com'
+DOMAIN_NAME = 'humorloos.pythonanywhere.com'
 VUE_DEV_SERVER_DOMAIN_NAME = f'{HOST_NAME}:8080'
 
 ALLOWED_HOSTS = [
