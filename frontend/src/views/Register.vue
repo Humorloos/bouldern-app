@@ -1,22 +1,24 @@
 <template>
   <h2>Register</h2>
-  <div
-    v-for="(value, name) in form"
-    :key="name"
-  >
-    <label :for="`id_${name}`">{{ value.label }}: </label>
-    <input
-      :id="`id_${name}`"
-      v-model="value.value"
-      :type="value.type"
+  <form @submit.prevent="submit">
+    <div
+      v-for="(value, name) in form"
+      :key="name"
     >
-  </div>
-  <button
-    id="submit_button"
-    @click="submit"
-  >
-    Sign Up
-  </button>
+      <label :for="`id_${name}`">{{ value.label }}: </label>
+      <input
+        :id="`id_${name}`"
+        v-model="value.value"
+        :type="value.type"
+      >
+    </div>
+    <button
+      id="submit_button"
+      type="submit"
+    >
+      Register
+    </button>
+  </form>
 </template>
 
 <script>
