@@ -22,8 +22,8 @@ from django.views.generic import RedirectView
 
 from googleCalendarApp.constants import CALENDAR_URI
 from python_anywhere.bouldern.views import index
-from python_anywhere.settings import USER_HOME, DEBUG, MEDIA_URL, MEDIA_ROOT, \
-    BOULDERN_URL_SEGMENT
+from python_anywhere.settings import USER_HOME, MEDIA_URL, MEDIA_ROOT, \
+    BOULDERN_URL_SEGMENT, DEVELOPMENT
 
 sys.path = list({str(USER_HOME / project_name) for project_name in
                  ['googleCalendarApp', 'GoogleApiHelper'] + sys.path})
@@ -40,7 +40,7 @@ urlpatterns = [
     path('registration/rest/', include('dj_rest_auth.registration.urls'))
 ]
 
-if DEBUG:
+if DEVELOPMENT:
     urlpatterns += static(MEDIA_URL, document_root=MEDIA_ROOT)
 else:
     urlpatterns += [path('', index, name='index')]

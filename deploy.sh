@@ -1,3 +1,4 @@
+set -x
 # pull updated version of branch from repo
 cd humorloos.pythonanywhere.com || exit
 git fetch --all
