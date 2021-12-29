@@ -1,20 +1,24 @@
 <template>
   <h1>Log In</h1>
-  <label for="id_email">E-Mail:</label>
-  <input
-    id="id_email"
-    v-model="username"
-    type="text"
-  >
-  <label for="id_password">Password:</label>
-  <input
-    id="id_password"
-    v-model="password"
-    type="password"
-  >
-  <button @click="submit">
-    Submit
-  </button>
+  <form @submit.prevent="submit">
+    <label for="id_email">E-Mail:</label>
+    <input
+      id="id_email"
+      v-model="username"
+      type="text"
+    >
+    <label for="id_password">Password:</label>
+    <input
+      id="id_password"
+      v-model="password"
+      type="password"
+    >
+    <button
+      type="submit"
+    >
+      Submit
+    </button>
+  </form>
 
   <div v-if="isAuthenticated">
     <p>
