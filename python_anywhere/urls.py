@@ -43,4 +43,4 @@ urlpatterns = [
 if DEBUG:
     urlpatterns += static(MEDIA_URL, document_root=MEDIA_ROOT)
 else:
-    urlpatterns += path('/', index, name='index')
+    urlpatterns += [path('', index, name='index')]
