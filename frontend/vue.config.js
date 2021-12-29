@@ -37,7 +37,7 @@ module.exports = {
   publicPath: process.env.NODE_ENV === 'production' ?
         // signals to django-webpack-loader to fall back to Django's standard
         // static finder behavior
-        '' :
+        '/' :
         'https://127.0.0.1:8080/', // in development, use own webpack development server
   outputDir: path.resolve(__dirname, '../python_anywhere/static/vue/'),
   chainWebpack: (config) => {
