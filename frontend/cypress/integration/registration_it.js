@@ -1,7 +1,7 @@
 describe('The register app', () => {
   it('notifys correctly if user does not exist', () => {
     // try log in with non-existent user
-    cy.visit(`${Cypress.env('host')}/bouldern`);
+    cy.visit(`${Cypress.env('host')}/bouldern/`);
 
     cy.verifyLogInWithInvalidUser();
   });

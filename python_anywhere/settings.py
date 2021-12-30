@@ -39,7 +39,7 @@ SECRET_KEY = env('SECRET_KEY')
 
 DEVELOPMENT = env('DEBUG')
 DEBUG = DEVELOPMENT
-HOST_NAME = '127.0.0.1'
+HOST_NAME = 'localhost'
 DOMAIN_NAME = 'humorloos.pythonanywhere.com'
 VUE_DEV_SERVER_DOMAIN_NAME = f'{HOST_NAME}:8080'
 
@@ -50,7 +50,7 @@ ALLOWED_HOSTS = [
 # in debug, add django and vue dev server to allowed hosts
 if DEVELOPMENT:
     ALLOWED_HOSTS += [
-        '127.0.0.1',
+        HOST_NAME,
     ]
 
 CSRF_COOKIE_SECURE = True
@@ -205,9 +205,9 @@ WEBPACK_LOADER = {
 # Authentication
 BOULDERN_URL_SEGMENT = 'bouldern'
 
-LOGIN_REDIRECT_URL = '/' + BOULDERN_URL_SEGMENT
+LOGIN_REDIRECT_URL = '/' + BOULDERN_URL_SEGMENT + '/'
 
-LOGOUT_REDIRECT_URL = '/' + BOULDERN_URL_SEGMENT
+LOGOUT_REDIRECT_URL = '/' + BOULDERN_URL_SEGMENT + '/'
 
 AUTH_USER_MODEL = 'accounts.User'
 
@@ -215,6 +215,10 @@ ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_EMAIL_VERIFICATION = 'none'
 
 JWT_AUTH_REFRESH_COOKIE = 'refresh-token'
+JWT_AUTH_COOKIE = 'auth-token'
+JWT_AUTH_RETURN_EXPIRATION = True
+# only send jwt tokens via https
+JWT_AUTH_SECURE = True
 
 # Logging
 if env('PIPELINE'):
@@ -239,3 +243,17 @@ if env('PIPELINE'):
 
 # Site settings
 SITE_ID = 1
+
+# Rest
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
+        'dj_rest_auth.jwt_auth.JWTCookieAuthentication'
+    ),
+    'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated'
+    ]
+}
+REST_USE_JWT = True
