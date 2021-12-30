@@ -5,9 +5,16 @@
       Register
     </router-link>
   </div>
-  <router-link to="/login">
-    Log In
-  </router-link>
+  <div>
+    <router-link to="/login">
+      Log In
+    </router-link>
+  </div>
+  <div>
+    <router-link to="/create-color">
+      Create Color
+    </router-link>
+  </div>
 </template>
 
 <script>
