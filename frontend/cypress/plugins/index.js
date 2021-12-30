@@ -19,6 +19,5 @@
 module.exports = (on, config) => {
   // `on` is used to hook into various events Cypress emits
   // `config` is the resolved Cypress config
-  config.env.hostVue = 'https://127.0.0.1:8080';
   return config;
 };
