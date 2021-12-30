@@ -73,7 +73,7 @@ Cypress.Commands.add('register', () => {
 });
 
 Cypress.Commands.add('registerAndLogin', () => {
-  cy.visit(`${Cypress.env('host')}/registration/signup`);
+  cy.visit(`${Cypress.env('host')}/registration/signup/`);
 
   cy.register();
 

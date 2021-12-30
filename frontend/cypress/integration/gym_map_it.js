@@ -2,7 +2,7 @@ describe('The bouldern app', () => {
   it('lets users add new colors', () => {
     // add gym
     cy.registerAndLogin();
-    cy.visit(`${Cypress.env('host')}/bouldern/add-gym`);
+    cy.visit(`${Cypress.env('host')}/bouldern/add-gym/`);
     cy.contains('New Color').click();
     cy.get('div.jquery-modal #id_name').type(Cypress.env('colorName'));
     cy.get('#id_color').click();
@@ -31,7 +31,7 @@ describe('The bouldern app', () => {
         `You're at the bouldern index.`);
   });
   it('can add boulders to gyms', () => {
-    cy.visit(`${Cypress.env('host')}/bouldern/${Cypress.env('gymName')}/map`);
+    cy.visit(`${Cypress.env('host')}/bouldern/${Cypress.env('gymName')}/map/`);
     cy.get('#map-root').click(340, 150);
     cy.contains('You clicked here');
     cy.get('#popup-closer').click();
