@@ -61,13 +61,13 @@ def test_add_gym(client, db):
     assert response.url == reverse('index')
 
 
-def test_add_gym_rest(logged_in_client):
+def test_add_gym_rest(logged_in_client_rest):
     """Test that post method works correctly"""
     # Given
     from python_anywhere.bouldern.factories import GymFactory
     payload = {key: GymFactory.stub().__dict__[key]
                for key in ['map', 'name']}
-    client, user = logged_in_client
+    client, user = logged_in_client_rest
 
     # When
     response = client.post(reverse(AddGymRest.name), data=payload, format='multipart')
