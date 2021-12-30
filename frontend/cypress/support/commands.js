@@ -79,3 +79,16 @@ Cypress.Commands.add('registerAndLogin', () => {
 
   cy.enterCredentialsAndLogin();
 });
+
+Cypress.Commands.add('registerAndLoginVue', () => {
+  cy.contains('Register').click();
+  cy.register();
+  cy.contains('Home').click();
+
+  cy.contains('Log In').click();
+  // log in with registered user
+  cy.logInViaLogInLinkVue();
+  cy.contains(`Hello, ${Cypress.env('email')}. ` +
+          'You\'re at the bouldern index.');
+  cy.contains('Home').click();
+});

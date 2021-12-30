@@ -13,5 +13,7 @@ declare namespace Cypress {
         register(): Chainable<null>;
 
         registerAndLogin(): Chainable<null>;
+
+        registerAndLoginVue(): Chainable<null>;
     }
 }

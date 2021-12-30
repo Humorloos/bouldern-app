@@ -1,13 +1,10 @@
 from dj_rest_auth.jwt_auth import JWTCookieAuthentication
-from dj_rest_auth.serializers import JWTSerializerWithExpiration
 from django.http import HttpRequest
 from faker import Faker
-from rest_framework.request import Request
 from rest_framework.reverse import reverse
 from rest_framework.test import APIClient
 
 from python_anywhere.accounts.factories import UserFactory
-from python_anywhere.accounts.models import User
 
 
 def test_login(db):
@@ -24,6 +21,7 @@ def test_login(db):
 
     # Then
     request = HttpRequest()
-    request.COOKIES['auth-token'] = response.cookies['auth-token'].value
+    request.META['HTTP_AUTHORIZATION'] = \
+        f"Bearer {response.data['access_token']}"
     logged_in_user, _ = JWTCookieAuthentication().authenticate(request)
     assert logged_in_user == user

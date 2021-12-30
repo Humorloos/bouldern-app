@@ -14,6 +14,7 @@
 <script>
 import 'jquery-modal/jquery.modal.min.css';
 require('jquery-modal');
+
 export default {
   name: 'Modal',
 };
