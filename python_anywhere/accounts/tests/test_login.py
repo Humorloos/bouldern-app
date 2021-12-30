@@ -21,6 +21,7 @@ def test_login(db):
 
     # Then
     request = HttpRequest()
-    request.COOKIES['auth-token'] = response.cookies['auth-token'].value
+    request.META['HTTP_AUTHORIZATION'] = \
+        f"Bearer {response.data['access_token']}"
     logged_in_user, _ = JWTCookieAuthentication().authenticate(request)
     assert logged_in_user == user
