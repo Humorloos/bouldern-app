@@ -19,6 +19,7 @@
     "typescript": "^4.5.4",
     "vue": "^3.0.0",
     "vue-axios": "^3.4.0",
+    "vue-router": "^4.0.12",
     "vue-select": "^4.0.0-beta.1",
     "vuex": "^4.0.2",
     "vuex-persistedstate": "^4.1.0"
