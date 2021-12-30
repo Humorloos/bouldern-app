@@ -83,6 +83,7 @@ module.exports = {
         .hotOnly(true)
         .watchOptions({poll: 1000})
         .https(true) // https is needed for dj-rest-auth
-        .headers({'Access-Control-Allow-Origin': ['*']});
+        .headers({'Access-Control-Allow-Origin': ['*']})
+        .historyApiFallback(true);
   },
 };
