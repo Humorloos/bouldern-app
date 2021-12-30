@@ -219,6 +219,7 @@ JWT_AUTH_COOKIE = 'auth-token'
 JWT_AUTH_RETURN_EXPIRATION = True
 # only send jwt tokens via https
 JWT_AUTH_SECURE = True
+REST_SESSION_LOGIN = False
 
 # Logging
 if env('PIPELINE'):
@@ -247,9 +248,9 @@ SITE_ID = 1
 # Rest
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.TokenAuthentication',
-        'dj_rest_auth.jwt_auth.JWTCookieAuthentication'
+        'dj_rest_auth.jwt_auth.JWTCookieAuthentication',
+        'rest_framework.authentication.SessionAuthentication'
     ),
     'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
     'DEFAULT_PERMISSION_CLASSES': [
