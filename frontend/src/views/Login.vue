@@ -4,9 +4,9 @@
     <p v-if="error.visible">
       {{ error.message }}
     </p>
-    <label for="id_email">E-Mail:</label>
+    <label for="id_username">E-Mail:</label>
     <input
-      id="id_email"
+      id="id_username"
       v-model="form.username"
       type="text"
     >
@@ -17,9 +17,10 @@
       type="password"
     >
     <button
+      id="submit_button"
       type="submit"
     >
-      Submit
+      Log In
     </button>
   </form>
 
