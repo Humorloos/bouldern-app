@@ -47,6 +47,15 @@ Cypress.Commands.add('logInViaLogInLink', () => {
   cy.enterCredentialsAndLogin();
 });
 
+Cypress.Commands.add('logInViaLogInLinkVue', () => {
+  cy.contains('You are not logged in');
+
+  cy.url()
+      .should('include', '/login');
+
+  cy.enterCredentialsAndLogin();
+});
+
 Cypress.Commands.add('verifyLogInWithInvalidUser', () => {
   cy.logInViaLogInLink();
 
@@ -62,7 +71,7 @@ Cypress.Commands.add('register', () => {
       .should('have.value', Cypress.env('email'));
   cy.get('#id_password1').type(Cypress.env('password'));
   cy.get('#id_password2').type(Cypress.env('password'));
-  cy.get('#submit_button').contains('Sign Up').click();
+  cy.get('#submit_button').contains('Register').click();
 });
 
 Cypress.Commands.add('registerAndLogin', () => {

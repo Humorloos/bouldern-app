@@ -6,6 +6,8 @@ declare namespace Cypress {
 
         logInViaLogInLink(): Chainable<null>;
 
+        logInViaLogInLinkVue(): Chainable<null>;
+
         verifyLogInWithInvalidUser(): Chainable<null>;
 
         register(): Chainable<null>;
