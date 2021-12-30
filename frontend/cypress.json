@@ -5,6 +5,7 @@
     "password": "testPassword",
     "colorName": "TestColor",
     "gymName": "testGym",
-    "host": "https://localhost:8000"
+    "host": "https://localhost:8000",
+    "hostVue": "https://localhost:8080"
   }
 }
