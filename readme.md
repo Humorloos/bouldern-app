@@ -17,4 +17,4 @@
 `pip install --global-option=build_ext --global-option="-I /usr/include/gdal" GDAL==$(gdal-config --version)`
 
 ### local django backend
-- run `python manage.py runsslserver` in project root
+- run `python manage.py runsslserver localhost:8000` in project root
