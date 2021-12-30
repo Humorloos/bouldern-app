@@ -43,7 +43,8 @@ def test_add_color_rest(logged_in_client_rest):
                for key in ['color', 'name']}
 
     # When
-    response = client.post(reverse(AddColorRest.name), data=payload)
+    response = client.post(reverse(AddColorRest.name), data=payload,
+                           format='json')
     # Then
     assert response.status_code == HTTP_201_CREATED
     color = Color.objects.first()
