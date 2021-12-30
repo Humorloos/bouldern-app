@@ -33,13 +33,10 @@ def test_add_color(client, db):
     assert response.url == reverse(AddGym.name)
 
 
-def test_add_color_rest(db):
+def test_add_color_rest(logged_in_client_rest):
     """Test that post method works correctly"""
     # Given
-    password = Faker().password()
-    user = UserFactory(password=password)
-    client = APIClient()
-    client.credentials(HTTP_AUTHORIZATION='Bearer ' + str(jwt_encode(user)[0]))
+    client, user = logged_in_client_rest
 
     from python_anywhere.bouldern.factories import ColorFactory
     payload = {key: ColorFactory.stub().__dict__[key]
