@@ -41,8 +41,7 @@ Cypress.Commands.add('logInViaLogInLink', () => {
   cy.contains('You are not logged in');
   cy.contains('Log In').click();
 
-  cy.url()
-      .should('include', '/registration/login');
+  cy.url().should('include', '/registration/login');
 
   cy.enterCredentialsAndLogin();
 });
@@ -50,8 +49,7 @@ Cypress.Commands.add('logInViaLogInLink', () => {
 Cypress.Commands.add('logInViaLogInLinkVue', () => {
   cy.contains('You are not logged in');
 
-  cy.url()
-      .should('include', '/login');
+  cy.url().should('include', '/login');
 
   cy.enterCredentialsAndLogin();
 });

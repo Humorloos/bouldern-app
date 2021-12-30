@@ -19,7 +19,7 @@ describe('The register vue app', () => {
     cy.visit(`${Cypress.env('hostVue')}/`);
     cy.contains('Log In').click();
 
-    // try log in with non-existent user
+    // log in with registered user
     cy.logInViaLogInLinkVue();
     cy.contains(`Hello, ${Cypress.env('email')}. ` +
           'You\'re at the bouldern index.');
