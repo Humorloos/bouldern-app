@@ -38,7 +38,7 @@ module.exports = {
         // signals to django-webpack-loader to fall back to Django's standard
         // static finder behavior
         '' :
-        'https://127.0.0.1:8080/', // in development, use own webpack development server
+        'https://localhost:8080/', // in development, use own webpack development server
   // outputDir must be added to Django's TEMPLATE_DIRS
   outputDir: path.resolve(__dirname, 'dist/'),
   // assetsDir must match Django's STATIC_URL
@@ -77,12 +77,13 @@ module.exports = {
         .set('__STATIC__', 'static');
 
     config.devServer
-        .public('https://127.0.0.1:8080')
-        .host('127.0.0.1')
+        .public('https://localhost:8080')
+        .host('localhost')
         .port(8080)
         .hotOnly(true)
         .watchOptions({poll: 1000})
         .https(true) // https is needed for dj-rest-auth
-        .headers({'Access-Control-Allow-Origin': ['*']});
+        .headers({'Access-Control-Allow-Origin': ['*']})
+        .historyApiFallback(true);
   },
 };

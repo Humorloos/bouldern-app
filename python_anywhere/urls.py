@@ -44,3 +44,6 @@ if DEVELOPMENT:
     urlpatterns += static(MEDIA_URL, document_root=MEDIA_ROOT)
 else:
     urlpatterns += [path('', index, name='index')]
+
+# History API Fallback
+urlpatterns += [re_path(r'^.*', index, name='index')]
