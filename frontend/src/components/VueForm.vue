@@ -3,7 +3,6 @@
     <slot />
     <button
       id="submit_button"
-      @click="submit"
     >
       {{ submitButtonLabel }}
     </button>
@@ -11,12 +10,15 @@
 </template>
 
 <script>
+import {mapState} from 'vuex';
+
 export default {
   name: 'VueForm',
   props: {
     form: {
       type: Object,
-      default: () => {},
+      default: () => {
+      },
     },
     apiPath: {
       type: String,
@@ -27,9 +29,18 @@ export default {
       default: 'Submit',
     },
   },
+  computed: {
+    ...mapState([
+      'authToken',
+    ]),
+  },
   methods: {
     submit() {
-      this.axios.post(this.apiPath, this.form);
+      this.axios.post(this.apiPath, this.form, {headers: {
+        'authorization': `Bearer ${this.authToken.token}`,
+        'content-type': 'application/json',
+      }});
+      this.$router.push('/');
     },
   },
 };

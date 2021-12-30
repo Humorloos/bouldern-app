@@ -39,11 +39,6 @@ export default {
   mounted() {
     jscolor.install();
   },
-  methods: {
-    submit() {
-      this.axios.post('/rest/add-color/', this.color);
-    },
-  },
 };
 </script>
 

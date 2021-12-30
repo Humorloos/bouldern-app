@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 import sys
 from pathlib import Path
 
+from corsheaders.defaults import default_headers
 from environ import Env, ImproperlyConfigured
 
 env = Env(DEBUG=(bool, False))
@@ -39,6 +40,7 @@ SECRET_KEY = env('SECRET_KEY')
 
 DEVELOPMENT = env('DEBUG')
 DEBUG = DEVELOPMENT
+PIPELINE = env('PIPELINE') == 'True'
 HOST_NAME = 'localhost'
 DOMAIN_NAME = 'humorloos.pythonanywhere.com'
 VUE_DEV_SERVER_DOMAIN_NAME = f'{HOST_NAME}:8080'
@@ -57,9 +59,10 @@ CSRF_COOKIE_SECURE = True
 
 SESSION_COOKIE_SECURE = True
 
-CORS_ORIGIN_ALLOW_ALL = False
+CORS_ALLOW_ALL_ORIGINS = False
 if DEVELOPMENT:
-    CORS_ORIGIN_WHITELIST = (f'https://{VUE_DEV_SERVER_DOMAIN_NAME}',)
+    CORS_ALLOWED_ORIGINS = [f'https://{VUE_DEV_SERVER_DOMAIN_NAME}']
+    CORS_ALLOW_HEADERS = list(default_headers)
 
 # Application definition
 
@@ -215,14 +218,13 @@ ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_EMAIL_VERIFICATION = 'none'
 
 JWT_AUTH_REFRESH_COOKIE = 'refresh-token'
-JWT_AUTH_COOKIE = 'auth-token'
 JWT_AUTH_RETURN_EXPIRATION = True
 # only send jwt tokens via https
 JWT_AUTH_SECURE = True
 REST_SESSION_LOGIN = False
 
 # Logging
-if env('PIPELINE'):
+if PIPELINE:
     LOGGING = {
         'version': 1,
         'disable_existing_loggers': False,
