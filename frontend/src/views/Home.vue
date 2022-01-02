@@ -15,6 +15,11 @@
       Create Color
     </router-link>
   </div>
+  <div>
+    <router-link to="/create-gym">
+      Create Gym
+    </router-link>
+  </div>
 </template>
 
 <script>

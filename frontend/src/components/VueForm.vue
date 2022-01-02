@@ -28,7 +28,12 @@ export default {
       type: String,
       default: 'Submit',
     },
+    contentType: {
+      type: String,
+      default: 'application/json',
+    },
   },
+  emits: ['submitted'],
   computed: {
     ...mapState([
       'authToken',
@@ -38,8 +43,8 @@ export default {
     submit() {
       this.axios.post(this.apiPath, this.form, {headers: {
         'authorization': `Bearer ${this.authToken.token}`,
-        'content-type': 'application/json',
-      }});
+        'content-type': this.contentType,
+      }}).then((response) => this.$emit('submitted', response));
       this.$router.push('/');
     },
   },

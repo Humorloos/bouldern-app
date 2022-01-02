@@ -61,17 +61,25 @@ def test_add_gym(client, db):
     assert response.url == reverse('index')
 
 
-def test_add_gym_rest(logged_in_client):
+def test_add_gym_rest(logged_in_client_rest):
     """Test that post method works correctly"""
     # Given
     from python_anywhere.bouldern.factories import GymFactory
-    payload = {key: GymFactory.stub().__dict__[key]
-               for key in ['map', 'name']}
-    client, user = logged_in_client
+    gym_stub = GymFactory.stub()
+    client, user = logged_in_client_rest
+    json_payload = {'name': gym_stub.name}
 
     # When
-    response = client.post(reverse(AddGymRest.name), data=payload, format='multipart')
-
+    response = client.post(reverse(AddGymRest.name), data=json_payload,
+                           format='json')
     # Then
     gym = Gym.objects.first()
-    assert_correct_gym(gym, payload, user)
+    assert gym.name == gym_stub.name
+    # When
+    multipart_payload = {'map': gym_stub.map}
+    client.patch(
+        reverse(AddGymRest.name, kwargs={'pk': response.data['id']}),
+        data=multipart_payload, format='multipart')
+    # Then
+    gym = Gym.objects.first()
+    assert_correct_gym(gym, json_payload | multipart_payload, user)

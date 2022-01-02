@@ -12,5 +12,6 @@ urlpatterns = [
     path('add-color/', AddColor.as_view(), name=AddColor.name),
     path('add-gym/', AddGym.as_view(), name=AddGym.name),
     path('rest/add-gym/', AddGymRest.as_view(), name=AddGymRest.name),
+    path('rest/add-gym/<int:pk>/', AddGymRest.as_view(), name=AddGymRest.name),
     path('rest/add-color/', AddColorRest.as_view(), name=AddColorRest.name),
 ]

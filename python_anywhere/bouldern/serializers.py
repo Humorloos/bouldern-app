@@ -16,7 +16,7 @@ class GymSerializer(UGCSerializer):
     """Serializer for Gym instances"""
     class Meta:
         model = Gym
-        fields = ['name', 'map']
+        fields = ['name', 'map', 'id']
 
 
 class ColorSerializer(UGCSerializer):
