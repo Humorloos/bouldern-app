@@ -4,7 +4,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 from django.views import View
-from rest_framework.generics import ListCreateAPIView, CreateAPIView, \
+from rest_framework.generics import CreateAPIView, \
     GenericAPIView
 from rest_framework.mixins import CreateModelMixin, UpdateModelMixin
 
@@ -89,10 +89,12 @@ class AddGymRest(GenericAPIView, CreateModelMixin, UpdateModelMixin):
     queryset = Gym.objects.all()
     serializer_class = GymSerializer
 
-    def post(self, request, pk=0, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
+        """Create a new gym"""
         return self.create(request, *args, **kwargs)
 
-    def patch(self, request, pk=0, *args, **kwargs):
+    def patch(self, request, pk, *args, **kwargs):
+        """Partially update a gym"""
         kwargs['pk'] = pk
         return self.partial_update(request, *args, **kwargs)
 
