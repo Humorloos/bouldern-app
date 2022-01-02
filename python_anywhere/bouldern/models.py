@@ -28,7 +28,7 @@ class Color(UGC):
 class Gym(UGC):
     """A bouldering gym"""
     name = CharField(max_length=128, unique=True)
-    map = ImageField(max_length=256, upload_to='bouldern/gym_maps/')
+    map = ImageField(max_length=256, upload_to='bouldern/gym_maps/', null=True)
 
     def __str__(self):
         return self.name
