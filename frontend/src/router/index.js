@@ -4,6 +4,7 @@ import Home from '@/views/Home';
 import Login from '@/views/Login';
 import NotFound from '@/views/NotFound';
 import CreateColor from '@/views/CreateColor';
+import CreateGym from '@/views/CreateGym';
 
 export default createRouter({
   history: createWebHistory(),
@@ -12,6 +13,7 @@ export default createRouter({
     {path: '/register', component: Register},
     {path: '/login', component: Login},
     {path: '/create-color', component: CreateColor},
+    {path: '/create-gym', component: CreateGym},
     {path: '/:pathMatch(.*)', component: NotFound},
   ],
 });

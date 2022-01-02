@@ -1,7 +1,13 @@
-describe('The add color view', () => {
-  it('allows adding colors', () => {
+describe('The bouldern app', () => {
+  it('allows adding gyms', () => {
     cy.visit(`${Cypress.env('hostVue')}/`);
     cy.registerAndLoginVue();
+    cy.contains('Create Gym').click();
+    cy.get('#id_name').type(Cypress.env('gymName'));
+    cy.get('#id_map').attachFile('generic_gym.png');
+    cy.contains('Submit').click();
+  });
+  it('allows adding colors', () => {
     cy.contains('Create Color').click();
     cy.get('#id_name').type(Cypress.env('colorName'));
     cy.get('#id_color').click();
