@@ -38,7 +38,7 @@ class AddColorRest(CreateAPIView):
     serializer_class = ColorSerializer
 
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        serializer.save(created_by=self.request.user)
 
 
 class AddGym(View):
@@ -99,10 +99,7 @@ class AddGymRest(GenericAPIView, CreateModelMixin, UpdateModelMixin):
         return self.partial_update(request, *args, **kwargs)
 
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
-
-    def perform_update(self, serializer):
-        serializer.save(user=self.request.user)
+        serializer.save(created_by=self.request.user)
 
 
 def gym_map(request: WSGIRequest, gym_name: str):
