@@ -1,4 +1,5 @@
 <template>
+  <h1>Create Gym</h1>
   <vue-form
     :form="form"
     :api-path="apiPath"
@@ -13,6 +14,7 @@
       >
     </div>
     <div>
+      <label for="id_map">Map: </label>
       <input
         id="id_map"
         type="file"
