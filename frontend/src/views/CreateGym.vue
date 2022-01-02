@@ -14,6 +14,7 @@
     </div>
     <div>
       <input
+        id="id_map"
         type="file"
         @change="onFileChange"
       >
