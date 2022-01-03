@@ -1,7 +1,7 @@
 <template>
   <div id="difficulty-level">
     <v-select
-      v-model="activeColor"
+      v-model="value"
       :options="options"
       :searchable="false"
       :clearable="false"
@@ -30,24 +30,10 @@ export default {
     },
     modelValue: {
       type: Object,
-      default: () => {
-        return {
-          level: 0,
-          color: 0,
-          label: '',
-        };
-      },
+      default: () => {},
     },
   },
   emits: ['update:modelValue'],
-  data() {
-    return {
-      activeColor: {
-        style: {color: 'white'},
-        label: '',
-      },
-    };
-  },
   computed: {
     options() {
       return this.colors.map((color) => {
@@ -57,20 +43,15 @@ export default {
         };
       });
     },
-    // value: {
-    //   get() {
-    //     return this.modelValue;
-    //   },
-    //   set(value) {
-    //     this.$emit('update:modelValue', this.modelValue);
-    //   },
-    // },
+    value: {
+      get() {
+        return this.modelValue;
+      },
+      set(value) {
+        this.$emit('update:modelValue', value);
+      },
+    },
   },
-  // methods: {
-  //   onInput(event) {
-  //     this.$emit('update:model-value', this.modelValue);
-  //   },
-  // },
 };
 </script>
 
@@ -78,7 +59,7 @@ export default {
 /*noinspection CssUnusedSymbol*/
 .vs__selected::before {
   /*noinspection CssInvalidFunction*/
-  background-color: v-bind("activeColor.style.color");
+  background-color: v-bind("value.style.color");
   border-radius: 50%;
   content: " ";
   display: flex;

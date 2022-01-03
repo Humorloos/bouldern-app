@@ -23,6 +23,7 @@
     </div>
 
     <difficulty-level-select-rest
+      v-model="form.difficultylevel_set"
       :colors="colors"
     />
   </vue-form>
@@ -43,7 +44,11 @@ export default {
     return {
       form: {
         name: '',
-        difficultylevel_set: {},
+        difficultylevel_set:
+          {
+            style: {color: 'white'},
+            label: '',
+          },
       },
       map: undefined,
       apiPath: '/bouldern/rest/add-gym/',
