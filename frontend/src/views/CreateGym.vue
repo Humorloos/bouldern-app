@@ -9,7 +9,7 @@
       <label for="id_name">Name: </label>
       <input
         id="id_name"
-        v-model="form.name"
+        v-model="gymName"
         type="text"
       >
     </div>
