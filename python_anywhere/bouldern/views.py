@@ -4,8 +4,9 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 from django.views import View
-from rest_framework.generics import GenericAPIView, ListCreateAPIView
-from rest_framework.mixins import CreateModelMixin, UpdateModelMixin
+from rest_framework.mixins import CreateModelMixin, UpdateModelMixin, \
+    ListModelMixin
+from rest_framework.viewsets import GenericViewSet
 
 from python_anywhere.bouldern.forms import GymMapFormSet, BoulderForm, \
     ColorForm, GymForm, DifficultyLevelFormset
@@ -30,7 +31,7 @@ class AddColor(View):
         return HttpResponseRedirect(reverse(AddGym.name))
 
 
-class AddColorRest(ListCreateAPIView):
+class AddColorRest(GenericViewSet, ListModelMixin, CreateModelMixin):
     """REST API for adding colors"""
     name = 'add_color_rest'
     queryset = Color.objects.all()
@@ -82,7 +83,7 @@ class AddGym(View):
         return HttpResponseRedirect(reverse(self.name))
 
 
-class AddGymRest(GenericAPIView, CreateModelMixin, UpdateModelMixin):
+class AddGymRest(GenericViewSet, CreateModelMixin, UpdateModelMixin):
     """Rest API for adding gyms"""
     name = 'add_gym_rest'
     queryset = Gym.objects.all()

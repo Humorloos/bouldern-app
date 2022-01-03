@@ -1,5 +1,5 @@
-from django.urls import reverse
 from faker import Faker
+from rest_framework.reverse import reverse
 
 from python_anywhere.accounts.factories import UserFactory
 from python_anywhere.bouldern.models import Gym, DifficultyLevel
@@ -78,7 +78,7 @@ def test_add_gym_rest(logged_in_client_rest):
             for i in difficulty_level_range]}
 
     # When
-    response = client.post(reverse(AddGymRest.name), data=json_payload,
+    response = client.post(reverse('gym-list'), data=json_payload,
                            format='json')
     # Then
     gym = Gym.objects.first()
@@ -93,7 +93,7 @@ def test_add_gym_rest(logged_in_client_rest):
     # When
     multipart_payload = {'map': gym_stub.map}
     client.patch(
-        reverse(AddGymRest.name, kwargs={'pk': response.data['id']}),
+        reverse('gym-detail', kwargs={'pk': response.data['id']}),
         data=multipart_payload, format='multipart')
     # Then
     gym = Gym.objects.first()
