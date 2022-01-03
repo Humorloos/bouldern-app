@@ -1,7 +1,7 @@
 <template>
   <vue-form
     :form="form"
-    :api-path="'/bouldern/rest/add-color/'"
+    :api-path="'/bouldern/color/'"
   >
     <label for="id_name">Name: </label>
     <input
