@@ -4,8 +4,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 from django.views import View
-from rest_framework.generics import CreateAPIView, \
-    GenericAPIView
+from rest_framework.generics import GenericAPIView, ListCreateAPIView
 from rest_framework.mixins import CreateModelMixin, UpdateModelMixin
 
 from python_anywhere.bouldern.forms import GymMapFormSet, BoulderForm, \
@@ -31,7 +30,7 @@ class AddColor(View):
         return HttpResponseRedirect(reverse(AddGym.name))
 
 
-class AddColorRest(CreateAPIView):
+class AddColorRest(ListCreateAPIView):
     """REST API for adding colors"""
     name = 'add_color_rest'
     queryset = Color.objects.all()

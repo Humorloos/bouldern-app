@@ -22,8 +22,8 @@
       >
     </div>
 
-    <difficulty-level-select
-      :options="options"
+    <difficulty-level-select-rest
+      :colors="colors"
     />
   </vue-form>
 </template>
@@ -31,31 +31,38 @@
 <script>
 import VueForm from '@/components/VueForm';
 import {mapState} from 'vuex';
-import DifficultyLevelSelect from '@/components/DifficultyLevelSelect';
+import DifficultyLevelSelectRest from '@/components/DifficultyLevelSelectRest';
 
 export default {
   name: 'CreateGym',
   components: {
     VueForm,
-    DifficultyLevelSelect,
+    DifficultyLevelSelectRest,
   },
   data() {
     return {
       form: {
         name: '',
+        difficultylevel_set: {},
       },
       map: undefined,
       apiPath: '/bouldern/rest/add-gym/',
-      options: [{
-        'label': 'default',
-        'style': {'color': '#FF7514'},
-      }],
+      colors: [],
     };
   },
   computed: {
     ...mapState([
       'authToken',
     ]),
+  },
+  created() {
+    this.axios.get('/bouldern/rest/add-color/', {
+      headers: {
+        'authorization': `Bearer ${this.authToken.token}`,
+      },
+    }).then((response) => {
+      this.colors = response.data;
+    });
   },
   mounted() {
     require('vue-select/dist/vue-select.css');
