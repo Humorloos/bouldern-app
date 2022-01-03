@@ -23,9 +23,18 @@
     </div>
 
     <difficulty-level-select-rest
-      v-model="form.difficultylevel_set"
+      v-for="(difficultyLevel, index) in form.difficultylevel_set"
+      :key="difficultyLevel.name"
+      v-model="form.difficultylevel_set[index]"
       :colors="colors"
     />
+    <button
+      id="add-level-button"
+      type="button"
+      @click="addDifficultySelect"
+    >
+      Add Level
+    </button>
   </vue-form>
 </template>
 
@@ -44,11 +53,10 @@ export default {
     return {
       form: {
         name: '',
-        difficultylevel_set:
-          {
-            color: 'white',
-            name: 'default',
-          },
+        difficultylevel_set: [{
+          color: 'white',
+          name: 'default',
+        }],
       },
       map: undefined,
       apiPath: '/bouldern/rest/add-gym/',
@@ -86,6 +94,9 @@ export default {
               'content-type': 'multipart/form-data',
             },
           });
+    },
+    addDifficultySelect() {
+      this.form.difficultylevel_set.push(this.form.difficultylevel_set.at(-1));
     },
   },
 };
