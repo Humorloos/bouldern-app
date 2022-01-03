@@ -77,7 +77,7 @@ export default {
     },
   },
   created() {
-    this.axios.get('/bouldern/rest/add-color/', {
+    this.axios.get('/bouldern/color/', {
       headers: {
         'authorization': `Bearer ${this.authToken.token}`,
       },
