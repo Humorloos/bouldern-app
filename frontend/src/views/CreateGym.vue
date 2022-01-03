@@ -59,7 +59,7 @@ export default {
       }],
       gymName: '',
       map: undefined,
-      apiPath: '/bouldern/rest/add-gym/',
+      apiPath: '/bouldern/gym/',
       colorOptions: [],
     };
   },
