@@ -24,7 +24,7 @@ export default {
     vSelect,
   },
   props: {
-    colors: {
+    colorOptions: {
       type: Array,
       default: function() {
         return [];
@@ -39,7 +39,7 @@ export default {
   emits: ['update:modelValue'],
   computed: {
     options() {
-      return this.colors.map((color) => {
+      return this.colorOptions.map((color) => {
         return this.optionFromColor(color);
       });
     },
@@ -48,10 +48,7 @@ export default {
         return this.optionFromColor(this.modelValue);
       },
       set(value) {
-        this.$emit('update:modelValue', {
-          color: value.color,
-          name: value.label,
-        });
+        this.$emit('update:modelValue', value);
       },
     },
   },

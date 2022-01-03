@@ -23,10 +23,10 @@
     </div>
 
     <difficulty-level-select-rest
-      v-for="(difficultyLevel, index) in form.difficultylevel_set"
-      :key="difficultyLevel.name"
-      v-model="form.difficultylevel_set[index]"
-      :colors="colors"
+      v-for="(color, index) in colors"
+      :key="color.name"
+      v-model="colors[index]"
+      :color-options="colorOptions"
     />
     <button
       id="add-level-button"
@@ -51,22 +51,29 @@ export default {
   },
   data() {
     return {
-      form: {
-        name: '',
-        difficultylevel_set: [{
-          color: 'white',
-          name: 'default',
-        }],
-      },
+      colors: [{
+        color: 'white',
+        name: 'default',
+        id: 0,
+      }],
+      gymName: '',
       map: undefined,
       apiPath: '/bouldern/rest/add-gym/',
-      colors: [],
+      colorOptions: [],
     };
   },
   computed: {
     ...mapState([
       'authToken',
     ]),
+    form() {
+      return {
+        name: this.gymName,
+        difficultylevel_set: this.colors.map((color, index) => {
+          return {color: color.id, level: index + 1};
+        }),
+      };
+    },
   },
   created() {
     this.axios.get('/bouldern/rest/add-color/', {
@@ -74,7 +81,7 @@ export default {
         'authorization': `Bearer ${this.authToken.token}`,
       },
     }).then((response) => {
-      this.colors = response.data;
+      this.colorOptions = response.data;
     });
   },
   mounted() {
@@ -96,7 +103,7 @@ export default {
           });
     },
     addDifficultySelect() {
-      this.form.difficultylevel_set.push(this.form.difficultylevel_set.at(-1));
+      this.colors.push(this.colors.at(-1));
     },
   },
 };
