@@ -41,7 +41,7 @@ class DifficultyLevel(UGC):
     gym = ForeignKey(Gym, on_delete=SET_NULL, null=True)
 
     def __str__(self):
-        return self.level
+        return str(self.level)
 
 
 class Boulder(UGC):

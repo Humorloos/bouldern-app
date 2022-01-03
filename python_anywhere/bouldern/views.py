@@ -4,8 +4,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 from django.views import View
-from rest_framework.generics import CreateAPIView, \
-    GenericAPIView
+from rest_framework.generics import GenericAPIView, ListCreateAPIView
 from rest_framework.mixins import CreateModelMixin, UpdateModelMixin
 
 from python_anywhere.bouldern.forms import GymMapFormSet, BoulderForm, \
@@ -31,14 +30,14 @@ class AddColor(View):
         return HttpResponseRedirect(reverse(AddGym.name))
 
 
-class AddColorRest(CreateAPIView):
+class AddColorRest(ListCreateAPIView):
     """REST API for adding colors"""
     name = 'add_color_rest'
     queryset = Color.objects.all()
     serializer_class = ColorSerializer
 
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        serializer.save(created_by=self.request.user)
 
 
 class AddGym(View):
@@ -99,10 +98,7 @@ class AddGymRest(GenericAPIView, CreateModelMixin, UpdateModelMixin):
         return self.partial_update(request, *args, **kwargs)
 
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
-
-    def perform_update(self, serializer):
-        serializer.save(user=self.request.user)
+        serializer.save(created_by=self.request.user)
 
 
 def gym_map(request: WSGIRequest, gym_name: str):

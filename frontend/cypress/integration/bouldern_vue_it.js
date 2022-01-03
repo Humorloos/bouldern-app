@@ -1,13 +1,7 @@
 describe('The bouldern app', () => {
-  it('allows adding gyms', () => {
+  it('allows adding colors', () => {
     cy.visit(`${Cypress.env('hostVue')}/`);
     cy.registerAndLoginVue();
-    cy.contains('Create Gym').click();
-    cy.get('#id_name').type(Cypress.env('gymName'));
-    cy.get('#id_map').attachFile('generic_gym.png');
-    cy.contains('Submit').click();
-  });
-  it('allows adding colors', () => {
     cy.contains('Create Color').click();
     cy.get('#id_name').type(Cypress.env('colorName'));
     cy.get('#id_color').click();
@@ -20,5 +14,17 @@ describe('The bouldern app', () => {
           'cursor: crosshair;"]')
         .click(150, 50);
     cy.get('#submit_button').click();
+  });
+  it('allows adding gyms', () => {
+    cy.contains('Create Gym').click();
+    cy.get('#id_name').type(Cypress.env('gymName'));
+    cy.get('#id_map').attachFile('generic_gym.png');
+    cy.get('#id_color-level-1').click();
+    // newly created color should be in selectable
+    cy.contains(Cypress.env('colorName')).click();
+    cy.contains('Add Level').click();
+    cy.get('#id_color-level-2').click();
+    cy.contains('Yellow').click();
+    cy.contains('Submit').click();
   });
 });
