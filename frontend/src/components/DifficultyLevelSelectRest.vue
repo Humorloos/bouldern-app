@@ -1,5 +1,5 @@
 <template>
-  <div id="difficulty-level">
+  <div>
     <v-select
       v-model="value"
       :options="options"

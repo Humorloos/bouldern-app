@@ -24,6 +24,7 @@
 
     <difficulty-level-select-rest
       v-for="(color, index) in colors"
+      :id="`id_color-level-${index + 1}`"
       :key="color.name"
       v-model="colors[index]"
       :color-options="colorOptions"
