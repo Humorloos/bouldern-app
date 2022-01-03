@@ -7,7 +7,9 @@
       :clearable="false"
     >
       <template #option="option">
-        <span :style="option.style">{{ option.label }}</span>
+        <span :style="`color: ${option.color}`">
+          {{ option.label }}
+        </span>
       </template>
     </v-select>
   </div>
@@ -38,25 +40,27 @@ export default {
   computed: {
     options() {
       return this.colors.map((color) => {
-        return {
-          style: {color: color.color},
-          label: color.name,
-        };
+        return this.optionFromColor(color);
       });
     },
     value: {
       get() {
-        return {
-          ...this.modelValue,
-          label: this.modelValue.name,
-        };
+        return this.optionFromColor(this.modelValue);
       },
       set(value) {
         this.$emit('update:modelValue', {
-          color: value.style.color,
+          color: value.color,
           name: value.label,
         });
       },
+    },
+  },
+  methods: {
+    optionFromColor(color) {
+      return {
+        ...color,
+        label: color.name,
+      };
     },
   },
 };
