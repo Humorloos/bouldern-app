@@ -46,8 +46,8 @@ export default {
         name: '',
         difficultylevel_set:
           {
-            style: {color: 'white'},
-            label: '',
+            color: 'white',
+            name: 'default',
           },
       },
       map: undefined,

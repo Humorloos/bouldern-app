@@ -30,7 +30,8 @@ export default {
     },
     modelValue: {
       type: Object,
-      default: () => {},
+      default: () => {
+      },
     },
   },
   emits: ['update:modelValue'],
@@ -45,10 +46,18 @@ export default {
     },
     value: {
       get() {
-        return this.modelValue;
+        return {
+          style: {
+            color: this.modelValue.color,
+          },
+          label: this.modelValue.name,
+        };
       },
       set(value) {
-        this.$emit('update:modelValue', value);
+        this.$emit('update:modelValue', {
+          color: value.style.color,
+          name: value.label,
+        });
       },
     },
   },
