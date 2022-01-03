@@ -54,7 +54,7 @@ export default {
     return {
       colors: [{
         color: 'white',
-        name: 'default',
+        name: '',
         id: 0,
       }],
       gymName: '',
