@@ -47,9 +47,7 @@ export default {
     value: {
       get() {
         return {
-          style: {
-            color: this.modelValue.color,
-          },
+          ...this.modelValue,
           label: this.modelValue.name,
         };
       },
@@ -68,7 +66,7 @@ export default {
 /*noinspection CssUnusedSymbol*/
 .vs__selected::before {
   /*noinspection CssInvalidFunction*/
-  background-color: v-bind("value.style.color");
+  background-color: v-bind("value.color");
   border-radius: 50%;
   content: " ";
   display: flex;
