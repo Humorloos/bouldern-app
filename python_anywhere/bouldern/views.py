@@ -5,9 +5,9 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.utils.decorators import classonlymethod
 from django.views import View
-from rest_framework.mixins import CreateModelMixin, UpdateModelMixin, \
-    ListModelMixin
-from rest_framework.viewsets import GenericViewSet
+from rest_framework.mixins import CreateModelMixin, ListModelMixin
+from rest_framework.viewsets import GenericViewSet, ModelViewSet
+from url_filter.integrations.drf import DjangoFilterBackend
 
 from python_anywhere.bouldern.forms import GymMapFormSet, BoulderForm, \
     ColorForm, GymForm, DifficultyLevelFormset
@@ -101,11 +101,13 @@ class AddGym(View):
         return HttpResponseRedirect(reverse(self.name))
 
 
-class GymAPI(ReversibleViewSet, CreateModelMixin, UpdateModelMixin):
+class GymAPI(ReversibleViewSet, ModelViewSet):
     """Rest API for adding gyms"""
     basename = 'gym'
     queryset = Gym.objects.all()
     serializer_class = GymSerializer
+    filter_backends = [DjangoFilterBackend]
+    filter_fields = ['name']
 
     def perform_create(self, serializer):
         serializer.save(created_by=self.request.user)
