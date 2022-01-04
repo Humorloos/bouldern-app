@@ -3,7 +3,7 @@ import json
 from django.utils.http import urlencode
 from faker import Faker
 from rest_framework.reverse import reverse
-from rest_framework.status import HTTP_200_OK
+from rest_framework.status import HTTP_200_OK, HTTP_201_CREATED
 
 from python_anywhere.accounts.factories import UserFactory
 from python_anywhere.bouldern.models import Gym, DifficultyLevel
@@ -86,6 +86,7 @@ def test_add_gym_rest(logged_in_client_rest):
     response = client.post(GymAPI().reverse_action('list'),
                            data=json_payload, format='json')
     # Then
+    assert response.status_code == HTTP_201_CREATED
     gym = Gym.objects.first()
     assert gym.name == gym_stub.name
     difficulty_levels = DifficultyLevel.objects.all()

@@ -23,7 +23,7 @@ class BoulderSerializer(ModelSerializer):
 class GymSerializer(ModelSerializer):
     """Serializer for Gym instances"""
     difficultylevel_set = DifficultyLevelSerializer(many=True)
-    boulder_set = BoulderSerializer(many=True)
+    boulder_set = BoulderSerializer(many=True, required=False)
 
     class Meta:
         model = Gym
