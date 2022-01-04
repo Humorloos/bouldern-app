@@ -1,7 +1,7 @@
 """Serializers for the bouldern app"""
 from rest_framework.serializers import ModelSerializer
 
-from python_anywhere.bouldern.models import Gym, Color, DifficultyLevel
+from python_anywhere.bouldern.models import Gym, Color, DifficultyLevel, Boulder
 
 
 class DifficultyLevelSerializer(ModelSerializer):
@@ -36,3 +36,11 @@ class ColorSerializer(ModelSerializer):
     class Meta:
         model = Color
         fields = ['name', 'color', 'id']
+
+
+class BoulderSerializer(ModelSerializer):
+    """Serializer for Color instances"""
+
+    class Meta:
+        model = Boulder
+        fields = ['coordinates', 'gym', 'id']
