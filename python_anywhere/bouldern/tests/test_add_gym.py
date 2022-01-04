@@ -3,7 +3,7 @@ from rest_framework.reverse import reverse
 
 from python_anywhere.accounts.factories import UserFactory
 from python_anywhere.bouldern.models import Gym, DifficultyLevel
-from python_anywhere.bouldern.views import AddGym, AddGymRest
+from python_anywhere.bouldern.views import AddGym, GymAPI
 
 
 def assert_correct_gym(gym, payload, user):
@@ -78,8 +78,8 @@ def test_add_gym_rest(logged_in_client_rest):
             for i in difficulty_level_range]}
 
     # When
-    response = client.post(reverse('gym-list'), data=json_payload,
-                           format='json')
+    response = client.post(GymAPI().reverse_action('list'),
+                           data=json_payload, format='json')
     # Then
     gym = Gym.objects.first()
     assert gym.name == gym_stub.name
@@ -93,7 +93,7 @@ def test_add_gym_rest(logged_in_client_rest):
     # When
     multipart_payload = {'map': gym_stub.map}
     client.patch(
-        reverse('gym-detail', kwargs={'pk': response.data['id']}),
+        GymAPI().reverse_action('detail', args=[response.data['id']]),
         data=multipart_payload, format='multipart')
     # Then
     gym = Gym.objects.first()

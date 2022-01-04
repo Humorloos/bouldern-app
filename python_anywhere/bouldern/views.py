@@ -3,6 +3,7 @@ from django.core.handlers.wsgi import WSGIRequest
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
+from django.utils.decorators import classonlymethod
 from django.views import View
 from rest_framework.mixins import CreateModelMixin, UpdateModelMixin, \
     ListModelMixin
@@ -11,7 +12,24 @@ from rest_framework.viewsets import GenericViewSet
 from python_anywhere.bouldern.forms import GymMapFormSet, BoulderForm, \
     ColorForm, GymForm, DifficultyLevelFormset
 from python_anywhere.bouldern.models import Boulder, Gym, Color
-from python_anywhere.bouldern.serializers import GymSerializer, ColorSerializer
+from python_anywhere.bouldern.serializers import GymSerializer, ColorSerializer, \
+    BoulderSerializer
+
+
+class ReversibleViewSet(GenericViewSet):
+    """
+    VewSet base class that allows using ViewSet().reverse_action() for
+    retrieving view URLs.
+    """
+    basename = None
+    request = None
+
+    @classonlymethod
+    def as_view(cls, actions=None, **initkwargs):
+        basename = cls.basename
+        view = super().as_view(actions, **initkwargs)
+        cls.basename = basename
+        return view
 
 
 class AddColor(View):
@@ -31,9 +49,9 @@ class AddColor(View):
         return HttpResponseRedirect(reverse(AddGym.name))
 
 
-class AddColorRest(GenericViewSet, ListModelMixin, CreateModelMixin):
+class ColorAPI(ReversibleViewSet, ListModelMixin, CreateModelMixin):
     """REST API for adding colors"""
-    name = 'add_color_rest'
+    basename = 'color'
     queryset = Color.objects.all()
     serializer_class = ColorSerializer
 
@@ -83,23 +101,28 @@ class AddGym(View):
         return HttpResponseRedirect(reverse(self.name))
 
 
-class AddGymRest(GenericViewSet, CreateModelMixin, UpdateModelMixin):
+class GymAPI(ReversibleViewSet, CreateModelMixin, UpdateModelMixin):
     """Rest API for adding gyms"""
-    name = 'add_gym_rest'
+    basename = 'gym'
     queryset = Gym.objects.all()
     serializer_class = GymSerializer
 
-    def post(self, request, *args, **kwargs):
-        """Create a new gym"""
-        return self.create(request, *args, **kwargs)
-
-    def patch(self, request, pk, *args, **kwargs):
-        """Partially update a gym"""
-        kwargs['pk'] = pk
-        return self.partial_update(request, *args, **kwargs)
-
     def perform_create(self, serializer):
         serializer.save(created_by=self.request.user)
+
+
+class BoulderAPI(ReversibleViewSet, ListModelMixin, CreateModelMixin):
+    """Rest API for reading and creating boulders in a specific gym"""
+    basename = 'boulder'
+    queryset = Boulder.objects.all()
+    serializer_class = BoulderSerializer
+
+    def get_queryset(self):
+        return Boulder.objects.filter(gym_id=self.kwargs['gym_pk'])
+
+    def perform_create(self, serializer):
+        serializer.save(created_by=self.request.user,
+                        gym=Gym.objects.get(pk=self.kwargs['gym_pk']))
 
 
 def gym_map(request: WSGIRequest, gym_name: str):
