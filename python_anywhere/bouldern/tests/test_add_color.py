@@ -1,11 +1,8 @@
-from dj_rest_auth.utils import jwt_encode
 from django.urls import reverse
 from faker import Faker
 from rest_framework.status import HTTP_201_CREATED, HTTP_200_OK
-from rest_framework.test import APIClient
 
 from python_anywhere.accounts.factories import UserFactory
-from python_anywhere.accounts.models import User
 from python_anywhere.bouldern.models import Color
 from python_anywhere.bouldern.views import AddGym, AddColor, AddColorRest
 
@@ -62,7 +59,7 @@ def test_color_api_get(logged_in_client_rest):
     colors = [ColorFactory() for _ in range(3)]
 
     # When
-    response = client.get(reverse('color-list'))
+    response = client.get(AddColorRest().reverse_action('list'))
     # Then
     assert response.status_code == HTTP_200_OK
     for instance in response.data.serializer.instance:
