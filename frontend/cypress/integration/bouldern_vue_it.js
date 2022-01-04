@@ -27,4 +27,10 @@ describe('The bouldern app', () => {
     cy.contains('Yellow').click();
     cy.contains('Submit').click();
   });
+  it('allows adding boulders', () => {
+    cy.get('#id_gym-name').type(Cypress.env('gymName'));
+    cy.get('#submit_button').click();
+    cy.pause();
+    console.log('');
+  });
 });
