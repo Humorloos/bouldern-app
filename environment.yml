@@ -164,8 +164,11 @@ dependencies:
   - zlib=1.2.11=h8ffe710_1013
   - zstd=1.5.0=h6255e5f_0
   - pip:
+    - cached-property==1.5.2
     - django-sslserver==0.22
+    - django-url-filter==0.3.15
     - drf-nested-routers==0.93.4
+    - enum-compat==0.0.3
     - pyjwt==1.7.1
     - pylint-django==2.5.0
     - pylint-plugin-utils==0.7
