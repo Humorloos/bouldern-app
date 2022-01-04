@@ -110,6 +110,6 @@ export default {
 };
 </script>
 
-<style scoped>
-
+<style>
+@import '../../node_modules/vue-select/dist/vue-select.css';
 </style>
