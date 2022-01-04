@@ -107,16 +107,6 @@ class AddGymRest(ReversibleViewSet, CreateModelMixin, UpdateModelMixin):
     queryset = Gym.objects.all()
     serializer_class = GymSerializer
 
-    # todo: check if I really need those
-    def post(self, request, *args, **kwargs):
-        """Create a new gym"""
-        return self.create(request, *args, **kwargs)
-
-    def patch(self, request, pk, *args, **kwargs):
-        """Partially update a gym"""
-        kwargs['pk'] = pk
-        return self.partial_update(request, *args, **kwargs)
-
     def perform_create(self, serializer):
         serializer.save(created_by=self.request.user)
 
