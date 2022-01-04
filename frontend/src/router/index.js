@@ -5,7 +5,7 @@ import Login from '@/views/Login';
 import NotFound from '@/views/NotFound';
 import CreateColor from '@/views/CreateColor';
 import CreateGym from '@/views/CreateGym';
-import GymMapRest from '@/views/GymMapRest';
+import GymMapView from '@/views/GymMapView';
 
 export default createRouter({
   history: createWebHistory(),
@@ -15,7 +15,7 @@ export default createRouter({
     {path: '/login', component: Login},
     {path: '/create-color', component: CreateColor},
     {path: '/create-gym', component: CreateGym},
-    {path: '/gym-map/:gymName', component: GymMapRest},
+    {path: '/gym-map/:gymName', component: GymMapView},
     {path: '/:pathMatch(.*)', component: NotFound},
   ],
 });
