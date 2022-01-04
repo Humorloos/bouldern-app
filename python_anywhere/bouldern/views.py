@@ -17,6 +17,10 @@ from python_anywhere.bouldern.serializers import GymSerializer, ColorSerializer,
 
 
 class ReversibleViewSet(GenericViewSet):
+    """
+    VewSet base class that allows using ViewSet().reverse_action() for
+    retrieving view URLs.
+    """
     basename = None
     request = None
 
@@ -103,6 +107,7 @@ class AddGymRest(ReversibleViewSet, CreateModelMixin, UpdateModelMixin):
     queryset = Gym.objects.all()
     serializer_class = GymSerializer
 
+    # todo: check if I really need those
     def post(self, request, *args, **kwargs):
         """Create a new gym"""
         return self.create(request, *args, **kwargs)
@@ -117,6 +122,7 @@ class AddGymRest(ReversibleViewSet, CreateModelMixin, UpdateModelMixin):
 
 
 class BoulderAPI(ReversibleViewSet, ListModelMixin, CreateModelMixin):
+    """Rest API for reading and creating boulders in a specific gym"""
     basename = 'boulder'
     queryset = Boulder.objects.all()
     serializer_class = BoulderSerializer
