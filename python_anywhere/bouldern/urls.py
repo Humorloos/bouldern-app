@@ -5,14 +5,14 @@ from rest_framework.routers import SimpleRouter
 from rest_framework_nested.routers import NestedSimpleRouter
 
 from python_anywhere.bouldern.views import gym_map, AddGym, AddColor, \
-    AddGymRest, AddColorRest, BoulderAPI
+    GymAPI, ColorAPI, BoulderAPI
 
 router = SimpleRouter()
-router.register(AddGymRest.basename, AddGymRest)
-router.register(AddColorRest.basename, AddColorRest)
+router.register(GymAPI.basename, GymAPI)
+router.register(ColorAPI.basename, ColorAPI)
 
-gym_router = NestedSimpleRouter(router, AddGymRest.basename,
-                                lookup=AddGymRest.basename)
+gym_router = NestedSimpleRouter(router, GymAPI.basename,
+                                lookup=GymAPI.basename)
 gym_router.register(BoulderAPI.basename, BoulderAPI)
 
 urlpatterns = [

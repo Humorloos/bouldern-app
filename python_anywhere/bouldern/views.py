@@ -49,7 +49,7 @@ class AddColor(View):
         return HttpResponseRedirect(reverse(AddGym.name))
 
 
-class AddColorRest(ReversibleViewSet, ListModelMixin, CreateModelMixin):
+class ColorAPI(ReversibleViewSet, ListModelMixin, CreateModelMixin):
     """REST API for adding colors"""
     basename = 'color'
     queryset = Color.objects.all()
@@ -101,7 +101,7 @@ class AddGym(View):
         return HttpResponseRedirect(reverse(self.name))
 
 
-class AddGymRest(ReversibleViewSet, CreateModelMixin, UpdateModelMixin):
+class GymAPI(ReversibleViewSet, CreateModelMixin, UpdateModelMixin):
     """Rest API for adding gyms"""
     basename = 'gym'
     queryset = Gym.objects.all()
