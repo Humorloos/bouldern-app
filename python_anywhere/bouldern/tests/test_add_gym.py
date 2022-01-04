@@ -35,7 +35,9 @@ def test_add_gym(client, db):
     difficulty_level_range = range(n_difficulty_levels)
 
     from python_anywhere.bouldern.factories import ColorFactory
-    colors = [ColorFactory() for _ in difficulty_level_range]
+    faker = Faker()
+    colors = [ColorFactory(name=faker.unique.color())
+              for _ in difficulty_level_range]
 
     difficulty_level_prefix = "difficultylevel_set-"
     payload = {
@@ -75,7 +77,9 @@ def test_add_gym_rest(logged_in_client_rest):
     n_difficulty_levels = 3
     difficulty_level_range = range(n_difficulty_levels)
     from python_anywhere.bouldern.factories import ColorFactory
-    colors = [ColorFactory() for _ in difficulty_level_range]
+    faker = Faker()
+    colors = [ColorFactory(name=faker.unique.color())
+              for _ in difficulty_level_range]
     json_payload = {
         'name': gym_stub.name,
         'difficultylevel_set': [
