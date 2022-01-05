@@ -31,7 +31,8 @@ describe('The bouldern app', () => {
         `You're at the bouldern index.`);
   });
   it('can add boulders to gyms', () => {
-    cy.visit(`${Cypress.env('host')}/bouldern/${Cypress.env('newGymName')}/map/`);
+    cy.visit(
+        `${Cypress.env('host')}/bouldern/${Cypress.env('newGymName')}/map/`);
     cy.get('#map-root').click(340, 150);
     cy.contains('You clicked here');
     cy.get('#popup-closer').click();
