@@ -36,6 +36,7 @@ module.exports = {
   // assetsDir must match Django's STATIC_URL
   assetsDir: 'static',
   configureWebpack: {
+    // This setting is for loading i18n yaml files
     module: {
       rules: [
         {
@@ -60,24 +61,6 @@ module.exports = {
             },
           },
         });
-    // delete plugins that create html files for bundles since we serve them
-    // from django templates
-    ['gym_form', 'gym_map'].forEach((page) => {
-      config.plugins.delete(`html-${page}`);
-      config.plugins.delete(`preload-${page}`);
-      config.plugins.delete(`prefetch-${page}`);
-    });
-
-    // webpack-stats.json is created by BundleTracker and describes bundles
-    // produced by build process
-    config
-        .plugin('BundleTracker')
-        .use(BundleTracker, [{filename: '../frontend/webpack-stats.json'}]);
-
-    // __STATIC__ alias allows referencing paths to static files within Vue
-    // components as "~__STATIC__/logo.png"
-    config.resolve.alias
-        .set('__STATIC__', 'static');
 
     config.devServer
         .public('https://localhost:8080')
@@ -87,6 +70,6 @@ module.exports = {
         .watchOptions({poll: 1000})
         .https(true) // https is needed for dj-rest-auth
         .headers({'Access-Control-Allow-Origin': ['*']})
-        .historyApiFallback(true);
+        .historyApiFallback(true); // needed for vue router history
   },
 };
