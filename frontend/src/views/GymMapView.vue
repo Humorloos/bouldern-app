@@ -3,6 +3,7 @@
     id="popup"
     ref="popup"
     class="ol-popup"
+    :style="{visibility: loaded ? 'visible' : 'hidden'}"
     @keyup.esc="closePopover"
   >
     <a
@@ -57,6 +58,7 @@ export default {
       mapImage: new Image(),
       jsonFormat: new GeoJSON(),
       selectedCoordinate: 'none yet',
+      loaded: false,
     };
   },
   computed: {
@@ -80,7 +82,8 @@ export default {
       featureCollection.on('add', function(event) {
         self.mapData.boulder_set.push({
           coordinates: self.jsonFormat
-              .writeGeometryObject(event.element.getGeometry())});
+              .writeGeometryObject(event.element.getGeometry()),
+        });
         self.popover['feature'] = event.element;
       });
       return featureCollection;
@@ -161,7 +164,10 @@ export default {
     }).then((response) => {
       this.mapData = response.data[0];
       this.mapImage.src = this.mapData.map;
-      this.mapImage.onload = () => this.map;
+      this.mapImage.onload = () => {
+        this.map;
+        this.loaded = true;
+      };
     });
   },
   methods: {
