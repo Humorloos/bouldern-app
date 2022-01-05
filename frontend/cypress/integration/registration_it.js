@@ -1,24 +1,28 @@
-describe('The register app', () => {
-  it('notifys correctly if user does not exist', () => {
+describe('The register vue app', () => {
+  it('notifys correctly if user does not exist', function() {
+    cy.visit(`${constants.hostVue}/`);
+    cy.contains('Log In').click();
     // try log in with non-existent user
-    cy.visit(`${Cypress.env('host')}/bouldern/`);
-
-    cy.verifyLogInWithInvalidUser();
+    cy.logInViaLogInLinkNew();
+    cy.contains($t('wrongCredentialsMsg'));
+    cy.contains('Home').click();
   });
 
-  it('lets users log in once they have signed up', () => {
-    // Sign up
-    cy.registerAndLogin();
+  it('allows logging in after registering', () => {
+    cy.registerAndLoginVue();
   });
-  it('lets users log out and log in again', () => {
-    // Sign out
+  it('allows logging out', () => {
     cy.contains('Log Out').click();
-
-    cy.logInViaLogInLink();
-    cy.contains('You\'re at the bouldern index');
+    cy.contains('Log In').click();
+    cy.contains($t('notLoggedInMsg'));
   });
-  it('lets users delete their account', () => {
-    cy.get('#delete_account').click();
-    cy.verifyLogInWithInvalidUser();
+  it('allows deleting your account', () => {
+    // try log in with non-existent user
+    cy.logInViaLogInLinkNew();
+    cy.contains('Home').click();
+    cy.contains('Delete Account').click();
+    cy.contains('Log In').click();
+    cy.logInViaLogInLinkNew();
+    cy.contains($t('wrongCredentialsMsg'));
   });
 });
