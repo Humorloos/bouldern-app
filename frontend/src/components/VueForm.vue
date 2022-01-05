@@ -53,7 +53,6 @@ export default {
           'content-type': this.contentType,
         },
       }).then((response) => this.$emit('submitted', response));
-      this.$router.push('/');
     },
   },
 };

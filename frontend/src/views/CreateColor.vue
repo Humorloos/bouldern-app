@@ -2,6 +2,7 @@
   <vue-form
     :form="form"
     :api-path="'/bouldern/color/'"
+    @submitted="onSubmitted"
   >
     <label for="id_name">Name: </label>
     <input
@@ -38,6 +39,11 @@ export default {
   },
   mounted() {
     jscolor.install();
+  },
+  methods: {
+    onSubmitted(response) {
+      this.$router.push('/');
+    },
   },
 };
 </script>

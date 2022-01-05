@@ -102,6 +102,7 @@ export default {
               'content-type': 'multipart/form-data',
             },
           });
+      this.$router.push('/');
     },
     addDifficultySelect() {
       this.colors.push(this.colors.at(-1));
