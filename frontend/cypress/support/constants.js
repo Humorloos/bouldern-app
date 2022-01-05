@@ -1,4 +1,4 @@
-export const constants = {
+window.constants = {
   newUsername: 'testUser',
   newEmail: 'testEmail@mailprovider.com',
   newPassword: 'testPassword',

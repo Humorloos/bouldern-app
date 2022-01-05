@@ -57,7 +57,7 @@ Cypress.Commands.add('logInViaLogInLink', () => {
 });
 
 Cypress.Commands.add('logInViaLogInLinkNew', () => {
-  cy.contains(cy.t('notLoggedInMsg'));
+  cy.contains($t('notLoggedInMsg'));
 
   cy.url().should('include', '/login');
 
