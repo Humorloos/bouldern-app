@@ -102,6 +102,7 @@ export default {
               'content-type': 'multipart/form-data',
             },
           });
+      this.$router.push('/');
     },
     addDifficultySelect() {
       this.colors.push(this.colors.at(-1));
@@ -110,6 +111,6 @@ export default {
 };
 </script>
 
-<style scoped>
-
+<style>
+@import '../../node_modules/vue-select/dist/vue-select.css';
 </style>
