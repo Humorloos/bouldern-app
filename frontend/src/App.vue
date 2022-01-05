@@ -14,6 +14,8 @@ export default {
 };
 </script>
 
-<style scoped>
-
+<style>
+html, body, #app {
+  height: 99%;
+}
 </style>

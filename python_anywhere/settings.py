@@ -85,6 +85,7 @@ INSTALLED_APPS = [
     'python_anywhere.accounts',
     'rest_framework',
     'rest_framework.authtoken',
+    'rest_framework_gis',
     'sslserver',
     'webpack_loader',
 ]
