@@ -1,10 +1,8 @@
 from django.urls import reverse
-from faker import Faker
 from rest_framework.status import HTTP_201_CREATED, HTTP_200_OK
 
-from python_anywhere.accounts.factories import UserFactory
 from python_anywhere.bouldern.models import Color
-from python_anywhere.bouldern.views import AddGym, AddColor, ColorAPI
+from python_anywhere.bouldern.views import ColorAPI
 
 
 def test_color_api_post(logged_in_client_rest):
