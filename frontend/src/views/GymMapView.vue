@@ -16,8 +16,8 @@
       <code>' {{ selectedCoordinate }} </code>
     </div>
     <vue-form
-      api-path="/bouldern/boulder/"
-      :form="mapData.boulder_set"
+      :api-path="`/bouldern/gym/${mapData.id}/boulder/`"
+      :form="mapData.boulder_set.at(-1)"
     />
   </div>
   <div
@@ -51,6 +51,7 @@ export default {
           coordinates: '',
         }],
         map: '',
+        id: 0,
       },
       mapImage: new Image(),
       jsonFormat: new GeoJSON(),
@@ -76,8 +77,9 @@ export default {
       const self = this;
       // Set handler for serializing newly added and modified features
       featureCollection.on('add', function(event) {
-        self.mapData.boulder_set.push(
-            self.jsonFormat.writeGeometry(event.element.getGeometry()));
+        self.mapData.boulder_set.push({
+          coordinates: self.jsonFormat
+              .writeGeometryObject(event.element.getGeometry())});
         self.popover['feature'] = event.element;
       });
       return featureCollection;

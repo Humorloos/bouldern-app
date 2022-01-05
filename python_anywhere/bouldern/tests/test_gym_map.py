@@ -55,7 +55,7 @@ def test_boulder_api_post(logged_in_client_rest):
 
     from python_anywhere.bouldern.factories import BoulderFactory
     payload = {f'coordinates': BoulderFactory.stub(
-        gym=gym).coordinates.geojson, 'gym': gym.pk}
+        gym=gym).coordinates.geojson}
     # When
     response = client.post(BoulderAPI().reverse_action('list', args=[gym.pk]),
                            data=payload, format='json')
