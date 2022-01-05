@@ -6,6 +6,7 @@
   "parser": "@typescript-eslint/parser",
   "rules": {
     "@typescript-eslint/no-loss-of-precision": 0,
+    "cypress/no-unnecessary-waiting": 0,
     "spaced-comment": [
       "error",
       "always",

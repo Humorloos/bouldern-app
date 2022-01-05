@@ -4,7 +4,7 @@ describe('The register vue app', () => {
     cy.contains('Log In').click();
 
     // try log in with non-existent user
-    cy.logInViaLogInLinkVue();
+    cy.logInViaLogInLinkNew();
     cy.contains('Please enter a correct email and password.');
     cy.contains('Home').click();
   });

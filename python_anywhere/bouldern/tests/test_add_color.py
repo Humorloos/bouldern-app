@@ -11,12 +11,13 @@ def test_add_color(client, db):
     """Test that post method works correctly"""
     # Given
     # login
-    password = Faker().password()
+    faker = Faker()
+    password = faker.password()
     user = UserFactory(password=password)
     client.login(username=user.email, password=password)
 
     from python_anywhere.bouldern.factories import ColorFactory
-    payload = {key: ColorFactory.stub().__dict__[key]
+    payload = {key: ColorFactory.stub(name=faker.unique.color()).__dict__[key]
                for key in ['color', 'name']}
 
     # When

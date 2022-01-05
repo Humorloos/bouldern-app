@@ -29,6 +29,11 @@ class Command(BaseCommand):
                     is_superuser=True,
                     is_staff=True, )
 
+        # create test user
+        UserFactory(email='wetBonez@web.de',
+                    username='wetBonez',
+                    password='youcantknowthispassword123')
+
         # add default colors
         colors = [ColorFactory(name=name, color=color)
                   for name, color in default_colors.items()]

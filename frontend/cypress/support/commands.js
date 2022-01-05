@@ -28,6 +28,16 @@
 import 'cypress-file-upload';
 
 
+Cypress.Commands.add('enterNewCredentialsAndLogin', () => {
+  cy.get('#id_username')
+      .type(Cypress.env('newEmail'))
+      .should('have.value', Cypress.env('newEmail'));
+  cy.get('#id_password').type(Cypress.env('newPassword'));
+
+  cy.get('#submit_button').contains('Log In').click();
+});
+
+
 Cypress.Commands.add('enterCredentialsAndLogin', () => {
   cy.get('#id_username')
       .type(Cypress.env('email'))
@@ -43,7 +53,15 @@ Cypress.Commands.add('logInViaLogInLink', () => {
 
   cy.url().should('include', '/registration/login');
 
-  cy.enterCredentialsAndLogin();
+  cy.enterNewCredentialsAndLogin();
+});
+
+Cypress.Commands.add('logInViaLogInLinkNew', () => {
+  cy.contains('You are not logged in');
+
+  cy.url().should('include', '/login');
+
+  cy.enterNewCredentialsAndLogin();
 });
 
 Cypress.Commands.add('logInViaLogInLinkVue', () => {
@@ -62,13 +80,13 @@ Cypress.Commands.add('verifyLogInWithInvalidUser', () => {
 
 Cypress.Commands.add('register', () => {
   cy.get('#id_username')
-      .type(Cypress.env('username'))
-      .should('have.value', Cypress.env('username'));
+      .type(Cypress.env('newUsername'))
+      .should('have.value', Cypress.env('newUsername'));
   cy.get('#id_email')
-      .type(Cypress.env('email'))
-      .should('have.value', Cypress.env('email'));
-  cy.get('#id_password1').type(Cypress.env('password'));
-  cy.get('#id_password2').type(Cypress.env('password'));
+      .type(Cypress.env('newEmail'))
+      .should('have.value', Cypress.env('newEmail'));
+  cy.get('#id_password1').type(Cypress.env('newPassword'));
+  cy.get('#id_password2').type(Cypress.env('newPassword'));
   cy.get('#submit_button').contains('Register').click();
 });
 
@@ -77,7 +95,7 @@ Cypress.Commands.add('registerAndLogin', () => {
 
   cy.register();
 
-  cy.enterCredentialsAndLogin();
+  cy.enterNewCredentialsAndLogin();
 });
 
 Cypress.Commands.add('registerAndLoginVue', () => {
@@ -87,8 +105,20 @@ Cypress.Commands.add('registerAndLoginVue', () => {
 
   cy.contains('Log In').click();
   // log in with registered user
-  cy.logInViaLogInLinkVue();
-  cy.contains(`Hello, ${Cypress.env('email')}. ` +
+  cy.logInViaLogInLinkNew();
+  cy.contains(`Hello, ${Cypress.env('newEmail')}. ` +
           'You\'re at the bouldern index.');
   cy.contains('Home').click();
+});
+
+Cypress.Commands.add('openNewGymMap', () => {
+  cy.get('#id_gym-name').type(Cypress.env('newGymName'));
+  cy.get('#submit_button').click();
+  cy.wait(500);
+});
+
+Cypress.Commands.add('openGymMap', () => {
+  cy.get('#id_gym-name').type(Cypress.env('gymName'));
+  cy.get('#submit_button').click();
+  cy.wait(500);
 });
