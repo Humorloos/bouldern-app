@@ -1,5 +1,4 @@
 'use strict';
-const BundleTracker = require('webpack-bundle-tracker');
 
 const pages = {
   'index': {
@@ -27,10 +26,10 @@ module.exports = {
   // source maps for production.
   productionSourceMap: false,
   publicPath: process.env.NODE_ENV === 'production' ?
-        // signals to django-webpack-loader to fall back to Django's standard
-        // static finder behavior
-        '' :
-        'https://localhost:8080/', // in development, use own webpack development server
+    // signals to django-webpack-loader to fall back to Django's standard
+    // static finder behavior
+    '' :
+    'https://localhost:8080/', // in development, use own webpack development server
   // outputDir must be added to Django's TEMPLATE_DIRS
   outputDir: path.resolve(__dirname, 'dist/'),
   // assetsDir must match Django's STATIC_URL
@@ -69,7 +68,6 @@ module.exports = {
         .hotOnly(true)
         .watchOptions({poll: 1000})
         .https(true) // https is needed for dj-rest-auth
-        .headers({'Access-Control-Allow-Origin': ['*']})
         .historyApiFallback(true); // needed for vue router history
   },
 };
