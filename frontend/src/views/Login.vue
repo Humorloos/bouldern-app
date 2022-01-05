@@ -30,7 +30,7 @@
     </p>
   </div>
   <div v-else>
-    <p>You are not logged in</p>
+    <p>{{ messages.notLoggedInMsg }}</p>
   </div>
 </template>
 <script>
@@ -57,6 +57,7 @@ export default {
     ]),
     ...mapState([
       'user',
+      'messages',
     ]),
   },
   methods: {

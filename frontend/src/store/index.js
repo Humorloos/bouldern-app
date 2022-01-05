@@ -1,7 +1,8 @@
 import {createStore} from 'vuex';
+import messages from '../lang/translations/en';
 
-export default createStore({
-  state: {
+const getDefaultState = () => {
+  return {
     authToken: {
       token: '',
       expiration: Date.now(),
@@ -16,7 +17,12 @@ export default createStore({
       last_name: '',
       pk: 0,
     },
-  },
+    messages,
+  };
+};
+
+export default createStore({
+  state: getDefaultState(),
   mutations: {
     setLoginData: (state, payload) => {
       state.authToken.token = payload.access_token;
@@ -25,6 +31,11 @@ export default createStore({
       state.refreshToken.expiration =
             new Date(payload.refresh_token_expiration);
       state.user = payload.user;
+    },
+    logout: (state) => {
+      // Merge rather than replace so we don't lose observers
+      // https://github.com/vuejs/vuex/issues/1118
+      Object.assign(state, getDefaultState());
     },
   },
   getters: {
