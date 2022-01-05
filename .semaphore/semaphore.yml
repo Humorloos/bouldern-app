@@ -139,7 +139,7 @@ blocks:
             - SEARCH_PATTERN='DONE'
             - npm run serve > ${VUE_LOGFILE} &
             - tail -f -n0 ${VUE_LOGFILE} | grep -qe "${SEARCH_PATTERN}"
-            - npx cypress run
+            - npx cypress run --browser chrome
       epilogue:
         always:
           commands:
