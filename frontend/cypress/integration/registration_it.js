@@ -3,7 +3,7 @@ describe('The register app', () => {
     cy.visit(`${constants.hostVue}/`);
     cy.contains('Log In').click();
     // try log in with non-existent user
-    cy.logInViaLogInLinkNew();
+    loginViaLogInLink(constants.newEmail, constants.newPassword);
     cy.contains($t('wrongCredentialsMsg'));
     cy.contains('Home').click();
   });
@@ -23,7 +23,7 @@ describe('The register app', () => {
     cy.contains('Home').click();
 
     cy.contains('Log In').click();
-    cy.logInViaLogInLinkNew();
+    loginViaLogInLink(constants.newEmail, constants.newPassword);
     cy.contains(`Hello, ${constants.newEmail}. ` +
           'You\'re at the bouldern index.');
     cy.contains('Home').click();
@@ -35,11 +35,11 @@ describe('The register app', () => {
   });
   it('allows deleting your account', () => {
     // try log in with non-existent user
-    cy.logInViaLogInLink();
+    loginViaLogInLink(constants.email, constants.password);
     cy.contains('Home').click();
     cy.contains('Delete Account').click();
     cy.contains('Log In').click();
-    cy.logInViaLogInLink();
+    loginViaLogInLink(constants.email, constants.password);
     cy.contains($t('wrongCredentialsMsg'));
   });
 });

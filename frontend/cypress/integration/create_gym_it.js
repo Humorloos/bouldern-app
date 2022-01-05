@@ -1,7 +1,7 @@
 describe('The gym creation view', () => {
   it('allows adding gyms', () => {
     cy.visit(`${constants.hostVue}/login`);
-    cy.logInViaLogInLink();
+    loginViaLogInLink(constants.email, constants.password);
     // log in with registered user
     cy.contains(`Hello, ${constants.email}. ` +
           'You\'re at the bouldern index.');

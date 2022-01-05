@@ -1,7 +1,7 @@
 describe('The color creation view', () => {
   it('allows adding colors', () => {
     cy.visit(`${constants.hostVue}/login`);
-    cy.logInViaLogInLink();
+    loginViaLogInLink(constants.email, constants.password);
     cy.contains('Home').click();
     cy.contains('Create Color').click();
     cy.get('#id_name').type(constants.colorName);
