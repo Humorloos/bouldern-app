@@ -3,10 +3,9 @@ from django.core.handlers.wsgi import WSGIRequest
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
-from django.utils.decorators import classonlymethod
 from django.views import View
 from rest_framework.mixins import CreateModelMixin, ListModelMixin
-from rest_framework.viewsets import GenericViewSet, ModelViewSet
+from rest_framework.viewsets import ModelViewSet
 from url_filter.integrations.drf import DjangoFilterBackend
 
 from python_anywhere.bouldern.forms import GymMapFormSet, BoulderForm, \
@@ -14,22 +13,7 @@ from python_anywhere.bouldern.forms import GymMapFormSet, BoulderForm, \
 from python_anywhere.bouldern.models import Boulder, Gym, Color
 from python_anywhere.bouldern.serializers import GymSerializer, ColorSerializer, \
     BoulderSerializer
-
-
-class ReversibleViewSet(GenericViewSet):
-    """
-    VewSet base class that allows using ViewSet().reverse_action() for
-    retrieving view URLs.
-    """
-    basename = None
-    request = None
-
-    @classonlymethod
-    def as_view(cls, actions=None, **initkwargs):
-        basename = cls.basename
-        view = super().as_view(actions, **initkwargs)
-        cls.basename = basename
-        return view
+from python_anywhere.views import ReversibleViewSet
 
 
 class AddColor(View):
