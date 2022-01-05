@@ -11,6 +11,12 @@
     </router-link>
   </div>
   <div>
+    <a
+      href="#"
+      @click="logout"
+    >Log Out</a>
+  </div>
+  <div>
     <router-link to="/create-color">
       Create Color
     </router-link>
@@ -36,6 +42,8 @@
 </template>
 
 <script>
+import {mapMutations} from 'vuex';
+
 export default {
   name: 'Index',
   data() {
@@ -44,6 +52,7 @@ export default {
     };
   },
   methods: {
+    ...mapMutations(['logout']),
     openGymMap() {
       this.$router.push(`/gym-map/${this.gymName}`);
     },
