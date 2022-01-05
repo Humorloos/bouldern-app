@@ -34,9 +34,9 @@ Cypress.Commands.add('logInViaLogInLinkNew', () => {
   cy.url().should('include', '/login');
 
   cy.get('#id_username')
-      .type(Cypress.env('newEmail'))
-      .should('have.value', Cypress.env('newEmail'));
-  cy.get('#id_password').type(Cypress.env('newPassword'));
+      .type(constants.newEmail)
+      .should('have.value', constants.newEmail);
+  cy.get('#id_password').type(constants.newPassword);
 
   cy.get('#submit_button').contains('Log In').click();
 });
@@ -51,9 +51,9 @@ Cypress.Commands.add('logInViaLogInLink', () => {
   cy.url().should('include', '/login');
 
   cy.get('#id_username')
-      .type(Cypress.env('email'))
-      .should('have.value', Cypress.env('email'));
-  cy.get('#id_password').type(Cypress.env('password'));
+      .type(constants.email)
+      .should('have.value', constants.email);
+  cy.get('#id_password').type(constants.password);
 
   cy.get('#submit_button').contains('Log In').click();
 });

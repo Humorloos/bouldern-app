@@ -1,11 +1,11 @@
 describe('The gym map view', () => {
   it('allows adding boulders', () => {
-    cy.visit(`${Cypress.env('hostVue')}/login`);
+    cy.visit(`${constants.hostVue}/login`);
     cy.logInViaLogInLink();
-    cy.contains(`Hello, ${Cypress.env('email')}. ` +
+    cy.contains(`Hello, ${constants.email}. ` +
           'You\'re at the bouldern index.');
     cy.contains('Home').click();
-    cy.get('#id_gym-name').type(Cypress.env('gymName'));
+    cy.get('#id_gym-name').type(constants.gymName);
     cy.get('#submit_button').click();
     cy.wait(500);
     cy.get('#map-root').click(340, 150);

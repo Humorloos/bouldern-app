@@ -12,19 +12,19 @@ describe('The register vue app', () => {
     cy.contains('Register').click();
 
     cy.get('#id_username')
-        .type(Cypress.env('newUsername'))
-        .should('have.value', Cypress.env('newUsername'));
+        .type(constants.newUsername)
+        .should('have.value', constants.newUsername);
     cy.get('#id_email')
-        .type(Cypress.env('newEmail'))
-        .should('have.value', Cypress.env('newEmail'));
-    cy.get('#id_password1').type(Cypress.env('newPassword'));
-    cy.get('#id_password2').type(Cypress.env('newPassword'));
+        .type(constants.newEmail)
+        .should('have.value', constants.newEmail);
+    cy.get('#id_password1').type(constants.newPassword);
+    cy.get('#id_password2').type(constants.newPassword);
     cy.get('#submit_button').contains('Register').click();
     cy.contains('Home').click();
 
     cy.contains('Log In').click();
     cy.logInViaLogInLinkNew();
-    cy.contains(`Hello, ${Cypress.env('newEmail')}. ` +
+    cy.contains(`Hello, ${constants.newEmail}. ` +
           'You\'re at the bouldern index.');
     cy.contains('Home').click();
   });
