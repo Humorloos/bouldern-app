@@ -7,6 +7,7 @@
   "rules": {
     "@typescript-eslint/no-loss-of-precision": 0,
     "cypress/no-unnecessary-waiting": 0,
+    // allow triple slash at beginnings of files
     "spaced-comment": [
       "error",
       "always",
@@ -19,6 +20,7 @@
   },
   "globals": {
     "$t": "readonly",
-    "constants": "writable"
+    "constants": "readonly",
+    "loginViaLogInLink": "readonly"
   }
 }
