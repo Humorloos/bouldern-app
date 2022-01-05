@@ -39,10 +39,16 @@
       </button>
     </form>
   </div>
+  <div>
+    <a
+      href="#"
+      @click="deleteAccountAndLogout"
+    >Delete Account</a>
+  </div>
 </template>
 
 <script>
-import {mapMutations} from 'vuex';
+import {mapActions, mapMutations, mapState} from 'vuex';
 
 export default {
   name: 'Index',
@@ -51,8 +57,12 @@ export default {
       gymName: '',
     };
   },
+  computed: {
+    ...mapState(['user']),
+  },
   methods: {
     ...mapMutations(['logout']),
+    ...mapActions(['deleteAccountAndLogout']),
     openGymMap() {
       this.$router.push(`/gym-map/${this.gymName}`);
     },
