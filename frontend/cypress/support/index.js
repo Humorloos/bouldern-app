@@ -13,13 +13,10 @@
 // https://on.cypress.io/configuration
 // ***********************************************************
 
-import './commands';
 import './functions';
 import './constants';
+import 'cypress-file-upload';
 
 before(() => {
   cy.exec('cd .. && python manage.py reset_db');
-});
-beforeEach(() => {
-  Cypress.Cookies.preserveOnce('sessionid', 'csrftoken');
 });

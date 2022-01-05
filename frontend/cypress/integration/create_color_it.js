@@ -1,9 +1,10 @@
 describe('The color creation view', () => {
   it('allows adding colors', () => {
-    cy.visit(`${Cypress.env('hostVue')}/`);
-    cy.registerAndLoginVue();
+    cy.visit(`${constants.hostVue}/login`);
+    loginViaLogInLink(constants.email, constants.password);
+    cy.contains('Home').click();
     cy.contains('Create Color').click();
-    cy.get('#id_name').type(Cypress.env('colorName'));
+    cy.get('#id_name').type(constants.colorName);
     cy.get('#id_color').click();
     cy.get('div[style=' +
           '"background: rgba(255, 0, 0, 0.2); ' +
@@ -17,6 +18,6 @@ describe('The color creation view', () => {
     cy.contains('Create Gym').click();
     cy.get('#id_color-level-1').click();
     // newly created color should be in selectable
-    cy.contains(Cypress.env('colorName')).click();
+    cy.contains(constants.colorName).click();
   });
 });
