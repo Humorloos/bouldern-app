@@ -11,13 +11,41 @@
 
 // This function is called when a project is opened or re-opened (e.g. due to
 // the project's config changing)
-
-/**
- * @type {Cypress.PluginConfig}
- */
-// eslint-disable-next-line no-unused-vars
 module.exports = (on, config) => {
-  // `on` is used to hook into various events Cypress emits
-  // `config` is the resolved Cypress config
+  /**
+   * @param on is used to hook into various events Cypress emits
+   * @param config is the resolved Cypress config
+   * @type {Cypress.PluginConfig}
+   */
+  const options = {
+    // send in the options from your webpack.config.js, so it works the same
+    // as your app's code
+    webpackOptions: {
+      mode: 'development',
+      module: {
+        rules: [
+          {
+            test: /\.jsx?$/,
+            exclude: [/node_modules/],
+            use: [{
+              loader: 'babel-loader',
+              options: {
+                presets: ['@babel/preset-env'],
+              },
+            }],
+          },
+          {
+            test: /\.ya?ml$/,
+            type: 'json', // Required by Webpack v4
+            use: 'yaml-loader',
+          },
+        ],
+      },
+    },
+    watchOptions: {},
+  };
+
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  on('file:preprocessor', require('@cypress/webpack-preprocessor')(options));
   return config;
 };
