@@ -14,6 +14,7 @@
 // ***********************************************************
 
 import './commands';
+import './functions';
 
 before(() => {
   cy.exec('cd .. && python manage.py reset_db');

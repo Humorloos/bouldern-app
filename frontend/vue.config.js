@@ -43,6 +43,17 @@ module.exports = {
   outputDir: path.resolve(__dirname, 'dist/'),
   // assetsDir must match Django's STATIC_URL
   assetsDir: 'static',
+  configureWebpack: {
+    module: {
+      rules: [
+        {
+          test: /\.ya?ml$/,
+          type: 'json', // Required by Webpack v4
+          use: 'yaml-loader',
+        },
+      ],
+    },
+  },
   chainWebpack: (config) => {
     // extract vendor javascripts into single shared bundle to allow browsers to
     // cache common javascript

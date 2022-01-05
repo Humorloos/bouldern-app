@@ -1,5 +1,4 @@
 import {createStore} from 'vuex';
-import messages from '../lang/translations/en';
 import http from '../http-common';
 const getDefaultState = () => {
   return {
@@ -18,7 +17,6 @@ const getDefaultState = () => {
       pk: 0,
     },
     axios: http,
-    messages,
   };
 };
 

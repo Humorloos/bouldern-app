@@ -2,7 +2,7 @@
   <h1>Log In</h1>
   <form @submit.prevent="submit">
     <p v-if="error.visible">
-      {{ error.message }}
+      {{ $t('wrongCredentialsMsg') }}
     </p>
     <label for="id_username">E-Mail:</label>
     <input
@@ -26,11 +26,11 @@
 
   <div v-if="isAuthenticated">
     <p>
-      Hello, {{ user.email }}. You're at the bouldern index.
+      {{ $t('welcomeMsg', {user: user.email}) }}
     </p>
   </div>
   <div v-else>
-    <p>{{ messages.notLoggedInMsg }}</p>
+    <p>{{ $t('notLoggedInMsg') }}</p>
   </div>
 </template>
 <script>
@@ -46,8 +46,6 @@ export default {
       },
       error: {
         visible: false,
-        message: 'Please enter a correct email and password. Note that ' +
-          'both fields may be case-sensitive.',
       },
     };
   },
