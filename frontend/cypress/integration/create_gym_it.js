@@ -1,9 +1,8 @@
 describe('The gym creation view', () => {
   it('allows adding gyms', () => {
-    cy.visit(`${Cypress.env('hostVue')}/`);
-    cy.contains('Log In').click();
-    // log in with registered user
+    cy.visit(`${Cypress.env('hostVue')}/login`);
     cy.logInViaLogInLink();
+    // log in with registered user
     cy.contains(`Hello, ${Cypress.env('email')}. ` +
           'You\'re at the bouldern index.');
     cy.contains('Home').click();
@@ -16,6 +15,8 @@ describe('The gym creation view', () => {
     cy.get('#id_color-level-2').click();
     cy.contains('Yellow').click();
     cy.contains('Submit').click();
-    cy.openNewGymMap();
+    cy.get('#id_gym-name').type(Cypress.env('newGymName'));
+    cy.get('#submit_button').click();
+    cy.wait(500);
   });
 });
