@@ -1,3 +1,4 @@
+"""This module contains general views for all apps"""
 from django.utils.decorators import classonlymethod
 from rest_framework.viewsets import GenericViewSet
 

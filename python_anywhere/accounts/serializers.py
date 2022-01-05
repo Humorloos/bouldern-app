@@ -1,3 +1,4 @@
+"""Serializers for accounts app"""
 from rest_framework.serializers import ModelSerializer
 
 from python_anywhere.accounts.models import User
