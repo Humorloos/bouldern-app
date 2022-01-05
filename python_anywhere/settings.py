@@ -41,26 +41,26 @@ SECRET_KEY = env('SECRET_KEY')
 DEVELOPMENT = env('DEBUG')
 DEBUG = DEVELOPMENT
 PIPELINE = env('PIPELINE') == 'True'
-HOST_NAME = 'localhost'
 DOMAIN_NAME = 'humorloos.pythonanywhere.com'
-VUE_DEV_SERVER_DOMAIN_NAME = f'{HOST_NAME}:8080'
+BOULDERN_URL_SEGMENT = 'bouldern'
 
 ALLOWED_HOSTS = [
     DOMAIN_NAME,
 ]
-
-# in debug, add django and vue dev server to allowed hosts
-if DEVELOPMENT:
-    ALLOWED_HOSTS += [
-        HOST_NAME,
-    ]
 
 CSRF_COOKIE_SECURE = True
 
 SESSION_COOKIE_SECURE = True
 
 CORS_ALLOW_ALL_ORIGINS = False
+
+# in debug, add django and vue dev server to allowed hosts
 if DEVELOPMENT:
+    HOST_NAME = 'localhost'
+    VUE_DEV_SERVER_DOMAIN_NAME = f'{HOST_NAME}:8080'
+    ALLOWED_HOSTS += [
+        HOST_NAME,
+    ]
     CORS_ALLOWED_ORIGINS = [f'https://{VUE_DEV_SERVER_DOMAIN_NAME}']
     CORS_ALLOW_HEADERS = list(default_headers)
 
@@ -108,10 +108,8 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
-            PROJECT_DIR / 'templates',
             VUE_OUTPUT_DIR,
         ],
-        'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
@@ -153,31 +151,15 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-# Internationalization
-# https://docs.djangoproject.com/en/3.2/topics/i18n/
-
-LANGUAGE_CODE = 'en-us'
-
-TIME_ZONE = 'Europe/Berlin'
-
-USE_I18N = True
-
-USE_L10N = True
-
-USE_TZ = True
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     VUE_OUTPUT_DIR / 'static',
-    PROJECT_DIR / 'bouldern' / 'static',
 ]
 
 STATIC_ROOT = USER_HOME / 'static'
-
-STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.ManifestStaticFilesStorage'
 
 MEDIA_URL = '/media/'
 
@@ -194,24 +176,7 @@ except ImproperlyConfigured:
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# Vue
-WEBPACK_LOADER = {
-    'DEFAULT': {
-        'CACHE': not DEVELOPMENT,
-        'BUNDLE_DIR_NAME': 'vue/',  # must end with slash
-        'STATS_FILE': VUE_FRONTEND_DIR / 'webpack-stats.json',
-        'POLL_INTERVAL': 0.1,
-        'TIMEOUT': None,
-        'IGNORE': [r'.+\.hot-update.js', r'.+\.map']
-    }
-}
-
 # Authentication
-BOULDERN_URL_SEGMENT = 'bouldern'
-
-LOGIN_REDIRECT_URL = '/' + BOULDERN_URL_SEGMENT + '/'
-
-LOGOUT_REDIRECT_URL = '/' + BOULDERN_URL_SEGMENT + '/'
 
 AUTH_USER_MODEL = 'accounts.User'
 
@@ -253,7 +218,6 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',
         'dj_rest_auth.jwt_auth.JWTCookieAuthentication',
-        'rest_framework.authentication.SessionAuthentication'
     ),
     'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
     'DEFAULT_PERMISSION_CLASSES': [
