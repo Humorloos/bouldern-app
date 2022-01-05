@@ -1,4 +1,4 @@
-export const constants = {
+window.constants = {
   newUsername: 'testUser',
   newEmail: 'testEmail@mailprovider.com',
   newPassword: 'testPassword',
@@ -11,4 +11,3 @@ export const constants = {
   host: 'https://localhost:8000',
   hostVue: 'https://localhost:8080',
 };
-export {default as messages} from '../../src/lang/translations/en';

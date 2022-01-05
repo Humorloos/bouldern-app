@@ -16,5 +16,9 @@
         ]
       }
     ]
+  },
+  "globals": {
+    "$t": "readonly",
+    "constants": "writable"
   }
 }

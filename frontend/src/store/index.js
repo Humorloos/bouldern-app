@@ -1,6 +1,5 @@
 import {createStore} from 'vuex';
-import messages from '../lang/translations/en';
-
+import http from '../http-common';
 const getDefaultState = () => {
   return {
     authToken: {
@@ -17,7 +16,7 @@ const getDefaultState = () => {
       last_name: '',
       pk: 0,
     },
-    messages,
+    axios: http,
   };
 };
 
@@ -32,14 +31,27 @@ export default createStore({
             new Date(payload.refresh_token_expiration);
       state.user = payload.user;
     },
-    logout: (state) => {
+    logout(state) {
       // Merge rather than replace so we don't lose observers
       // https://github.com/vuejs/vuex/issues/1118
       Object.assign(state, getDefaultState());
     },
+    deleteAccount(state, payload) {
+      state.axios.delete(`/registration/user/${state.user.pk}/`, {
+        headers: {
+          'authorization': `Bearer ${state.authToken.token}`,
+        },
+      });
+    },
+  },
+  actions: {
+    deleteAccountAndLogout({commit}) {
+      commit('deleteAccount');
+      commit('logout');
+    },
   },
   getters: {
     isAuthenticated: (state) => state.authToken.token.length > 0 &&
-          state.authToken.expiration > Date.now(),
+            state.authToken.expiration > Date.now(),
   },
 });
