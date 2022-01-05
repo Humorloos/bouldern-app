@@ -1,37 +1,11 @@
 from django.urls import reverse
-from faker import Faker
 from rest_framework.status import HTTP_201_CREATED, HTTP_200_OK
 
-from python_anywhere.accounts.factories import UserFactory
 from python_anywhere.bouldern.models import Color
-from python_anywhere.bouldern.views import AddGym, AddColor, ColorAPI
+from python_anywhere.bouldern.views import ColorAPI
 
 
-def test_add_color(client, db):
-    """Test that post method works correctly"""
-    # Given
-    # login
-    faker = Faker()
-    password = faker.password()
-    user = UserFactory(password=password)
-    client.login(username=user.email, password=password)
-
-    from python_anywhere.bouldern.factories import ColorFactory
-    payload = {key: ColorFactory.stub(name=faker.unique.color()).__dict__[key]
-               for key in ['color', 'name']}
-
-    # When
-    response = client.post(reverse(AddColor.name), data=payload)
-
-    # Then
-    color = Color.objects.first()
-    assert color.name == payload['name']
-    assert color.color == payload['color']
-    assert color.created_by == user
-    assert response.url == reverse(AddGym.name)
-
-
-def test_add_color_rest(logged_in_client_rest):
+def test_color_api_post(logged_in_client_rest):
     """Test that post method works correctly"""
     # Given
     client, user = logged_in_client_rest
