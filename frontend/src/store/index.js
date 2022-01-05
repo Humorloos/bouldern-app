@@ -1,4 +1,5 @@
 import {createStore} from 'vuex';
+import messages from '../lang/translations/en';
 
 const getDefaultState = () => {
   return {
@@ -16,6 +17,7 @@ const getDefaultState = () => {
       last_name: '',
       pk: 0,
     },
+    messages,
   };
 };
 

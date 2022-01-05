@@ -1,8 +1,9 @@
-describe('The register vue app', () => {
-  it('notifys correctly if user does not exist', () => {
-    cy.visit(`${Cypress.env('hostVue')}/`);
-    cy.contains('Log In').click();
+import {constants, messages} from '../support/constants';
 
+describe('The register vue app', () => {
+  it('notifys correctly if user does not exist', function() {
+    cy.visit(`${constants.hostVue}/`);
+    cy.contains('Log In').click();
     // try log in with non-existent user
     cy.logInViaLogInLinkNew();
     cy.contains('Please enter a correct email and password.');
