@@ -122,5 +122,3 @@ Cypress.Commands.add('openGymMap', () => {
   cy.get('#submit_button').click();
   cy.wait(500);
 });
-// todo: take https://docs.cypress.io/api/cypress-api/custom-commands#4-Skip-your-UI-as-much-as-possible into account!!
-// todo: take https://docs.cypress.io/api/cypress-api/custom-commands#1-Don-t-make-everything-a-custom-command into acccount!
