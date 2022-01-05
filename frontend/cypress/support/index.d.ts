@@ -6,19 +6,13 @@ declare namespace Cypress {
 
         enterCredentialsAndLogin(): Chainable<null>;
 
-        logInViaLogInLink(): Chainable<null>;
-
         logInViaLogInLinkNew(): Chainable<null>;
 
-        logInViaLogInLinkVue(): Chainable<null>;
-
-        verifyLogInWithInvalidUser(): Chainable<null>;
+        logInViaLogInLink(): Chainable<null>;
 
         register(): Chainable<null>;
 
         registerAndLogin(): Chainable<null>;
-
-        registerAndLoginVue(): Chainable<null>;
 
         openNewGymMap(): Chainable<null>;
 

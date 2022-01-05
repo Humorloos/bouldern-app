@@ -1,7 +1,8 @@
 describe('The color creation view', () => {
   it('allows adding colors', () => {
     cy.visit(`${Cypress.env('hostVue')}/`);
-    cy.registerAndLoginVue();
+    // todo: no need to register, just login
+    cy.registerAndLogin();
     cy.contains('Create Color').click();
     cy.get('#id_name').type(Cypress.env('colorName'));
     cy.get('#id_color').click();

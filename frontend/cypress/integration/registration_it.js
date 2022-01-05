@@ -9,7 +9,7 @@ describe('The register vue app', () => {
   });
 
   it('allows logging in after registering', () => {
-    cy.registerAndLoginVue();
+    cy.registerAndLogin();
   });
   it('allows logging out', () => {
     cy.contains('Log Out').click();

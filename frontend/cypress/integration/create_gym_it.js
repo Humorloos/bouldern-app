@@ -3,7 +3,7 @@ describe('The gym creation view', () => {
     cy.visit(`${Cypress.env('hostVue')}/`);
     cy.contains('Log In').click();
     // log in with registered user
-    cy.logInViaLogInLinkVue();
+    cy.logInViaLogInLink();
     cy.contains(`Hello, ${Cypress.env('email')}. ` +
           'You\'re at the bouldern index.');
     cy.contains('Home').click();
