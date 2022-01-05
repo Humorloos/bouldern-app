@@ -32,6 +32,10 @@ export default {
       type: String,
       default: 'application/json',
     },
+    method: {
+      type: String,
+      default: 'POST',
+    },
   },
   emits: ['submitted'],
   computed: {
@@ -41,11 +45,14 @@ export default {
   },
   methods: {
     submit() {
-      this.axios.post(this.apiPath, this.form, {headers: {
-        'authorization': `Bearer ${this.authToken.token}`,
-        'content-type': this.contentType,
-      }}).then((response) => this.$emit('submitted', response));
-      this.$router.push('/');
+      this.axios(this.apiPath, {
+        method: this.method,
+        data: this.form,
+        headers: {
+          'authorization': `Bearer ${this.authToken.token}`,
+          'content-type': this.contentType,
+        },
+      }).then((response) => this.$emit('submitted', response));
     },
   },
 };

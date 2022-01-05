@@ -21,17 +21,18 @@ describe('The bouldern app', () => {
     cy.contains(Cypress.env('colorName')).click();
   });
   it('lets users create new gyms', () => {
-    cy.get('#id_name').type(Cypress.env('gymName'));
+    cy.get('#id_name').type(Cypress.env('newGymName'));
     cy.get('#id_map').attachFile('generic_gym.png');
     cy.contains('Add Level').click();
     cy.get('#difficulty-level:nth-of-type(2)').click();
     cy.contains('Yellow').click();
     cy.contains('Submit').click();
-    cy.contains(`Hello, ${Cypress.env('username')}. ` +
+    cy.contains(`Hello, ${Cypress.env('newUsername')}. ` +
         `You're at the bouldern index.`);
   });
   it('can add boulders to gyms', () => {
-    cy.visit(`${Cypress.env('host')}/bouldern/${Cypress.env('gymName')}/map/`);
+    cy.visit(
+        `${Cypress.env('host')}/bouldern/${Cypress.env('newGymName')}/map/`);
     cy.get('#map-root').click(340, 150);
     cy.contains('You clicked here');
     cy.get('#popup-closer').click();

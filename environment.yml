@@ -167,6 +167,7 @@ dependencies:
     - cached-property==1.5.2
     - django-sslserver==0.22
     - django-url-filter==0.3.15
+    - djangorestframework-gis==0.17
     - drf-nested-routers==0.93.4
     - enum-compat==0.0.3
     - pyjwt==1.7.1
