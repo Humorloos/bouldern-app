@@ -18,6 +18,7 @@
     <vue-form
       :api-path="`/bouldern/gym/${mapData.id}/boulder/`"
       :form="mapData.boulder_set.at(-1)"
+      @submitted="onSubmitted"
     />
   </div>
   <div
@@ -164,12 +165,6 @@ export default {
     });
   },
   methods: {
-    getBoulderName(index) {
-      return `${this.prefix}-${index}-coordinates`;
-    },
-    getBoulderId(index) {
-      return `id_${this.getBoulderName(index)}`;
-    },
     /**
      * Add a click handler to hide the popup.
      * @return {boolean} Don't follow the href.
@@ -178,6 +173,9 @@ export default {
       this.featureCollection.remove(this.popover.feature);
       this.popover.setPosition(undefined);
       return false;
+    },
+    onSubmitted() {
+      this.popover.setPosition(undefined);
     },
   },
 };
