@@ -13,4 +13,9 @@ describe('The register vue app', () => {
   it('allows logging in after registering', () => {
     cy.registerAndLoginVue();
   });
+  it('allows logging out', () => {
+    cy.contains('Log Out').click();
+    cy.contains('Log In').click();
+    cy.contains(messages.notLoggedInMsg);
+  });
 });
