@@ -1,8 +1,13 @@
+import json
+
+from django.utils.http import urlencode
 from faker import Faker
 from rest_framework.reverse import reverse
+from rest_framework.status import HTTP_200_OK, HTTP_201_CREATED
 
 from python_anywhere.accounts.factories import UserFactory
 from python_anywhere.bouldern.models import Gym, DifficultyLevel
+from python_anywhere.bouldern.serializers import BoulderSerializer
 from python_anywhere.bouldern.views import AddGym, GymAPI
 
 
@@ -30,7 +35,9 @@ def test_add_gym(client, db):
     difficulty_level_range = range(n_difficulty_levels)
 
     from python_anywhere.bouldern.factories import ColorFactory
-    colors = [ColorFactory() for _ in difficulty_level_range]
+    faker = Faker()
+    colors = [ColorFactory(name=faker.unique.color())
+              for _ in difficulty_level_range]
 
     difficulty_level_prefix = "difficultylevel_set-"
     payload = {
@@ -70,7 +77,9 @@ def test_add_gym_rest(logged_in_client_rest):
     n_difficulty_levels = 3
     difficulty_level_range = range(n_difficulty_levels)
     from python_anywhere.bouldern.factories import ColorFactory
-    colors = [ColorFactory() for _ in difficulty_level_range]
+    faker = Faker()
+    colors = [ColorFactory(name=faker.unique.color())
+              for _ in difficulty_level_range]
     json_payload = {
         'name': gym_stub.name,
         'difficultylevel_set': [
@@ -81,6 +90,7 @@ def test_add_gym_rest(logged_in_client_rest):
     response = client.post(GymAPI().reverse_action('list'),
                            data=json_payload, format='json')
     # Then
+    assert response.status_code == HTTP_201_CREATED
     gym = Gym.objects.first()
     assert gym.name == gym_stub.name
     difficulty_levels = DifficultyLevel.objects.all()
@@ -98,3 +108,21 @@ def test_add_gym_rest(logged_in_client_rest):
     # Then
     gym = Gym.objects.first()
     assert_correct_gym(gym, json_payload | multipart_payload, user)
+
+
+def test_gym_api_get(logged_in_client_rest):
+    # Given
+    from python_anywhere.bouldern.factories import GymFactory
+    correct_gym = GymFactory(name='testName')
+    GymFactory()
+    from python_anywhere.bouldern.factories import BoulderFactory
+    boulders = [BoulderFactory(gym=correct_gym) for _ in range(3)]
+    client, user = logged_in_client_rest
+    # When
+    response = client.get(f'{GymAPI().reverse_action("list")}?'
+                          f'{urlencode({"name": correct_gym.name})}')
+    # Then
+    assert response.status_code == HTTP_200_OK
+    assert set(response.data.serializer.instance) == {correct_gym}
+    assert json.loads(response.content)[0]['boulder_set'][0]['coordinates'] == \
+           BoulderSerializer(boulders[0]).data['coordinates']
