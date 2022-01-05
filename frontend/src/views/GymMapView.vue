@@ -15,6 +15,7 @@
       <p>You clicked here:</p>
       <code>' {{ selectedCoordinate }} </code>
     </div>
+    <!--    todo: do not go home after submit-->
     <vue-form
       :api-path="`/bouldern/gym/${mapData.id}/boulder/`"
       :form="mapData.boulder_set.at(-1)"
@@ -160,7 +161,7 @@ export default {
     }).then((response) => {
       this.mapData = response.data[0];
       this.mapImage.src = this.mapData.map;
-      this.map;
+      this.mapImage.onload = () => this.map;
     });
   },
   methods: {
