@@ -1,4 +1,4 @@
-describe('The register vue app', () => {
+describe('The register app', () => {
   it('notifys correctly if user does not exist', function() {
     cy.visit(`${constants.hostVue}/`);
     cy.contains('Log In').click();
