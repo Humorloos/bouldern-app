@@ -55,7 +55,7 @@ SESSION_COOKIE_SECURE = True
 CORS_ALLOW_ALL_ORIGINS = False
 
 # Allow access from android app
-CORS_ALLOWED_ORIGINS = [f'http://localhost']
+CORS_ALLOWED_ORIGINS = ['http://localhost']
 
 # in debug, add django and vue dev server to allowed hosts
 if DEVELOPMENT:
