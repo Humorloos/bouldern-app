@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Bouldern App</string>
+    <string name="title_activity_main">Bouldern App</string>
+    <string name="package_name">humorloos.pythonanywhere.com</string>
+    <string name="custom_url_scheme">humorloos.pythonanywhere.com</string>
+</resources>

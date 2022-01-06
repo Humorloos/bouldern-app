@@ -1,0 +1,6 @@
+{
+	"appId": "humorloos.pythonanywhere.com",
+	"appName": "Bouldern App",
+	"webDir": "dist",
+	"bundledWebRuntime": false
+}
