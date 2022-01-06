@@ -2,7 +2,7 @@
 import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'humorloos.pythonanywhere.com',
+  appId: 'com.pythonanywhere.humorloos',
   appName: 'Bouldern App',
   webDir: 'dist',
   bundledWebRuntime: false

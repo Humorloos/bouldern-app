@@ -1,4 +1,4 @@
-package humorloos.pythonanywhere.com;
+package com.pythonanywhere.humorloos;
 
 import com.getcapacitor.BridgeActivity;
 
