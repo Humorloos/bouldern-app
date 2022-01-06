@@ -1,0 +1,7 @@
+{
+  "name": "bouldern-app",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "vue"
+}
