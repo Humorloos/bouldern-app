@@ -1,6 +1,6 @@
 describe('The gym map view', () => {
   it('allows adding boulders', () => {
-    cy.visit(`${constants.hostVue}/login`);
+    cy.visit('login');
     loginViaLogInLink(constants.email, constants.password);
     cy.contains(`Hello, ${constants.email}. ` +
           'You\'re at the bouldern index.');
