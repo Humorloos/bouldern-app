@@ -11,7 +11,7 @@ describe('The gym map view', () => {
     // todo: instead import gymmapview and use gymmapview.name, but this needs
     //  webpackconfig of cypress to be same as that of vue
     cy.window()
-        .its('HelloWorld')
+        .its('GymMapView')
         .then((app) => {
           debugger;
         });

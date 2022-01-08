@@ -172,7 +172,7 @@ export default {
   },
   mounted() {
     if (window.Cypress) {
-      window['HelloWorld'] = this;
+      window[this.$options.name] = this;
     }
   },
   methods: {
