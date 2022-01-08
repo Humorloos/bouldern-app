@@ -1,6 +1,6 @@
 describe('The register app', () => {
   it('notifys correctly if user does not exist', function() {
-    cy.visit(`${constants.hostVue}/`);
+    cy.visit('');
     cy.contains('Log In').click();
     // try log in with non-existent user
     loginViaLogInLink(constants.newEmail, constants.newPassword);
