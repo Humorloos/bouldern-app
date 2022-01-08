@@ -7,15 +7,11 @@ describe('The gym map view', () => {
     cy.contains('Home').click();
     cy.get('#id_gym-name').type(constants.gymName);
     cy.get('#submit_button').click();
-    cy.wait(1000);
     // todo: instead import gymmapview and use gymmapview.name, but this needs
     //  webpackconfig of cypress to be same as that of vue
     cy.window()
-        .its('GymMapView')
-        .then((app) => {
-          debugger;
-        });
-    cy.get('canvas').click(340, 150);
+        .its('GymMapView.$data.loaded').should('equal', true);
+    cy.get('#map-root').click(340, 150);
     cy.contains('You clicked here');
     cy.get('#popup-closer').click();
     cy.get('#map-root').click(340, 210);
