@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 /// <reference types="cypress" />
 // ***********************************************************
 // This example plugins/index.js can be used to load plugins
@@ -22,30 +23,12 @@ module.exports = (on, config) => {
     // as your app's code
     webpackOptions: {
       mode: 'development',
-      module: {
-        rules: [
-          {
-            test: /\.jsx?$/,
-            exclude: [/node_modules/],
-            use: [{
-              loader: 'babel-loader',
-              options: {
-                presets: ['@babel/preset-env'],
-              },
-            }],
-          },
-          {
-            test: /\.ya?ml$/,
-            type: 'json', // Required by Webpack v4
-            use: 'yaml-loader',
-          },
-        ],
-      },
     },
     watchOptions: {},
   };
+  options.webpackOptions.module =
+    require('@vue/cli-service/webpack.config.js').module;
 
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
   on('file:preprocessor', require('@cypress/webpack-preprocessor')(options));
   return config;
 };
