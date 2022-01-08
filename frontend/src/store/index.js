@@ -28,7 +28,6 @@ export default createStore({
       state.authToken.expiration = new Date(payload.access_token_expiration);
       state.refreshToken.token = payload.refresh_token;
       state.refreshToken.expiration =
-            // todo: has to be camelCase
             new Date(payload.refresh_token_expiration);
       state.user = payload.user;
     },
