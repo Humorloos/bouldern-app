@@ -18,3 +18,6 @@
 
 ### local django backend
 - run `python manage.py runsslserver localhost:8000` in project root
+
+### webpack development server
+- run `npx ionic serve -p 8080 -b` in frontend directory
