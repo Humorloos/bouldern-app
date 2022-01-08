@@ -1,3 +1,5 @@
+import GymMapView from '../../src/views/GymMapView';
+
 describe('The gym map view', () => {
   it('allows adding boulders', () => {
     cy.visit('login');
@@ -7,10 +9,7 @@ describe('The gym map view', () => {
     cy.contains('Home').click();
     cy.get('#id_gym-name').type(constants.gymName);
     cy.get('#submit_button').click();
-    // todo: instead import gymmapview and use gymmapview.name, but this needs
-    //  webpackconfig of cypress to be same as that of vue
-    cy.window()
-        .its('GymMapView.$data.loaded').should('equal', true);
+    cy.window().its(`${GymMapView.name}.$data.loaded`).should('equal', true);
     cy.get('#map-root').click(340, 150);
     cy.contains('You clicked here');
     cy.get('#popup-closer').click();

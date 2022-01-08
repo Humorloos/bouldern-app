@@ -26,8 +26,10 @@ module.exports = (on, config) => {
     },
     watchOptions: {},
   };
-  options.webpackOptions.module =
-    require('@vue/cli-service/webpack.config.js').module;
+  const vueWebpackConfig = require('@vue/cli-service/webpack.config.js');
+  options.webpackOptions.module = vueWebpackConfig.module;
+  options.webpackOptions.plugins = vueWebpackConfig.plugins;
+  options.webpackOptions.resolve = vueWebpackConfig.resolve;
 
   on('file:preprocessor', require('@cypress/webpack-preprocessor')(options));
   return config;
