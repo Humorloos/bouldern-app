@@ -1,5 +1,11 @@
 import {createStore} from 'vuex';
 import http from '../http-common';
+
+/**
+ * Generates default state of store for initialization
+ *
+ * @returns {object} the store's default state
+ */
 const getDefaultState = () => {
   return {
     authToken: {

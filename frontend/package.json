@@ -33,6 +33,7 @@
     "yaml-loader": "^0.6.0"
   },
   "devDependencies": {
+    "@babel/eslint-parser": "^7.16.5",
     "@capacitor/cli": "^3.3.4",
     "@cypress/webpack-preprocessor": "^5.11.0",
     "@typescript-eslint/eslint-plugin": "^5.7.0",
@@ -40,11 +41,11 @@
     "@vue/cli-plugin-babel": "~4.5.0",
     "@vue/cli-plugin-eslint": "~4.5.0",
     "@vue/cli-service": "^4.5.0",
-    "@vue/compiler-sfc": "^3.0.0",
-    "babel-eslint": "^10.1.0",
+    "@vue/compiler-sfc": "^3.2.26",
     "cypress": "^9.1.1",
     "eslint": "^6.7.2",
     "eslint-plugin-cypress": "^2.12.1",
+    "eslint-plugin-jsdoc": "^37.5.2",
     "eslint-plugin-vue": "^7.0.0"
   },
   "eslintConfig": {
@@ -57,7 +58,7 @@
       "eslint:recommended"
     ],
     "parserOptions": {
-      "parser": "babel-eslint"
+      "parser": "@babel/eslint-parser"
     },
     "rules": {}
   },
