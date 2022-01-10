@@ -8,6 +8,7 @@
 </template>
 
 <script>
+/** @file highest level component of bouldern app */
 
 export default {
   name: 'App',

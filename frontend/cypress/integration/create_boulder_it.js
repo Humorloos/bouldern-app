@@ -1,3 +1,5 @@
+/** @file test for interactive gym map */
+
 import GymMapView from '../../src/views/GymMapView';
 
 describe('The gym map view', () => {

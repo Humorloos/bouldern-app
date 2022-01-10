@@ -3,6 +3,8 @@
 </template>
 
 <script>
+/** @file view that is shown on 404 errors */
+
 export default {
   name: 'NotFound',
 };

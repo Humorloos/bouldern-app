@@ -48,6 +48,8 @@
 </template>
 
 <script>
+/** @file index view with menu */
+
 import {mapActions, mapMutations, mapState} from 'vuex';
 
 export default {

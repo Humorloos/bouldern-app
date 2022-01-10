@@ -1,3 +1,5 @@
+/** @file test for gym creation */
+
 describe('The gym creation view', () => {
   it('allows adding gyms', () => {
     cy.visit('login');

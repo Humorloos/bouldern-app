@@ -29,6 +29,8 @@
 </template>
 
 <script>
+/** @file view with interactive gym map */
+
 import {mapState} from 'vuex';
 import {Collection, Overlay} from 'ol';
 import {Projection} from 'ol/proj';
@@ -42,6 +44,7 @@ import {GeoJSON} from 'ol/format';
 import VueForm from '@/components/VueForm';
 
 export default {
+  // todo: remove view from name
   name: 'GymMapView',
   components: {
     VueForm,

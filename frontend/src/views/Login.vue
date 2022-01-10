@@ -34,6 +34,8 @@
   </div>
 </template>
 <script>
+/** @file login view */
+
 import {mapGetters, mapState} from 'vuex';
 
 export default {

@@ -1,3 +1,5 @@
+/** @file vuex store configuration */
+
 import {createStore} from 'vuex';
 import http from '../http-common';
 

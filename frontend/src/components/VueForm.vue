@@ -10,6 +10,8 @@
 </template>
 
 <script>
+/** @file component for submitting forms to apis */
+
 import {mapState} from 'vuex';
 
 export default {

@@ -1,3 +1,5 @@
+/** @file router configuration */
+
 import {createRouter, createWebHistory} from 'vue-router';
 import Register from '@/views/Register';
 import Home from '@/views/Home';

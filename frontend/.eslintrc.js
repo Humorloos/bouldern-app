@@ -11,6 +11,7 @@ module.exports = {
   ],
   plugins: ['jsdoc'],
   rules: {
+    'jsdoc/require-file-overview': 2,
     'valid-jsdoc': 0, // eslint-jsdoc takes care of jsdoc validation
     'jsdoc/require-jsdoc': [2, {
       require: {
