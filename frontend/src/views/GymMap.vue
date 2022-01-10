@@ -14,11 +14,11 @@
     />
     <div id="popup-content">
       <p>You clicked here:</p>
-      <code>' {{ selectedCoordinate }} </code>
+      <code>' {{ createdBoulder.coordinates }} </code>
     </div>
     <vue-form
       :api-path="`/bouldern/gym/${mapData.id}/boulder/`"
-      :form="mapData.boulder_set.at(-1)"
+      :form="createdBoulder"
       @submitted="onSubmitted"
     />
   </div>
@@ -57,9 +57,9 @@ export default {
         map: '',
         id: 0,
       },
+      createdBoulder: {coordinates: {}},
       mapImage: new Image(),
       jsonFormat: new GeoJSON(),
-      selectedCoordinate: 'none yet',
       loaded: false,
     };
   },
@@ -91,20 +91,14 @@ export default {
       const featureCollection = new Collection();
       const self = this;
       // Set handler for serializing newly added and modified features
-      // todo: check if boulders are removed from mapdata when closing popover
       featureCollection.on('add',
           /**
-           * Adds boulders added to the feature collection as GEOJson to the
-           * map data and associates the popover to the feature so that it can
-           * be removed in case the popover is closed
+           * Associates the popover to the feature so that it can be removed in
+           * case the popover is closed
            *
            * @param event the add feature event
            */
           function(event) {
-            self.mapData.boulder_set.push({
-              coordinates: self.jsonFormat
-                  .writeGeometryObject(event.element.getGeometry()),
-            });
             self.popover.feature = event.element;
           });
       return featureCollection;
@@ -135,15 +129,10 @@ export default {
      * @returns {VectorSource} the vector source
      */
     source() {
-      const source = new VectorSource({
+      return new VectorSource({
         features: this.featureCollection,
         useSpatialIndex: false, // improves performance
       });
-      // Populate with initial features
-      this.mapData.boulder_set.forEach(
-          (boulder) => source.addFeature(
-              this.jsonFormat.readFeature(boulder.coordinates)));
-      return source;
     },
     /**
      * Icon drawing interaction for drawing boulder icons
@@ -157,11 +146,21 @@ export default {
         condition: (event) => containsCoordinate(this.extent, event.coordinate),
       });
       // Set handler for opening popup on draw
-      draw.on('drawend', (event) => {
-        const coordinate = event.feature.getGeometry().getCoordinates();
-        this.selectedCoordinate = coordinate;
-        this.popover.setPosition(coordinate);
-      });
+      draw.on('drawend',
+          /**
+           * Sets created boulder as GeoJSON object and sets the position of the
+           * popover to the created boulder
+           *
+           * @param event the add feature event
+           */
+          (event) => {
+            const geometry = event.feature.getGeometry();
+            this.createdBoulder.coordinates = this.jsonFormat
+                .writeGeometryObject(geometry);
+
+            const coordinate = geometry.getCoordinates();
+            this.popover.setPosition(coordinate);
+          });
       return draw;
     },
     /**
@@ -216,6 +215,10 @@ export default {
       this.mapImage.src = this.mapData.map;
       this.mapImage.onload = () => {
         this.map;
+        // Populate with initial features
+        this.mapData.boulder_set.forEach(
+            (boulder) => this.source.addFeature(
+                this.jsonFormat.readFeature(boulder.coordinates)));
         this.loaded = true;
       };
     });
@@ -231,7 +234,7 @@ export default {
   methods: {
     /**
      * Removes the popover's feature from the featureCollection and blurs the
-     * popover
+     * popover.
      *
      * @returns {boolean} false (don't follow the ref)
      */
