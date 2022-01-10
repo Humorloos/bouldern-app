@@ -1,14 +1,1 @@
-module.exports = {
-  parser: 'vue-eslint-parser',
-  rules: {
-    'jsdoc/require-jsdoc': [2, {
-      require: {
-        'FunctionExpression': false,
-      },
-      contexts: [
-        'FunctionExpression:not(Property[key.name = /^data$/] ' +
-        'FunctionExpression)'
-      ],
-    }],
-  },
-};
+module.exports = require('../vue-component-eslintrc')
