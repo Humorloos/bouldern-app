@@ -37,11 +37,17 @@ export default {
       },
     };
   },
+  /**
+   * Installs jscolor (required for jscolor widget to work)
+   */
   mounted() {
     jscolor.install();
   },
   methods: {
-    onSubmitted(response) {
+    /**
+     * Redirects to index after form submission
+     */
+    onSubmitted() {
       this.$router.push('/');
     },
   },
