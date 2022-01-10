@@ -44,8 +44,7 @@ import {GeoJSON} from 'ol/format';
 import VueForm from '@/components/VueForm';
 
 export default {
-  // todo: remove view from name
-  name: 'GymMapView',
+  name: 'GymMap',
   components: {
     VueForm,
   },

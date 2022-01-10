@@ -7,7 +7,7 @@ import Login from '@/views/Login';
 import NotFound from '@/views/NotFound';
 import CreateColor from '@/views/CreateColor';
 import CreateGym from '@/views/CreateGym';
-import GymMapView from '@/views/GymMapView';
+import GymMapView from '@/views/GymMap';
 
 export default createRouter({
   history: createWebHistory(),

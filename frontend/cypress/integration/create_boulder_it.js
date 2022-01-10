@@ -1,6 +1,6 @@
 /** @file test for interactive gym map */
 
-import GymMapView from '../../src/views/GymMapView';
+import GymMapView from '@/views/GymMap';
 
 describe('The gym map view', () => {
   it('allows adding boulders', () => {
