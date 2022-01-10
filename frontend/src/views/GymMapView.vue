@@ -170,6 +170,11 @@ export default {
       };
     });
   },
+  mounted() {
+    if (window.Cypress) {
+      window[this.$options.name] = this;
+    }
+  },
   methods: {
     /**
      * Add a click handler to hide the popup.

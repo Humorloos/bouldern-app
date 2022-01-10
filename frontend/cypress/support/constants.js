@@ -8,6 +8,4 @@ window.constants = {
   colorName: 'TestColor',
   newGymName: 'testGym',
   gymName: 'generic_gym',
-  host: 'https://localhost:8000',
-  hostVue: 'https://localhost:8080',
 };

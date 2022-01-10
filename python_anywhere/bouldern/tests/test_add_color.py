@@ -1,4 +1,5 @@
 from django.urls import reverse
+from faker import Faker
 from rest_framework.status import HTTP_201_CREATED, HTTP_200_OK
 
 from python_anywhere.bouldern.models import Color
@@ -31,7 +32,8 @@ def test_color_api_get(logged_in_client_rest):
     client, user = logged_in_client_rest
 
     from python_anywhere.bouldern.factories import ColorFactory
-    colors = [ColorFactory() for _ in range(3)]
+    faker = Faker()
+    colors = [ColorFactory(name=faker.unique.color()) for _ in range(3)]
 
     # When
     response = client.get(ColorAPI().reverse_action('list'))
