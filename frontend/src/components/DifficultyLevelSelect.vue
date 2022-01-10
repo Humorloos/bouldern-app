@@ -21,8 +21,7 @@
 import vSelect from 'vue-select';
 
 export default {
-  // todo: remove rest from name
-  name: 'DifficultyLevelSelectRest',
+  name: 'DifficultyLevelSelect',
   components: {
     vSelect,
   },

@@ -22,7 +22,7 @@
       >
     </div>
 
-    <difficulty-level-select-rest
+    <difficulty-level-select
       v-for="(color, index) in colors"
       :id="`id_color-level-${index + 1}`"
       :key="color.name"
@@ -44,13 +44,13 @@
 
 import VueForm from '@/components/VueForm';
 import {mapState} from 'vuex';
-import DifficultyLevelSelectRest from '@/components/DifficultyLevelSelectRest';
+import DifficultyLevelSelect from '@/components/DifficultyLevelSelect';
 
 export default {
   name: 'CreateGym',
   components: {
     VueForm,
-    DifficultyLevelSelectRest,
+    DifficultyLevelSelect,
   },
   data() {
     return {
