@@ -16,9 +16,12 @@
 </template>
 
 <script>
+/** @file select field for color of a difficulty level */
+
 import vSelect from 'vue-select';
 
 export default {
+  // todo: remove rest from name
   name: 'DifficultyLevelSelectRest',
   components: {
     vSelect,

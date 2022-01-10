@@ -40,6 +40,8 @@
 </template>
 
 <script>
+/** @file view for creating gyms */
+
 import VueForm from '@/components/VueForm';
 import {mapState} from 'vuex';
 import DifficultyLevelSelectRest from '@/components/DifficultyLevelSelectRest';

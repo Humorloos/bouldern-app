@@ -1,3 +1,5 @@
+/** @file i18n configuration */
+
 import en from './locales/en.yaml';
 import {createI18n} from 'vue-i18n/index';
 

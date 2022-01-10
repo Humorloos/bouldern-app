@@ -1,3 +1,5 @@
+/** @file test for color creation */
+
 describe('The color creation view', () => {
   it('allows adding colors', () => {
     cy.visit('login');

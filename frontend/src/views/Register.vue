@@ -22,6 +22,7 @@
 </template>
 
 <script>
+/** @file view for registering */
 
 export default {
   name: 'Register',

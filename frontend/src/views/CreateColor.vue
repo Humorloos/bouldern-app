@@ -20,6 +20,8 @@
 </template>
 
 <script>
+/** @file view for creating colors */
+
 import VueForm from '@/components/VueForm';
 import jscolor from '@eastdesire/jscolor/jscolor';
 

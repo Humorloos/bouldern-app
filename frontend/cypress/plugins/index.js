@@ -1,3 +1,4 @@
+/** @file custom handlers for cypress events */
 /* eslint-disable @typescript-eslint/no-var-requires */
 /// <reference types="cypress" />
 // ***********************************************************
@@ -12,7 +13,10 @@
 
 // This function is called when a project is opened or re-opened (e.g. due to
 // the project's config changing)
+
 /**
+ * Binds handlers to events exposed by cypress
+ *
  * @param on  - Is used to hook into various events Cypress emits.
  * @param config  - Is the resolved Cypress config.
  * @type {Cypress.PluginConfig}

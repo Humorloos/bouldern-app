@@ -1,3 +1,5 @@
+/** @file vue configuration */
+
 'use strict';
 
 const pages = {

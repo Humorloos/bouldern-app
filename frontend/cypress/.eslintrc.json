@@ -3,6 +3,7 @@
     "plugin:@typescript-eslint/recommended",
     "plugin:cypress/recommended"
   ],
+//  todo: use babel parser, typescript not needed
   "parser": "@typescript-eslint/parser",
   "rules": {
     "@typescript-eslint/no-loss-of-precision": 0,
