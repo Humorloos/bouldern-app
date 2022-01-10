@@ -44,6 +44,10 @@ export default {
     ]),
   },
   methods: {
+    /**
+     * Submits the form to the specified URL via the specified method and emits
+     * the submitted event with * the response
+     */
     submit() {
       this.axios(this.apiPath, {
         method: this.method,

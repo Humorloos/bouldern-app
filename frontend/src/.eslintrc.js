@@ -6,7 +6,7 @@ module.exports = {
         'FunctionExpression': false,
       },
       contexts: [
-        'FunctionExpression:not(Property[key.name = /^get|data$/] ' +
+        'FunctionExpression:not(Property[key.name = /^get|set|data$/] ' +
         'FunctionExpression)',
       ],
     }],
