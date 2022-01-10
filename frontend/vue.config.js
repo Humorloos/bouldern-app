@@ -46,6 +46,7 @@ module.exports = {
       ],
     },
   },
+  lintOnSave: false, // do not enforce eslint during development
   chainWebpack: (config) => {
     // extract vendor javascripts into single shared bundle to allow browsers to
     // cache common javascript
