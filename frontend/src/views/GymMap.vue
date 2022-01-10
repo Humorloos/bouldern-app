@@ -122,7 +122,8 @@ export default {
       });
     },
     /**
-     * Icon drawing interaction for drawing boulder icons
+     * Icon drawing interaction for drawing boulder icons. Only allows drawing
+     * on the image, not outside of it.
      *
      * @returns {Draw} the draw interaction
      */
