@@ -80,6 +80,7 @@ export default {
 </script>
 
 <style>
+@import '../../node_modules/vue-select/dist/vue-select.css';
 /*noinspection CssUnusedSymbol*/
 .vs__selected::before {
   /*noinspection CssInvalidFunction*/

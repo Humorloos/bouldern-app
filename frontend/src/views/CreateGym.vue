@@ -95,12 +95,6 @@ export default {
       this.colorOptions = response.data;
     });
   },
-  /**
-   * Imports css styles for vue-select component
-   */
-  mounted() {
-    require('vue-select/dist/vue-select.css');
-  },
   methods: {
     /**
      * Handler for file upload
@@ -141,6 +135,4 @@ export default {
 </script>
 
 <style>
-/*todo: check where we have to import this, here or via require, prefer here*/
-@import '../../node_modules/vue-select/dist/vue-select.css';
 </style>
