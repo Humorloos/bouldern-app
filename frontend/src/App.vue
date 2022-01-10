@@ -10,15 +10,24 @@
 <script>
 /** @file highest level component of bouldern app */
 
+import {mapActions} from 'vuex';
+
 export default {
   name: 'App',
   /**
-   * Exposes Vuex store to cypress tests
+   * Tries to login the user when loading the app and exposes Vuex store to
+   * cypress tests
    */
   mounted() {
     if (window.Cypress) {
       window['$store'] = this.$store;
     }
+    this.loginFromStorage();
+  },
+  methods: {
+    ...mapActions({
+      loginFromStorage: 'loginFromStorage',
+    }),
   },
 };
 </script>
