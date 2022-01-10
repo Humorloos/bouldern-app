@@ -53,6 +53,7 @@ import {close} from 'ionicons/icons';
 import VueForm from '@/components/VueForm';
 
 export default {
+  // todo: remove view from name
   name: 'GymMap',
   components: {
     VueForm,
