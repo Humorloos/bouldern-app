@@ -183,23 +183,8 @@ export default {
         // Set handler for associating created boulders to popover
         this.featureCollection.on('add',
             (event) => this.popover.feature = event.element);
-
         // Set handler for opening popup on draw
-        this.drawInteraction.on('drawend',
-            /**
-             * Sets created boulder as GeoJSON object and sets the position of
-             * the popover to the created boulder
-             *
-             * @param event the add feature event
-             */
-            (event) => {
-              const geometry = event.feature.getGeometry();
-              this.createdBoulder.coordinates = this.jsonFormat
-                  .writeGeometryObject(geometry);
-
-              const coordinate = geometry.getCoordinates();
-              this.popover.setPosition(coordinate);
-            });
+        this.drawInteraction.on('drawend', this.createBoulder);
         this.loaded = true;
         this.map;
       };
@@ -230,6 +215,20 @@ export default {
      */
     onSubmitted() {
       this.popover.setPosition(undefined);
+    },
+    /**
+     * Handler for draw interaction. Sets created boulder as GeoJSON object and
+     * sets the position of the popover to the created boulder
+     *
+     * @param event the add feature event
+     */
+    createBoulder(event) {
+      const geometry = event.feature.getGeometry();
+      this.createdBoulder.coordinates = this.jsonFormat
+          .writeGeometryObject(geometry);
+
+      const coordinate = geometry.getCoordinates();
+      this.popover.setPosition(coordinate);
     },
   },
 };
