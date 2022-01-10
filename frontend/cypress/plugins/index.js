@@ -1,5 +1,4 @@
 /** @file custom handlers for cypress events */
-/* eslint-disable @typescript-eslint/no-var-requires */
 /// <reference types="cypress" />
 // ***********************************************************
 // This example plugins/index.js can be used to load plugins
