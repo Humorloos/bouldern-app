@@ -119,28 +119,11 @@ export default {
      * @returns {Draw} the draw interaction
      */
     drawInteraction() {
-      const draw = new Draw({
+      return new Draw({
         type: 'Point',
         source: this.source,
         condition: (event) => containsCoordinate(this.extent, event.coordinate),
       });
-      // Set handler for opening popup on draw
-      draw.on('drawend',
-          /**
-           * Sets created boulder as GeoJSON object and sets the position of the
-           * popover to the created boulder
-           *
-           * @param event the add feature event
-           */
-          (event) => {
-            const geometry = event.feature.getGeometry();
-            this.createdBoulder.coordinates = this.jsonFormat
-                .writeGeometryObject(geometry);
-
-            const coordinate = geometry.getCoordinates();
-            this.popover.setPosition(coordinate);
-          });
-      return draw;
     },
     /**
      * Initializes the gym map with image layer, vector layer, popover, and
@@ -193,7 +176,6 @@ export default {
       this.mapData = response.data[0];
       this.mapImage.src = this.mapData.map;
       this.mapImage.onload = () => {
-        this.map;
         // Populate with initial features
         this.mapData.boulder_set.forEach(
             (boulder) => this.source.addFeature(
@@ -201,7 +183,25 @@ export default {
         // Set handler for associating created boulders to popover
         this.featureCollection.on('add',
             (event) => this.popover.feature = event.element);
+
+        // Set handler for opening popup on draw
+        this.drawInteraction.on('drawend',
+            /**
+             * Sets created boulder as GeoJSON object and sets the position of
+             * the popover to the created boulder
+             *
+             * @param event the add feature event
+             */
+            (event) => {
+              const geometry = event.feature.getGeometry();
+              this.createdBoulder.coordinates = this.jsonFormat
+                  .writeGeometryObject(geometry);
+
+              const coordinate = geometry.getCoordinates();
+              this.popover.setPosition(coordinate);
+            });
         this.loaded = true;
+        this.map;
       };
     });
   },
