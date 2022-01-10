@@ -65,7 +65,11 @@ export default {
     ...mapState([
       'authToken',
     ]),
-    // Popover showing the position the user clicked
+    /**
+     * Popover showing the position the user clicked
+     *
+     * @returns {Overlay} the popover
+     */
     popover() {
       return new Overlay({
         element: this.$refs['popup'],
@@ -75,22 +79,47 @@ export default {
         },
       });
     },
+    /**
+     * OpenLayers feature collection containing the geographic features in the
+     * map
+     *
+     * @returns {Collection} the feature collection
+     */
     featureCollection() {
       const featureCollection = new Collection();
       const self = this;
       // Set handler for serializing newly added and modified features
-      featureCollection.on('add', function(event) {
-        self.mapData.boulder_set.push({
-          coordinates: self.jsonFormat
-              .writeGeometryObject(event.element.getGeometry()),
-        });
-        self.popover['feature'] = event.element;
-      });
+      // todo: check if boulders are removed from mapdata when closing popover
+      featureCollection.on('add',
+          /**
+           * Adds boulders added to the feature collection as GEOJson to the
+           * map data and associates the popover to the feature so that it can
+           * be removed in case the popover is closed
+           *
+           * @param event the add feature event
+           */
+          function(event) {
+            self.mapData.boulder_set.push({
+              coordinates: self.jsonFormat
+                  .writeGeometryObject(event.element.getGeometry()),
+            });
+            self.popover.feature = event.element;
+          });
       return featureCollection;
     },
+    /**
+     * The map's extent
+     *
+     * @returns {number[]} the map's extent
+     */
     extent() {
       return [0, 0, this.mapImage.width, this.mapImage.height];
     },
+    /**
+     * Projecton from image coordinates to geo-coordinates
+     *
+     * @returns {Projection} the projection
+     */
     projection() {
       return new Projection({
         code: 'xkcd-image',
@@ -98,6 +127,11 @@ export default {
         extent: this.extent,
       });
     },
+    /**
+     * Vector source to draw boulders on
+     *
+     * @returns {VectorSource} the vector source
+     */
     source() {
       const source = new VectorSource({
         features: this.featureCollection,
@@ -109,7 +143,11 @@ export default {
               this.jsonFormat.readFeature(boulder.coordinates)));
       return source;
     },
-    // Add icon drawing interaction
+    /**
+     * Icon drawing interaction for drawing boulder icons
+     *
+     * @returns {Draw} the draw interaction
+     */
     drawInteraction() {
       const draw = new Draw({
         type: 'Point',
@@ -124,6 +162,12 @@ export default {
       });
       return draw;
     },
+    /**
+     * Initializes the gym map with image layer, vector layer, popover, and
+     * draw interaction
+     *
+     * @returns {Map} the gym map
+     */
     map() {
       // Initialize map
       const map = new Map({
@@ -156,6 +200,10 @@ export default {
       return map;
     },
   },
+  /**
+   * Gets the gym data including the map image's url, saves it and loads the map
+   * once the image has loaded
+   */
   created() {
     this.axios.get(`/bouldern/gym/?name=${this.$route.params.gymName}`, {
       headers: {
@@ -170,6 +218,9 @@ export default {
       };
     });
   },
+  /**
+   * Makes the component available to cypress in test runs
+   */
   mounted() {
     if (window.Cypress) {
       window[this.$options.name] = this;
@@ -177,14 +228,19 @@ export default {
   },
   methods: {
     /**
-     * Add a click handler to hide the popup.
-     * @return {boolean} Don't follow the href.
+     * Removes the popover's feature from the featureCollection and blurs the
+     * popover
+     *
+     * @returns {boolean} false (don't follow the ref)
      */
     closePopover() {
       this.featureCollection.remove(this.popover.feature);
       this.popover.setPosition(undefined);
       return false;
     },
+    /**
+     * Blurs the popover
+     */
     onSubmitted() {
       this.popover.setPosition(undefined);
     },
