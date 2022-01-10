@@ -6,7 +6,7 @@ import http from '../http-common';
  *
  * @returns {object} the store's default state
  */
-const getDefaultState = () => {
+const getDefaultState = function() {
   return {
     authToken: {
       token: '',
@@ -33,12 +33,12 @@ export default createStore({
      * Sets jwt tokens and user data from the provided payload which contains
      * the server's login response.
      */
-    setLoginData: (state, payload) => {
+    setLoginData(state, payload) {
       state.authToken.token = payload.access_token;
       state.authToken.expiration = new Date(payload.access_token_expiration);
       state.refreshToken.token = payload.refresh_token;
       state.refreshToken.expiration =
-            new Date(payload.refresh_token_expiration);
+        new Date(payload.refresh_token_expiration);
       state.user = payload.user;
     },
     /**
@@ -75,7 +75,9 @@ export default createStore({
      *
      * @returns {boolean} whether the authtoken is set and not expired
      */
-    isAuthenticated: (state) => state.authToken.token.length > 0 &&
-            state.authToken.expiration > Date.now(),
+    isAuthenticated(state) {
+      return state.authToken.token.length > 0 &&
+        state.authToken.expiration > Date.now();
+    },
   },
 });
