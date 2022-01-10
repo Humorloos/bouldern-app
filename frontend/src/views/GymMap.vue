@@ -61,6 +61,7 @@ export default {
       mapImage: new Image(),
       jsonFormat: new GeoJSON(),
       loaded: false,
+      featureCollection: new Collection(),
     };
   },
   computed: {
@@ -80,28 +81,6 @@ export default {
           duration: 250,
         },
       });
-    },
-    /**
-     * OpenLayers feature collection containing the geographic features in the
-     * map
-     *
-     * @returns {Collection} the feature collection
-     */
-    featureCollection() {
-      const featureCollection = new Collection();
-      const self = this;
-      // Set handler for serializing newly added and modified features
-      featureCollection.on('add',
-          /**
-           * Associates the popover to the feature so that it can be removed in
-           * case the popover is closed
-           *
-           * @param event the add feature event
-           */
-          function(event) {
-            self.popover.feature = event.element;
-          });
-      return featureCollection;
     },
     /**
      * The map's extent
@@ -219,6 +198,9 @@ export default {
         this.mapData.boulder_set.forEach(
             (boulder) => this.source.addFeature(
                 this.jsonFormat.readFeature(boulder.coordinates)));
+        // Set handler for associating created boulders to popover
+        this.featureCollection.on('add',
+            (event) => this.popover.feature = event.element);
         this.loaded = true;
       };
     });
