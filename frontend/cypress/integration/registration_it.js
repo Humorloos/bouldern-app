@@ -9,6 +9,7 @@ describe('The register app', () => {
           mutationPayload: mutation.payload, state: state,
         };
       });
+      // todo: maybe it would be better to log in App.vue hook
       win.$store.subscribeAction((action, state) => {
         $log[new Date().toISOString() + ' - ' + action.type] = {
           actionPayload: action.payload, state: state,
@@ -20,9 +21,9 @@ describe('The register app', () => {
     loginViaLogInLink(constants.newEmail, constants.newPassword);
     cy.contains($t('wrongCredentialsMsg'));
     cy.contains('Home').click();
-  });
-
-  it('allows logging in after registering', () => {
+    // });
+    //
+    // it('allows logging in after registering', () => {
     cy.contains('Register').click();
 
     cy.get('#id_username')
@@ -41,13 +42,13 @@ describe('The register app', () => {
     cy.contains(`Hello, ${constants.newEmail}. ` +
           'You\'re at the bouldern index.');
     cy.contains('Home').click();
-  });
-  it('allows logging out', () => {
+    // });
+    // it('allows logging out', () => {
     cy.contains('Log Out').click();
     cy.contains('Log In').click();
     cy.contains($t('notLoggedInMsg'));
-  });
-  it('allows deleting your account', () => {
+    // });
+    // it('allows deleting your account', () => {
     // try log in with non-existent user
     loginViaLogInLink(constants.email, constants.password);
     cy.contains('Home').click();
