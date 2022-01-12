@@ -34,7 +34,7 @@ module.exports = (on, config) => {
   on('file:preprocessor', require('@cypress/webpack-preprocessor')(options));
   on('task', {
     log(message) {
-      console.log(message);
+      console.log(JSON.stringify(message, null, 2));
 
       return null;
     },
