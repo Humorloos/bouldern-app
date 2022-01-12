@@ -10,11 +10,11 @@ describe('The gym map view', () => {
           mutation: mutation, state: state,
         };
       });
-      // win.$store.subscribeAction((action, state) => {
-      //   $log[new Date().toTimeString().split(' ')[0]] = {
-      //     action: action, state: state,
-      //   };
-      // });
+      win.$store.subscribeAction((action, state) => {
+        $log[new Date().toTimeString().split(' ')[0]] = {
+          action: action, state: state,
+        };
+      });
     });
     loginViaLogInLink(constants.email, constants.password);
     cy.contains(`Hello, ${constants.email}. ` +
