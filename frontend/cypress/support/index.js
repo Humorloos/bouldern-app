@@ -17,6 +17,8 @@ import './functions';
 import './constants';
 import 'cypress-file-upload';
 
+window.$log = {};
+
 before(() => {
   cy.exec('cd .. && python manage.py reset_db');
 });
