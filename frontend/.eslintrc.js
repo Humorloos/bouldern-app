@@ -1,3 +1,5 @@
+/** @file global eslint config */
+
 module.exports = {
   'env': {
     'node': true,
@@ -9,8 +11,8 @@ module.exports = {
     'plugin:vue/vue3-recommended',
     'plugin:jsdoc/recommended',
   ],
-  plugins: ['jsdoc'],
-  rules: {
+  'plugins': ['jsdoc'],
+  'rules': {
     'jsdoc/require-file-overview': 2,
     'valid-jsdoc': 0, // eslint-jsdoc takes care of jsdoc validation
     'jsdoc/require-jsdoc': [2, {
@@ -26,9 +28,11 @@ module.exports = {
     'jsdoc/require-param': [2, {
       contexts: [
         // no params for store methods for now
-        'ArrowFunctionExpression:not(CallExpression[callee.name ="createStore"] ArrowFunctionExpression)',
+        'ArrowFunctionExpression:not(' +
+        'CallExpression[callee.name ="createStore"] ArrowFunctionExpression)',
         'FunctionDeclaration',
-        'FunctionExpression:not(CallExpression[callee.name ="createStore"] FunctionExpression)'
+        'FunctionExpression:not(' +
+        'CallExpression[callee.name ="createStore"] FunctionExpression)',
       ],
     }],
     'jsdoc/require-param-type': 0, // for now, no types in jsdoc
