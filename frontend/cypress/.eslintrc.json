@@ -19,6 +19,7 @@
   },
   "globals": {
     "$t": "readonly",
+    "$log": "readonly",
     "constants": "readonly",
     "loginViaLogInLink": "readonly"
   }

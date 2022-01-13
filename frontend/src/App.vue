@@ -11,6 +11,11 @@
 
 export default {
   name: 'App',
+  mounted() {
+    if (window.Cypress) {
+      window['$store'] = this.$store;
+    }
+  },
 };
 </script>
 
