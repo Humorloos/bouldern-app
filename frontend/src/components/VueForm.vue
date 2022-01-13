@@ -10,6 +10,8 @@
 </template>
 
 <script>
+/** @file component for submitting forms to apis */
+
 import {mapState} from 'vuex';
 
 export default {
@@ -44,6 +46,10 @@ export default {
     ]),
   },
   methods: {
+    /**
+     * Submits the form to the specified URL via the specified method and emits
+     * the submitted event with * the response
+     */
     submit() {
       this.axios(this.apiPath, {
         method: this.method,

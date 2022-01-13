@@ -22,7 +22,7 @@
       >
     </div>
 
-    <difficulty-level-select-rest
+    <difficulty-level-select
       v-for="(color, index) in colors"
       :id="`id_color-level-${index + 1}`"
       :key="color.name"
@@ -40,15 +40,17 @@
 </template>
 
 <script>
+/** @file view for creating gyms */
+
 import VueForm from '@/components/VueForm';
 import {mapState} from 'vuex';
-import DifficultyLevelSelectRest from '@/components/DifficultyLevelSelectRest';
+import DifficultyLevelSelect from '@/components/DifficultyLevelSelect';
 
 export default {
   name: 'CreateGym',
   components: {
     VueForm,
-    DifficultyLevelSelectRest,
+    DifficultyLevelSelect,
   },
   data() {
     return {
@@ -67,6 +69,11 @@ export default {
     ...mapState([
       'authToken',
     ]),
+    /**
+     * Gets a form with the gym's name and all difficulty levels for submission
+     *
+     * @returns {object} the gym form
+     */
     form() {
       return {
         name: this.gymName,
@@ -76,6 +83,9 @@ export default {
       };
     },
   },
+  /**
+   * Gets all possible colors from the api and saves them
+   */
   created() {
     this.axios.get('/bouldern/color/', {
       headers: {
@@ -85,13 +95,22 @@ export default {
       this.colorOptions = response.data;
     });
   },
-  mounted() {
-    require('vue-select/dist/vue-select.css');
-  },
   methods: {
-    onFileChange(e) {
-      this.map = e.target.files[0];
+    /**
+     * Handler for file upload
+     *
+     * @param event the file upload event
+     */
+    onFileChange(event) {
+      this.map = event.target.files[0];
     },
+    /**
+     * Submits the gym map image after submitting the gym map form and redirects
+     * to index
+     *
+     * @param response the create response returned from the api after creating
+     * the gym
+     */
     onSubmitted(response) {
       const formData = new FormData();
       formData.append('map', this.map);
@@ -104,6 +123,10 @@ export default {
           });
       this.$router.push('/');
     },
+    /**
+     * Adds the last added color again to colors to create new difficulty level
+     * select
+     */
     addDifficultySelect() {
       this.colors.push(this.colors.at(-1));
     },
@@ -112,5 +135,4 @@ export default {
 </script>
 
 <style>
-@import '../../node_modules/vue-select/dist/vue-select.css';
 </style>
