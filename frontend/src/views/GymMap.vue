@@ -6,9 +6,8 @@
     :style="{visibility: loaded ? 'visible' : 'hidden'}"
     @keyup.esc="closePopover"
   >
-    <a
-      id="popup-closer"
-      href="#"
+    <ion-icon
+      name="close"
       class="ol-popup-closer"
       @click="closePopover"
     />
@@ -16,11 +15,6 @@
       <p>You clicked here:</p>
       <code>' {{ createdBoulder.coordinates }} </code>
     </div>
-    <vue-form
-      :api-path="`/bouldern/gym/${mapData.id}/boulder/`"
-      :form="createdBoulder"
-      @submitted="onSubmitted"
-    />
   </div>
   <div
     id="map-root"
@@ -41,12 +35,16 @@ import Map from 'ol/Map';
 import {Image as ImageLayer, Vector as VectorLayer} from 'ol/layer';
 import View from 'ol/View';
 import {GeoJSON} from 'ol/format';
-import VueForm from '@/components/VueForm';
+import {IonIcon} from '@ionic/vue';
+import {close} from 'ionicons/icons';
 
 export default {
   name: 'GymMap',
   components: {
-    VueForm,
+    IonIcon,
+  },
+  setup() {
+    return close;
   },
   data() {
     return {
@@ -290,11 +288,8 @@ export default {
 .ol-popup-closer {
   text-decoration: none;
   position: absolute;
-  top: 2px;
+  top: 4px;
   right: 8px;
 }
 
-.ol-popup-closer:after {
-  content: "✖";
-}
 </style>
