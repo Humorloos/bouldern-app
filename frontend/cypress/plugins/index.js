@@ -36,6 +36,12 @@ module.exports = (on, config) => {
 
   on('file:preprocessor', require('@cypress/webpack-preprocessor')(options));
   on('task', {
+    /**
+     * Prints the message to the cypress command line
+     *
+     * @param message the message to pring
+     * @returns {null} tasks that return nothing have to return null
+     */
     log(message) {
       console.log(JSON.stringify(message, null, 2));
 

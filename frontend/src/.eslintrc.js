@@ -1,3 +1,5 @@
+/** @file vue eslint config */
+
 module.exports = {
   parser: 'vue-eslint-parser',
   rules: {
@@ -6,8 +8,8 @@ module.exports = {
         'FunctionExpression': false,
       },
       contexts: [
-        'FunctionExpression:not(Property[key.name = /^get|set|data$/] ' +
-        'FunctionExpression)',
+        'FunctionExpression:not(' +
+        'Property[key.name = /^get|set|data$/] FunctionExpression)',
       ],
     }],
   },
