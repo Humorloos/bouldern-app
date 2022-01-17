@@ -17,6 +17,7 @@ else
     cache store GoogleApiHelper ~/GoogleApiHelper
   fi
   if [[ $googleCalendarApp_cached == *"doesn't"* ]]; then
+    pwd
     echo "Installing and caching private repository googleCalendarApp"
     git clone git@github.com:Humorloos/googleCalendarApp.git
     cache store googleCalendarApp ~/googleCalendarApp

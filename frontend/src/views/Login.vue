@@ -34,6 +34,8 @@
   </div>
 </template>
 <script>
+/** @file login view */
+
 import {mapGetters, mapState} from 'vuex';
 
 export default {
@@ -55,10 +57,13 @@ export default {
     ]),
     ...mapState([
       'user',
-      'messages',
     ]),
   },
   methods: {
+    /**
+     * Submits the login form to the login api and commits the returned data to
+     * the store. In case of error shows an error message.
+     */
     submit() {
       this.axios.post('/registration/rest/login/', this.form,
       ).then((result) => {

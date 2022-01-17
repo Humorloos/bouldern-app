@@ -1,3 +1,8 @@
+/**
+ *  @file this file is called before executing each e2e test and executes code
+ *  required in multiple e2e tests
+ */
+
 // ***********************************************************
 // This example support/index.js is processed and
 // loaded automatically before your test files.

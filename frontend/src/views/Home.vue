@@ -48,6 +48,8 @@
 </template>
 
 <script>
+/** @file index view with menu */
+
 import {mapActions, mapMutations, mapState} from 'vuex';
 
 export default {
@@ -63,6 +65,9 @@ export default {
   methods: {
     ...mapMutations(['logout']),
     ...mapActions(['deleteAccountAndLogout']),
+    /**
+     * Redirects to gym map with name entered in text field
+     */
     openGymMap() {
       this.$router.push(`/gym-map/${this.gymName}`);
     },

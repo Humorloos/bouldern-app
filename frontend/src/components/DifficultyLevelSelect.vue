@@ -16,33 +16,42 @@
 </template>
 
 <script>
+/** @file select field for color of a difficulty level */
+
 import vSelect from 'vue-select';
 
 export default {
-  name: 'DifficultyLevelSelectRest',
+  name: 'DifficultyLevelSelect',
   components: {
     vSelect,
   },
   props: {
     colorOptions: {
       type: Array,
-      default: function() {
-        return [];
-      },
+      default: () => [],
     },
     modelValue: {
       type: Object,
-      default: () => {
-      },
+      default: () => {},
     },
   },
   emits: ['update:modelValue'],
   computed: {
+    /**
+     * Gets difficulty level select options (which require label property) for
+     * color options.
+     *
+     * @returns {object[]} array of difficulty level select options
+     */
     options() {
       return this.colorOptions.map((color) => {
         return this.optionFromColor(color);
       });
     },
+    /**
+     * Value property is computed with get() and set() for allowing usage with
+     * v-model
+     */
     value: {
       get() {
         return this.optionFromColor(this.modelValue);
@@ -53,6 +62,13 @@ export default {
     },
   },
   methods: {
+    /**
+     * Converts a color object (as returned by color api) into a vue-select
+     * option (requires changing property name to label)
+     *
+     * @param color the color to convert
+     * @returns {object} the vue-select option
+     */
     optionFromColor(color) {
       return {
         ...color,
@@ -64,6 +80,7 @@ export default {
 </script>
 
 <style>
+@import '../../node_modules/vue-select/dist/vue-select.css';
 /*noinspection CssUnusedSymbol*/
 .vs__selected::before {
   /*noinspection CssInvalidFunction*/
