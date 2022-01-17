@@ -8,18 +8,26 @@
   >
     <!--      shape="round"-->
     <ion-button
+      id="popup-closer"
+      fill="clear"
+      size="small"
       class="ol-popup-closer"
       @click="closePopover"
     >
       <ion-icon
         icon-only
-        name="close"
+        :icon="close"
       />
     </ion-button>
     <div id="popup-content">
       <p>You clicked here:</p>
       <code>' {{ createdBoulder.coordinates }} </code>
     </div>
+    <vue-form
+      :api-path="`/bouldern/gym/${mapData.id}/boulder/`"
+      :form="createdBoulder"
+      @submitted="onSubmitted"
+    />
   </div>
   <div
     id="map-root"
@@ -42,10 +50,12 @@ import View from 'ol/View';
 import {GeoJSON} from 'ol/format';
 import {IonIcon, IonButton} from '@ionic/vue';
 import {close} from 'ionicons/icons';
+import VueForm from '@/components/VueForm';
 
 export default {
   name: 'GymMap',
   components: {
+    VueForm,
     IonIcon,
     IonButton,
   },
