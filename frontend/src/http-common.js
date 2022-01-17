@@ -1,3 +1,5 @@
+/** @file axios configuration */
+
 import axios from 'axios';
 
 export default axios.create({

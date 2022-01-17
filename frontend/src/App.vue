@@ -8,9 +8,13 @@
 </template>
 
 <script>
+/** @file highest level component of bouldern app */
 
 export default {
   name: 'App',
+  /**
+   * Exposes Vuex store to cypress tests
+   */
   mounted() {
     if (window.Cypress) {
       window['$store'] = this.$store;
@@ -20,6 +24,8 @@ export default {
 </script>
 
 <style>
+@import '../node_modules/@ionic/core/css/core.css';
+@import '../node_modules/@ionic/core/css/ionic.bundle.css';
 html, body, #app {
   height: 99%;
 }
