@@ -10,8 +10,6 @@
 <script>
 /** @file highest level component of bouldern app */
 
-import {mapActions} from 'vuex';
-
 export default {
   name: 'App',
   /**
@@ -22,12 +20,6 @@ export default {
     if (window.Cypress) {
       window['$store'] = this.$store;
     }
-    this.loginFromStorage();
-  },
-  methods: {
-    ...mapActions({
-      loginFromStorage: 'loginFromStorage',
-    }),
   },
 };
 </script>
