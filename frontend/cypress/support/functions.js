@@ -1,6 +1,14 @@
+/** @file utility functions for use over multiple e2e tests */
+
 import i18n from '../../src/i18n';
 
 window.$t = i18n.global.t;
+/**
+ * Logs in user with given credentials when at login page
+ *
+ * @param email the user's email
+ * @param password the user's password
+ */
 window.loginViaLogInLink = (email, password) => {
   cy.contains('You are not logged in');
   cy.url().should('include', '/login');
