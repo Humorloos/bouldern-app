@@ -9,6 +9,7 @@ else
   chmod 0600 ~/.ssh/id_rsa_semaphoreci
   # Add the key to the ssh agent:
   ssh-add ~/.ssh/id_rsa_semaphoreci
+  pwd
   cd ..
   # clone repos if necessary
   if [[ $GoogleApiHelper_cached == *"doesn't"* ]]; then
@@ -19,6 +20,8 @@ else
   if [[ $googleCalendarApp_cached == *"doesn't"* ]]; then
     echo "Installing and caching private repository googleCalendarApp"
     git clone git@github.com:Humorloos/googleCalendarApp.git
+    pwd
+    ls
     cache store googleCalendarApp ~/googleCalendarApp
   fi
   cd "$PROJECT_DIR" || exit
