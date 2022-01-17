@@ -1,3 +1,5 @@
+/** @file constants for global use in different e2e tests */
+
 window.constants = {
   newUsername: 'testUser',
   newEmail: 'testEmail@mailprovider.com',
