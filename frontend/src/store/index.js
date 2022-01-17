@@ -106,5 +106,6 @@ export default createStore({
       return state.authToken.token.length > 0 &&
         new Date(state.authToken.expiration) > Date.now();
     },
+    state: (state) => state,
   },
 });
