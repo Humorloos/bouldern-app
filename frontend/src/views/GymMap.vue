@@ -6,20 +6,19 @@
     :style="{visibility: loaded ? 'visible' : 'hidden'}"
     @keyup.esc="closePopover"
   >
-    <!--      shape="round"-->
-    <ion-button
-      id="popup-closer"
-      fill="clear"
-      size="small"
-      class="ol-popup-closer"
-      @click="closePopover"
-    >
-      <ion-icon
-        icon-only
-        :icon="close"
-      />
-    </ion-button>
     <div id="popup-content">
+      <ion-button
+        id="popup-closer"
+        fill="clear"
+        size="small"
+        class="ol-popup-closer"
+        @click="closePopover"
+      >
+        <ion-icon
+          icon-only
+          :icon="close"
+        />
+      </ion-button>
       <p>You clicked here:</p>
       <code>' {{ createdBoulder.coordinates }} </code>
     </div>
