@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
+/** @file custom handlers for cypress events */
 /// <reference types="cypress" />
 // ***********************************************************
 // This example plugins/index.js can be used to load plugins
@@ -12,12 +12,15 @@
 
 // This function is called when a project is opened or re-opened (e.g. due to
 // the project's config changing)
+
+/**
+ * Binds handlers to events exposed by cypress
+ *
+ * @param on  - Is used to hook into various events Cypress emits.
+ * @param config  - Is the resolved Cypress config.
+ * @type {Cypress.PluginConfig}
+ */
 module.exports = (on, config) => {
-  /**
-   * @param on is used to hook into various events Cypress emits
-   * @param config is the resolved Cypress config
-   * @type {Cypress.PluginConfig}
-   */
   const options = {
     // send in the options from your webpack.config.js, so it works the same
     // as your app's code
@@ -33,6 +36,12 @@ module.exports = (on, config) => {
 
   on('file:preprocessor', require('@cypress/webpack-preprocessor')(options));
   on('task', {
+    /**
+     * Prints the message to the cypress command line
+     *
+     * @param message the message to pring
+     * @returns {null} tasks that return nothing have to return null
+     */
     log(message) {
       console.log(JSON.stringify(message, null, 2));
 

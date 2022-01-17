@@ -1,3 +1,5 @@
+/** @file test for registration, login, logout, and account deletion */
+
 after(() => cy.task('log', $log));
 
 describe('The register app', () => {
