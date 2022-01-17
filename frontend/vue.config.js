@@ -1,3 +1,5 @@
+/** @file vue configuration */
+
 'use strict';
 
 const pages = {
@@ -47,6 +49,11 @@ module.exports = {
     },
   },
   lintOnSave: false, // do not enforce eslint during development
+  /**
+   * Modifies the webpack config via webpack-chain
+   *
+   * @param config the webpack config
+   */
   chainWebpack: (config) => {
     // extract vendor javascripts into single shared bundle to allow browsers to
     // cache common javascript
