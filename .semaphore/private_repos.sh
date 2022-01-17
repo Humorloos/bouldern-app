@@ -19,6 +19,8 @@ else
   if [[ $googleCalendarApp_cached == *"doesn't"* ]]; then
     echo "Installing and caching private repository googleCalendarApp"
     git clone git@github.com:Humorloos/googleCalendarApp.git
+    pwd
+    ls
     cache store googleCalendarApp ~/googleCalendarApp
   fi
   cd "$PROJECT_DIR" || exit
