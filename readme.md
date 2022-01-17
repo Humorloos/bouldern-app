@@ -21,3 +21,7 @@
 
 ### webpack development server
 - run `npx ionic serve -p 8080 -b` in frontend directory
+
+### chrome https configuration:
+- incase of error `NET::ERR_CERT_AUTHORITY_INVALID` in chrome, visit `chrome://flags/#allow-insecure-localhost` and set "Allow invalid certificates for resources loaded from localhost" to Enabled
+
