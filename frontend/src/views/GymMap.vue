@@ -6,11 +6,16 @@
     :style="{visibility: loaded ? 'visible' : 'hidden'}"
     @keyup.esc="closePopover"
   >
-    <ion-icon
-      name="close"
+    <!--      shape="round"-->
+    <ion-button
       class="ol-popup-closer"
       @click="closePopover"
-    />
+    >
+      <ion-icon
+        icon-only
+        name="close"
+      />
+    </ion-button>
     <div id="popup-content">
       <p>You clicked here:</p>
       <code>' {{ createdBoulder.coordinates }} </code>
@@ -35,16 +40,17 @@ import Map from 'ol/Map';
 import {Image as ImageLayer, Vector as VectorLayer} from 'ol/layer';
 import View from 'ol/View';
 import {GeoJSON} from 'ol/format';
-import {IonIcon} from '@ionic/vue';
+import {IonIcon, IonButton} from '@ionic/vue';
 import {close} from 'ionicons/icons';
 
 export default {
   name: 'GymMap',
   components: {
     IonIcon,
+    IonButton,
   },
   setup() {
-    return close;
+    return {close};
   },
   data() {
     return {
