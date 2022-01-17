@@ -87,7 +87,7 @@ export default createStore({
     async login({state, commit}, form) {
       try {
         const response = await state.axios.post(
-            '/registration/rest/login/', form);
+            '/registration/login/', form);
         const loginData = response.data;
         commit('setLoginData', loginData);
       } catch (error) {
