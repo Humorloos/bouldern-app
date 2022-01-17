@@ -6,19 +6,25 @@
     :style="{visibility: loaded ? 'visible' : 'hidden'}"
     @keyup.esc="closePopover"
   >
-    <a
-      id="popup-closer"
-      href="#"
-      class="ol-popup-closer"
-      @click="closePopover"
-    />
     <div id="popup-content">
+      <ion-button
+        id="popup-closer"
+        fill="clear"
+        size="small"
+        class="ol-popup-closer"
+        @click="closePopover"
+      >
+        <ion-icon
+          icon-only
+          :icon="close"
+        />
+      </ion-button>
       <p>You clicked here:</p>
-      <code>' {{ selectedCoordinate }} </code>
+      <code>' {{ createdBoulder.coordinates }} </code>
     </div>
     <vue-form
       :api-path="`/bouldern/gym/${mapData.id}/boulder/`"
-      :form="mapData.boulder_set.at(-1)"
+      :form="createdBoulder"
       @submitted="onSubmitted"
     />
   </div>
@@ -29,6 +35,8 @@
 </template>
 
 <script>
+/** @file view with interactive gym map */
+
 import {mapState} from 'vuex';
 import {Collection, Overlay} from 'ol';
 import {Projection} from 'ol/proj';
@@ -39,12 +47,19 @@ import Map from 'ol/Map';
 import {Image as ImageLayer, Vector as VectorLayer} from 'ol/layer';
 import View from 'ol/View';
 import {GeoJSON} from 'ol/format';
+import {IonIcon, IonButton} from '@ionic/vue';
+import {close} from 'ionicons/icons';
 import VueForm from '@/components/VueForm';
 
 export default {
-  name: 'GymMapView',
+  name: 'GymMap',
   components: {
     VueForm,
+    IonIcon,
+    IonButton,
+  },
+  setup() {
+    return {close};
   },
   data() {
     return {
@@ -55,9 +70,9 @@ export default {
         map: '',
         id: 0,
       },
+      createdBoulder: {coordinates: {}},
       mapImage: new Image(),
       jsonFormat: new GeoJSON(),
-      selectedCoordinate: 'none yet',
       loaded: false,
     };
   },
@@ -65,7 +80,11 @@ export default {
     ...mapState([
       'authToken',
     ]),
-    // Popover showing the position the user clicked
+    /**
+     * Popover showing the position the user clicked
+     *
+     * @returns {Overlay} the popover
+     */
     popover() {
       return new Overlay({
         element: this.$refs['popup'],
@@ -75,22 +94,28 @@ export default {
         },
       });
     },
+    /**
+     * OpenLayers feature collection containing the geographic features in the
+     * map
+     *
+     * @returns {Collection} the feature collection
+     */
     featureCollection() {
-      const featureCollection = new Collection();
-      const self = this;
-      // Set handler for serializing newly added and modified features
-      featureCollection.on('add', function(event) {
-        self.mapData.boulder_set.push({
-          coordinates: self.jsonFormat
-              .writeGeometryObject(event.element.getGeometry()),
-        });
-        self.popover['feature'] = event.element;
-      });
-      return featureCollection;
+      return new Collection();
     },
+    /**
+     * The map's extent
+     *
+     * @returns {number[]} the map's extent
+     */
     extent() {
       return [0, 0, this.mapImage.width, this.mapImage.height];
     },
+    /**
+     * Projecton from image coordinates to geo-coordinates
+     *
+     * @returns {Projection} the projection
+     */
     projection() {
       return new Projection({
         code: 'xkcd-image',
@@ -98,32 +123,36 @@ export default {
         extent: this.extent,
       });
     },
+    /**
+     * Vector source to draw boulders on
+     *
+     * @returns {VectorSource} the vector source
+     */
     source() {
-      const source = new VectorSource({
+      return new VectorSource({
         features: this.featureCollection,
         useSpatialIndex: false, // improves performance
       });
-      // Populate with initial features
-      this.mapData.boulder_set.forEach(
-          (boulder) => source.addFeature(
-              this.jsonFormat.readFeature(boulder.coordinates)));
-      return source;
     },
-    // Add icon drawing interaction
+    /**
+     * Icon drawing interaction for drawing boulder icons. Only allows drawing
+     * on the image, not outside of it.
+     *
+     * @returns {Draw} the draw interaction
+     */
     drawInteraction() {
-      const draw = new Draw({
+      return new Draw({
         type: 'Point',
         source: this.source,
         condition: (event) => containsCoordinate(this.extent, event.coordinate),
       });
-      // Set handler for opening popup on draw
-      draw.on('drawend', (event) => {
-        const coordinate = event.feature.getGeometry().getCoordinates();
-        this.selectedCoordinate = coordinate;
-        this.popover.setPosition(coordinate);
-      });
-      return draw;
     },
+    /**
+     * Initializes the gym map with image layer, vector layer, popover, and
+     * draw interaction
+     *
+     * @returns {Map} the gym map
+     */
     map() {
       // Initialize map
       const map = new Map({
@@ -156,6 +185,10 @@ export default {
       return map;
     },
   },
+  /**
+   * Gets the gym data including the map image's url, saves it and loads the map
+   * once the image has loaded
+   */
   created() {
     this.axios.get(`/bouldern/gym/?name=${this.$route.params.gymName}`, {
       headers: {
@@ -165,11 +198,23 @@ export default {
       this.mapData = response.data[0];
       this.mapImage.src = this.mapData.map;
       this.mapImage.onload = () => {
-        this.map;
+        // Populate with initial features
+        this.mapData.boulder_set.forEach(
+            (boulder) => this.source.addFeature(
+                this.jsonFormat.readFeature(boulder.coordinates)));
+        // Set handler for associating created boulders to popover
+        this.featureCollection.on('add',
+            (event) => this.popover.feature = event.element);
+        // Set handler for opening popup on draw
+        this.drawInteraction.on('drawend', this.createBoulder);
         this.loaded = true;
+        this.map;
       };
     });
   },
+  /**
+   * Makes the component available to cypress in test runs
+   */
   mounted() {
     if (window.Cypress) {
       window[this.$options.name] = this;
@@ -177,16 +222,35 @@ export default {
   },
   methods: {
     /**
-     * Add a click handler to hide the popup.
-     * @return {boolean} Don't follow the href.
+     * Removes the popover's feature from the featureCollection and blurs the
+     * popover.
+     *
+     * @returns {boolean} false (don't follow the ref)
      */
     closePopover() {
       this.featureCollection.remove(this.popover.feature);
       this.popover.setPosition(undefined);
       return false;
     },
+    /**
+     * Blurs the popover
+     */
     onSubmitted() {
       this.popover.setPosition(undefined);
+    },
+    /**
+     * Handler for draw interaction. Sets created boulder as GeoJSON object and
+     * sets the position of the popover to the created boulder
+     *
+     * @param event the add feature event
+     */
+    createBoulder(event) {
+      const geometry = event.feature.getGeometry();
+      this.createdBoulder.coordinates = this.jsonFormat
+          .writeGeometryObject(geometry);
+
+      const coordinate = geometry.getCoordinates();
+      this.popover.setPosition(coordinate);
     },
   },
 };
@@ -239,11 +303,8 @@ export default {
 .ol-popup-closer {
   text-decoration: none;
   position: absolute;
-  top: 2px;
+  top: 4px;
   right: 8px;
 }
 
-.ol-popup-closer:after {
-  content: "✖";
-}
 </style>

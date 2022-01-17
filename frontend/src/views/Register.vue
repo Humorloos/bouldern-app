@@ -22,6 +22,7 @@
 </template>
 
 <script>
+/** @file view for registering */
 
 export default {
   name: 'Register',
@@ -52,6 +53,9 @@ export default {
     };
   },
   methods: {
+    /**
+     * Posts the registration form to the registration api
+     */
     submit() {
       this.axios.post('/registration/rest/',
           Object.keys(this.form).reduce((payload, key) => {
