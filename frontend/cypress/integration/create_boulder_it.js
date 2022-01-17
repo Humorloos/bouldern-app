@@ -12,7 +12,7 @@ describe('The gym map view', () => {
     cy.get('#id_gym-name').type(constants.gymName);
     cy.get('#submit_button').click();
     cy.window().its(`${GymMapView.name}.$data.loaded`).should('equal', true);
-    cy.get('#map-root').click(140, 150);
+    cy.get('#map-root').click(140, 270);
     cy.contains('You clicked here');
     cy.get('#popup-closer').click();
     cy.get('#map-root').click(340, 210);
