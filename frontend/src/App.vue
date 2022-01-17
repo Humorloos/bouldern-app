@@ -12,6 +12,9 @@
 
 export default {
   name: 'App',
+  /**
+   * Exposes Vuex store to cypress tests
+   */
   mounted() {
     if (window.Cypress) {
       window['$store'] = this.$store;
