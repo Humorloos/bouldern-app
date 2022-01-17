@@ -39,6 +39,9 @@ describe('The register app', () => {
     loginViaLogInLink(constants.newEmail, constants.newPassword);
     cy.contains(`Hello, ${constants.newEmail}. ` +
           'You\'re at the bouldern index.');
+    cy.reload();
+    cy.contains(`Hello, ${constants.newEmail}. ` +
+          'You\'re at the bouldern index.');
     cy.contains('Home').click();
     cy.contains('Log Out').click();
     cy.contains('Log In').click();
