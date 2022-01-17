@@ -24,6 +24,8 @@ export default {
 </script>
 
 <style>
+@import '../node_modules/@ionic/core/css/core.css';
+@import '../node_modules/@ionic/core/css/ionic.bundle.css';
 html, body, #app {
   height: 99%;
 }
