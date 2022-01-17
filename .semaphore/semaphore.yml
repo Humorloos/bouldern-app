@@ -47,9 +47,6 @@ blocks:
     task:
       secrets:
         - name: private-repo
-      prologue:
-        commands:
-          - checkout
       jobs:
         - name: pip
           priority:
