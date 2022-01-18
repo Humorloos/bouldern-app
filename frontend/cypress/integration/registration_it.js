@@ -7,29 +7,50 @@ after(() => {
   cy.writeFile('cypress/logs/vuex.json', cy.$log);
 });
 
+before(() => {
+  cy.request('POST', 'https://localhost:8000/registration/login/', {
+    username: constants.email,
+    password: constants.password,
+  }).its('body')
+      .then((res) => {
+        cy.loginData = res;
+      });
+});
+
 describe('The register app', () => {
-  it.only('refreshes auth token after expiration', () => {
-    let loginData;
-    cy.request('POST', 'https://localhost:8000/registration/login/', {
-      username: constants.email,
-      password: constants.password,
-    }).its('body')
-        .then((res) => {
-          loginData = res;
-        });
-    cy.visit('', {
+  beforeEach(() => {
+    cy.visit('login', {
       onLoad: (win) => {
-        win.$store.dispatch('setLoginData', loginData);
+        win.$store.dispatch('setLoginData', cy.loginData);
       },
     });
     cy.window().its('$store.state.authToken.token').should('not.be.empty');
-    cy.visit('login');
+  });
+
+  it('refreshes auth token after expiration', () => {
     // remove auth token
     cy.window().then((win) => win.$store.commit('setAuthTokenToken', ''));
     cy.visit(`gym-map/${constants.gymName}`);
     cy.window().its(`${GymMapView.name}.$data.loaded`).should('equal', true);
   });
 
+  it('stays logged in after reloading the page', () => {
+    // log in with registered user
+    cy.contains($t('welcomeMsg', {user: constants.email}));
+    cy.reload();
+    cy.contains($t('welcomeMsg', {user: constants.email}));
+  });
+
+  it('allows logging out', () => {
+    cy.contains($t('welcomeMsg', {user: constants.email}));
+    cy.contains('Home').click();
+    cy.contains('Log Out').click();
+    cy.contains('Log In').click();
+    cy.contains($t('notLoggedInMsg'));
+  });
+});
+
+describe('The register app', () => {
   it('shows an error message when trying to log in with wrong crendentials',
       () => {
         cy.visit('');
@@ -39,7 +60,8 @@ describe('The register app', () => {
         cy.contains($t('wrongCredentialsMsg'));
       });
 
-  it('allows logging in after registration', () => {
+  it('allows registering, logging in, and deleting ones account ' +
+    'afterwards', () => {
     cy.visit('');
     cy.contains('Register').click();
 
@@ -56,39 +78,11 @@ describe('The register app', () => {
 
     cy.contains('Log In').click();
     loginViaLogInLink(constants.newEmail, constants.newPassword);
-    cy.contains(`Hello, ${constants.newEmail}. ` +
-      'You\'re at the bouldern index.');
-  });
-
-  it('stays logged in after reloading the page', () => {
-    cy.visit('login');
-    loginViaLogInLink(constants.email, constants.password);
-    // log in with registered user
-    cy.contains($t('welcomeMsg', {user: constants.email}));
-    cy.reload();
-    cy.contains(`Hello, ${constants.email}. ` +
-      'You\'re at the bouldern index.');
-  });
-
-  it('allows logging out', () => {
-    cy.visit('login');
-    loginViaLogInLink(constants.email, constants.password);
-    // log in with registered user
-    cy.contains($t('welcomeMsg', {user: constants.email}));
-    cy.contains('Home').click();
-    cy.contains('Log Out').click();
-    cy.contains('Log In').click();
-    cy.contains($t('notLoggedInMsg'));
-  });
-
-  it('allows deleting ones account', () => {
-    cy.visit('login');
-    loginViaLogInLink(constants.email, constants.password);
-    cy.contains($t('welcomeMsg', {user: constants.email}));
+    cy.contains($t('welcomeMsg', {user: constants.newEmail}));
     cy.contains('Home').click();
     cy.contains('Delete Account').click();
     cy.contains('Log In').click();
-    loginViaLogInLink(constants.email, constants.password);
+    loginViaLogInLink(constants.newEmail, constants.newPassword);
     cy.contains($t('wrongCredentialsMsg'));
   });
 });
