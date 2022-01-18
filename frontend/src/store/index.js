@@ -61,23 +61,22 @@ export default createStore({
       // https://github.com/vuejs/vuex/issues/1118
       Object.assign(state, getDefaultState());
     },
-    /**
-     * Sends delete request for currently logged-in account
-     */
-    deleteAccount(state) {
-      state.axios.delete(`/registration/user/${state.user.pk}/`, {
-        headers: {
-          'authorization': `Bearer ${state.authToken.token}`,
-        },
-      });
-    },
   },
   actions: {
     /**
+     * Sends delete request for currently logged-in account
+     */
+    deleteAccount({state, dispatch}) {
+      dispatch('requestWithJwt', {
+        apiPath: `/registration/user/${state.user.pk}/`,
+        method: 'DELETE',
+      });
+    },
+    /**
      * Calls deleteAccount and logout mutations
      */
-    deleteAccountAndLogout({commit}) {
-      commit('deleteAccount');
+    deleteAccountAndLogout({commit, dispatch}) {
+      dispatch('deleteAccount');
       commit('logout');
     },
     /**
