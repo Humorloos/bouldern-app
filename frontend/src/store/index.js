@@ -35,14 +35,29 @@ export default createStore({
   plugins: [createPersistedState()],
   state: getDefaultState(),
   mutations: {
+    setUser(state, user) {
+      state.user = user;
+    },
     setAuthToken(state, authToken) {
       state.authToken = authToken;
+    },
+    setRefreshToken(state, refreshToken) {
+      state.refreshToken = refreshToken;
     },
     setAuthTokenToken(state, authTokenToken) {
       state.authToken.token = authTokenToken;
     },
+    /**
+     * Sets the login error message
+     */
     setLoginError(state) {
       state.loginError = i18n.global.t('wrongCredentialsMsg');
+    },
+    /**
+     * clears the login error message
+     */
+    clearLoginError(state) {
+      state.loginError = '';
     },
     /**
      * Resets the state to default.
@@ -79,10 +94,12 @@ export default createStore({
         token: loginData.access_token,
         expiration: loginData.access_token_expiration,
       });
-      state.refreshToken.token = loginData.refresh_token;
-      state.refreshToken.expiration = loginData.refresh_token_expiration;
-      state.user = loginData.user;
-      state.loginError = '';
+      commit('setRefreshToken', {
+        token: loginData.refresh_token,
+        expiration: loginData.refresh_token_expiration,
+      });
+      commit('setUser', loginData.user);
+      commit('clearLoginError');
     },
     /**
      * Submits the login form to the login api and commits the returned data to
