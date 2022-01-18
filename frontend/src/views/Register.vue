@@ -57,7 +57,7 @@ export default {
      * Posts the registration form to the registration api
      */
     submit() {
-      this.axios.post('/registration/rest/',
+      this.axios.post('/registration/',
           Object.keys(this.form).reduce((payload, key) => {
             payload[key] = this.form[key].value;
             return payload;
