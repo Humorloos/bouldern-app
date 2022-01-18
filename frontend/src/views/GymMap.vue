@@ -75,7 +75,6 @@ export default {
       mapImage: new Image(),
       jsonFormat: new GeoJSON(),
       loaded: false,
-      featureCollection: new Collection(),
     };
   },
   computed: {
