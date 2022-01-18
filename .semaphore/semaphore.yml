@@ -143,7 +143,7 @@ blocks:
             - artifact push job "$PROJECT_DIR"/django_server.log
             - artifact push job "$FRONTEND_DIR"/vue_server.log
             - artifact push job "$FRONTEND_DIR"/cypress/videos
-            - artifact push job "$FRONTEND_DIR"/cypress/logs/vuex.log
+            - artifact push job "$FRONTEND_DIR"/cypress/logs
 
 promotions:
   - name: Deploy

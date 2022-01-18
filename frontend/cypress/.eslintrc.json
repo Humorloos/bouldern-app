@@ -19,6 +19,7 @@
     "$t": "readonly",
     "$log": "readonly",
     "constants": "readonly",
-    "loginViaLogInLink": "readonly"
+    "loginViaLogInLink": "readonly",
+    "slugify": "readonly"
   }
 }
