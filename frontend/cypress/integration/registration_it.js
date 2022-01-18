@@ -2,11 +2,6 @@
 
 import GymMapView from '@/views/GymMap';
 
-after(() => {
-  cy.task('log', Object.keys(cy.$log));
-  cy.writeFile('cypress/logs/vuex.json', cy.$log);
-});
-
 describe('The register app', () => {
   beforeEach(() => {
     cy.visit('login', {
