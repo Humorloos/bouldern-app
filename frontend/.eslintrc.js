@@ -28,11 +28,10 @@ module.exports = {
     'jsdoc/require-param': [2, {
       contexts: [
         // no params for store methods for now
-        'ArrowFunctionExpression:not(' +
-        'CallExpression[callee.name ="createStore"] ArrowFunctionExpression)',
         'FunctionDeclaration',
-        'FunctionExpression:not(' +
-        'CallExpression[callee.name ="createStore"] FunctionExpression)',
+        'FunctionExpression' +
+        ':not(CallExpression[callee.name = "createStore"] FunctionExpression)' +
+        ':not(Property[key.name = "install"] FunctionExpression)',
       ],
     }],
     'jsdoc/require-param-type': 0, // for now, no types in jsdoc

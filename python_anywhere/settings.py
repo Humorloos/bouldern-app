@@ -102,7 +102,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'python_anywhere.middleware.MoveJWTRefreshCookieIntoTheBody'
 ]
 
 ROOT_URLCONF = 'python_anywhere.urls'
@@ -195,7 +194,7 @@ AUTH_USER_MODEL = 'accounts.User'
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_EMAIL_VERIFICATION = 'none'
 
-JWT_AUTH_REFRESH_COOKIE = 'refresh-token'
+# JWT_AUTH_REFRESH_COOKIE = 'refresh-token'
 JWT_AUTH_RETURN_EXPIRATION = True
 # only send jwt tokens via https
 JWT_AUTH_SECURE = True

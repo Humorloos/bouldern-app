@@ -35,9 +35,8 @@ urlpatterns = [
     re_path(r'^favicon\.ico$',
             RedirectView.as_view(url='/static/vue/favicon.ico')),
     path('registration/', include('python_anywhere.accounts.urls')),
-    path('registration/', include('django.contrib.auth.urls')),
-    path('registration/rest/', include('dj_rest_auth.urls')),
-    path('registration/rest/', include('dj_rest_auth.registration.urls'))
+    path('registration/', include('dj_rest_auth.urls')),
+    path('registration/', include('dj_rest_auth.registration.urls'))
 ]
 
 if DEVELOPMENT:

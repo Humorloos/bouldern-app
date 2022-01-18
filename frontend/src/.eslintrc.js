@@ -9,7 +9,8 @@ module.exports = {
       },
       contexts: [
         'FunctionExpression:not(' +
-        'Property[key.name = /^get|set|data$/] FunctionExpression)',
+        'Property[key.name = /^get$|^set.*$|^data$|^setup$/]' +
+        ' FunctionExpression)',
       ],
     }],
   },
