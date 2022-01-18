@@ -22,7 +22,6 @@ import './functions';
 import './constants';
 import 'cypress-file-upload';
 
-cy.$log = {};
 
 before(() => {
   // reset DB
@@ -35,4 +34,14 @@ before(() => {
       .then((res) => {
         cy.loginData = res;
       });
+});
+
+beforeEach(() => {
+  cy.$log = {};
+});
+
+afterEach(() => {
+  cy.task('log', Object.keys(cy.$log));
+  cy.writeFile(`cypress/logs/vuex/${Cypress.currentTest.titlePath.map(slugify).
+      join('/')}.json`, cy.$log);
 });
