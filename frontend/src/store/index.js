@@ -122,6 +122,10 @@ export default createStore({
      * is a valid refresh token, first refreshes the auth token before the
      * request.
      *
+     * @param store the vuex store
+     * @param store.state the vuex store's state
+     * @param store.getters the vuex store's getters
+     * @param store.commit the vuex store's mutations
      * @param options the request specification
      * @param options.apiPath the url to which to send the request to
      * @param [options.method=POST] the http method to use for the request

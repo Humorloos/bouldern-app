@@ -5,8 +5,7 @@ describe('The gym creation view', () => {
     cy.visit('login');
     loginViaLogInLink(constants.email, constants.password);
     // log in with registered user
-    cy.contains(`Hello, ${constants.email}. ` +
-          'You\'re at the bouldern index.');
+    cy.contains($t('welcomeMsg', {user: constants.email}));
     cy.contains('Home').click();
     cy.contains('Create Gym').click();
     cy.get('#id_name').type(constants.newGymName);

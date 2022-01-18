@@ -39,7 +39,7 @@ module.exports = (on, config) => {
     /**
      * Prints the message to the cypress command line
      *
-     * @param message the message to pring
+     * @param message the message to print
      * @returns {null} tasks that return nothing have to return null
      */
     log(message) {
