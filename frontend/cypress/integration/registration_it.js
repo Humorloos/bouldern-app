@@ -8,10 +8,22 @@ after(() => {
 });
 
 describe('The register app', () => {
-  it('refreshes auth token after expiration', () => {
-    cy.visit('login');
-    loginViaLogInLink(constants.email, constants.password);
+  it.only('refreshes auth token after expiration', () => {
+    let loginData;
+    cy.request('POST', 'https://localhost:8000/registration/login/', {
+      username: constants.email,
+      password: constants.password,
+    }).its('body')
+        .then((res) => {
+          loginData = res;
+        });
+    cy.visit('', {
+      onLoad: (win) => {
+        win.$store.dispatch('setLoginData', loginData);
+      },
+    });
     cy.window().its('$store.state.authToken.token').should('not.be.empty');
+    cy.visit('login');
     // remove auth token
     cy.window().then((win) => win.$store.commit('setAuthTokenToken', ''));
     cy.visit(`gym-map/${constants.gymName}`);
