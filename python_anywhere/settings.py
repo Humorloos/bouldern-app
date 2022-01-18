@@ -194,7 +194,6 @@ AUTH_USER_MODEL = 'accounts.User'
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_EMAIL_VERIFICATION = 'none'
 
-# JWT_AUTH_REFRESH_COOKIE = 'refresh-token'
 JWT_AUTH_RETURN_EXPIRATION = True
 # only send jwt tokens via https
 JWT_AUTH_SECURE = True
