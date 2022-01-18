@@ -1,8 +1,20 @@
 /** @file test for registration, login, logout, and account deletion */
 
+import GymMapView from '@/views/GymMap';
+
 after(() => cy.task('log', $log));
 
 describe('The register app', () => {
+  it('refreshes auth token after expiration', () => {
+    cy.visit('login');
+    loginViaLogInLink(constants.email, constants.password);
+    cy.window().its('$store.state.authToken.token').should('not.be.empty');
+    // remove auth token
+    cy.window().then((win) => win.$store.commit('setAuthTokenToken', ''));
+    cy.visit(`gym-map/${constants.gymName}`);
+    cy.window().its(`${GymMapView.name}.$data.loaded`).should('equal', true);
+  });
+
   it('can register, login, logout, and delete accounts', () => {
     cy.visit('');
     cy.window().then((win) => {
@@ -39,6 +51,8 @@ describe('The register app', () => {
     loginViaLogInLink(constants.newEmail, constants.newPassword);
     cy.contains(`Hello, ${constants.newEmail}. ` +
           'You\'re at the bouldern index.');
+
+    // after refresh, stay logged in
     cy.reload();
     cy.contains(`Hello, ${constants.newEmail}. ` +
           'You\'re at the bouldern index.');
