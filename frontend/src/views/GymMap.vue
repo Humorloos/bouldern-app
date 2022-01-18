@@ -191,7 +191,10 @@ export default {
    * once the image has loaded
    */
   created() {
-    this.getGym(this.$route.params.gymName).then((response) => {
+    this.requestWithJwt({
+      method: 'GET',
+      apiPath: `/bouldern/gym/?name=${this.$route.params.gymName}`,
+    }).then((response) => {
       this.mapData = response.data[0];
       this.mapImage.src = this.mapData.map;
       this.mapImage.onload = () => {
@@ -219,7 +222,7 @@ export default {
   },
   methods: {
     ...mapActions({
-      getGym: 'getGym',
+      requestWithJwt: 'requestWithJwt',
     }),
     /**
      * Removes the popover's feature from the featureCollection and blurs the

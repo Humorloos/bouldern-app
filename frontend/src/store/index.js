@@ -100,10 +100,24 @@ export default createStore({
      *
      * @returns {object} Promise for response
      */
-    async getGym(state, gymName) {
-      return await state.axios.get(`/bouldern/gym/?name=${gymName}`, {
+    async requestWithJwt({state}, options) {
+      const defaultOptions = {
+        apiPath: '/',
+        method: 'POST',
+        data: {},
+        contentType: 'application/json',
+      };
+      Object.keys(defaultOptions).forEach((key) => {
+        if (!(key in options)) {
+          options[key] = defaultOptions[key];
+        }
+      });
+      return state.axios(options.apiPath, {
+        method: options.method,
+        data: options.data,
         headers: {
           'authorization': `Bearer ${state.authToken.token}`,
+          'content-type': options.contentType,
         },
       });
     },
