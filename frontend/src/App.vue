@@ -18,18 +18,14 @@ export default {
    */
   mounted() {
     if (window.Cypress) {
-      this.$store.subscribe((mutation, state) => {
+      const storeEventHandler = (storeEvent, state) => {
         window.Cypress.cy.$log[
-            new Date().toISOString() + ' - ' + mutation.type] = {
-          mutationPayload: mutation.payload, state: state,
+            new Date().toISOString() + ' - ' + storeEvent.type] = {
+          payload: storeEvent.payload,
         };
-      });
-      this.$store.subscribeAction((action, state) => {
-        window.Cypress.cy.$log[
-            new Date().toISOString() + ' - ' + action.type] = {
-          actionPayload: action.payload, state: state,
-        };
-      });
+      }
+      this.$store.subscribe(storeEventHandler);
+      this.$store.subscribeAction(storeEventHandler);
       window['$store'] = this.$store;
     }
   },
