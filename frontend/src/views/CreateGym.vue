@@ -43,7 +43,7 @@
 /** @file view for creating gyms */
 
 import VueForm from '@/components/VueForm';
-import {mapState} from 'vuex';
+import {mapActions, mapState} from 'vuex';
 import DifficultyLevelSelect from '@/components/DifficultyLevelSelect';
 
 export default {
@@ -87,15 +87,17 @@ export default {
    * Gets all possible colors from the api and saves them
    */
   created() {
-    this.axios.get('/bouldern/color/', {
-      headers: {
-        'authorization': `Bearer ${this.authToken.token}`,
-      },
+    this.requestWithJwt({
+      apiPath: '/bouldern/color/',
+      method: 'GET',
     }).then((response) => {
       this.colorOptions = response.data;
     });
   },
   methods: {
+    ...mapActions({
+      requestWithJwt: 'requestWithJwt',
+    }),
     /**
      * Handler for file upload
      *
@@ -114,13 +116,12 @@ export default {
     onSubmitted(response) {
       const formData = new FormData();
       formData.append('map', this.map);
-      this.axios.patch(`${this.apiPath}${response.data.id}/`, formData,
-          {
-            headers: {
-              'authorization': `Bearer ${this.authToken.token}`,
-              'content-type': 'multipart/form-data',
-            },
-          });
+      this.requestWithJwt({
+        apiPath: `${this.apiPath}${response.data.id}/`,
+        method: 'PATCH',
+        data: formData,
+        contentType: 'multipart/form-data',
+      });
       this.$router.push('/');
     },
     /**
