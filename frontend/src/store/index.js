@@ -117,8 +117,15 @@ export default createStore({
       }
     },
     /**
-     * todo
+     * Makes a request to the specified path with the specified method, data, and
+     * content type
      *
+     * @param options the request specification
+     * @param options.apiPath the url to which to send the request to
+     * @param [options.method=POST] the http method to use for the request
+     * @param [options.data={}] the data to send in the request
+     * @param [options.contentType=application/json] the content type to be
+     * specified in the contentType header
      * @returns {object} Promise for response
      */
     async requestWithJwt({state, getters, commit}, options) {
