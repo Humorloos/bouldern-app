@@ -35,21 +35,12 @@ export default createStore({
   plugins: [createPersistedState()],
   state: getDefaultState(),
   mutations: {
-    /**
-     * Sets jwt tokens and user data from the provided payload which contains
-     * the server's login response.
-     */
-    setLoginData(state, loginData) {
-      state.authToken.token = loginData.access_token;
-      state.authToken.expiration = loginData.access_token_expiration;
-      state.refreshToken.token = loginData.refresh_token;
-      state.refreshToken.expiration = loginData.refresh_token_expiration;
-      state.user = loginData.user;
-      state.loginError = '';
+    setAuthToken(state, authToken) {
+      state.authToken = authToken;
     },
-    /**
-     * Sets the login error message
-     */
+    setAuthTokenToken(state, authTokenToken) {
+      state.authToken.token = authTokenToken;
+    },
     setLoginError(state) {
       state.loginError = i18n.global.t('wrongCredentialsMsg');
     },
@@ -80,15 +71,29 @@ export default createStore({
       commit('logout');
     },
     /**
+     * Sets jwt tokens and user data from the provided payload which contains
+     * the server's login response.
+     */
+    setLoginData({state, commit}, loginData) {
+      commit('setAuthToken', {
+        token: loginData.access_token,
+        expiration: loginData.access_token_expiration,
+      });
+      state.refreshToken.token = loginData.refresh_token;
+      state.refreshToken.expiration = loginData.refresh_token_expiration;
+      state.user = loginData.user;
+      state.loginError = '';
+    },
+    /**
      * Submits the login form to the login api and commits the returned data to
      * the store. In case of error shows an error message.
      */
-    async login({state, commit}, form) {
+    async login({state, commit, dispatch}, form) {
       try {
         const response = await state.axios.post(
             '/registration/login/', form);
         const loginData = response.data;
-        commit('setLoginData', loginData);
+        dispatch('setLoginData', loginData);
       } catch (error) {
         console.log(error);
         commit('setLoginError');
@@ -99,7 +104,8 @@ export default createStore({
      *
      * @returns {object} Promise for response
      */
-    async requestWithJwt({state}, options) {
+    async requestWithJwt({state, getters, commit}, options) {
+      // set options
       const defaultOptions = {
         apiPath: '/',
         method: 'POST',
@@ -111,6 +117,20 @@ export default createStore({
           options[key] = defaultOptions[key];
         }
       });
+      // if necessary, refresh authToken
+      if (!getters.hasValidAuthToken) {
+        if (getters.hasValidRefreshToken) {
+          const refreshResponse = await state.axios.post(
+              '/registration/token/refresh/', {
+                refresh: state.refreshToken.token,
+              });
+          commit('setAuthToken', {
+            token: refreshResponse.data.access,
+            expiration: refreshResponse.data.access_token_expiration,
+          });
+        }
+      }
+      // make api call
       return state.axios(options.apiPath, {
         method: options.method,
         data: options.data,
@@ -127,9 +147,18 @@ export default createStore({
      *
      * @returns {boolean} whether the authtoken is set and not expired
      */
-    isAuthenticated(state) {
+    hasValidAuthToken(state) {
       return state.authToken.token.length > 0 &&
         new Date(state.authToken.expiration) > Date.now();
+    },
+    /**
+     * Whether the refresh token is set and not expired
+     *
+     * @returns {boolean} whether the authtoken is set and not expired
+     */
+    hasValidRefreshToken(state) {
+      return state.refreshToken.token.length > 0 &&
+        new Date(state.refreshToken.expiration) > Date.now();
     },
     state: (state) => state,
   },

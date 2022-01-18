@@ -22,7 +22,7 @@
     </button>
   </form>
 
-  <div v-if="isAuthenticated">
+  <div v-if="hasValidRefreshToken">
     <p>
       {{ $t('welcomeMsg', {user: user.email}) }}
     </p>
@@ -51,7 +51,7 @@ export default {
   },
   computed: {
     ...mapGetters({
-      isAuthenticated: 'isAuthenticated',
+      hasValidRefreshToken: 'hasValidRefreshToken',
     }),
     ...mapState({
       user: 'user',
