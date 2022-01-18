@@ -21,7 +21,6 @@ module.exports = {
         'FunctionExpression': true,
         'ClassExpression': true,
         'ClassDeclaration': true,
-        'ArrowFunctionExpression': true,
       },
     }],
     'jsdoc/require-description': 2,
