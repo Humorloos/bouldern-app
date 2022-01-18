@@ -95,6 +95,18 @@ export default createStore({
         commit('setLoginError');
       }
     },
+    /**
+     * todo
+     *
+     * @returns {object} Promise for response
+     */
+    async getGym(state, gymName) {
+      return await state.axios.get(`/bouldern/gym/?name=${gymName}`, {
+        headers: {
+          'authorization': `Bearer ${state.authToken.token}`,
+        },
+      });
+    },
   },
   getters: {
     /**

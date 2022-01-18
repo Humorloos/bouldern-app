@@ -38,7 +38,7 @@
 <script>
 /** @file view with interactive gym map */
 
-import {mapState} from 'vuex';
+import {mapActions, mapState} from 'vuex';
 import {Collection, Overlay} from 'ol';
 import {Projection} from 'ol/proj';
 import {ImageStatic, Vector as VectorSource} from 'ol/source';
@@ -191,11 +191,7 @@ export default {
    * once the image has loaded
    */
   created() {
-    this.axios.get(`/bouldern/gym/?name=${this.$route.params.gymName}`, {
-      headers: {
-        'authorization': `Bearer ${this.authToken.token}`,
-      },
-    }).then((response) => {
+    this.getGym(this.$route.params.gymName).then((response) => {
       this.mapData = response.data[0];
       this.mapImage.src = this.mapData.map;
       this.mapImage.onload = () => {
@@ -222,6 +218,9 @@ export default {
     }
   },
   methods: {
+    ...mapActions({
+      getGym: 'getGym',
+    }),
     /**
      * Removes the popover's feature from the featureCollection and blurs the
      * popover.
