@@ -25,5 +25,14 @@ import 'cypress-file-upload';
 cy.$log = {};
 
 before(() => {
+  // reset DB
   cy.exec('cd .. && python manage.py reset_db');
+  // get login data
+  cy.request('POST', 'https://localhost:8000/registration/login/', {
+    username: constants.email,
+    password: constants.password,
+  }).its('body')
+      .then((res) => {
+        cy.loginData = res;
+      });
 });

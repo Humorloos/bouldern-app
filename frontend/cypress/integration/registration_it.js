@@ -7,16 +7,6 @@ after(() => {
   cy.writeFile('cypress/logs/vuex.json', cy.$log);
 });
 
-before(() => {
-  cy.request('POST', 'https://localhost:8000/registration/login/', {
-    username: constants.email,
-    password: constants.password,
-  }).its('body')
-      .then((res) => {
-        cy.loginData = res;
-      });
-});
-
 describe('The register app', () => {
   beforeEach(() => {
     cy.visit('login', {
