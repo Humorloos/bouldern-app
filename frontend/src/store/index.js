@@ -117,8 +117,17 @@ export default createStore({
       }
     },
     /**
-     * todo
+     * Makes an authorized request to the specified path with the specified
+     * method, data, and content type. If the auth token is expired, and there
+     * is a valid refresh token, first refreshes the auth token before the
+     * request.
      *
+     * @param options the request specification
+     * @param options.apiPath the url to which to send the request to
+     * @param [options.method=POST] the http method to use for the request
+     * @param [options.data={}] the data to send in the request
+     * @param [options.contentType=application/json] the content type to be
+     * specified in the contentType header
      * @returns {object} Promise for response
      */
     async requestWithJwt({state, getters, commit}, options) {

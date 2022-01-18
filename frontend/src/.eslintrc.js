@@ -13,5 +13,8 @@ module.exports = {
         ' FunctionExpression)',
       ],
     }],
+    'jsdoc/require-param': [0, {
+      checkDestructured: false,
+    }],
   },
 };
