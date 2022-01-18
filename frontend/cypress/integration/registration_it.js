@@ -18,24 +18,25 @@ describe('The register app', () => {
     cy.window().its(`${GymMapView.name}.$data.loaded`).should('equal', true);
   });
 
-  it('shows an error message when trying to log in with wrong crendentials', () => {
-    cy.visit('');
-    cy.contains('Log In').click();
-    // try log in with non-existent user
-    loginViaLogInLink(constants.newEmail, constants.newPassword);
-    cy.contains($t('wrongCredentialsMsg'));
-  });
+  it('shows an error message when trying to log in with wrong crendentials',
+      () => {
+        cy.visit('');
+        cy.contains('Log In').click();
+        // try log in with non-existent user
+        loginViaLogInLink(constants.newEmail, constants.newPassword);
+        cy.contains($t('wrongCredentialsMsg'));
+      });
 
   it('allows logging in after registration', () => {
     cy.visit('');
     cy.contains('Register').click();
 
     cy.get('#id_username')
-      .type(constants.newUsername)
-      .should('have.value', constants.newUsername);
+        .type(constants.newUsername)
+        .should('have.value', constants.newUsername);
     cy.get('#id_email')
-      .type(constants.newEmail)
-      .should('have.value', constants.newEmail);
+        .type(constants.newEmail)
+        .should('have.value', constants.newEmail);
     cy.get('#id_password1').type(constants.newPassword);
     cy.get('#id_password2').type(constants.newPassword);
     cy.get('#submit_button').contains('Register').click();
