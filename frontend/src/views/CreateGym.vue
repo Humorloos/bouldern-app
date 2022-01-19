@@ -42,9 +42,9 @@
 <script>
 /** @file view for creating gyms */
 
-import VueForm from '@/components/VueForm';
+import VueForm from '@/components/VueForm.vue';
 import {mapActions, mapState} from 'vuex';
-import DifficultyLevelSelect from '@/components/DifficultyLevelSelect';
+import DifficultyLevelSelect from '@/components/DifficultyLevelSelect.vue';
 
 export default {
   name: 'CreateGym',

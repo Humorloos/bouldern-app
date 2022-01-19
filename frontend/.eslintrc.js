@@ -1,18 +1,18 @@
 /** @file global eslint config */
 
 module.exports = {
-  'env': {
-    'node': true,
+  env: {
+    es2021: true,
+    node: true,
   },
-  'parser': '@babel/eslint-parser',
-  'extends': [
+  extends: [
     'eslint:recommended',
     'google',
     'plugin:vue/vue3-recommended',
     'plugin:jsdoc/recommended',
   ],
-  'plugins': ['jsdoc'],
-  'rules': {
+  plugins: ['jsdoc'],
+  rules: {
     'jsdoc/require-file-overview': 2,
     'valid-jsdoc': 0, // eslint-jsdoc takes care of jsdoc validation
     'jsdoc/require-jsdoc': [2, {

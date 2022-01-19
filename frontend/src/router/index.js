@@ -1,13 +1,13 @@
 /** @file router configuration */
 
 import {createRouter, createWebHistory} from 'vue-router';
-import Register from '@/views/Register';
-import Home from '@/views/Home';
-import Login from '@/views/Login';
-import NotFound from '@/views/NotFound';
-import CreateColor from '@/views/CreateColor';
-import CreateGym from '@/views/CreateGym';
-import GymMapView from '@/views/GymMap';
+import Register from '@/views/Register.vue';
+import Home from '@/views/Home.vue';
+import Login from '@/views/Login.vue';
+import NotFound from '@/views/NotFound.vue';
+import CreateColor from '@/views/CreateColor.vue';
+import CreateGym from '@/views/CreateGym.vue';
+import GymMapView from '@/views/GymMap.vue';
 
 export default createRouter({
   history: createWebHistory(),

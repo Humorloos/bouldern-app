@@ -1,6 +1,6 @@
 /** @file bouldern app tests */
 
-import GymMapView from '@/views/GymMap';
+import GymMapView from '@/views/GymMap.vue';
 
 beforeEach(() => {
   cy.visit('', {

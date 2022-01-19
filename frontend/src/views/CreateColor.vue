@@ -22,7 +22,7 @@
 <script>
 /** @file view for creating colors */
 
-import VueForm from '@/components/VueForm';
+import VueForm from '@/components/VueForm.vue';
 import jscolor from '@eastdesire/jscolor/jscolor';
 
 
