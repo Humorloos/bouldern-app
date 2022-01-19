@@ -41,7 +41,7 @@ import Map from 'ol/Map';
 import {Image as ImageLayer, Vector as VectorLayer} from 'ol/layer';
 import View from 'ol/View';
 import {GeoJSON} from 'ol/format';
-import VueForm from '@/components/VueForm.vue';
+import VueForm from '../components/VueForm.vue';
 
 export default {
   name: 'GymMap',
