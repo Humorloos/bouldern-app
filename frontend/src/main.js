@@ -1,11 +1,11 @@
 /** @file vue app entrypoint */
 
 import {createApp} from 'vue';
-import App from '@/App.vue';
-import store from '@/store/index';
+import App from './App.vue';
+import store from './store/index';
 import VueAxios from 'vue-axios';
-import router from '@/router/index';
-import i18n from '@/i18n';
+import router from './router/index';
+import i18n from './i18n';
 
 createApp(App)
     .use(store)

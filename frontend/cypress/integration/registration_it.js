@@ -1,6 +1,6 @@
 /** @file test for registration, login, logout, and account deletion */
 
-import GymMapView from '@/views/GymMap';
+import GymMapView from '@/views/GymMap.vue';
 
 describe('The register app', () => {
   beforeEach(() => {
