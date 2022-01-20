@@ -133,8 +133,8 @@ blocks:
             - python manage.py runsslserver &
             - cd frontend || exit
             - VUE_LOGFILE=vue_server.log
-            - SEARCH_PATTERN='DONE'
-            - npm run serve > ${VUE_LOGFILE} &
+            - SEARCH_PATTERN='ready'
+            - npx vite > ${VUE_LOGFILE} &
             - tail -f -n0 ${VUE_LOGFILE} | grep -qe "${SEARCH_PATTERN}"
             - npx cypress run --browser chrome
       epilogue:
