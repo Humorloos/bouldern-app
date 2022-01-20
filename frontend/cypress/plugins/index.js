@@ -12,7 +12,7 @@
 
 // This function is called when a project is opened or re-opened (e.g. due to
 // the project's config changing)
-
+const {VueLoaderPlugin} = require('vue-loader');
 /**
  * Binds handlers to events exposed by cypress
  *
@@ -26,13 +26,36 @@ module.exports = (on, config) => {
     // as your app's code
     webpackOptions: {
       mode: 'development',
+      module: {
+        rules: [
+          {
+            test: /\.vue$/,
+            loader: 'vue-loader',
+          },
+          // this will apply to both plain `.js` files
+          // AND `<script>` blocks in `.vue` files
+          {
+            test: /\.js$/,
+            loader: 'babel-loader',
+          },
+          // this will apply to both plain `.css` files
+          // AND `<style>` blocks in `.vue` files
+          {
+            test: /\.css$/,
+            use: [
+              'vue-style-loader',
+              'css-loader',
+            ],
+          },
+        ],
+      },
+      plugins: [
+        // make sure to include the plugin for the magic
+        new VueLoaderPlugin(),
+      ],
     },
     watchOptions: {},
   };
-  const vueWebpackConfig = require('@vue/cli-service/webpack.config.js');
-  options.webpackOptions.module = vueWebpackConfig.module;
-  options.webpackOptions.plugins = vueWebpackConfig.plugins;
-  options.webpackOptions.resolve = vueWebpackConfig.resolve;
 
   on('file:preprocessor', require('@cypress/webpack-preprocessor')(options));
   on('task', {
