@@ -13,7 +13,7 @@ cd frontend || exit
 echo "installing node packages"
 npm install
 echo "compiling vue files"
-npm run build
+npx vite build
 cd ..
 
 # perform django migration task
