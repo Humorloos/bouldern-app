@@ -23,6 +23,7 @@
     "vuex-persistedstate": "^4.1.0"
   },
   "devDependencies": {
+    "@babel/core": "^7.16.10",
     "@capacitor/cli": "^3.3.4",
     "@cypress/vite-dev-server": "^2.2.2",
     "@cypress/webpack-preprocessor": "^5.11.0",
