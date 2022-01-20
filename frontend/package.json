@@ -28,6 +28,7 @@
     "@cypress/webpack-preprocessor": "^5.11.0",
     "@vitejs/plugin-vue": "^1.6.1",
     "@vue/compiler-sfc": "^3.2.26",
+    "babel-loader": "^8.2.3",
     "cordova-res": "^0.15.4",
     "cypress": "^9.1.1",
     "eslint": "^8.7.0",
