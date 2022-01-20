@@ -2,11 +2,6 @@
   "name": "frontend",
   "version": "0.1.0",
   "private": true,
-  "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "serve": "vite preview"
-  },
   "dependencies": {
     "@capacitor/android": "3.3.4",
     "@capacitor/core": "^3.3.4",
