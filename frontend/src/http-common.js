@@ -3,7 +3,7 @@
 import axios from 'axios';
 
 export default axios.create({
-  baseURL: import.meta.env.NODE_ENV === 'production' ?
+  baseURL: import.meta.env.MODE === 'production' ?
         // signals to django-webpack-loader to fall back to Django's standard
         // static finder behavior
         'https://humorloos.pythonanywhere.com/' :
