@@ -16,4 +16,7 @@ export default defineConfig({
     port: 8080,
     https: true,
   },
+  preview: {
+    port: 8080,
+  },
 });
