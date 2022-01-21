@@ -1,42 +1,46 @@
 <template>
-  <h1>Create Gym</h1>
-  <vue-form
-    :form="form"
-    :api-path="apiPath"
-    @submitted="onSubmitted"
-  >
-    <div>
-      <label for="id_name">Name: </label>
-      <input
-        id="id_name"
-        v-model="gymName"
-        type="text"
-      >
-    </div>
-    <div>
-      <label for="id_map">Map: </label>
-      <input
-        id="id_map"
-        type="file"
-        @change="onFileChange"
-      >
-    </div>
+  <v-container>
+    <v-row>
+      <v-col><h1>Create Gym</h1></v-col>
+    </v-row>
+    <v-row>
+      <v-col>
+        <vue-form
+          :form="form"
+          :api-path="apiPath"
+          @submitted="onSubmitted"
+        >
+          <v-text-field
+            id="id_name"
+            v-model="gymName"
+            label="Name"
+            type="text"
+          />
+          <v-file-input
+            id="id_map"
+            accept="image/*"
+            label="Map"
+            @change="onFileChange"
+          />
 
-    <difficulty-level-select
-      v-for="(color, index) in colors"
-      :id="`id_color-level-${index + 1}`"
-      :key="color.name"
-      v-model="colors[index]"
-      :color-options="colorOptions"
-    />
-    <button
-      id="add-level-button"
-      type="button"
-      @click="addDifficultySelect"
-    >
-      Add Level
-    </button>
-  </vue-form>
+          <difficulty-level-select
+            v-for="(color, index) in colors"
+            :id="`id_color-level-${index + 1}`"
+            :key="color.name"
+            v-model="colors[index]"
+            :color-options="colorOptions"
+          />
+          <v-btn
+            id="add-level-button"
+            type="button"
+            @click="addDifficultySelect"
+          >
+            Add Level
+          </v-btn>
+        </vue-form>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script>

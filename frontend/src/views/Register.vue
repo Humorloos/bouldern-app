@@ -1,24 +1,32 @@
 <template>
-  <h2>Register</h2>
-  <form @submit.prevent="submit">
-    <div
-      v-for="(value, name) in form"
-      :key="name"
-    >
-      <label :for="`id_${name}`">{{ value.label }}: </label>
-      <input
-        :id="`id_${name}`"
-        v-model="value.value"
-        :type="value.type"
-      >
-    </div>
-    <button
-      id="submit_button"
-      type="submit"
-    >
-      Register
-    </button>
-  </form>
+  <v-container>
+    <v-row>
+      <v-col>
+        <h2>Register</h2>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col>
+        <v-form>
+          <v-text-field
+            v-for="(value, name) in form"
+            :id="`id_${name}`"
+            :key="name"
+            v-model="value.value"
+            :label="value.label"
+            :type="value.type"
+          />
+          <v-btn
+            id="submit_button"
+            type="submit"
+            @click="submit"
+          >
+            Register
+          </v-btn>
+        </v-form>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script>
