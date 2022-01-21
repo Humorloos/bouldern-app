@@ -3,7 +3,7 @@
 import GymMapView from '../../src/views/GymMap.vue';
 
 beforeEach(() => {
-  cy.visit('', {
+  cy.visit('login', {
     onLoad: (win) => {
       win.$store.dispatch('setLoginData', cy.loginData);
     },
