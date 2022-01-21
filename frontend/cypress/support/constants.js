@@ -10,4 +10,5 @@ window.constants = {
   colorName: 'TestColor',
   newGymName: 'testGym',
   gymName: 'generic_gym',
+  greenGymName: 'green_gym',
 };

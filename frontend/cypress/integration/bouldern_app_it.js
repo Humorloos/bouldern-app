@@ -3,7 +3,7 @@
 import GymMapView from '../../src/views/GymMap.vue';
 
 beforeEach(() => {
-  cy.visit('', {
+  cy.visit('login', {
     onLoad: (win) => {
       win.$store.dispatch('setLoginData', cy.loginData);
     },
@@ -13,7 +13,7 @@ beforeEach(() => {
 
 describe('The color creation view', () => {
   it('allows adding colors', () => {
-    cy.contains('Create Color').click();
+    cy.visit('create-color');
     cy.get('#id_name').type(constants.colorName);
     cy.get('#id_color').click();
     cy.get('div[style=' +
@@ -25,8 +25,10 @@ describe('The color creation view', () => {
           'cursor: crosshair;"]')
         .click(150, 50);
     cy.get('.v-main__wrap').click();
-    cy.get('#submit_button').click();
-    cy.contains('Create Gym').click();
+    cy.intercept('POST', '/bouldern/color').as('createColor');
+    cy.get('.v-form > #submit_button').click();
+    cy.wait('@createColor');
+    cy.visit('create-gym');
     cy.get('#id_color-level-1').click();
     // newly created color should be in selectable
     cy.contains(constants.colorName).click();
@@ -36,21 +38,34 @@ describe('The color creation view', () => {
 
 describe('The gym map view', () => {
   it('allows adding boulders', () => {
-    cy.get('#id_gym-name').type(constants.gymName);
-    cy.get('#submit_button').click();
+    cy.visit('');
     cy.window().its(`${GymMapView.name}.$data.loaded`).should('equal', true);
     cy.get('#map-root').click(140, 270);
     cy.contains('You clicked here');
-    cy.get('.ol-popup-closer').click();
+    cy.get('#popup-closer').click();
     cy.get('#map-root').click(340, 210);
     cy.contains('Submit').click();
-    cy.contains('Home').click();
+  });
+
+  it.only('loads the last opened gym at root', () => {
+    cy.intercept('GET', `/bouldern/gym/?name=${constants.greenGymName}`)
+        .as('getGreenGym');
+    cy.visit(`gym-map/${constants.greenGymName}`);
+    cy.wait('@getGreenGym');
+    cy.visit('');
+    cy.wait('@getGreenGym');
+    cy.intercept('GET', `/bouldern/gym/?name=${constants.gymName}`)
+        .as('getGym');
+    cy.visit(`gym-map/${constants.gymName}`);
+    cy.wait('@getGym');
+    cy.visit('');
+    cy.wait('@getGym');
   });
 });
 
 describe('The gym creation view', () => {
   it('allows adding gyms', () => {
-    cy.contains('Create Gym').click();
+    cy.visit('create-gym');
     cy.get('#id_name').type(constants.newGymName);
     cy.get('#id_map').attachFile('generic_gym.png');
     cy.get('#id_color-level-1').click();
@@ -59,7 +74,37 @@ describe('The gym creation view', () => {
     cy.get('#id_color-level-2').click();
     cy.contains('Yellow').click();
     cy.contains('Submit').click();
-    cy.get('#id_gym-name').type(constants.newGymName);
+    cy.visit(`gym-map/${constants.newGymName}`);
+    cy.window().its(`${GymMapView.name}.$data.loaded`).should('equal', true);
+  });
+});
+
+describe('The app drawer', () => {
+  beforeEach(() => {
+    cy.get('.mdi-menu').click();
+  });
+
+  it('allows navigating to register and login view', () => {
+    cy.contains('Register').click();
+    cy.contains('Password confirmation');
+    cy.get('.mdi-menu').click();
+    cy.contains('Log In').click();
+    cy.contains('Log In');
+  });
+
+  it('allows navigating to color creation view', () => {
+    cy.contains('Create Color').click();
+    cy.get('#id_color');
+  });
+
+  it('allows navigating to gym creation view', () => {
+    cy.contains('Create Gym').click();
+    cy.get('#id_map');
+  });
+
+  it('allows navigating to a gym map view', () => {
+    cy.get('#id_gym-name').type(constants.gymName);
     cy.get('#submit_button').click();
+    cy.window().its(`${GymMapView.name}.$data.loaded`).should('equal', true);
   });
 });
