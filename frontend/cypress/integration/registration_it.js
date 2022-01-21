@@ -38,8 +38,7 @@ describe('The register app', () => {
 describe('The register app', () => {
   it('shows an error message when trying to log in with wrong crendentials',
       () => {
-        cy.visit('');
-        cy.contains('Log In').click();
+        cy.visit('login');
         // try log in with non-existent user
         loginViaLogInLink(constants.newEmail, constants.newPassword);
         cy.contains($t('wrongCredentialsMsg'));
