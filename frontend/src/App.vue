@@ -5,6 +5,12 @@
         v-if="$vuetify.display.mobile"
         @click.stop="drawer = !drawer"
       />
+      <v-app-bar-title
+        style="cursor:pointer"
+        @click="$router.push('/')"
+      >
+        Bolder Holder
+      </v-app-bar-title>
     </v-app-bar>
     <v-navigation-drawer
       v-model="drawer"
