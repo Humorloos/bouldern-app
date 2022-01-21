@@ -8,11 +8,11 @@
   >
     <v-container id="popup-content">
       <v-btn
+        id="popup-closer"
         flat
         size="small"
         icon="mdi-close"
         href="#"
-        class="ol-popup-closer"
         @click="closePopover"
       />
       <v-row>
@@ -323,9 +323,5 @@ export default {
   position: absolute;
   top: 2px;
   right: 8px;
-}
-
-.ol-popup-closer:after {
-  content: "✖";
 }
 </style>
