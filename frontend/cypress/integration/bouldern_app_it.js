@@ -24,6 +24,7 @@ describe('The color creation view', () => {
           'height: 127px; ' +
           'cursor: crosshair;"]')
         .click(150, 50);
+    cy.get('.v-main__wrap').click();
     cy.get('#submit_button').click();
     cy.contains('Create Gym').click();
     cy.get('#id_color-level-1').click();
@@ -40,7 +41,7 @@ describe('The gym map view', () => {
     cy.window().its(`${GymMapView.name}.$data.loaded`).should('equal', true);
     cy.get('#map-root').click(140, 270);
     cy.contains('You clicked here');
-    cy.get('#popup-closer').click();
+    cy.get('.ol-popup-closer').click();
     cy.get('#map-root').click(340, 210);
     cy.contains('Submit').click();
     cy.contains('Home').click();

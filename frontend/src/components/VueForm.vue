@@ -1,12 +1,13 @@
 <template>
-  <form @submit.prevent="submit">
+  <v-form>
     <slot />
-    <button
+    <v-btn
       id="submit_button"
+      @click="submit"
     >
       {{ submitButtonLabel }}
-    </button>
-  </form>
+    </v-btn>
+  </v-form>
 </template>
 
 <script>

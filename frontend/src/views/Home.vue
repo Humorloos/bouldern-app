@@ -1,50 +1,78 @@
 <template>
-  <h1>sup</h1>
-  <div>
-    <router-link to="/register">
-      Register
-    </router-link>
-  </div>
-  <div>
-    <router-link to="/login">
-      Log In
-    </router-link>
-  </div>
-  <div>
-    <a
-      href="#"
-      @click="logout"
-    >Log Out</a>
-  </div>
-  <div>
-    <router-link to="/create-color">
-      Create Color
-    </router-link>
-  </div>
-  <div>
-    <router-link to="/create-gym">
-      Create Gym
-    </router-link>
-  </div>
-  <div>
-    <h2>Gym Map:</h2>
-    <form @submit.prevent="openGymMap">
-      <input
-        id="id_gym-name"
-        v-model="gymName"
-        type="text"
-      >
-      <button id="submit_button">
-        Open
-      </button>
-    </form>
-  </div>
-  <div>
-    <a
-      href="#"
-      @click="deleteAccountAndLogout"
-    >Delete Account</a>
-  </div>
+  <v-container>
+    <v-row>
+      <v-col>
+        <h1>sup</h1>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col>
+        <v-btn to="/register">
+          Register
+        </v-btn>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col>
+        <v-btn to="/login">
+          Log In
+        </v-btn>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col>
+        <v-btn @click="logout">
+          Log Out
+        </v-btn>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col>
+        <v-btn to="/create-color">
+          Create Color
+        </v-btn>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col>
+        <v-btn to="/create-gym">
+          Create Gym
+        </v-btn>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col>
+        <h2>Gym Map:</h2>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col>
+        <v-form>
+          <v-text-field
+            id="id_gym-name"
+            v-model="gymName"
+            label="Gym Name"
+          />
+          <v-btn
+            id="submit_button"
+            @click="openGymMap"
+          >
+            Open
+          </v-btn>
+        </v-form>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col>
+        <v-btn
+          color="error"
+          @click="deleteAccountAndLogout"
+        >
+          Delete Account
+        </v-btn>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script>
