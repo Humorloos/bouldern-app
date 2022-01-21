@@ -21,6 +21,7 @@ def test_login(db):
     response = client.post(reverse('rest_login'), data=payload, format='json')
 
     # Then
+    assert response.status_code == HTTP_200_OK
     request = HttpRequest()
     request.META['HTTP_AUTHORIZATION'] = \
         f"Bearer {response.data['access_token']}"
