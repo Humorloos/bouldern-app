@@ -1,7 +1,10 @@
 <template>
   <v-app>
     <v-app-bar height="50">
-      <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
+      <v-app-bar-nav-icon
+        v-if="$vuetify.display.mobile"
+        @click.stop="drawer = !drawer"
+      />
     </v-app-bar>
     <v-navigation-drawer
       v-model="drawer"
@@ -96,7 +99,7 @@ export default {
      * Closes the app drawer when navigating to another view
      */
     $route(to, from) {
-      this.drawer = false;
+      if (this.$vuetify.display.mobile) this.drawer = false;
     },
   },
   /**
@@ -115,6 +118,12 @@ export default {
       this.$store.subscribeAction(storeEventHandler);
       window['$store'] = this.$store;
     }
+  },
+  /**
+   * Opens the navigation drawer on desktop
+   */
+  created() {
+    this.drawer = !this.$vuetify.display.mobile;
   },
   methods: {
     ...mapMutations({commitLogout: 'logout'}),
