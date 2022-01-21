@@ -52,7 +52,7 @@ describe('The gym map view', () => {
 
 describe('The gym creation view', () => {
   it('allows adding gyms', () => {
-    cy.contains('Create Gym').click();
+    cy.visit('create-gym');
     cy.get('#id_name').type(constants.newGymName);
     cy.get('#id_map').attachFile('generic_gym.png');
     cy.get('#id_color-level-1').click();
@@ -61,7 +61,7 @@ describe('The gym creation view', () => {
     cy.get('#id_color-level-2').click();
     cy.contains('Yellow').click();
     cy.contains('Submit').click();
-    cy.get('#id_gym-name').type(constants.newGymName);
-    cy.get('#submit_button').click();
+    cy.visit(`gym-map/${constants.newGymName}`);
+    cy.window().its(`${GymMapView.name}.$data.loaded`).should('equal', true);
   });
 });
