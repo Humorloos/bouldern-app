@@ -84,14 +84,6 @@ describe('The app drawer', () => {
     cy.get('.mdi-menu').click();
   });
 
-  it('allows navigating to register and login view', () => {
-    cy.contains('Register').click();
-    cy.contains('Password confirmation');
-    cy.get('.mdi-menu').click();
-    cy.contains('Log In').click();
-    cy.contains('Log In');
-  });
-
   it('allows navigating to color creation view', () => {
     cy.contains('Create Color').click();
     cy.get('#id_color');
