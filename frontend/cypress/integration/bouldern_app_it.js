@@ -63,3 +63,33 @@ describe('The gym creation view', () => {
     cy.window().its(`${GymMapView.name}.$data.loaded`).should('equal', true);
   });
 });
+
+describe('The app drawer', () => {
+  beforeEach(() => {
+    cy.get('.mdi-menu').click();
+  });
+
+  it('allows navigating to register and login view', () => {
+    cy.contains('Register').click();
+    cy.contains('Password confirmation');
+    cy.get('.mdi-menu').click();
+    cy.contains('Log In').click();
+    cy.contains('Log In');
+  });
+
+  it('allows navigating to color creation view', () => {
+    cy.contains('Create Color').click();
+    cy.get('#id_color');
+  });
+
+  it('allows navigating to gym creation view', () => {
+    cy.contains('Create Gym').click();
+    cy.get('#id_map');
+  });
+
+  it('allows navigating to a gym map view', () => {
+    cy.get('#id_gym-name').type(constants.gymName);
+    cy.get('#submit_button').click();
+    cy.window().its(`${GymMapView.name}.$data.loaded`).should('equal', true);
+  });
+});
