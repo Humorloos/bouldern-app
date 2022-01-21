@@ -41,7 +41,7 @@
 <script>
 /** @file view with interactive gym map */
 
-import {mapActions, mapState} from 'vuex';
+import {mapActions, mapMutations, mapState} from 'vuex';
 import {Collection, Overlay} from 'ol';
 import {Projection} from 'ol/proj';
 import {ImageStatic, Vector as VectorSource} from 'ol/source';
@@ -74,9 +74,25 @@ export default {
     };
   },
   computed: {
-    ...mapState([
-      'authToken',
-    ]),
+    ...mapState({
+      authToken: 'authToken',
+      activeGym: 'activeGym',
+    }),
+    /**
+     * Gets the name of the gym to show the map of and sets it as the active gym
+     * if a new gym was opened
+     *
+     * @returns {string} the name of the gym of which to show the map
+     */
+    gymName() {
+      if (this.$route.fullPath === '/') {
+        return this.activeGym;
+      } else {
+        const gymName = this.$route.params.gymName;
+        this.setActiveGym(gymName);
+        return gymName;
+      }
+    },
     /**
      * Popover showing the position the user clicked
      *
@@ -189,7 +205,7 @@ export default {
   created() {
     this.requestWithJwt({
       method: 'GET',
-      apiPath: `/bouldern/gym/?name=${this.$route.params.gymName}`,
+      apiPath: `/bouldern/gym/?name=${this.gymName}`,
     }).then((response) => {
       this.mapData = response.data[0];
       this.mapImage.src = this.mapData.map;
@@ -217,6 +233,9 @@ export default {
     }
   },
   methods: {
+    ...mapMutations({
+      setActiveGym: 'setActiveGym',
+    }),
     ...mapActions({
       requestWithJwt: 'requestWithJwt',
     }),
