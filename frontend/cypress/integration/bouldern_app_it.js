@@ -47,7 +47,7 @@ describe('The gym map view', () => {
     cy.contains('Submit').click();
   });
 
-  it.only('loads the last opened gym at root', () => {
+  it('loads the last opened gym at root', () => {
     cy.intercept('GET', `/bouldern/gym/?name=${constants.greenGymName}`)
         .as('getGreenGym');
     cy.visit(`gym-map/${constants.greenGymName}`);
