@@ -24,25 +24,31 @@
         >
           <v-list-item-title>Log In</v-list-item-title>
         </v-list-item>
-        <v-list-item to="/create-color">
+        <v-list-item
+          v-if="isAuthenticated"
+          to="/create-color"
+        >
           <v-list-item-title>Create Color</v-list-item-title>
         </v-list-item>
-        <v-list-item to="/create-gym">
+        <v-list-item
+          v-if="isAuthenticated"
+          to="/create-gym"
+        >
           <v-list-item-title>Create Gym</v-list-item-title>
         </v-list-item>
-        <v-list-item>
+        <v-list-item v-if="isAuthenticated">
           <v-list-item-subtitle class="text-h6">
             Gym Map
           </v-list-item-subtitle>
         </v-list-item>
-        <v-list-item>
+        <v-list-item v-if="isAuthenticated">
           <v-text-field
             id="id_gym-name"
             v-model="gymName"
             label="Gym Name"
           />
         </v-list-item>
-        <v-list-item>
+        <v-list-item v-if="isAuthenticated">
           <v-btn
             id="submit_button"
             @click="openGymMap"
@@ -50,7 +56,7 @@
             Open
           </v-btn>
         </v-list-item>
-        <v-list-item>
+        <v-list-item v-if="isAuthenticated">
           <v-btn
             color="error"
             size="small"
