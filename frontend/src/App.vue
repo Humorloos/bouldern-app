@@ -12,14 +12,17 @@
         </v-list-item-title>
       </v-list-item>
       <v-list dense>
-        <v-list-item to="/register">
-          <v-list-item-title>Register</v-list-item-title>
-        </v-list-item>
-        <v-list-item to="/login">
-          <v-list-item-title>Log In</v-list-item-title>
-        </v-list-item>
-        <v-list-item @click="logout">
+        <v-list-item
+          v-if="isAuthenticated"
+          @click="logout"
+        >
           <v-list-item-title>Log Out</v-list-item-title>
+        </v-list-item>
+        <v-list-item
+          v-else
+          to="/login"
+        >
+          <v-list-item-title>Log In</v-list-item-title>
         </v-list-item>
         <v-list-item to="/create-color">
           <v-list-item-title>Create Color</v-list-item-title>
@@ -67,7 +70,7 @@
 <script>
 /** @file highest level component of bouldern app */
 
-import {mapActions, mapMutations} from 'vuex';
+import {mapActions, mapGetters, mapMutations} from 'vuex';
 
 export default {
   name: 'App',
@@ -76,6 +79,11 @@ export default {
       drawer: false,
       gymName: '',
     };
+  },
+  computed: {
+    ...mapGetters({
+      isAuthenticated: 'isAuthenticated',
+    }),
   },
   watch: {
     /**
