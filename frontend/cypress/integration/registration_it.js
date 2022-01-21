@@ -28,9 +28,9 @@ describe('The register app', () => {
 
   it('allows logging out', () => {
     cy.contains($t('welcomeMsg', {user: constants.email}));
-    cy.contains('Home').click();
+    cy.get('.mdi-menu').click();
     cy.contains('Log Out').click();
-    cy.contains('Log In').click();
+    cy.get('.mdi-menu').click();
     cy.contains($t('notLoggedInMsg'));
   });
 });
@@ -38,8 +38,7 @@ describe('The register app', () => {
 describe('The register app', () => {
   it('shows an error message when trying to log in with wrong crendentials',
       () => {
-        cy.visit('');
-        cy.contains('Log In').click();
+        cy.visit('login');
         // try log in with non-existent user
         loginViaLogInLink(constants.newEmail, constants.newPassword);
         cy.contains($t('wrongCredentialsMsg'));
@@ -47,8 +46,7 @@ describe('The register app', () => {
 
   it('allows registering, logging in, and deleting ones account ' +
     'afterwards', () => {
-    cy.visit('');
-    cy.contains('Register').click();
+    cy.visit('register');
 
     cy.get('#id_username')
         .type(constants.newUsername)
@@ -58,15 +56,16 @@ describe('The register app', () => {
         .should('have.value', constants.newEmail);
     cy.get('#id_password1').type(constants.newPassword);
     cy.get('#id_password2').type(constants.newPassword);
-    cy.get('#submit_button').contains('Register').click();
-    cy.contains('Home').click();
+    cy.intercept('POST', '/registration/').as('register');
+    cy.get('.v-form > #submit_button').click();
+    cy.wait('@register');
 
-    cy.contains('Log In').click();
+    cy.visit('login');
     loginViaLogInLink(constants.newEmail, constants.newPassword);
     cy.contains($t('welcomeMsg', {user: constants.newEmail}));
-    cy.contains('Home').click();
+    cy.get('.mdi-menu').click();
     cy.contains('Delete Account').click();
-    cy.contains('Log In').click();
+    cy.get('.mdi-menu').click();
     loginViaLogInLink(constants.newEmail, constants.newPassword);
     cy.contains($t('wrongCredentialsMsg'));
   });

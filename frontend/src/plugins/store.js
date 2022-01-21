@@ -28,6 +28,7 @@ const getDefaultState = function() {
     },
     loginError: '',
     axios: http,
+    activeGym: 'generic_gym',
   };
 };
 
@@ -35,6 +36,9 @@ export default createStore({
   plugins: [createPersistedState()],
   state: getDefaultState(),
   mutations: {
+    setActiveGym(state, gymName) {
+      state.activeGym = gymName;
+    },
     setUser(state, user) {
       state.user = user;
     },
