@@ -168,7 +168,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
-    VUE_OUTPUT_DIR / 'static',
+    VUE_OUTPUT_DIR / 'assets',
 ]
 
 STATIC_ROOT = USER_HOME / 'static'

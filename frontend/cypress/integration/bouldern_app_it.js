@@ -73,7 +73,9 @@ describe('The gym creation view', () => {
     cy.contains('Add Level').click();
     cy.get('#id_color-level-2').click();
     cy.contains('Yellow').click();
+    cy.intercept('POST', '/bouldern/gym').as('createGym');
     cy.contains('Submit').click();
+    cy.wait('@createGym');
     cy.visit(`gym-map/${constants.newGymName}`);
     cy.window().its(`${GymMapView.name}.$data.loaded`).should('equal', true);
   });
