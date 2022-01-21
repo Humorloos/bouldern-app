@@ -31,7 +31,7 @@
     </v-row>
     <v-row>
       <v-col>
-        <div v-if="hasValidRefreshToken">
+        <div v-if="isAuthenticated">
           <p>
             {{ $t('welcomeMsg', {user: user.email}) }}
           </p>
@@ -63,7 +63,7 @@ export default {
   },
   computed: {
     ...mapGetters({
-      hasValidRefreshToken: 'hasValidRefreshToken',
+      isAuthenticated: 'isAuthenticated',
     }),
     ...mapState({
       user: 'user',

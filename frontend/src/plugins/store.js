@@ -194,6 +194,14 @@ export default createStore({
       return state.refreshToken.token.length > 0 &&
         new Date(state.refreshToken.expiration) > Date.now();
     },
+    /**
+     * Whether the user is authenticated
+     *
+     * @returns {boolean} whether the user is authenticated
+     */
+    isAuthenticated(state, getters) {
+      return getters.hasValidRefreshToken || getters.hasValidAuthToken;
+    },
     state: (state) => state,
   },
 });
