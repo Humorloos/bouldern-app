@@ -3,6 +3,7 @@
 module.exports = {
   parser: 'vue-eslint-parser',
   rules: {
+    'vue/multi-word-component-names': 0,
     'jsdoc/require-jsdoc': [2, {
       require: {
         'FunctionExpression': false,
