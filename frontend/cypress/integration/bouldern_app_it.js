@@ -13,7 +13,7 @@ beforeEach(() => {
 
 describe('The color creation view', () => {
   it('allows adding colors', () => {
-    cy.contains('Create Color').click();
+    cy.visit('create-color');
     cy.get('#id_name').type(constants.colorName);
     cy.get('#id_color').click();
     cy.get('div[style=' +
@@ -25,8 +25,10 @@ describe('The color creation view', () => {
           'cursor: crosshair;"]')
         .click(150, 50);
     cy.get('.v-main__wrap').click();
-    cy.get('#submit_button').click();
-    cy.contains('Create Gym').click();
+    cy.intercept('POST', '/bouldern/color').as('createColor');
+    cy.get('.v-form > #submit_button').click();
+    cy.wait('@createColor');
+    cy.visit('create-gym');
     cy.get('#id_color-level-1').click();
     // newly created color should be in selectable
     cy.contains(constants.colorName).click();
