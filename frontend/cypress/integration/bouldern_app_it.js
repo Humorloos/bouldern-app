@@ -38,15 +38,13 @@ describe('The color creation view', () => {
 
 describe('The gym map view', () => {
   it('allows adding boulders', () => {
-    cy.get('#id_gym-name').type(constants.gymName);
-    cy.get('#submit_button').click();
+    cy.visit('');
     cy.window().its(`${GymMapView.name}.$data.loaded`).should('equal', true);
     cy.get('#map-root').click(140, 270);
     cy.contains('You clicked here');
-    cy.get('.ol-popup-closer').click();
+    cy.get('#popup-closer').click();
     cy.get('#map-root').click(340, 210);
     cy.contains('Submit').click();
-    cy.contains('Home').click();
   });
 });
 
