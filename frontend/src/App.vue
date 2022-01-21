@@ -103,13 +103,20 @@ export default {
     }
   },
   methods: {
-    ...mapMutations({logout: 'logout'}),
+    ...mapMutations({commitLogout: 'logout'}),
     ...mapActions({deleteAccountAndLogout: 'deleteAccountAndLogout'}),
     /**
      * Redirects to gym map with name entered in text field
      */
     openGymMap() {
       this.$router.push(`/gym-map/${this.gymName}`);
+    },
+    /**
+     * Logs the user out and redirects to the login view
+     */
+    logout() {
+      this.commitLogout();
+      this.$router.push(`/login`);
     },
   },
 };
