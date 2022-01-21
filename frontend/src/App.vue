@@ -9,7 +9,7 @@
         style="cursor:pointer"
         @click="$router.push('/')"
       >
-        Bolder Holder
+        Boulder Holder
       </v-app-bar-title>
     </v-app-bar>
     <v-navigation-drawer
