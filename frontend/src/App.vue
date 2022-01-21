@@ -1,7 +1,10 @@
 <template>
   <v-app>
     <v-app-bar height="50">
-      <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
+      <v-app-bar-nav-icon
+        v-if="$vuetify.display.mobile"
+        @click.stop="drawer = !drawer"
+      />
     </v-app-bar>
     <v-navigation-drawer
       v-model="drawer"
@@ -12,34 +15,43 @@
         </v-list-item-title>
       </v-list-item>
       <v-list dense>
-        <v-list-item to="/register">
-          <v-list-item-title>Register</v-list-item-title>
-        </v-list-item>
-        <v-list-item to="/login">
-          <v-list-item-title>Log In</v-list-item-title>
-        </v-list-item>
-        <v-list-item @click="logout">
+        <v-list-item
+          v-if="isAuthenticated"
+          @click="logout"
+        >
           <v-list-item-title>Log Out</v-list-item-title>
         </v-list-item>
-        <v-list-item to="/create-color">
+        <v-list-item
+          v-else
+          to="/login"
+        >
+          <v-list-item-title>Log In</v-list-item-title>
+        </v-list-item>
+        <v-list-item
+          v-if="isAuthenticated"
+          to="/create-color"
+        >
           <v-list-item-title>Create Color</v-list-item-title>
         </v-list-item>
-        <v-list-item to="/create-gym">
+        <v-list-item
+          v-if="isAuthenticated"
+          to="/create-gym"
+        >
           <v-list-item-title>Create Gym</v-list-item-title>
         </v-list-item>
-        <v-list-item>
+        <v-list-item v-if="isAuthenticated">
           <v-list-item-subtitle class="text-h6">
             Gym Map
           </v-list-item-subtitle>
         </v-list-item>
-        <v-list-item>
+        <v-list-item v-if="isAuthenticated">
           <v-text-field
             id="id_gym-name"
             v-model="gymName"
             label="Gym Name"
           />
         </v-list-item>
-        <v-list-item>
+        <v-list-item v-if="isAuthenticated">
           <v-btn
             id="submit_button"
             @click="openGymMap"
@@ -47,7 +59,7 @@
             Open
           </v-btn>
         </v-list-item>
-        <v-list-item>
+        <v-list-item v-if="isAuthenticated">
           <v-btn
             color="error"
             size="small"
@@ -67,21 +79,27 @@
 <script>
 /** @file highest level component of bouldern app */
 
-import {mapActions, mapMutations} from 'vuex';
+import {mapActions, mapGetters, mapMutations} from 'vuex';
 
 export default {
   name: 'App',
   data() {
     return {
       drawer: false,
+      gymName: '',
     };
+  },
+  computed: {
+    ...mapGetters({
+      isAuthenticated: 'isAuthenticated',
+    }),
   },
   watch: {
     /**
      * Closes the app drawer when navigating to another view
      */
     $route(to, from) {
-      this.drawer = false;
+      if (this.$vuetify.display.mobile) this.drawer = false;
     },
   },
   /**
@@ -101,14 +119,27 @@ export default {
       window['$store'] = this.$store;
     }
   },
+  /**
+   * Opens the navigation drawer on desktop
+   */
+  created() {
+    this.drawer = !this.$vuetify.display.mobile;
+  },
   methods: {
-    ...mapMutations({logout: 'logout'}),
+    ...mapMutations({commitLogout: 'logout'}),
     ...mapActions({deleteAccountAndLogout: 'deleteAccountAndLogout'}),
     /**
      * Redirects to gym map with name entered in text field
      */
     openGymMap() {
       this.$router.push(`/gym-map/${this.gymName}`);
+    },
+    /**
+     * Logs the user out and redirects to the login view
+     */
+    logout() {
+      this.commitLogout();
+      this.$router.push(`/login`);
     },
   },
 };

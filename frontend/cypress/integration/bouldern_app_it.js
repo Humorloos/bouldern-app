@@ -47,7 +47,7 @@ describe('The gym map view', () => {
     cy.contains('Submit').click();
   });
 
-  it.only('loads the last opened gym at root', () => {
+  it('loads the last opened gym at root', () => {
     cy.intercept('GET', `/bouldern/gym/?name=${constants.greenGymName}`)
         .as('getGreenGym');
     cy.visit(`gym-map/${constants.greenGymName}`);
@@ -82,14 +82,6 @@ describe('The gym creation view', () => {
 describe('The app drawer', () => {
   beforeEach(() => {
     cy.get('.mdi-menu').click();
-  });
-
-  it('allows navigating to register and login view', () => {
-    cy.contains('Register').click();
-    cy.contains('Password confirmation');
-    cy.get('.mdi-menu').click();
-    cy.contains('Log In').click();
-    cy.contains('Log In');
   });
 
   it('allows navigating to color creation view', () => {

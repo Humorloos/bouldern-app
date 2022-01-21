@@ -30,15 +30,32 @@
       </v-col>
     </v-row>
     <v-row>
-      <v-col>
-        <div v-if="hasValidRefreshToken">
-          <p>
-            {{ $t('welcomeMsg', {user: user.email}) }}
-          </p>
-        </div>
-        <div v-else>
-          <p>{{ $t('notLoggedInMsg') }}</p>
-        </div>
+      <v-col
+        cols="8"
+      >
+        <p v-if="isAuthenticated">
+          {{ $t('welcomeMsg', {user: user.email}) }}
+        </p>
+        <p v-else>
+          {{ $t('notLoggedInMsg') }}
+        </p>
+      </v-col>
+      <v-spacer />
+      <v-col
+        cols="4"
+      >
+        <v-btn
+          v-if="isAuthenticated"
+          @click="logout"
+        >
+          Log Out
+        </v-btn>
+        <v-btn
+          v-else
+          to="/register"
+        >
+          Register
+        </v-btn>
       </v-col>
     </v-row>
   </v-container>
@@ -46,7 +63,7 @@
 <script>
 /** @file login view */
 
-import {mapActions, mapGetters, mapState} from 'vuex';
+import {mapActions, mapGetters, mapMutations, mapState} from 'vuex';
 
 export default {
   name: 'Login',
@@ -63,7 +80,7 @@ export default {
   },
   computed: {
     ...mapGetters({
-      hasValidRefreshToken: 'hasValidRefreshToken',
+      isAuthenticated: 'isAuthenticated',
     }),
     ...mapState({
       user: 'user',
@@ -73,6 +90,9 @@ export default {
   methods: {
     ...mapActions({
       login: 'login',
+    }),
+    ...mapMutations({
+      logout: 'logout',
     }),
     /**
      * Submits the login form to the login api and commits the returned data to

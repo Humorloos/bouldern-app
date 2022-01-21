@@ -188,11 +188,19 @@ export default createStore({
     /**
      * Whether the refresh token is set and not expired
      *
-     * @returns {boolean} whether the authtoken is set and not expired
+     * @returns {boolean} whether the refresh token is set and not expired
      */
     hasValidRefreshToken(state) {
       return state.refreshToken.token.length > 0 &&
         new Date(state.refreshToken.expiration) > Date.now();
+    },
+    /**
+     * Whether the user is authenticated
+     *
+     * @returns {boolean} whether the user is authenticated
+     */
+    isAuthenticated(state, getters) {
+      return getters.hasValidRefreshToken || getters.hasValidAuthToken;
     },
     state: (state) => state,
   },
