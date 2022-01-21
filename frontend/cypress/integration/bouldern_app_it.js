@@ -46,6 +46,21 @@ describe('The gym map view', () => {
     cy.get('#map-root').click(340, 210);
     cy.contains('Submit').click();
   });
+
+  it.only('loads the last opened gym at root', () => {
+    cy.intercept('GET', `/bouldern/gym/?name=${constants.greenGymName}`)
+        .as('getGreenGym');
+    cy.visit(`gym-map/${constants.greenGymName}`);
+    cy.wait('@getGreenGym');
+    cy.visit('');
+    cy.wait('@getGreenGym');
+    cy.intercept('GET', `/bouldern/gym/?name=${constants.gymName}`)
+        .as('getGym');
+    cy.visit(`gym-map/${constants.gymName}`);
+    cy.wait('@getGym');
+    cy.visit('');
+    cy.wait('@getGym');
+  });
 });
 
 describe('The gym creation view', () => {
