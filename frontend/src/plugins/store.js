@@ -188,7 +188,7 @@ export default createStore({
     /**
      * Whether the refresh token is set and not expired
      *
-     * @returns {boolean} whether the authtoken is set and not expired
+     * @returns {boolean} whether the refresh token is set and not expired
      */
     hasValidRefreshToken(state) {
       return state.refreshToken.token.length > 0 &&
