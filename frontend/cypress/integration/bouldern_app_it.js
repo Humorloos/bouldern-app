@@ -58,8 +58,8 @@ describe('The gym map view', () => {
         .as('getGym');
     cy.visit(`gym-map/${constants.gymName}`);
     cy.wait('@getGym');
-    cy.visit('');
-    cy.wait('@getGym');
+    cy.get('.v-app-bar-title__placeholder').click();
+    cy.window().its(`${GymMapView.name}.$data.loaded`).should('equal', true);
   });
 });
 
