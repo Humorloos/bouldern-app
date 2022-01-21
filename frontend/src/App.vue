@@ -1,10 +1,14 @@
 <template>
-  <div>
-    <router-link to="/">
-      Home
-    </router-link>
-  </div>
-  <router-view />
+  <v-app>
+    <v-app-bar>
+      <v-btn to="/">
+        Home
+      </v-btn>
+    </v-app-bar>
+    <v-main>
+      <router-view />
+    </v-main>
+  </v-app>
 </template>
 
 <script>

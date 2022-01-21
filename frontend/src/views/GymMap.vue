@@ -6,21 +6,31 @@
     :style="{visibility: loaded ? 'visible' : 'hidden'}"
     @keyup.esc="closePopover"
   >
-    <a
-      id="popup-closer"
-      href="#"
-      class="ol-popup-closer"
-      @click="closePopover"
-    />
-    <div id="popup-content">
-      <p>You clicked here:</p>
-      <code>' {{ createdBoulder.coordinates }} </code>
-    </div>
-    <vue-form
-      :api-path="`/bouldern/gym/${mapData.id}/boulder/`"
-      :form="createdBoulder"
-      @submitted="onSubmitted"
-    />
+    <v-container id="popup-content">
+      <v-btn
+        flat
+        size="small"
+        icon="mdi-close"
+        href="#"
+        class="ol-popup-closer"
+        @click="closePopover"
+      />
+      <v-row>
+        <v-col><p>You clicked here:</p></v-col>
+      </v-row>
+      <v-row>
+        <v-col><code>' {{ createdBoulder.coordinates }} </code></v-col>
+      </v-row>
+      <v-row>
+        <v-col>
+          <vue-form
+            :api-path="`/bouldern/gym/${mapData.id}/boulder/`"
+            :form="createdBoulder"
+            @submitted="onSubmitted"
+          />
+        </v-col>
+      </v-row>
+    </v-container>
   </div>
   <div
     id="map-root"
@@ -250,7 +260,7 @@ export default {
 
 #map-root {
   width: 100%;
-  height: 99%;
+  height: 100%;
 }
 
 .ol-popup {
