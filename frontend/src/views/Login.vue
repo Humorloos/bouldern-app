@@ -1,35 +1,47 @@
 <template>
-  <h1>Log In</h1>
-  <form @submit.prevent="submit">
-    <p>{{ loginError }}</p>
-    <label for="id_username">E-Mail:</label>
-    <input
-      id="id_username"
-      v-model="form.username"
-      type="text"
-    >
-    <label for="id_password">Password:</label>
-    <input
-      id="id_password"
-      v-model="form.password"
-      type="password"
-    >
-    <button
-      id="submit_button"
-      type="submit"
-    >
-      Log In
-    </button>
-  </form>
-
-  <div v-if="hasValidRefreshToken">
-    <p>
-      {{ $t('welcomeMsg', {user: user.email}) }}
-    </p>
-  </div>
-  <div v-else>
-    <p>{{ $t('notLoggedInMsg') }}</p>
-  </div>
+  <v-container>
+    <v-row>
+      <v-col><h1>Log In</h1></v-col>
+    </v-row>
+    <v-row>
+      <v-col>
+        <v-form>
+          <p>{{ loginError }}</p>
+          <v-text-field
+            id="id_username"
+            v-model="form.username"
+            type="text"
+            label="E-Mail"
+          />
+          <v-text-field
+            id="id_password"
+            v-model="form.password"
+            type="password"
+            label="Password"
+          />
+          <v-btn
+            id="submit_button"
+            type="submit"
+            @click="submit"
+          >
+            Log In
+          </v-btn>
+        </v-form>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col>
+        <div v-if="hasValidRefreshToken">
+          <p>
+            {{ $t('welcomeMsg', {user: user.email}) }}
+          </p>
+        </div>
+        <div v-else>
+          <p>{{ $t('notLoggedInMsg') }}</p>
+        </div>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 <script>
 /** @file login view */
