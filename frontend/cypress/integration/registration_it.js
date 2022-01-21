@@ -28,9 +28,9 @@ describe('The register app', () => {
 
   it('allows logging out', () => {
     cy.contains($t('welcomeMsg', {user: constants.email}));
-    cy.contains('Home').click();
+    cy.get('.mdi-menu').click();
     cy.contains('Log Out').click();
-    cy.contains('Log In').click();
+    cy.get('.mdi-menu').click();
     cy.contains($t('notLoggedInMsg'));
   });
 });
