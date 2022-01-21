@@ -69,4 +69,10 @@ describe('The register app', () => {
     loginViaLogInLink(constants.newEmail, constants.newPassword);
     cy.contains($t('wrongCredentialsMsg'));
   });
+
+  it('Redirects to login page when visiting gym map while logged out',
+      () => {
+        cy.visit(`gym-map/${constants.gymName}`);
+        cy.contains($t('notLoggedInMsg'));
+      });
 });
