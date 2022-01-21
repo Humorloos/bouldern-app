@@ -50,3 +50,8 @@ class Command(BaseCommand):
         # add boulders
         BoulderFactory(gym=generic_gym, coordinates=Point(1041, 716))
         BoulderFactory(gym=generic_gym, coordinates=Point(799, 645))
+
+        # add green gym
+        GymFactory(
+            name='green_gym',
+            map=ImageField(from_path=RESOURCES_DIR / 'green_gym.png'))
