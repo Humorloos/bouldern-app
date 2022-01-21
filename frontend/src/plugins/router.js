@@ -2,7 +2,6 @@
 
 import {createRouter, createWebHistory} from 'vue-router';
 import Register from '../views/Register.vue';
-import Home from '../views/Home.vue';
 import Login from '../views/Login.vue';
 import NotFound from '../views/NotFound.vue';
 import CreateColor from '../views/CreateColor.vue';
@@ -12,7 +11,7 @@ import GymMapView from '../views/GymMap.vue';
 export default createRouter({
   history: createWebHistory(),
   routes: [
-    {path: '/', component: Home},
+    {path: '/', component: GymMapView},
     {path: '/register', component: Register},
     {path: '/login', component: Login},
     {path: '/create-color', component: CreateColor},
