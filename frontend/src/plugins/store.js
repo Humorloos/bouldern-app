@@ -74,12 +74,13 @@ export default createStore({
   },
   actions: {
     /**
-     * Sends delete request for currently logged-in account
+     * De-activates currently logged-in account
      */
     deleteAccount({state, dispatch}) {
       dispatch('requestWithJwt', {
         apiPath: `/registration/user/${state.user.pk}/`,
-        method: 'DELETE',
+        method: 'PATCH',
+        data: {is_active: false},
       });
     },
     /**
