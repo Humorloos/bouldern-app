@@ -4,7 +4,6 @@
     ref="popup"
     class="ol-popup"
     :style="{visibility: loaded ? 'visible' : 'hidden'}"
-    @keyup.esc="closePopover"
   >
     <v-container id="popup-content">
       <v-btn
@@ -13,6 +12,7 @@
         size="small"
         icon="mdi-close"
         href="#"
+        class="ol-popup-closer"
         @click="closePopover"
       />
       <v-row>
@@ -267,6 +267,9 @@ export default {
       this.createdBoulder.coordinates = this.jsonFormat
           .writeGeometryObject(geometry);
 
+      if (this.popover.getPosition() !== undefined) {
+        this.closePopover();
+      }
       const coordinate = geometry.getCoordinates();
       this.popover.setPosition(coordinate);
     },

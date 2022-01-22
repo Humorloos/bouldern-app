@@ -9,6 +9,6 @@ window.constants = {
   password: 'youcantknowthispassword123',
   colorName: 'TestColor',
   newGymName: 'testGym',
-  gymName: 'generic_gym',
-  greenGymName: 'green_gym',
+  gymName: 'Generic Gym',
+  greenGymName: 'Green Gym',
 };
