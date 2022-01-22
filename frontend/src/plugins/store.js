@@ -94,7 +94,7 @@ export default createStore({
      * Sets jwt tokens and user data from the provided payload which contains
      * the server's login response.
      */
-    setLoginData({state, commit}, loginData) {
+    setLoginData({commit}, loginData) {
       commit('setAuthToken', {
         token: loginData.access_token,
         expiration: loginData.access_token_expiration,

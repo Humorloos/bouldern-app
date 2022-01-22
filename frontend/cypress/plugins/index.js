@@ -13,6 +13,8 @@
 // This function is called when a project is opened or re-opened (e.g. due to
 // the project's config changing)
 const {VueLoaderPlugin} = require('vue-loader');
+const fs = require('fs');
+
 /**
  * Binds handlers to events exposed by cypress
  *
@@ -69,6 +71,17 @@ module.exports = (on, config) => {
       console.log(JSON.stringify(message, null, 2));
 
       return null;
+    },
+    /**
+     * Reads the content of the last confirmation email written by django to the
+     * logs directory during registration.
+     *
+     * @returns {string} the content of the last confirmation email
+     */
+    readConfirmationEmail() {
+      const emailPath = 'cypress/logs/email';
+      const filename = fs.readdirSync(emailPath).at(-1);
+      return fs.readFileSync(`${emailPath}/${filename}`, 'utf8');
     },
   });
   return config;

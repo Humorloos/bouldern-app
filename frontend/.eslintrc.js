@@ -13,8 +13,9 @@ module.exports = {
   ],
   plugins: ['jsdoc'],
   rules: {
-    'jsdoc/require-file-overview': 2,
     'valid-jsdoc': 0, // eslint-jsdoc takes care of jsdoc validation
+    'jsdoc/require-description': 2,
+    'jsdoc/require-file-overview': 2,
     'jsdoc/require-jsdoc': [2, {
       require: {
         'MethodDefinition': true,
@@ -23,7 +24,6 @@ module.exports = {
         'ClassDeclaration': true,
       },
     }],
-    'jsdoc/require-description': 2,
     'jsdoc/require-param': [2, {
       contexts: [
         // no params for store methods for now
@@ -34,5 +34,6 @@ module.exports = {
       ],
     }],
     'jsdoc/require-param-type': 0, // for now, no types in jsdoc
+    'no-unused-vars': ['error', {'varsIgnorePattern': '^_$'}],
   },
 };
