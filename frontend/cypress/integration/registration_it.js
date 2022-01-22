@@ -59,6 +59,17 @@ describe('The register app', () => {
     for (const _ of waitingFor('POST', '/registration/')) {
       cy.get('.v-form > #submit_button').click();
     }
+    cy.task('readConfirmationEmail')
+        .should('have.string', constants.newEmail)
+        .then((mail) => {
+          const confirmationLink = /(https?:\/\/[^\s]+)/g
+              .exec(mail)[0]
+              .replace('localhost:8000', 'localhost:8080');
+          cy.visit(confirmationLink);
+        });
+    for (const _ of waitingFor('POST', '/registration/verify-email/')) {
+      cy.get('#id_confirm_email').click();
+    }
     cy.visit('login');
     loginViaLogInLink(constants.newEmail, constants.newPassword);
     cy.contains($t('welcomeMsg', {user: constants.newEmail}));
