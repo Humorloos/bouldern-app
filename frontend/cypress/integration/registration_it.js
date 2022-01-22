@@ -44,7 +44,7 @@ describe('The register app', () => {
         cy.contains($t('wrongCredentialsMsg'));
       });
 
-  it('allows registering, logging in, and deleting ones account ' +
+  it('allows registering, logging in, and deleting one\'s account ' +
     'afterwards', () => {
     cy.visit('register');
 
@@ -56,10 +56,20 @@ describe('The register app', () => {
         .should('have.value', constants.newEmail);
     cy.get('#id_password1').type(constants.newPassword);
     cy.get('#id_password2').type(constants.newPassword);
-    cy.intercept('POST', '/registration/').as('register');
-    cy.get('.v-form > #submit_button').click();
-    cy.wait('@register');
-
+    for (const _ of waitingFor('POST', '/registration/')) {
+      cy.get('.v-form > #submit_button').click();
+    }
+    cy.task('readConfirmationEmail')
+        .should('have.string', constants.newEmail)
+        .then((mail) => {
+          const confirmationLink = /(https?:\/\/[^\s]+)/g
+              .exec(mail)[0]
+              .replace('localhost:8000', 'localhost:8080');
+          cy.visit(confirmationLink);
+        });
+    for (const _ of waitingFor('POST', '/registration/verify-email/')) {
+      cy.get('#id_confirm_email').click();
+    }
     cy.visit('login');
     loginViaLogInLink(constants.newEmail, constants.newPassword);
     cy.contains($t('welcomeMsg', {user: constants.newEmail}));
