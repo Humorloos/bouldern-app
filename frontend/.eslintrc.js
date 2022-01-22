@@ -34,5 +34,6 @@ module.exports = {
       ],
     }],
     'jsdoc/require-param-type': 0, // for now, no types in jsdoc
+    'no-unused-vars': ['error', {'varsIgnorePattern': '^_$'}],
   },
 };
