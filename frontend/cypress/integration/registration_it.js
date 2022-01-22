@@ -44,7 +44,7 @@ describe('The register app', () => {
         cy.contains($t('wrongCredentialsMsg'));
       });
 
-  it('allows registering, logging in, and deleting ones account ' +
+  it('allows registering, logging in, and deleting one\'s account ' +
     'afterwards', () => {
     cy.visit('register');
 
