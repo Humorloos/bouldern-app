@@ -267,6 +267,9 @@ export default {
       this.createdBoulder.coordinates = this.jsonFormat
           .writeGeometryObject(geometry);
 
+      if (this.popover.getPosition() !== undefined) {
+        this.closePopover();
+      }
       const coordinate = geometry.getCoordinates();
       this.popover.setPosition(coordinate);
     },
