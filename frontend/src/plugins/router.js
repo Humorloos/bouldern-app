@@ -6,6 +6,7 @@ import Login from '../views/Login.vue';
 import NotFound from '../views/NotFound.vue';
 import CreateColor from '../views/CreateColor.vue';
 import CreateGym from '../views/CreateGym.vue';
+import ConfirmEmail from '../views/ConfirmEmail.vue';
 import GymMapView from '../views/GymMap.vue';
 import store from '../plugins/store';
 
@@ -34,6 +35,10 @@ const router = createRouter({
       path: '/gym-map/:gymName',
       component: GymMapView,
       meta: {requiresAuth: true},
+    },
+    {
+      path: '/registration/account-confirm-email/:key',
+      component: ConfirmEmail,
     },
     {
       path: '/:pathMatch(.*)',
