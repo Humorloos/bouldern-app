@@ -25,9 +25,9 @@ describe('The color creation view', () => {
           'cursor: crosshair;"]')
         .click(150, 50);
     cy.get('.v-main__wrap').click();
-    cy.intercept('POST', '/bouldern/color').as('createColor');
-    cy.get('.v-form > #submit_button').click();
-    cy.wait('@createColor');
+    for (const _ of waitingFor('POST', '/bouldern/color')) {
+      cy.get('.v-form > #submit_button').click();
+    }
     cy.visit('create-gym');
     cy.get('#id_color-level-1').click();
     // newly created color should be in selectable
@@ -48,16 +48,15 @@ describe('The gym map view', () => {
   });
 
   it('loads the last opened gym at root', () => {
-    cy.intercept('GET', `/bouldern/gym/?name=${constants.greenGymName}`)
-        .as('getGreenGym');
-    cy.visit(`gym-map/${constants.greenGymName}`);
-    cy.wait('@getGreenGym');
-    cy.visit('');
-    cy.wait('@getGreenGym');
-    cy.intercept('GET', `/bouldern/gym/?name=${constants.gymName}`)
-        .as('getGym');
-    cy.visit(`gym-map/${constants.gymName}`);
-    cy.wait('@getGym');
+    for (const _ of waitingFor(
+        'GET', `/bouldern/gym/?name=${constants.greenGymName}`)) {
+      cy.visit(`gym-map/${constants.greenGymName}`);
+      cy.visit('');
+    }
+    for (const _ of waitingFor(
+        'GET', `/bouldern/gym/?name=${constants.gymName}`)) {
+      cy.visit(`gym-map/${constants.gymName}`);
+    }
     cy.get('.v-app-bar-title__placeholder').click();
     cy.window().its(`${GymMapView.name}.$data.loaded`).should('equal', true);
   });
@@ -73,9 +72,9 @@ describe('The gym creation view', () => {
     cy.contains('Add Level').click();
     cy.get('#id_color-level-2').click();
     cy.contains('Yellow').click();
-    cy.intercept('POST', '/bouldern/gym').as('createGym');
-    cy.contains('Submit').click();
-    cy.wait('@createGym');
+    for (const _ of waitingFor('POST', '/bouldern/gym')) {
+      cy.contains('Submit').click();
+    }
     cy.visit(`gym-map/${constants.newGymName}`);
     cy.window().its(`${GymMapView.name}.$data.loaded`).should('equal', true);
   });

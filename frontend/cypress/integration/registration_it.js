@@ -56,10 +56,9 @@ describe('The register app', () => {
         .should('have.value', constants.newEmail);
     cy.get('#id_password1').type(constants.newPassword);
     cy.get('#id_password2').type(constants.newPassword);
-    cy.intercept('POST', '/registration/').as('register');
-    cy.get('.v-form > #submit_button').click();
-    cy.wait('@register');
-
+    for (const _ of waitingFor('POST', '/registration/')) {
+      cy.get('.v-form > #submit_button').click();
+    }
     cy.visit('login');
     loginViaLogInLink(constants.newEmail, constants.newPassword);
     cy.contains($t('welcomeMsg', {user: constants.newEmail}));
