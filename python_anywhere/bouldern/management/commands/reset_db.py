@@ -40,7 +40,7 @@ class Command(BaseCommand):
 
         # add generic gym
         generic_gym = GymFactory(
-            name='generic_gym',
+            name='Generic Gym',
             map=ImageField(from_path=RESOURCES_DIR / 'generic_gym.png'))
 
         # add difficulty levels for generic gym
@@ -53,5 +53,5 @@ class Command(BaseCommand):
 
         # add green gym
         GymFactory(
-            name='green_gym',
+            name='Green Gym',
             map=ImageField(from_path=RESOURCES_DIR / 'green_gym.png'))
