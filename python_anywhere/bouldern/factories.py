@@ -50,7 +50,7 @@ class DifficultyLevelFactory(UGCFactory):
 
     level = LazyAttribute(lambda o: o.gym.difficultylevel_set.count())
     color = Iterator(Color.objects.all())
-    gym = Iterator(Color.objects.all())
+    gym = Gym.objects.first()
 
 
 class BoulderFactory(UGCFactory):
