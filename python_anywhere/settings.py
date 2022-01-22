@@ -196,6 +196,13 @@ AUTH_USER_MODEL = 'accounts.User'
 if DEVELOPMENT:
     EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
     EMAIL_FILE_PATH = CYPRESS_DIR / 'logs' / 'email'
+else:
+    EMAIL_SUBJECT_PREFIX = "[Boulder Holder]"
+    EMAIL_PORT = 587
+    EMAIL_USE_TLS = True
+    EMAIL_HOST = 'smtp.gmail.com'
+    EMAIL_HOST_USER = env('EMAIL_HOST_USER')
+    EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
 
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
