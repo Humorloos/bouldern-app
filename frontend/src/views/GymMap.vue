@@ -4,7 +4,6 @@
     ref="popup"
     class="ol-popup"
     :style="{visibility: loaded ? 'visible' : 'hidden'}"
-    @keyup.esc="closePopover"
   >
     <v-container id="popup-content">
       <v-btn
