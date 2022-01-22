@@ -1,5 +1,6 @@
 from faker import Faker
 from rest_framework.reverse import reverse
+from rest_framework.status import HTTP_201_CREATED
 from rest_framework.test import APIClient
 
 from python_anywhere.accounts.factories import UserFactory
@@ -16,10 +17,10 @@ def test_register(db):
     payload.update({f'password{i}': password for i in range(1, 3)})
 
     # When
-    client.post(reverse('rest_register'), data=payload,
-                format='json')
-
+    response = client.post(reverse('rest_register'), data=payload,
+                           format='json')
     # Then
+    assert response.status_code == HTTP_201_CREATED
     created_user = User.objects.first()
     assert created_user.email == payload['email']
     assert created_user.username == payload['username']

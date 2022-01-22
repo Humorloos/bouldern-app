@@ -23,9 +23,10 @@ PROJECT_DIR = Path(__file__).resolve().parent
 BASE_DIR = PROJECT_DIR.parent
 # parent directory of bouldern-app
 USER_HOME = BASE_DIR.parent
-RESOURCES_DIR = BASE_DIR / 'frontend' / 'cypress' / 'fixtures'
 # directory of vue frontend
 VUE_FRONTEND_DIR = BASE_DIR / 'frontend'
+CYPRESS_DIR = VUE_FRONTEND_DIR / 'cypress'
+RESOURCES_DIR = CYPRESS_DIR / 'fixtures'
 # target of vue sources when building for production
 VUE_OUTPUT_DIR = VUE_FRONTEND_DIR / 'dist'
 
@@ -192,8 +193,13 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'accounts.User'
 
+if DEVELOPMENT:
+    EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
+    EMAIL_FILE_PATH = CYPRESS_DIR / 'logs' / 'email'
+
 ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_EMAIL_VERIFICATION = 'none'
+ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
+ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 7
 
 JWT_AUTH_RETURN_EXPIRATION = True
 # only send jwt tokens via https
