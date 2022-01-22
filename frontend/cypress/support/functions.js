@@ -55,7 +55,7 @@ window.slugify = function(str) {
  */
 window.waitingFor = function* (method, url) {
   // setup
-  cy.intercept(method, url).as('request');
+  cy.intercept(method, encodeURI(url)).as('request');
   try {
     yield;
   } finally {
