@@ -25,7 +25,8 @@ BASE_DIR = PROJECT_DIR.parent
 USER_HOME = BASE_DIR.parent
 # directory of vue frontend
 VUE_FRONTEND_DIR = BASE_DIR / 'frontend'
-RESOURCES_DIR = VUE_FRONTEND_DIR / 'cypress' / 'fixtures'
+CYPRESS_DIR = VUE_FRONTEND_DIR / 'cypress'
+RESOURCES_DIR = CYPRESS_DIR / 'fixtures'
 # target of vue sources when building for production
 VUE_OUTPUT_DIR = VUE_FRONTEND_DIR / 'dist'
 
