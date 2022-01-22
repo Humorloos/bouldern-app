@@ -43,3 +43,23 @@ window.slugify = function(str) {
 
   return str;
 };
+
+/**
+ * Utility for an API call to finish proceeding. The API call has to occur
+ * within a for block using this function.
+ * Usage: for (const _ of waitingFor(..., ...)) {...}
+ * Source: https://stackoverflow.com/questions/62879698/any-tips-on-context-manager-similar-to-python-in-javascript
+ *
+ * @param method the method used in the API call
+ * @param url the request's target url
+ */
+window.waitingFor = function* (method, url) {
+  // setup
+  cy.intercept(method, url).as('request');
+  try {
+    yield;
+  } finally {
+    // cleanup
+    cy.wait('@request');
+  }
+};
