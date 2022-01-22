@@ -1,13 +1,14 @@
 """
 This script contains factories for building model instances of the bouldern app
 """
-from factory import Iterator, Faker, LazyAttribute
+
+from factory import Iterator, Faker, LazyAttribute, RelatedFactoryList
 from factory.django import DjangoModelFactory, ImageField
 
+from python_anywhere.accounts.models import User
 from python_anywhere.bouldern.models import Color, Gym, DifficultyLevel, UGC, \
     Boulder
 from python_anywhere.bouldern.providers import GeoProvider
-from python_anywhere.accounts.models import User
 from python_anywhere.settings import RESOURCES_DIR
 
 Faker.add_provider(GeoProvider)
@@ -32,16 +33,6 @@ class ColorFactory(UGCFactory):
     color = Faker('color')
 
 
-class GymFactory(UGCFactory):
-    """Factory for building gym instances"""
-
-    class Meta:
-        model = Gym
-
-    name = Faker('company')
-    map = ImageField(from_path=RESOURCES_DIR / 'generic_gym.png')
-
-
 class DifficultyLevelFactory(UGCFactory):
     """Factory for building difficulty level instances"""
 
@@ -51,6 +42,21 @@ class DifficultyLevelFactory(UGCFactory):
     level = LazyAttribute(lambda o: o.gym.difficultylevel_set.count())
     color = Iterator(Color.objects.all())
     gym = Gym.objects.first()
+
+
+class GymFactory(UGCFactory):
+    """Factory for building gym instances"""
+
+    class Meta:
+        model = Gym
+
+    name = Faker('company')
+    map = ImageField(from_path=RESOURCES_DIR / 'generic_gym.png')
+    difficulty_levels = RelatedFactoryList(
+        DifficultyLevelFactory,
+        factory_related_name='gym',
+        size=7
+    )
 
 
 class BoulderFactory(UGCFactory):
