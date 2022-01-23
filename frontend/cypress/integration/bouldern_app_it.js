@@ -41,9 +41,13 @@ describe('The gym map view', () => {
     cy.visit('');
     cy.window().its(`${GymMapView.name}.$data.loaded`).should('equal', true);
     cy.get('#map-root').click(140, 270);
-    cy.contains('You clicked here');
+    cy.contains('Difficulty');
     cy.get('#popup-closer').click();
-    cy.get('#map-root').click(340, 210);
+    cy.get('#map-root').click(280, 240);
+    cy.get('#id-difficulty-select').click();
+    cy.contains('5').click();
+    cy.get('#id-color-select').click();
+    cy.contains('Yellow').click();
     cy.contains('Submit').click();
   });
 
