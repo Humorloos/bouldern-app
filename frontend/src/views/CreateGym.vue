@@ -23,7 +23,7 @@
             @change="onFileChange"
           />
 
-          <difficulty-level-select
+          <color-select
             v-for="(color, index) in colors"
             :id="`id_color-level-${index + 1}`"
             :key="color.name"
@@ -48,13 +48,13 @@
 
 import VueForm from '../components/VueForm.vue';
 import {mapActions, mapState} from 'vuex';
-import DifficultyLevelSelect from '../components/DifficultyLevelSelect.vue';
+import ColorSelect from '../components/ColorSelect.vue';
 
 export default {
   name: 'CreateGym',
   components: {
     VueForm,
-    DifficultyLevelSelect,
+    ColorSelect,
   },
   data() {
     return {
