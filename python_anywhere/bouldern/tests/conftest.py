@@ -26,3 +26,8 @@ def logged_in_client(db):
     yield client, user
 
 
+@pytest.fixture()
+def colors(db):
+    from python_anywhere.bouldern.factories import ColorFactory
+    yield [ColorFactory(name=name, color=color) for name, color in
+           default_colors.items()]
