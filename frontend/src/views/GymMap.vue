@@ -16,16 +16,35 @@
         @click="closePopover"
       />
       <v-row>
-        <v-col><p>You clicked here:</p></v-col>
+        <v-col>
+          Difficulty:
+          <color-select
+            id="id-difficulty-select"
+            v-model="selectedDifficulty"
+            :color-options="difficultyLevelColors"
+            @update:model-value="updateDifficultyLevel($event)"
+          />
+        </v-col>
       </v-row>
       <v-row>
-        <v-col><code>' {{ createdBoulder.coordinates }} </code></v-col>
+        <v-col>
+          Hold-Color:
+          <color-select
+            id="id-color-select"
+            v-model="selectedColor"
+            :color-options="colorOptions"
+          />
+        </v-col>
       </v-row>
       <v-row>
         <v-col>
           <vue-form
-            :api-path="`/bouldern/gym/${mapData.id}/boulder/`"
-            :form="createdBoulder"
+            :api-path="`/bouldern/gym/${gym.id}/boulder/`"
+            :form="{
+              coordinates: selectedCoordinates,
+              color: selectedColor.id,
+              difficulty: selectedDifficulty.id,
+            }"
             @submitted="onSubmitted"
           />
         </v-col>
@@ -52,22 +71,47 @@ import {Image as ImageLayer, Vector as VectorLayer} from 'ol/layer';
 import View from 'ol/View';
 import {GeoJSON} from 'ol/format';
 import VueForm from '../components/VueForm.vue';
+import ColorSelect from '../components/ColorSelect.vue';
 
 export default {
   name: 'GymMap',
   components: {
     VueForm,
+    ColorSelect,
   },
   data() {
     return {
-      mapData: {
+      gym: {
         boulder_set: [{
           coordinates: '',
         }],
         map: '',
         id: 0,
+        difficultylevel_set: [{
+          id: -1,
+          level: 0,
+          color: {
+            name: '',
+            color: '#60522d',
+          },
+        }],
       },
-      createdBoulder: {coordinates: {}},
+      colorOptions: [{
+        name: '',
+        color: '#60522d',
+        id: -1,
+      }],
+      selectedCoordinates: {},
+      selectedDifficulty: {
+        name: '',
+        id: -1,
+        color: '#ffffff',
+      },
+      selectedColor: {
+        name: '',
+        id: -1,
+        color: '#ffffff',
+      },
       mapImage: new Image(),
       jsonFormat: new GeoJSON(),
       loaded: false,
@@ -78,6 +122,16 @@ export default {
       authToken: 'authToken',
       activeGym: 'activeGym',
     }),
+    /**
+     * The options for the difficulty level of newly created boulders
+     *
+     * @returns {{color: *, name: *, id: *}[]} the difficulty level options
+     */
+    difficultyLevelColors() {
+      return this.gym.difficultylevel_set.map(
+          ({id, level, color}) => (
+            {color: color.color, id: id, name: level + 1}));
+    },
     /**
      * Gets the name of the gym to show the map of and sets it as the active gym
      * if a new gym was opened
@@ -173,7 +227,7 @@ export default {
           // This layer contains the map image
           new ImageLayer({
             source: new ImageStatic({
-              url: this.mapData.map,
+              url: this.gym.map,
               projection: this.projection,
               imageExtent: this.extent,
             }),
@@ -207,21 +261,27 @@ export default {
       method: 'GET',
       apiPath: `/bouldern/gym/?name=${this.gymName}`,
     }).then((response) => {
-      this.mapData = response.data[0];
-      this.mapImage.src = this.mapData.map;
+      this.gym = response.data[0];
+      this.mapImage.src = this.gym.map;
       this.mapImage.onload = () => {
         // Populate with initial features
-        this.mapData.boulder_set.forEach(
+        this.gym.boulder_set.forEach(
             (boulder) => this.source.addFeature(
                 this.jsonFormat.readFeature(boulder.coordinates)));
         // Set handler for associating created boulders to popover
         this.featureCollection.on('add',
             (event) => this.popover.feature = event.element);
         // Set handler for opening popup on draw
-        this.drawInteraction.on('drawend', this.createBoulder);
+        this.drawInteraction.on('drawend', this.openPopover);
         this.loaded = true;
         this.map;
       };
+    });
+    this.requestWithJwt({
+      method: 'GET',
+      apiPath: `/bouldern/color/`,
+    }).then((response) => {
+      this.colorOptions = response.data;
     });
   },
   /**
@@ -239,6 +299,14 @@ export default {
     ...mapActions({
       requestWithJwt: 'requestWithJwt',
     }),
+    /**
+     * Adjusts the currently selected hold color when selecting a difficulty
+     * level
+     */
+    updateDifficultyLevel(event) {
+      this.selectedColor = this.colorOptions.filter(
+          (colorOption) => colorOption.color === event.color)[0];
+    },
     /**
      * Removes the popover's feature from the featureCollection and blurs the
      * popover.
@@ -262,9 +330,9 @@ export default {
      *
      * @param event the add feature event
      */
-    createBoulder(event) {
+    openPopover(event) {
       const geometry = event.feature.getGeometry();
-      this.createdBoulder.coordinates = this.jsonFormat
+      this.selectedCoordinates = this.jsonFormat
           .writeGeometryObject(geometry);
 
       if (this.popover.getPosition() !== undefined) {

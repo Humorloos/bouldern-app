@@ -37,13 +37,17 @@ describe('The color creation view', () => {
 
 
 describe('The gym map view', () => {
-  it('allows adding boulders', () => {
+  it.only('allows adding boulders', () => {
     cy.visit('');
     cy.window().its(`${GymMapView.name}.$data.loaded`).should('equal', true);
     cy.get('#map-root').click(140, 270);
-    cy.contains('You clicked here');
+    cy.contains('Difficulty');
     cy.get('#popup-closer').click();
-    cy.get('#map-root').click(340, 210);
+    cy.get('#map-root').click(280, 240);
+    cy.get('#id-difficulty-select').click();
+    cy.contains('5').click();
+    cy.contains('Orange').click();
+    cy.contains('Yellow').click();
     cy.contains('Submit').click();
   });
 
