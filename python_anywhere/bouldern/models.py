@@ -2,7 +2,7 @@
 from colorfield.fields import ColorField
 from django.contrib.gis.db.models import PointField
 from django.db.models import Model, CharField, ImageField, ForeignKey, \
-    SET_NULL, PositiveSmallIntegerField, DateTimeField
+    SET_NULL, PositiveSmallIntegerField, DateTimeField, PROTECT
 
 from python_anywhere.accounts.models import User
 
@@ -48,3 +48,5 @@ class Boulder(UGC):
     """A boulder in a gym"""
     coordinates = PointField()
     gym = ForeignKey(Gym, on_delete=SET_NULL, null=True)
+    difficulty = ForeignKey(DifficultyLevel, on_delete=PROTECT, null=True)
+    color = ForeignKey(Color, on_delete=PROTECT, null=True)

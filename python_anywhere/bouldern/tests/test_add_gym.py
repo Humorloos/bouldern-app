@@ -1,7 +1,6 @@
 import json
 
 from django.utils.http import urlencode
-from faker import Faker
 from rest_framework.status import HTTP_200_OK, HTTP_201_CREATED
 
 from python_anywhere.bouldern.models import Gym, DifficultyLevel
@@ -21,18 +20,14 @@ def assert_correct_gym(gym, payload, user):
     assert gym.created_by == user
 
 
-def test_create_gym(logged_in_client_rest):
+def test_create_gym(logged_in_client_rest, colors):
     """Test that post method works correctly"""
     # Given
     from python_anywhere.bouldern.factories import GymFactory
-    gym_stub = GymFactory.stub()
+    gym_stub = GymFactory.build()
     client, user = logged_in_client_rest
     n_difficulty_levels = 3
     difficulty_level_range = range(n_difficulty_levels)
-    from python_anywhere.bouldern.factories import ColorFactory
-    faker = Faker()
-    colors = [ColorFactory(name=faker.unique.color())
-              for _ in difficulty_level_range]
     json_payload = {
         'name': gym_stub.name,
         'difficultylevel_set': [
@@ -63,7 +58,7 @@ def test_create_gym(logged_in_client_rest):
     assert_correct_gym(gym, json_payload | multipart_payload, user)
 
 
-def test_gym_api_get(logged_in_client_rest):
+def test_gym_api_get(logged_in_client_rest, colors):
     # Given
     from python_anywhere.bouldern.factories import GymFactory
     correct_gym = GymFactory(name='testName')
