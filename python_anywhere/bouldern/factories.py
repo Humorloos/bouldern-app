@@ -2,6 +2,8 @@
 This script contains factories for building model instances of the bouldern app
 """
 
+from random import choice
+
 from factory import Iterator, Faker, LazyAttribute, RelatedFactoryList
 from factory.django import DjangoModelFactory, ImageField
 
@@ -67,3 +69,9 @@ class BoulderFactory(UGCFactory):
 
     coordinates = Faker('point')
     gym = Gym.objects.first()
+    # set random difficulty from the boulder's gym
+    difficulty = LazyAttribute(
+        lambda o: DifficultyLevel.objects.get(pk=choice(
+            DifficultyLevel.objects.filter(gym=o.gym).values_list('pk'))[0]))
+    # default color is difficultylevel's color
+    color = LazyAttribute(lambda o: o.difficulty.color)
