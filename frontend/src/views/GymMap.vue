@@ -24,7 +24,7 @@
       <v-row>
         <v-col>
           <vue-form
-            :api-path="`/bouldern/gym/${mapData.id}/boulder/`"
+            :api-path="`/bouldern/gym/${gym.id}/boulder/`"
             :form="createdBoulder"
             @submitted="onSubmitted"
           />
@@ -60,7 +60,7 @@ export default {
   },
   data() {
     return {
-      mapData: {
+      gym: {
         boulder_set: [{
           coordinates: '',
         }],
@@ -173,7 +173,7 @@ export default {
           // This layer contains the map image
           new ImageLayer({
             source: new ImageStatic({
-              url: this.mapData.map,
+              url: this.gym.map,
               projection: this.projection,
               imageExtent: this.extent,
             }),
@@ -207,11 +207,11 @@ export default {
       method: 'GET',
       apiPath: `/bouldern/gym/?name=${this.gymName}`,
     }).then((response) => {
-      this.mapData = response.data[0];
-      this.mapImage.src = this.mapData.map;
+      this.gym = response.data[0];
+      this.mapImage.src = this.gym.map;
       this.mapImage.onload = () => {
         // Populate with initial features
-        this.mapData.boulder_set.forEach(
+        this.gym.boulder_set.forEach(
             (boulder) => this.source.addFeature(
                 this.jsonFormat.readFeature(boulder.coordinates)));
         // Set handler for associating created boulders to popover
