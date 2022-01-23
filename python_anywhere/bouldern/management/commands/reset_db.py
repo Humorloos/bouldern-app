@@ -6,11 +6,11 @@ from django.contrib.gis.geos import Point
 from django.core.management import BaseCommand
 from factory.django import ImageField
 
+from python_anywhere.accounts.factories import UserFactory
 from python_anywhere.bouldern.factories import ColorFactory, GymFactory, \
-    DifficultyLevelFactory, BoulderFactory
+    BoulderFactory
 from python_anywhere.bouldern.management.commands._default_colors import \
     default_colors
-from python_anywhere.accounts.factories import UserFactory
 from python_anywhere.settings import BASE_DIR, env, RESOURCES_DIR
 
 
@@ -35,17 +35,13 @@ class Command(BaseCommand):
                     password='youcantknowthispassword123')
 
         # add default colors
-        colors = [ColorFactory(name=name, color=color)
-                  for name, color in default_colors.items()]
+        for name, color in default_colors.items():
+            ColorFactory(name=name, color=color)
 
         # add generic gym
         generic_gym = GymFactory(
             name='Generic Gym',
             map=ImageField(from_path=RESOURCES_DIR / 'generic_gym.png'))
-
-        # add difficulty levels for generic gym
-        for color in colors[:7]:
-            DifficultyLevelFactory(color=color, gym=generic_gym)
 
         # add boulders
         BoulderFactory(gym=generic_gym, coordinates=Point(1041, 716))
