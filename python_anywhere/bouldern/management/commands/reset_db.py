@@ -9,8 +9,7 @@ from factory.django import ImageField
 from python_anywhere.accounts.factories import UserFactory
 from python_anywhere.bouldern.factories import ColorFactory, GymFactory, \
     BoulderFactory
-from python_anywhere.bouldern.management.commands._default_colors import \
-    default_colors
+from python_anywhere.bouldern.tests.conftest import default_colors
 from python_anywhere.settings import BASE_DIR, env, RESOURCES_DIR
 
 
