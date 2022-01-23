@@ -65,6 +65,8 @@ def test_create_gym(logged_in_client_rest):
 
 def test_gym_api_get(logged_in_client_rest):
     # Given
+    from python_anywhere.bouldern.factories import ColorFactory
+    ColorFactory()
     from python_anywhere.bouldern.factories import GymFactory
     correct_gym = GymFactory(name='testName')
     GymFactory()
