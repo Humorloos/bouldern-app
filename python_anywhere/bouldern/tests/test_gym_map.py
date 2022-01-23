@@ -14,8 +14,11 @@ def test_boulder_api_post(logged_in_client_rest, colors):
     gym = GymFactory()
 
     from python_anywhere.bouldern.factories import BoulderFactory
-    payload = {f'coordinates': BoulderFactory.stub(
-        gym=gym).coordinates.geojson}
+    boulder_stub = BoulderFactory.stub(gym=gym)
+    payload = {f'coordinates': boulder_stub.coordinates.geojson}
+    payload.update({
+        key: boulder_stub.__dict__[key].pk for key in ['color', 'difficulty']
+    })
     # When
     response = client.post(BoulderAPI().reverse_action('list', args=[gym.pk]),
                            data=payload, format='json')
@@ -25,6 +28,8 @@ def test_boulder_api_post(logged_in_client_rest, colors):
     assert boulder.created_by == user
     assert boulder.coordinates.geojson == payload['coordinates']
     assert boulder.gym == gym
+    assert boulder.color == boulder_stub.color
+    assert boulder.difficulty == boulder_stub.difficulty
 
 
 def test_boulder_api_get(logged_in_client_rest, colors):
