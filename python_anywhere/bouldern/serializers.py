@@ -17,7 +17,7 @@ class BoulderSerializer(ModelSerializer):
 
     class Meta:
         model = Boulder
-        fields = ['coordinates', 'gym', 'id']
+        fields = ['coordinates', 'gym', 'id', 'color', 'difficulty']
 
 
 class GymSerializer(ModelSerializer):
