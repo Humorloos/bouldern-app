@@ -1,7 +1,7 @@
 """
 This script contains factories for building model instances of the bouldern app
 """
-from factory import Iterator, Faker
+from factory import Iterator, Faker, LazyAttribute
 from factory.django import DjangoModelFactory, ImageField
 
 from python_anywhere.bouldern.models import Color, Gym, DifficultyLevel, UGC, \
@@ -48,7 +48,7 @@ class DifficultyLevelFactory(UGCFactory):
     class Meta:
         model = DifficultyLevel
 
-    level = 0
+    level = LazyAttribute(lambda o: o.gym.difficultylevel_set.count())
     color = Iterator(Color.objects.all())
     gym = Iterator(Color.objects.all())
 
