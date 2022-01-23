@@ -1,13 +1,16 @@
 """
 This script contains factories for building model instances of the bouldern app
 """
-from factory import Iterator, Faker
+
+from random import choice
+
+from factory import Iterator, Faker, LazyAttribute, RelatedFactoryList
 from factory.django import DjangoModelFactory, ImageField
 
+from python_anywhere.accounts.models import User
 from python_anywhere.bouldern.models import Color, Gym, DifficultyLevel, UGC, \
     Boulder
 from python_anywhere.bouldern.providers import GeoProvider
-from python_anywhere.accounts.models import User
 from python_anywhere.settings import RESOURCES_DIR
 
 Faker.add_provider(GeoProvider)
@@ -32,6 +35,17 @@ class ColorFactory(UGCFactory):
     color = Faker('color')
 
 
+class DifficultyLevelFactory(UGCFactory):
+    """Factory for building difficulty level instances"""
+
+    class Meta:
+        model = DifficultyLevel
+
+    level = LazyAttribute(lambda o: o.gym.difficultylevel_set.count())
+    color = Iterator(Color.objects.all())
+    gym = Gym.objects.first()
+
+
 class GymFactory(UGCFactory):
     """Factory for building gym instances"""
 
@@ -40,17 +54,11 @@ class GymFactory(UGCFactory):
 
     name = Faker('company')
     map = ImageField(from_path=RESOURCES_DIR / 'generic_gym.png')
-
-
-class DifficultyLevelFactory(UGCFactory):
-    """Factory for building difficulty level instances"""
-
-    class Meta:
-        model = DifficultyLevel
-
-    level = 0
-    color = Iterator(Color.objects.all())
-    gym = Iterator(Color.objects.all())
+    difficulty_levels = RelatedFactoryList(
+        DifficultyLevelFactory,
+        factory_related_name='gym',
+        size=7
+    )
 
 
 class BoulderFactory(UGCFactory):
@@ -61,3 +69,9 @@ class BoulderFactory(UGCFactory):
 
     coordinates = Faker('point')
     gym = Gym.objects.first()
+    # set random difficulty from the boulder's gym
+    difficulty = LazyAttribute(
+        lambda o: DifficultyLevel.objects.get(pk=choice(
+            DifficultyLevel.objects.filter(gym=o.gym).values_list('pk'))[0]))
+    # default color is difficultylevel's color
+    color = LazyAttribute(lambda o: o.difficulty.color)
