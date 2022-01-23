@@ -5,7 +5,7 @@ from python_anywhere.bouldern.models import Boulder
 from python_anywhere.bouldern.views import BoulderAPI
 
 
-def test_boulder_api_post(logged_in_client_rest):
+def test_boulder_api_post(logged_in_client_rest, colors):
     """Test that post method works correctly"""
     # Given
     client, user = logged_in_client_rest
@@ -27,7 +27,7 @@ def test_boulder_api_post(logged_in_client_rest):
     assert boulder.gym == gym
 
 
-def test_boulder_api_get(logged_in_client_rest):
+def test_boulder_api_get(logged_in_client_rest, colors):
     client, user = logged_in_client_rest
     from python_anywhere.bouldern.factories import GymFactory
     correct_gym = GymFactory()
