@@ -44,8 +44,8 @@ class Command(BaseCommand):
             map=ImageField(from_path=RESOURCES_DIR / 'generic_gym.png'))
 
         # add difficulty levels for generic gym
-        for level, color in enumerate(colors[:7]):
-            DifficultyLevelFactory(level=level, color=color, gym=generic_gym)
+        for color in colors[:7]:
+            DifficultyLevelFactory(color=color, gym=generic_gym)
 
         # add boulders
         BoulderFactory(gym=generic_gym, coordinates=Point(1041, 716))
