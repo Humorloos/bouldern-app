@@ -27,12 +27,18 @@ def test_create_gym(logged_in_client_rest, colors):
     gym_stub = GymFactory.build()
     client, user = logged_in_client_rest
     n_difficulty_levels = 3
-    difficulty_level_range = range(n_difficulty_levels)
+    difficulty_level_range = range(1, n_difficulty_levels + 1)
+    from python_anywhere.bouldern.factories import DifficultyLevelFactory
+    difficulty_level_stubs = [
+        DifficultyLevelFactory.stub(gym=gym_stub, level=i)
+        for i in difficulty_level_range]
     json_payload = {
         'name': gym_stub.name,
-        'difficultylevel_set': [
-            {field: n_difficulty_levels - i for field in ['color', 'level']}
-            for i in difficulty_level_range]}
+        'difficultylevel_set': [{
+            'color_id': level.color.pk,
+            'level': level.level
+        } for level in difficulty_level_stubs]
+    }
 
     # When
     response = client.post(GymAPI().reverse_action('list'),
@@ -46,7 +52,7 @@ def test_create_gym(logged_in_client_rest, colors):
     for difficulty_level in difficulty_levels:
         assert difficulty_level.gym.name == gym_stub.name
         assert difficulty_level.color in colors
-        assert difficulty_level.level - 1 in difficulty_level_range
+        assert difficulty_level.level in difficulty_level_range
         assert difficulty_level.created_by == user
     # When
     multipart_payload = {'map': gym_stub.map}
