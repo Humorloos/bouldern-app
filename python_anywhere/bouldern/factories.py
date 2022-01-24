@@ -41,7 +41,7 @@ class DifficultyLevelFactory(UGCFactory):
     class Meta:
         model = DifficultyLevel
 
-    level = LazyAttribute(lambda o: o.gym.difficultylevel_set.count())
+    level = LazyAttribute(lambda o: o.gym.difficultylevel_set.count() + 1)
     color = Iterator(Color.objects.all())
     gym = Gym.objects.first()
 
