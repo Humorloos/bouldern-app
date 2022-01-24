@@ -72,6 +72,7 @@ import View from 'ol/View';
 import {GeoJSON} from 'ol/format';
 import VueForm from '../components/VueForm.vue';
 import ColorSelect from '../components/ColorSelect.vue';
+import {Circle, Fill, Stroke, Style} from 'ol/style';
 
 export default {
   name: 'GymMap',
@@ -265,9 +266,31 @@ export default {
       this.mapImage.src = this.gym.map;
       this.mapImage.onload = () => {
         // Populate with initial features
-        this.gym.boulder_set.forEach(
-            (boulder) => this.source.addFeature(
-                this.jsonFormat.readFeature(boulder.coordinates)));
+        this.gym.boulder_set.forEach((boulder) => {
+          const feature = this.jsonFormat.readFeature(boulder.coordinates);
+          const fill = new Fill({
+            color: '#cb1414',
+          });
+          const stroke = new Stroke({
+            color: '#000000',
+            width: 5,
+          });
+          const styles = [
+            new Style({
+              image: new Circle({
+                fill: fill,
+                stroke: stroke,
+                radius: 10,
+              }),
+              fill: fill,
+              stroke: stroke,
+            }),
+          ];
+          // debugger;
+          feature.setStyle(styles);
+          this.source.addFeature(
+              feature);
+        });
         // Set handler for associating created boulders to popover
         this.featureCollection.on('add',
             (event) => this.popover.feature = event.element);
