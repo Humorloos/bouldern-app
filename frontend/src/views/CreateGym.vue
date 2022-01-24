@@ -82,7 +82,7 @@ export default {
       return {
         name: this.gymName,
         difficultylevel_set: this.colors.map((color, index) => {
-          return {color: color.id, level: index + 1};
+          return {color_id: color.id, level: index + 1};
         }),
       };
     },
