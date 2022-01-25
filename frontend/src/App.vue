@@ -55,6 +55,7 @@
             id="id_gym-name"
             v-model="gymName"
             label="Gym Name"
+            @keyup.enter="openGymMap"
           />
         </v-list-item>
         <v-list-item v-if="isAuthenticated">
