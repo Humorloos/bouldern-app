@@ -220,6 +220,7 @@ export default {
      * @returns {VectorSource} the vector source
      */
     source() {
+      // todo rename to vectorsource
       return new VectorSource({
         features: this.featureCollection,
         useSpatialIndex: false, // improves performance
@@ -267,6 +268,32 @@ export default {
       map.addOverlay(this.popover);
       map.addInteraction(this.drawInteraction);
       return map;
+    },
+  },
+  watch: {
+    /**
+     * Loads new gym map when gym name changes
+     */
+    gymName() {
+      this.featureCollection.clear();
+      this.requestWithJwt({
+        method: 'GET',
+        apiPath: `/bouldern/gym/?name=${this.gymName}`,
+      }).then((response) => {
+        this.gym = response.data[0];
+        this.mapImage.src = this.gym.map;
+        this.mapImage.onload = () => {
+          this.gym.boulder_set.forEach((boulder) => {
+            const feature = this.jsonFormat.readFeature(boulder.coordinates);
+            // debugger;
+            feature.setStyle(this.getBoulderStyle(
+                boulder.color.color,
+                boulder.difficulty.color.color,
+            ));
+            this.source.addFeature(feature);
+          });
+        };
+      });
     },
   },
   /**
