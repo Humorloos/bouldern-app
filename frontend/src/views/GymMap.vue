@@ -33,6 +33,7 @@
             id="id-color-select"
             v-model="selectedColor"
             :color-options="colorOptions"
+            @update:model-value="updateHoldColor($event)"
           />
         </v-col>
       </v-row>
@@ -42,8 +43,8 @@
             :api-path="`/bouldern/gym/${gym.id}/boulder/`"
             :form="{
               coordinates: selectedCoordinates,
-              color: selectedColor.id,
-              difficulty: selectedDifficulty.id,
+              color_id: selectedColor.id,
+              difficulty_id: selectedDifficulty.id,
             }"
             @submitted="onSubmitted"
           />
@@ -72,6 +73,13 @@ import View from 'ol/View';
 import {GeoJSON} from 'ol/format';
 import VueForm from '../components/VueForm.vue';
 import ColorSelect from '../components/ColorSelect.vue';
+import {Circle, Fill, Icon, Stroke, Style} from 'ol/style';
+
+const defaultColor = {
+  name: '',
+  id: -1,
+  color: '#ffffff',
+};
 
 export default {
   name: 'GymMap',
@@ -90,30 +98,24 @@ export default {
         difficultylevel_set: [{
           id: -1,
           level: 0,
-          color: {
-            name: '',
-            color: '#60522d',
-          },
+          color: defaultColor,
         }],
       },
-      colorOptions: [{
-        name: '',
-        color: '#60522d',
-        id: -1,
-      }],
+      colorOptions: [defaultColor],
       selectedCoordinates: {},
-      selectedDifficulty: {
-        name: '',
-        id: -1,
-        color: '#ffffff',
-      },
-      selectedColor: {
-        name: '',
-        id: -1,
-        color: '#ffffff',
-      },
+      selectedDifficulty: defaultColor,
+      selectedColor: defaultColor,
       mapImage: new Image(),
       jsonFormat: new GeoJSON(),
+      shadowStyle: new Style({
+        image: new Icon({
+          src: this.axios.defaults.baseURL +
+              'static/bouldern/images/shadow.png',
+          scale: 0.5,
+          opacity: 0.3,
+        }),
+      }),
+      featureCollection: new Collection(),
       loaded: false,
     };
   },
@@ -122,6 +124,29 @@ export default {
       authToken: 'authToken',
       activeGym: 'activeGym',
     }),
+    /**
+     * The openlayers gym map image source to be used in the image layer.
+     *
+     * @returns {Static} the map image source.
+     */
+    mapImageSource() {
+      return new ImageStatic({
+        url: this.gym.map,
+        projection: this.projection,
+        imageExtent: this.extent,
+        imageLoadFunction: this.setMapImage,
+      });
+    },
+    /**
+     * This layer contains the map image
+     *
+     * @returns {ImageLayer} the map image layer
+     */
+    imageLayer() {
+      return new ImageLayer({
+        source: this.mapImageSource,
+      });
+    },
     /**
      * The options for the difficulty level of newly created boulders
      *
@@ -139,12 +164,12 @@ export default {
      * @returns {string} the name of the gym of which to show the map
      */
     gymName() {
-      if (this.$route.fullPath === '/') {
-        return this.activeGym;
-      } else {
+      if (this.$route.matched.some(({name}) => name==='gymMap')) {
         const gymName = this.$route.params.gymName;
         this.setActiveGym(gymName);
         return gymName;
+      } else {
+        return this.activeGym;
       }
     },
     /**
@@ -160,15 +185,6 @@ export default {
           duration: 250,
         },
       });
-    },
-    /**
-     * OpenLayers feature collection containing the geographic features in the
-     * map
-     *
-     * @returns {Collection} the feature collection
-     */
-    featureCollection() {
-      return new Collection();
     },
     /**
      * The map's extent
@@ -195,7 +211,7 @@ export default {
      *
      * @returns {VectorSource} the vector source
      */
-    source() {
+    vectorSource() {
       return new VectorSource({
         features: this.featureCollection,
         useSpatialIndex: false, // improves performance
@@ -208,11 +224,13 @@ export default {
      * @returns {Draw} the draw interaction
      */
     drawInteraction() {
-      return new Draw({
+      const drawInteraction = new Draw({
         type: 'Point',
-        source: this.source,
+        source: this.vectorSource,
         condition: (event) => containsCoordinate(this.extent, event.coordinate),
       });
+      drawInteraction.on('drawend', this.openPopover);
+      return drawInteraction;
     },
     /**
      * Initializes the gym map with image layer, vector layer, popover, and
@@ -224,17 +242,10 @@ export default {
       // Initialize map
       const map = new Map({
         layers: [
-          // This layer contains the map image
-          new ImageLayer({
-            source: new ImageStatic({
-              url: this.gym.map,
-              projection: this.projection,
-              imageExtent: this.extent,
-            }),
-          }),
+          this.imageLayer,
           // This layer is where icons are drawn on
           new VectorLayer({
-            source: this.source,
+            source: this.vectorSource,
             updateWhileAnimating: true,
             updateWhileInteracting: true,
           }),
@@ -252,31 +263,23 @@ export default {
       return map;
     },
   },
+  watch: {
+    /**
+     * Loads new gym map when gym name changes
+     */
+    gymName() {
+      this.featureCollection.clear();
+      this.selectedDifficulty = defaultColor;
+      this.selectedColor = defaultColor;
+      this.loadGymMap();
+    },
+  },
   /**
    * Gets the gym data including the map image's url, saves it and loads the map
    * once the image has loaded
    */
   created() {
-    this.requestWithJwt({
-      method: 'GET',
-      apiPath: `/bouldern/gym/?name=${this.gymName}`,
-    }).then((response) => {
-      this.gym = response.data[0];
-      this.mapImage.src = this.gym.map;
-      this.mapImage.onload = () => {
-        // Populate with initial features
-        this.gym.boulder_set.forEach(
-            (boulder) => this.source.addFeature(
-                this.jsonFormat.readFeature(boulder.coordinates)));
-        // Set handler for associating created boulders to popover
-        this.featureCollection.on('add',
-            (event) => this.popover.feature = event.element);
-        // Set handler for opening popup on draw
-        this.drawInteraction.on('drawend', this.openPopover);
-        this.loaded = true;
-        this.map;
-      };
-    });
+    this.loadGymMap(this.onGymMapLoaded);
     this.requestWithJwt({
       method: 'GET',
       apiPath: `/bouldern/color/`,
@@ -300,12 +303,98 @@ export default {
       requestWithJwt: 'requestWithJwt',
     }),
     /**
+     * Gets the gym data from the API, loads the gym map image, and deserializes
+     * the gym's boulders into the feature collection
+     */
+    loadGymMap(onLoaded) {
+      this.requestWithJwt({
+        method: 'GET',
+        apiPath: `/bouldern/gym/?name=${this.gymName}`,
+      }).then((response) => {
+        this.gym = response.data[0];
+        this.mapImage.src = this.gym.map;
+        this.mapImage.onload = () => {
+          // Populate with initial features
+          this.gym.boulder_set.forEach((boulder) => {
+            const feature = this.jsonFormat.readFeature(boulder.coordinates);
+            feature.setStyle(this.getBoulderStyle(
+                boulder.color.color,
+                boulder.difficulty.color.color,
+            ));
+            this.vectorSource.addFeature(feature);
+          });
+          if (onLoaded) onLoaded();
+        };
+      });
+    },
+    /**
+     * Registers the draw interaction, sets the loaded flag and initializes the
+     * map
+     */
+    onGymMapLoaded() {
+      // Set handler for opening popup on draw
+      this.loaded = true;
+      this.map;
+    },
+    /**
+     * Assigns the map image to the provided image. The purpose of this method
+     * is to avoid loading the map image twice by assigning the already loaded
+     * image instead.
+     *
+     * @param image image object of map image source.
+     */
+    setMapImage(image) {
+      image.setImage(this.mapImage);
+    },
+    /**
+     * Generates the openlayers style for a boulder with the given hold and
+     * difficulty color. The style is a cirle with four small border segments
+     * where the cirle is colored in the boulder's difficulty color and the
+     * border segments are colored in the boulder's hold color. Behind this
+     * style there is another style that serves as the icon's shadow.
+     *
+     * @param holdColor the boulder's hold color
+     * @param difficultyColor the boulder's difficulty color
+     * @returns {Style[]} the boulder's style consisting of the two-colored icon
+     * and a shadow
+     */
+    getBoulderStyle(holdColor, difficultyColor) {
+      const colorStyle = new Style({
+        image: new Circle({
+          fill: new Fill({
+            color: difficultyColor,
+          }),
+          stroke: new Stroke({
+            color: holdColor,
+            width: 6,
+            lineDash: [7.4, 8.05],
+            lineDashOffset: 3.45,
+          }),
+          radius: 10,
+        }),
+      });
+      return [colorStyle, this.shadowStyle];
+    },
+    /**
      * Adjusts the currently selected hold color when selecting a difficulty
-     * level
+     * level and Updates both the hold and difficulty color of the most recently
+     * added boulder to the provided event's color
      */
     updateDifficultyLevel(event) {
+      this.featureCollection.getArray().at(-1)
+          .setStyle(this.getBoulderStyle(event.color, event.color));
       this.selectedColor = this.colorOptions.filter(
           (colorOption) => colorOption.color === event.color)[0];
+    },
+    /**
+     * Updates the hold color of the most recently added boulder to the provided
+     * event's color
+     *
+     * @param event a color select update event
+     */
+    updateHoldColor(event) {
+      this.featureCollection.getArray().at(-1).setStyle(
+          this.getBoulderStyle(event.color, this.selectedDifficulty.color));
     },
     /**
      * Removes the popover's feature from the featureCollection and blurs the
@@ -314,7 +403,7 @@ export default {
      * @returns {boolean} false (don't follow the ref)
      */
     closePopover() {
-      this.featureCollection.remove(this.popover.feature);
+      this.featureCollection.pop();
       this.popover.setPosition(undefined);
       return false;
     },
@@ -331,6 +420,9 @@ export default {
      * @param event the add feature event
      */
     openPopover(event) {
+      event.feature.setStyle(this.getBoulderStyle(
+          this.selectedColor.color, this.selectedDifficulty.color));
+
       const geometry = event.feature.getGeometry();
       this.selectedCoordinates = this.jsonFormat
           .writeGeometryObject(geometry);
