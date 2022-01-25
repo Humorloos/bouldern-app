@@ -321,7 +321,7 @@ export default {
             ));
             this.source.addFeature(feature);
           });
-          onLoaded();
+          if (onLoaded) onLoaded();
         };
       });
     },
