@@ -134,6 +134,19 @@ export default {
       activeGym: 'activeGym',
     }),
     /**
+     * todo
+     */
+    imageLayer() {
+      // This layer contains the map image
+      return new ImageLayer({
+        source: new ImageStatic({
+          url: this.gym.map,
+          projection: this.projection,
+          imageExtent: this.extent,
+        }),
+      });
+    },
+    /**
      * The options for the difficulty level of newly created boulders
      *
      * @returns {{color: *, name: *, id: *}[]} the difficulty level options
@@ -178,6 +191,7 @@ export default {
      * @returns {number[]} the map's extent
      */
     extent() {
+      const asdf = this.imageLayer;
       return [0, 0, this.mapImage.width, this.mapImage.height];
     },
     /**
@@ -226,14 +240,7 @@ export default {
       // Initialize map
       const map = new Map({
         layers: [
-          // This layer contains the map image
-          new ImageLayer({
-            source: new ImageStatic({
-              url: this.gym.map,
-              projection: this.projection,
-              imageExtent: this.extent,
-            }),
-          }),
+          this.imageLayer,
           // This layer is where icons are drawn on
           new VectorLayer({
             source: this.source,
@@ -279,6 +286,7 @@ export default {
         // Set handler for opening popup on draw
         this.drawInteraction.on('drawend', this.openPopover);
         this.loaded = true;
+        debugger;
         this.map;
       };
     });
