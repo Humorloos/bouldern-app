@@ -75,6 +75,12 @@ import VueForm from '../components/VueForm.vue';
 import ColorSelect from '../components/ColorSelect.vue';
 import {Circle, Fill, Icon, Stroke, Style} from 'ol/style';
 
+const defaultColor = {
+  name: '',
+  id: -1,
+  color: '#ffffff',
+};
+
 export default {
   name: 'GymMap',
   components: {
@@ -92,28 +98,13 @@ export default {
         difficultylevel_set: [{
           id: -1,
           level: 0,
-          color: {
-            name: '',
-            color: '#60522d',
-          },
+          color: defaultColor,
         }],
       },
-      colorOptions: [{
-        name: '',
-        color: '#60522d',
-        id: -1,
-      }],
+      colorOptions: [defaultColor],
       selectedCoordinates: {},
-      selectedDifficulty: {
-        name: '',
-        id: -1,
-        color: '#ffffff',
-      },
-      selectedColor: {
-        name: '',
-        id: -1,
-        color: '#ffffff',
-      },
+      selectedDifficulty: defaultColor,
+      selectedColor: defaultColor,
       mapImage: new Image(),
       jsonFormat: new GeoJSON(),
       shadowStyle: new Style({
