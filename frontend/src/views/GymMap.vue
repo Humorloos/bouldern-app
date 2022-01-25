@@ -42,8 +42,8 @@
             :api-path="`/bouldern/gym/${gym.id}/boulder/`"
             :form="{
               coordinates: selectedCoordinates,
-              color: selectedColor.id,
-              difficulty: selectedDifficulty.id,
+              color_id: selectedColor.id,
+              difficulty_id: selectedDifficulty.id,
             }"
             @submitted="onSubmitted"
           />
