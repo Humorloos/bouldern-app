@@ -276,22 +276,12 @@ export default {
         // Populate with initial features
         this.gym.boulder_set.forEach((boulder) => {
           const feature = this.jsonFormat.readFeature(boulder.coordinates);
-          const circleStyle = new Style({
-            image: new Circle({
-              fill: new Fill({
-                color: boulder.color.color,
-              }),
-              stroke: new Stroke({
-                color: boulder.difficulty.color.color,
-                width: 5,
-              }),
-              radius: 10,
-            }),
-          });
           // debugger;
-          feature.setStyle([circleStyle, this.shadowStyle]);
-          this.source.addFeature(
-              feature);
+          feature.setStyle(this.getBoulderStyle(
+              boulder.color.color,
+              boulder.difficulty.color.color,
+          ));
+          this.source.addFeature(feature);
         });
         // Set handler for associating created boulders to popover
         this.featureCollection.on('add',
@@ -324,6 +314,24 @@ export default {
     ...mapActions({
       requestWithJwt: 'requestWithJwt',
     }),
+    /**
+     * todo
+     */
+    getBoulderStyle(holdColor, difficultyColor) {
+      const colorStyle = new Style({
+        image: new Circle({
+          fill: new Fill({
+            color: holdColor,
+          }),
+          stroke: new Stroke({
+            color: difficultyColor,
+            width: 5,
+          }),
+          radius: 10,
+        }),
+      });
+      return [colorStyle, this.shadowStyle];
+    },
     /**
      * Adjusts the currently selected hold color when selecting a difficulty
      * level
