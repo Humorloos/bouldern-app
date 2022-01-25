@@ -33,6 +33,7 @@
             id="id-color-select"
             v-model="selectedColor"
             :color-options="colorOptions"
+            @update:model-value="updateHoldColor($event)"
           />
         </v-col>
       </v-row>
@@ -334,13 +335,20 @@ export default {
     },
     /**
      * Adjusts the currently selected hold color when selecting a difficulty
-     * level
+     * level todo: add more
      */
     updateDifficultyLevel(event) {
       this.popover.feature.setStyle(
           this.getBoulderStyle(event.color, event.color));
       this.selectedColor = this.colorOptions.filter(
           (colorOption) => colorOption.color === event.color)[0];
+    },
+    /**
+     * todo
+     */
+    updateHoldColor(event) {
+      this.popover.feature.setStyle(
+          this.getBoulderStyle(event.color, this.selectedDifficulty.color));
     },
     /**
      * Removes the popover's feature from the featureCollection and blurs the
