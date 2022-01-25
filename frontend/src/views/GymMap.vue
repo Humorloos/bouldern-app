@@ -337,6 +337,8 @@ export default {
      * level
      */
     updateDifficultyLevel(event) {
+      this.popover.feature.setStyle(
+          this.getBoulderStyle(event.color, event.color));
       this.selectedColor = this.colorOptions.filter(
           (colorOption) => colorOption.color === event.color)[0];
     },
