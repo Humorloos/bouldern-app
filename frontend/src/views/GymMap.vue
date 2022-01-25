@@ -269,22 +269,23 @@ export default {
         this.gym.boulder_set.forEach((boulder) => {
           const feature = this.jsonFormat.readFeature(boulder.coordinates);
           const fill = new Fill({
-            color: '#cb1414',
+            color: boulder.color.color,
           });
           const stroke = new Stroke({
-            color: '#000000',
+            color: boulder.difficulty.color.color,
             width: 5,
           });
-          const styles = [
-            new Style({
-              image: new Circle({
-                fill: fill,
-                stroke: stroke,
-                radius: 10,
-              }),
+          const circleStyle = new Style({
+            image: new Circle({
               fill: fill,
               stroke: stroke,
+              radius: 10,
             }),
+            fill: fill,
+            stroke: stroke,
+          });
+          const styles = [
+            circleStyle,
           ];
           // debugger;
           feature.setStyle(styles);
