@@ -117,7 +117,8 @@ export default {
       jsonFormat: new GeoJSON(),
       shadowStyle: new Style({
         image: new Icon({
-          src: 'https://localhost:8000/static/bouldern/images/blur.png',
+          src: this.axios.defaults.baseURL +
+              'static/bouldern/images/shadow.png',
           scale: 0.5,
           opacity: 0.3,
         }),
