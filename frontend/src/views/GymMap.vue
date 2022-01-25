@@ -72,7 +72,7 @@ import View from 'ol/View';
 import {GeoJSON} from 'ol/format';
 import VueForm from '../components/VueForm.vue';
 import ColorSelect from '../components/ColorSelect.vue';
-import {Circle, Fill, Stroke, Style} from 'ol/style';
+import {Circle, Fill, Icon, Stroke, Style} from 'ol/style';
 
 export default {
   name: 'GymMap',
@@ -115,6 +115,13 @@ export default {
       },
       mapImage: new Image(),
       jsonFormat: new GeoJSON(),
+      shadowStyle: new Style({
+        image: new Icon({
+          src: 'https://localhost:8000/static/bouldern/images/blur.png',
+          scale: 0.5,
+          opacity: 0.3,
+        }),
+      }),
       loaded: false,
     };
   },
@@ -268,27 +275,20 @@ export default {
         // Populate with initial features
         this.gym.boulder_set.forEach((boulder) => {
           const feature = this.jsonFormat.readFeature(boulder.coordinates);
-          const fill = new Fill({
-            color: boulder.color.color,
-          });
-          const stroke = new Stroke({
-            color: boulder.difficulty.color.color,
-            width: 5,
-          });
           const circleStyle = new Style({
             image: new Circle({
-              fill: fill,
-              stroke: stroke,
+              fill: new Fill({
+                color: boulder.color.color,
+              }),
+              stroke: new Stroke({
+                color: boulder.difficulty.color.color,
+                width: 5,
+              }),
               radius: 10,
             }),
-            fill: fill,
-            stroke: stroke,
           });
-          const styles = [
-            circleStyle,
-          ];
           // debugger;
-          feature.setStyle(styles);
+          feature.setStyle([circleStyle, this.shadowStyle]);
           this.source.addFeature(
               feature);
         });
