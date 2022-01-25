@@ -276,24 +276,7 @@ export default {
      */
     gymName() {
       this.featureCollection.clear();
-      this.requestWithJwt({
-        method: 'GET',
-        apiPath: `/bouldern/gym/?name=${this.gymName}`,
-      }).then((response) => {
-        this.gym = response.data[0];
-        this.mapImage.src = this.gym.map;
-        this.mapImage.onload = () => {
-          this.gym.boulder_set.forEach((boulder) => {
-            const feature = this.jsonFormat.readFeature(boulder.coordinates);
-            // debugger;
-            feature.setStyle(this.getBoulderStyle(
-                boulder.color.color,
-                boulder.difficulty.color.color,
-            ));
-            this.source.addFeature(feature);
-          });
-        };
-      });
+      this.loadGymMap();
     },
   },
   /**
@@ -301,29 +284,7 @@ export default {
    * once the image has loaded
    */
   created() {
-    this.requestWithJwt({
-      method: 'GET',
-      apiPath: `/bouldern/gym/?name=${this.gymName}`,
-    }).then((response) => {
-      this.gym = response.data[0];
-      this.mapImage.src = this.gym.map;
-      this.mapImage.onload = () => {
-        // Populate with initial features
-        this.gym.boulder_set.forEach((boulder) => {
-          const feature = this.jsonFormat.readFeature(boulder.coordinates);
-          // debugger;
-          feature.setStyle(this.getBoulderStyle(
-              boulder.color.color,
-              boulder.difficulty.color.color,
-          ));
-          this.source.addFeature(feature);
-        });
-        // Set handler for opening popup on draw
-        this.drawInteraction.on('drawend', this.openPopover);
-        this.loaded = true;
-        this.map;
-      };
-    });
+    this.loadGymMap(this.onGymMapLoaded);
     this.requestWithJwt({
       method: 'GET',
       apiPath: `/bouldern/color/`,
@@ -346,6 +307,41 @@ export default {
     ...mapActions({
       requestWithJwt: 'requestWithJwt',
     }),
+    /**
+     * Gets the gym data from the API, loads the gym map image, and deserializes
+     * the gym's boulders into the feature collection
+     */
+    loadGymMap(onLoaded) {
+      this.requestWithJwt({
+        method: 'GET',
+        apiPath: `/bouldern/gym/?name=${this.gymName}`,
+      }).then((response) => {
+        this.gym = response.data[0];
+        this.mapImage.src = this.gym.map;
+        this.mapImage.onload = () => {
+          // Populate with initial features
+          this.gym.boulder_set.forEach((boulder) => {
+            const feature = this.jsonFormat.readFeature(boulder.coordinates);
+            feature.setStyle(this.getBoulderStyle(
+                boulder.color.color,
+                boulder.difficulty.color.color,
+            ));
+            this.source.addFeature(feature);
+          });
+          onLoaded();
+        };
+      });
+    },
+    /**
+     * Registers the draw interaction, sets the loaded flag and initializes the
+     * map
+     */
+    onGymMapLoaded() {
+      // Set handler for opening popup on draw
+      this.drawInteraction.on('drawend', this.openPopover);
+      this.loaded = true;
+      this.map;
+    },
     /**
      * Assigns the map image to the provided image. The purpose of this method
      * is to avoid loading the map image twice by assigning the already loaded
