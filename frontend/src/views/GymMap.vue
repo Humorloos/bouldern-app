@@ -138,10 +138,11 @@ export default {
       });
     },
     /**
-     * todo
+     * This layer contains the map image
+     *
+     * @returns {ImageLayer} the map image layer
      */
     imageLayer() {
-      // This layer contains the map image
       return new ImageLayer({
         source: this.mapImageSource,
       });
@@ -346,7 +347,16 @@ export default {
       image.setImage(this.mapImage);
     },
     /**
-     * todo
+     * Generates the openlayers style for a boulder with the given hold and
+     * difficulty color. The style is a cirle with four small border segments
+     * where the cirle is colored in the boulder's difficulty color and the
+     * border segments are colored in the boulder's hold color. Behind this
+     * style there is another style that serves as the icon's shadow.
+     *
+     * @param holdColor the boulder's hold color
+     * @param difficultyColor the boulder's difficulty color
+     * @returns {Style[]} the boulder's style consisting of the two-colored icon
+     * and a shadow
      */
     getBoulderStyle(holdColor, difficultyColor) {
       const colorStyle = new Style({
@@ -367,7 +377,8 @@ export default {
     },
     /**
      * Adjusts the currently selected hold color when selecting a difficulty
-     * level todo: add more
+     * level and Updates both the hold and difficulty color of the most recently
+     * added boulder to the provided event's color
      */
     updateDifficultyLevel(event) {
       this.featureCollection.getArray().at(-1)
@@ -376,7 +387,10 @@ export default {
           (colorOption) => colorOption.color === event.color)[0];
     },
     /**
-     * todo
+     * Updates the hold color of the most recently added boulder to the provided
+     * event's color
+     *
+     * @param event a color select update event
      */
     updateHoldColor(event) {
       this.featureCollection.getArray().at(-1).setStyle(
