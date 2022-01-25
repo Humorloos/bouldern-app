@@ -136,14 +136,20 @@ export default {
     /**
      * todo
      */
+    mapImageSource() {
+      return new ImageStatic({
+        url: this.gym.map,
+        projection: this.projection,
+        imageExtent: this.extent,
+      });
+    },
+    /**
+     * todo
+     */
     imageLayer() {
       // This layer contains the map image
       return new ImageLayer({
-        source: new ImageStatic({
-          url: this.gym.map,
-          projection: this.projection,
-          imageExtent: this.extent,
-        }),
+        source: this.mapImageSource,
       });
     },
     /**
@@ -286,7 +292,6 @@ export default {
         // Set handler for opening popup on draw
         this.drawInteraction.on('drawend', this.openPopover);
         this.loaded = true;
-        debugger;
         this.map;
       };
     });
