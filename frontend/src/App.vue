@@ -105,7 +105,7 @@ export default {
     /**
      * Closes the app drawer when navigating to another view
      */
-    $route(to, from) {
+    $route() {
       if (this.$vuetify.display.mobile) this.drawer = false;
     },
   },
@@ -115,7 +115,7 @@ export default {
    */
   mounted() {
     if (window.Cypress) {
-      const storeEventHandler = (storeEvent, state) => {
+      const storeEventHandler = (storeEvent) => {
         window.Cypress.cy.$log[
             new Date().toISOString() + ' - ' + storeEvent.type] = {
           payload: storeEvent.payload,
