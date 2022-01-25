@@ -134,13 +134,16 @@ export default {
       activeGym: 'activeGym',
     }),
     /**
-     * todo
+     * The openlayers gym map image source to be used in the image layer.
+     *
+     * @returns {Static} the map image source.
      */
     mapImageSource() {
       return new ImageStatic({
         url: this.gym.map,
         projection: this.projection,
         imageExtent: this.extent,
+        imageLoadFunction: this.setMapImage,
       });
     },
     /**
@@ -197,7 +200,6 @@ export default {
      * @returns {number[]} the map's extent
      */
     extent() {
-      const asdf = this.imageLayer;
       return [0, 0, this.mapImage.width, this.mapImage.height];
     },
     /**
@@ -317,6 +319,16 @@ export default {
     ...mapActions({
       requestWithJwt: 'requestWithJwt',
     }),
+    /**
+     * Assigns the map image to the provided image. The purpose of this method
+     * is to avoid loading the map image twice by assigning the already loaded
+     * image instead.
+     *
+     * @param image image object of map image source.
+     */
+    setMapImage(image) {
+      image.setImage(this.mapImage);
+    },
     /**
      * todo
      */
