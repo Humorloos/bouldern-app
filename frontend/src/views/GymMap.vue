@@ -267,6 +267,8 @@ export default {
      */
     gymName() {
       this.featureCollection.clear();
+      this.selectedDifficulty = defaultColor;
+      this.selectedColor = defaultColor;
       this.loadGymMap();
     },
   },
