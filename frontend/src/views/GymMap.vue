@@ -322,11 +322,13 @@ export default {
       const colorStyle = new Style({
         image: new Circle({
           fill: new Fill({
-            color: holdColor,
+            color: difficultyColor,
           }),
           stroke: new Stroke({
-            color: difficultyColor,
-            width: 5,
+            color: holdColor,
+            width: 6,
+            lineDash: [7.4, 8.05],
+            lineDashOffset: 3.45,
           }),
           radius: 10,
         }),
