@@ -124,6 +124,7 @@ export default {
           opacity: 0.3,
         }),
       }),
+      featureCollection: new Collection(),
       loaded: false,
     };
   },
@@ -170,15 +171,6 @@ export default {
           duration: 250,
         },
       });
-    },
-    /**
-     * OpenLayers feature collection containing the geographic features in the
-     * map
-     *
-     * @returns {Collection} the feature collection
-     */
-    featureCollection() {
-      return new Collection();
     },
     /**
      * The map's extent
@@ -284,9 +276,6 @@ export default {
           ));
           this.source.addFeature(feature);
         });
-        // Set handler for associating created boulders to popover
-        this.featureCollection.on('add',
-            (event) => this.popover.feature = event.element);
         // Set handler for opening popup on draw
         this.drawInteraction.on('drawend', this.openPopover);
         this.loaded = true;
@@ -340,8 +329,8 @@ export default {
      * level todo: add more
      */
     updateDifficultyLevel(event) {
-      this.popover.feature.setStyle(
-          this.getBoulderStyle(event.color, event.color));
+      this.featureCollection.getArray().at(-1)
+          .setStyle(this.getBoulderStyle(event.color, event.color));
       this.selectedColor = this.colorOptions.filter(
           (colorOption) => colorOption.color === event.color)[0];
     },
@@ -349,7 +338,7 @@ export default {
      * todo
      */
     updateHoldColor(event) {
-      this.popover.feature.setStyle(
+      this.featureCollection.getArray().at(-1).setStyle(
           this.getBoulderStyle(event.color, this.selectedDifficulty.color));
     },
     /**
@@ -359,7 +348,7 @@ export default {
      * @returns {boolean} false (don't follow the ref)
      */
     closePopover() {
-      this.featureCollection.remove(this.popover.feature);
+      this.featureCollection.pop();
       this.popover.setPosition(undefined);
       return false;
     },
