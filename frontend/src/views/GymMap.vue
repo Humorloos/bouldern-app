@@ -211,8 +211,7 @@ export default {
      *
      * @returns {VectorSource} the vector source
      */
-    source() {
-      // todo rename to vectorsource
+    vectorSource() {
       return new VectorSource({
         features: this.featureCollection,
         useSpatialIndex: false, // improves performance
@@ -227,7 +226,7 @@ export default {
     drawInteraction() {
       const drawInteraction = new Draw({
         type: 'Point',
-        source: this.source,
+        source: this.vectorSource,
         condition: (event) => containsCoordinate(this.extent, event.coordinate),
       });
       drawInteraction.on('drawend', this.openPopover);
@@ -246,7 +245,7 @@ export default {
           this.imageLayer,
           // This layer is where icons are drawn on
           new VectorLayer({
-            source: this.source,
+            source: this.vectorSource,
             updateWhileAnimating: true,
             updateWhileInteracting: true,
           }),
@@ -322,7 +321,7 @@ export default {
                 boulder.color.color,
                 boulder.difficulty.color.color,
             ));
-            this.source.addFeature(feature);
+            this.vectorSource.addFeature(feature);
           });
           if (onLoaded) onLoaded();
         };
