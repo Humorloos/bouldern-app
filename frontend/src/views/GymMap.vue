@@ -364,6 +364,9 @@ export default {
      * @param event the add feature event
      */
     openPopover(event) {
+      event.feature.setStyle(this.getBoulderStyle(
+          this.selectedColor.color, this.selectedDifficulty.color));
+
       const geometry = event.feature.getGeometry();
       this.selectedCoordinates = this.jsonFormat
           .writeGeometryObject(geometry);
