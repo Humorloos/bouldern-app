@@ -225,11 +225,13 @@ export default {
      * @returns {Draw} the draw interaction
      */
     drawInteraction() {
-      return new Draw({
+      const drawInteraction = new Draw({
         type: 'Point',
         source: this.source,
         condition: (event) => containsCoordinate(this.extent, event.coordinate),
       });
+      drawInteraction.on('drawend', this.openPopover);
+      return drawInteraction;
     },
     /**
      * Initializes the gym map with image layer, vector layer, popover, and
@@ -332,7 +334,6 @@ export default {
      */
     onGymMapLoaded() {
       // Set handler for opening popup on draw
-      this.drawInteraction.on('drawend', this.openPopover);
       this.loaded = true;
       this.map;
     },
