@@ -172,12 +172,12 @@ export default {
      * @returns {string} the name of the gym of which to show the map
      */
     gymName() {
-      if (this.$route.fullPath === '/') {
-        return this.activeGym;
-      } else {
+      if (this.$route.matched.some(({name}) => name==='gymMap')) {
         const gymName = this.$route.params.gymName;
         this.setActiveGym(gymName);
         return gymName;
+      } else {
+        return this.activeGym;
       }
     },
     /**

@@ -35,6 +35,7 @@ const router = createRouter({
       path: '/gym-map/:gymName',
       component: GymMapView,
       meta: {requiresAuth: true},
+      name: 'gymMap',
     },
     {
       path: '/registration/account-confirm-email/:key',
