@@ -145,6 +145,7 @@ export default {
      */
     imageLayer() {
       return new ImageLayer({
+        className: 'image-layer',
         source: this.mapImageSource,
       });
     },
@@ -155,6 +156,7 @@ export default {
      */
     vectorLayer() {
       return new VectorLayer({
+        className: 'vector-layer',
         source: this.vectorSource,
         updateWhileAnimating: true,
         updateWhileInteracting: true,
