@@ -127,7 +127,7 @@ export default {
     /**
      * The openlayers gym map image source to be used in the image layer.
      *
-     * @returns {Static} the map image source.
+     * @returns {ImageStatic} the map image source.
      */
     mapImageSource() {
       return new ImageStatic({
