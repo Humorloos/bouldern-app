@@ -115,6 +115,7 @@ export default {
           opacity: 0.3,
         }),
       }),
+      extent: [0, 0, 0, 0],
       featureCollection: new Collection(),
       loaded: false,
     };
@@ -199,14 +200,6 @@ export default {
       });
     },
     /**
-     * The map's extent
-     *
-     * @returns {number[]} the map's extent
-     */
-    extent() {
-      return [0, 0, this.mapImage.width, this.mapImage.height];
-    },
-    /**
      * Projecton from image coordinates to geo-coordinates
      *
      * @returns {Projection} the projection
@@ -254,15 +247,8 @@ export default {
       // Initialize map
       const map = new Map({
         target: this.$refs['map-root'],
-        view: new View({
-          projection: this.projection,
-          center: getCenter(this.extent),
-          zoom: 1,
-          maxZoom: 8,
-        }),
       });
       map.addOverlay(this.popover);
-      map.addInteraction(this.drawInteraction);
       return map;
     },
   },
@@ -317,6 +303,19 @@ export default {
         this.gym = response.data[0];
         this.mapImage.src = this.gym.map;
         this.mapImage.onload = () => {
+          this.extent = [0, 0, this.mapImage.width, this.mapImage.height];
+          this.map.setLayers([
+            this.imageLayer,
+            this.vectorLayer,
+          ]);
+          this.map.setView(new View({
+            projection: this.projection,
+            center: getCenter(this.extent),
+            zoom: 1,
+            maxZoom: 8,
+          }));
+          this.map.removeInteraction(this.drawInteraction);
+          this.map.addInteraction(this.drawInteraction);
           // Populate with initial features
           this.gym.boulder_set.forEach((boulder) => {
             const feature = this.jsonFormat.readFeature(boulder.coordinates);
@@ -338,10 +337,6 @@ export default {
       // Set handler for opening popup on draw
       this.loaded = true;
       this.map;
-      this.map.setLayers([
-        this.imageLayer,
-        this.vectorLayer,
-      ]);
     },
     /**
      * Assigns the map image to the provided image. The purpose of this method
