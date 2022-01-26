@@ -234,7 +234,11 @@ export default {
       const drawInteraction = new Draw({
         type: 'Point',
         source: this.vectorSource,
-        condition: (event) => containsCoordinate(this.extent, event.coordinate),
+        style: new Style({}),
+        condition: (event) => {
+          return containsCoordinate(this.extent, event.coordinate) &&
+              !this.hasBoulderAtPixel(event.pixel);
+        },
       });
       drawInteraction.on('drawend', this.openPopover);
       return drawInteraction;
