@@ -294,6 +294,12 @@ export default {
       requestWithJwt: 'requestWithJwt',
     }),
     /**
+     * todo
+     */
+    checkLayer(layerCandidate) {
+      return layerCandidate.getClassName() === this.vectorLayer.getClassName();
+    },
+    /**
      * Gets the gym data from the API, loads the gym map image, and deserializes
      * the gym's boulders into the feature collection
      */
@@ -318,6 +324,13 @@ export default {
           }));
           this.map.removeInteraction(this.drawInteraction);
           this.map.addInteraction(this.drawInteraction);
+          this.map.on('pointermove', (event) => {
+            const pixel = this.map.getEventPixel(event.originalEvent);
+            const hit = this.map.hasFeatureAtPixel(pixel, {
+              layerFilter: this.checkLayer,
+            });
+            this.map.getTarget().style.cursor = hit ? 'pointer' : '';
+          });
           // Populate with initial features
           this.gym.boulder_set.forEach((boulder) => {
             const feature = this.jsonFormat.readFeature(boulder.coordinates);
