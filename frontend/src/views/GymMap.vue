@@ -300,6 +300,14 @@ export default {
       return layerCandidate.getClassName() === this.vectorLayer.getClassName();
     },
     /**
+     * todo
+     */
+    hasBoulderAtPixel(pixel) {
+      return this.map.hasFeatureAtPixel(pixel, {
+        layerFilter: this.checkLayer,
+      });
+    },
+    /**
      * Gets the gym data from the API, loads the gym map image, and deserializes
      * the gym's boulders into the feature collection
      */
@@ -326,9 +334,7 @@ export default {
           this.map.addInteraction(this.drawInteraction);
           this.map.on('pointermove', (event) => {
             const pixel = this.map.getEventPixel(event.originalEvent);
-            const hit = this.map.hasFeatureAtPixel(pixel, {
-              layerFilter: this.checkLayer,
-            });
+            const hit = this.hasBoulderAtPixel(pixel);
             this.map.getTarget().style.cursor = hit ? 'pointer' : '';
           });
           // Populate with initial features
