@@ -111,8 +111,8 @@ export default {
         image: new Icon({
           src: this.axios.defaults.baseURL +
               'static/bouldern/images/shadow.png',
-          scale: 0.5,
-          opacity: 0.3,
+          scale: 0.34,
+          opacity: 0.6,
         }),
       }),
       extent: [0, 0, 0, 0],
@@ -400,7 +400,7 @@ export default {
           radius: 10,
         }),
       });
-      return [colorStyle, this.shadowStyle];
+      return [this.shadowStyle, colorStyle];
     },
     /**
      * Adjusts the currently selected hold color when selecting a difficulty
