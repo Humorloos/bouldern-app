@@ -255,6 +255,11 @@ export default {
         target: this.$refs['map-root'],
       });
       map.addOverlay(this.popover);
+      map.on('pointermove', (event) => {
+        const pixel = map.getEventPixel(event.originalEvent);
+        const hit = this.hasBoulderAtPixel(pixel);
+        map.getTarget().style.cursor = hit ? 'pointer' : '';
+      });
       return map;
     },
   },
@@ -336,11 +341,6 @@ export default {
           }));
           this.map.removeInteraction(this.drawInteraction);
           this.map.addInteraction(this.drawInteraction);
-          this.map.on('pointermove', (event) => {
-            const pixel = this.map.getEventPixel(event.originalEvent);
-            const hit = this.hasBoulderAtPixel(pixel);
-            this.map.getTarget().style.cursor = hit ? 'pointer' : '';
-          });
           // Populate with initial features
           this.gym.boulder_set.forEach((boulder) => {
             const feature = this.jsonFormat.readFeature(boulder.coordinates);
