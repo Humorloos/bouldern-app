@@ -148,6 +148,18 @@ export default {
       });
     },
     /**
+     * This layer is where icons are drawn on
+     *
+     * @returns {VectorLayer} the vector layer
+     */
+    vectorLayer() {
+      return new VectorLayer({
+        source: this.vectorSource,
+        updateWhileAnimating: true,
+        updateWhileInteracting: true,
+      });
+    },
+    /**
      * The options for the difficulty level of newly created boulders
      *
      * @returns {{color: *, name: *, id: *}[]} the difficulty level options
@@ -243,12 +255,7 @@ export default {
       const map = new Map({
         layers: [
           this.imageLayer,
-          // This layer is where icons are drawn on
-          new VectorLayer({
-            source: this.vectorSource,
-            updateWhileAnimating: true,
-            updateWhileInteracting: true,
-          }),
+          this.vectorLayer,
         ],
         target: this.$refs['map-root'],
         view: new View({
