@@ -115,6 +115,7 @@ export default {
           opacity: 0.3,
         }),
       }),
+      extent: [0, 0, 0, 0],
       featureCollection: new Collection(),
       loaded: false,
     };
@@ -127,7 +128,7 @@ export default {
     /**
      * The openlayers gym map image source to be used in the image layer.
      *
-     * @returns {Static} the map image source.
+     * @returns {ImageStatic} the map image source.
      */
     mapImageSource() {
       return new ImageStatic({
@@ -145,6 +146,18 @@ export default {
     imageLayer() {
       return new ImageLayer({
         source: this.mapImageSource,
+      });
+    },
+    /**
+     * This layer is where icons are drawn on
+     *
+     * @returns {VectorLayer} the vector layer
+     */
+    vectorLayer() {
+      return new VectorLayer({
+        source: this.vectorSource,
+        updateWhileAnimating: true,
+        updateWhileInteracting: true,
       });
     },
     /**
@@ -185,14 +198,6 @@ export default {
           duration: 250,
         },
       });
-    },
-    /**
-     * The map's extent
-     *
-     * @returns {number[]} the map's extent
-     */
-    extent() {
-      return [0, 0, this.mapImage.width, this.mapImage.height];
     },
     /**
      * Projecton from image coordinates to geo-coordinates
@@ -241,25 +246,9 @@ export default {
     map() {
       // Initialize map
       const map = new Map({
-        layers: [
-          this.imageLayer,
-          // This layer is where icons are drawn on
-          new VectorLayer({
-            source: this.vectorSource,
-            updateWhileAnimating: true,
-            updateWhileInteracting: true,
-          }),
-        ],
         target: this.$refs['map-root'],
-        view: new View({
-          projection: this.projection,
-          center: getCenter(this.extent),
-          zoom: 1,
-          maxZoom: 8,
-        }),
       });
       map.addOverlay(this.popover);
-      map.addInteraction(this.drawInteraction);
       return map;
     },
   },
@@ -314,6 +303,19 @@ export default {
         this.gym = response.data[0];
         this.mapImage.src = this.gym.map;
         this.mapImage.onload = () => {
+          this.extent = [0, 0, this.mapImage.width, this.mapImage.height];
+          this.map.setLayers([
+            this.imageLayer,
+            this.vectorLayer,
+          ]);
+          this.map.setView(new View({
+            projection: this.projection,
+            center: getCenter(this.extent),
+            zoom: 1,
+            maxZoom: 8,
+          }));
+          this.map.removeInteraction(this.drawInteraction);
+          this.map.addInteraction(this.drawInteraction);
           // Populate with initial features
           this.gym.boulder_set.forEach((boulder) => {
             const feature = this.jsonFormat.readFeature(boulder.coordinates);
