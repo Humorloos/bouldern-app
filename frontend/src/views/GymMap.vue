@@ -253,10 +253,6 @@ export default {
     map() {
       // Initialize map
       const map = new Map({
-        layers: [
-          this.imageLayer,
-          this.vectorLayer,
-        ],
         target: this.$refs['map-root'],
         view: new View({
           projection: this.projection,
@@ -342,6 +338,10 @@ export default {
       // Set handler for opening popup on draw
       this.loaded = true;
       this.map;
+      this.map.setLayers([
+        this.imageLayer,
+        this.vectorLayer,
+      ]);
     },
     /**
      * Assigns the map image to the provided image. The purpose of this method
