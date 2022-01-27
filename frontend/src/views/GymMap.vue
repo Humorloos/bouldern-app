@@ -5,16 +5,16 @@
     class="ol-popup"
     :style="{visibility: loaded ? 'visible' : 'hidden'}"
   >
+    <v-btn
+      id="popup-closer"
+      flat
+      size="small"
+      icon="mdi-close"
+      href="#"
+      class="ol-popup-closer"
+      @click="closePopover"
+    />
     <v-container id="popup-content">
-      <v-btn
-        id="popup-closer"
-        flat
-        size="small"
-        icon="mdi-close"
-        href="#"
-        class="ol-popup-closer"
-        @click="closePopover"
-      />
       <v-row>
         <v-col>
           Difficulty:
@@ -429,15 +429,12 @@ export default {
           this.getBoulderStyle(event.color, this.selectedDifficulty.color));
     },
     /**
-     * Removes the popover's feature from the featureCollection and blurs the
-     * popover.
-     *
-     * @returns {boolean} false (don't follow the ref)
+     * If in create mode, removes the popover's feature from the
+     * featureCollection and (always) blurs the popover.
      */
     closePopover() {
-      this.featureCollection.pop();
+      if (this.creating) this.featureCollection.pop();
       this.popover.setPosition(undefined);
-      return false;
     },
     /**
      * Blurs the popover
