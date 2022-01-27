@@ -260,6 +260,11 @@ export default {
         const hit = this.hasBoulderAtPixel(pixel);
         map.getTarget().style.cursor = hit ? 'pointer' : '';
       });
+      map.on('click', (event) => {
+        const feature = map.forEachFeatureAtPixel(event.pixel,
+            (feature) => feature);
+        console.log(feature);
+      });
       return map;
     },
   },
