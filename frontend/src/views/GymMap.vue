@@ -14,7 +14,10 @@
       class="ol-popup-closer"
       @click="closePopover"
     />
-    <v-container id="popup-content">
+    <v-container
+      v-if="creating"
+      id="popup-content"
+    >
       <v-row>
         <v-col>
           Difficulty:
@@ -51,6 +54,7 @@
         </v-col>
       </v-row>
     </v-container>
+    <v-container v-else />
   </div>
   <div
     id="map-root"
