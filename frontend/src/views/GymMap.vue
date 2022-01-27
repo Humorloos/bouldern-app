@@ -107,9 +107,6 @@ export default {
   data() {
     return {
       gym: {
-        boulder_set: [{
-          coordinates: '',
-        }],
         map: '',
         id: 0,
         difficultylevel_set: [{
@@ -118,6 +115,9 @@ export default {
           color: defaultColor,
         }],
       },
+      boulders: [{
+        coordinates: '',
+      }],
       colorOptions: [defaultColor],
       selectedCoordinates: {},
       selectedDifficulty: defaultColor,
@@ -364,17 +364,24 @@ export default {
           }));
           this.map.removeInteraction(this.drawInteraction);
           this.map.addInteraction(this.drawInteraction);
+          if (onLoaded) onLoaded();
+        };
+        this.requestWithJwt({
+          method: 'GET',
+          apiPath: `/bouldern/gym/${this.gym.id}/boulder/?is_active=true`,
+        }).then((response) => {
+          this.boulders = response.data;
           // Populate with initial features
-          this.gym.boulder_set.forEach((boulder) => {
+          this.boulders.forEach((boulder) => {
             const feature = this.jsonFormat.readFeature(boulder.coordinates);
+            feature.id = boulder.id;
             feature.setStyle(this.getBoulderStyle(
                 boulder.color.color,
                 boulder.difficulty.color.color,
             ));
             this.vectorSource.addFeature(feature);
           });
-          if (onLoaded) onLoaded();
-        };
+        });
       });
     },
     /**
