@@ -17,7 +17,8 @@ class ColorAPI(ReversibleViewSet, ListModelMixin, CreateModelMixin):
     serializer_class = ColorSerializer
 
     def perform_create(self, serializer):
-        serializer.save(created_by=self.request.user)
+        serializer.save(created_by=self.request.user,
+                        modified_by=self.request.user)
 
 
 class GymAPI(ReversibleViewSet, ModelViewSet):
@@ -29,7 +30,8 @@ class GymAPI(ReversibleViewSet, ModelViewSet):
     filter_fields = ['name']
 
     def perform_create(self, serializer):
-        serializer.save(created_by=self.request.user)
+        serializer.save(created_by=self.request.user,
+                        modified_by=self.request.user)
 
 
 class BoulderAPI(ReversibleViewSet, ListModelMixin, CreateModelMixin):
@@ -43,6 +45,7 @@ class BoulderAPI(ReversibleViewSet, ListModelMixin, CreateModelMixin):
 
     def perform_create(self, serializer):
         serializer.save(created_by=self.request.user,
+                        modified_by=self.request.user,
                         gym=Gym.objects.get(pk=self.kwargs['gym_pk']))
 
 
