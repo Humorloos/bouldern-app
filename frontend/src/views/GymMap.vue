@@ -53,7 +53,21 @@
         </v-col>
       </v-row>
     </v-container>
-    <v-container v-else />
+    <v-container v-else>
+      <v-row>
+        <v-col>
+          <v-btn
+            id="retire-boulder"
+            flat
+            @click="retireBoulder"
+          >
+            <div>retire</div>
+            <br>
+            <v-icon>mdi-package-down</v-icon>
+          </v-btn>
+        </v-col>
+      </v-row>
+    </v-container>
   </div>
   <div
     id="map-root"
