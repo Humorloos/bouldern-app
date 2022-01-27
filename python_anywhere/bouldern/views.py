@@ -39,6 +39,8 @@ class BoulderAPI(ReversibleViewSet, ModelViewSet):
     basename = 'boulder'
     queryset = Boulder.objects.all()
     serializer_class = BoulderSerializer
+    filter_backends = [DjangoFilterBackend]
+    filter_fields = ['is_active']
 
     def get_queryset(self):
         return Boulder.objects.filter(gym_id=self.kwargs['gym_pk'])
