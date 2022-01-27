@@ -5,16 +5,19 @@
     class="ol-popup"
     :style="{visibility: loaded ? 'visible' : 'hidden'}"
   >
-    <v-container id="popup-content">
-      <v-btn
-        id="popup-closer"
-        flat
-        size="small"
-        icon="mdi-close"
-        href="#"
-        class="ol-popup-closer"
-        @click="closePopover"
-      />
+    <v-btn
+      id="popup-closer"
+      flat
+      size="small"
+      icon="mdi-close"
+      href="#"
+      class="ol-popup-closer"
+      @click="closePopover"
+    />
+    <v-container
+      v-if="creating"
+      id="popup-content"
+    >
       <v-row>
         <v-col>
           Difficulty:
@@ -51,6 +54,7 @@
         </v-col>
       </v-row>
     </v-container>
+    <v-container v-else />
   </div>
   <div
     id="map-root"
@@ -111,13 +115,14 @@ export default {
         image: new Icon({
           src: this.axios.defaults.baseURL +
               'static/bouldern/images/shadow.png',
-          scale: 0.5,
-          opacity: 0.3,
+          scale: 0.34,
+          opacity: 0.6,
         }),
       }),
       extent: [0, 0, 0, 0],
       featureCollection: new Collection(),
       loaded: false,
+      creating: false,
     };
   },
   computed: {
@@ -145,6 +150,7 @@ export default {
      */
     imageLayer() {
       return new ImageLayer({
+        className: 'image-layer',
         source: this.mapImageSource,
       });
     },
@@ -155,6 +161,7 @@ export default {
      */
     vectorLayer() {
       return new VectorLayer({
+        className: 'vector-layer',
         source: this.vectorSource,
         updateWhileAnimating: true,
         updateWhileInteracting: true,
@@ -177,7 +184,7 @@ export default {
      * @returns {string} the name of the gym of which to show the map
      */
     gymName() {
-      if (this.$route.matched.some(({name}) => name==='gymMap')) {
+      if (this.$route.matched.some(({name}) => name === 'gymMap')) {
         const gymName = this.$route.params.gymName;
         this.setActiveGym(gymName);
         return gymName;
@@ -186,7 +193,7 @@ export default {
       }
     },
     /**
-     * Popover showing the position the user clicked
+     * Popover for creating or editing boulders
      *
      * @returns {Overlay} the popover
      */
@@ -232,7 +239,11 @@ export default {
       const drawInteraction = new Draw({
         type: 'Point',
         source: this.vectorSource,
-        condition: (event) => containsCoordinate(this.extent, event.coordinate),
+        style: new Style({}),
+        condition: (event) => {
+          return containsCoordinate(this.extent, event.coordinate) &&
+              !this.hasBoulderAtPixel(event.pixel);
+        },
       });
       drawInteraction.on('drawend', this.openPopover);
       return drawInteraction;
@@ -249,6 +260,16 @@ export default {
         target: this.$refs['map-root'],
       });
       map.addOverlay(this.popover);
+      map.on('pointermove', (event) => {
+        const pixel = map.getEventPixel(event.originalEvent);
+        const hit = this.hasBoulderAtPixel(pixel);
+        map.getTarget().style.cursor = hit ? 'pointer' : '';
+      });
+      map.on('click', (event) => {
+        const feature = map
+            .forEachFeatureAtPixel(event.pixel, (feature) => feature);
+        if (feature) this.openPopover(feature);
+      });
       return map;
     },
   },
@@ -292,6 +313,20 @@ export default {
       requestWithJwt: 'requestWithJwt',
     }),
     /**
+     * todo
+     */
+    checkLayer(layerCandidate) {
+      return layerCandidate.getClassName() === this.vectorLayer.getClassName();
+    },
+    /**
+     * todo
+     */
+    hasBoulderAtPixel(pixel) {
+      return this.map.hasFeatureAtPixel(pixel, {
+        layerFilter: this.checkLayer,
+      });
+    },
+    /**
      * Gets the gym data from the API, loads the gym map image, and deserializes
      * the gym's boulders into the feature collection
      */
@@ -330,11 +365,10 @@ export default {
       });
     },
     /**
-     * Registers the draw interaction, sets the loaded flag and initializes the
+     * Sets the loaded flag and initializes the
      * map
      */
     onGymMapLoaded() {
-      // Set handler for opening popup on draw
       this.loaded = true;
       this.map;
     },
@@ -375,7 +409,7 @@ export default {
           radius: 10,
         }),
       });
-      return [colorStyle, this.shadowStyle];
+      return [this.shadowStyle, colorStyle];
     },
     /**
      * Adjusts the currently selected hold color when selecting a difficulty
@@ -399,15 +433,12 @@ export default {
           this.getBoulderStyle(event.color, this.selectedDifficulty.color));
     },
     /**
-     * Removes the popover's feature from the featureCollection and blurs the
-     * popover.
-     *
-     * @returns {boolean} false (don't follow the ref)
+     * If in create mode, removes the popover's feature from the
+     * featureCollection and (always) blurs the popover.
      */
     closePopover() {
-      this.featureCollection.pop();
+      if (this.creating) this.featureCollection.pop();
       this.popover.setPosition(undefined);
-      return false;
     },
     /**
      * Blurs the popover
@@ -416,24 +447,29 @@ export default {
       this.popover.setPosition(undefined);
     },
     /**
-     * Handler for draw interaction. Sets created boulder as GeoJSON object and
-     * sets the position of the popover to the created boulder
+     * Opens the create / edit popover and closes the old one if still open. If
+     * called with draw event sets selected coordinates to the event's feature's
+     * coordinates and sets the drawn feature's style to the selected colors.
      *
-     * @param event the add feature event
+     * @param event the draw event or the clicked feature
      */
     openPopover(event) {
-      event.feature.setStyle(this.getBoulderStyle(
-          this.selectedColor.color, this.selectedDifficulty.color));
-
-      const geometry = event.feature.getGeometry();
-      this.selectedCoordinates = this.jsonFormat
-          .writeGeometryObject(geometry);
-
       if (this.popover.getPosition() !== undefined) {
         this.closePopover();
       }
-      const coordinate = geometry.getCoordinates();
-      this.popover.setPosition(coordinate);
+
+      this.creating = event.type === 'drawend';
+
+      const feature = this.creating ? event.feature : event;
+      const geometry = feature.getGeometry();
+      this.popover.setPosition(geometry.getCoordinates());
+
+      if (this.creating) {
+        this.selectedCoordinates = this.jsonFormat
+            .writeGeometryObject(geometry);
+        feature.setStyle(this.getBoulderStyle(
+            this.selectedColor.color, this.selectedDifficulty.color));
+      }
     },
   },
 };
