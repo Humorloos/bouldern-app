@@ -2,7 +2,7 @@
 from colorfield.fields import ColorField
 from django.contrib.gis.db.models import PointField
 from django.db.models import Model, CharField, ImageField, ForeignKey, \
-    SET_NULL, PositiveSmallIntegerField, DateTimeField, PROTECT
+    SET_NULL, PositiveSmallIntegerField, DateTimeField, PROTECT, BooleanField
 
 from python_anywhere.accounts.models import User
 
@@ -10,7 +10,14 @@ from python_anywhere.accounts.models import User
 class UGC(Model):
     """Abstract model for user-generated content"""
     created_at = DateTimeField(auto_now_add=True)
-    created_by = ForeignKey(User, on_delete=SET_NULL, null=True)
+    created_by = ForeignKey(
+        User, on_delete=SET_NULL, null=True, related_name='created_%(class)ss',
+        related_query_name='created_%(class)s')
+    modified_at = DateTimeField(auto_now=True)
+    modified_by = ForeignKey(
+        User, on_delete=SET_NULL, null=True, related_name='modified_%(class)ss',
+        related_query_name='modified_%(class)s')
+    is_active = BooleanField(default=True)
 
     class Meta:
         abstract = True
