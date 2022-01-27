@@ -64,6 +64,13 @@ describe('The gym map view', () => {
     cy.get('.v-app-bar-title__placeholder').click();
     cy.window().its(`${GymMapView.name}.$data.loaded`).should('equal', true);
   });
+
+  it('shows the edit popup when clicking a boulder', () => {
+    cy.visit('');
+    cy.window().its(`${GymMapView.name}.$data.loaded`).should('equal', true);
+    cy.get('#map-root').click(230, 330);
+    cy.get('#popup-closer').click();
+  });
 });
 
 describe('The gym creation view', () => {
