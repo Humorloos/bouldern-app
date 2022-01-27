@@ -1,10 +1,7 @@
-import json
-
 from django.utils.http import urlencode
 from rest_framework.status import HTTP_200_OK, HTTP_201_CREATED
 
 from python_anywhere.bouldern.models import Gym, DifficultyLevel
-from python_anywhere.bouldern.serializers import BoulderSerializer
 from python_anywhere.bouldern.views import GymAPI
 
 
@@ -69,8 +66,6 @@ def test_gym_api_get(logged_in_client_rest, colors):
     from python_anywhere.bouldern.factories import GymFactory
     correct_gym = GymFactory(name='testName')
     GymFactory()
-    from python_anywhere.bouldern.factories import BoulderFactory
-    boulders = [BoulderFactory(gym=correct_gym) for _ in range(3)]
     client, user = logged_in_client_rest
     # When
     response = client.get(f'{GymAPI().reverse_action("list")}?'
@@ -78,5 +73,3 @@ def test_gym_api_get(logged_in_client_rest, colors):
     # Then
     assert response.status_code == HTTP_200_OK
     assert set(response.data.serializer.instance) == {correct_gym}
-    assert json.loads(response.content)[0]['boulder_set'][0]['coordinates'] == \
-           BoulderSerializer(boulders[0]).data['coordinates']
