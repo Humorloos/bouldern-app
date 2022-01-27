@@ -10,7 +10,6 @@
       flat
       size="small"
       icon="mdi-close"
-      href="#"
       class="ol-popup-closer"
       @click="closePopover"
     />
