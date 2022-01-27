@@ -360,11 +360,10 @@ export default {
       });
     },
     /**
-     * Registers the draw interaction, sets the loaded flag and initializes the
+     * Sets the loaded flag and initializes the
      * map
      */
     onGymMapLoaded() {
-      // Set handler for opening popup on draw
       this.loaded = true;
       this.map;
     },
