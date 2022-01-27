@@ -34,7 +34,7 @@ class GymAPI(ReversibleViewSet, ModelViewSet):
                         modified_by=self.request.user)
 
 
-class BoulderAPI(ReversibleViewSet, ListModelMixin, CreateModelMixin):
+class BoulderAPI(ReversibleViewSet, ModelViewSet):
     """Rest API for reading and creating boulders in a specific gym"""
     basename = 'boulder'
     queryset = Boulder.objects.all()
