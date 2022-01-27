@@ -136,6 +136,7 @@ export default {
       featureCollection: new Collection(),
       loaded: false,
       creating: false,
+      selectedFeature: undefined,
     };
   },
   computed: {
@@ -437,7 +438,7 @@ export default {
      * added boulder to the provided event's color
      */
     updateDifficultyLevel(event) {
-      this.featureCollection.getArray().at(-1)
+      this.selectedFeature
           .setStyle(this.getBoulderStyle(event.color, event.color));
       this.selectedColor = this.colorOptions.filter(
           (colorOption) => colorOption.color === event.color)[0];
@@ -449,7 +450,7 @@ export default {
      * @param event a color select update event
      */
     updateHoldColor(event) {
-      this.featureCollection.getArray().at(-1).setStyle(
+      this.selectedFeature.setStyle(
           this.getBoulderStyle(event.color, this.selectedDifficulty.color));
     },
     /**
@@ -461,9 +462,25 @@ export default {
       this.popover.setPosition(undefined);
     },
     /**
+     *
+     */
+    retireBoulder() {
+      this.requestWithJwt({
+        apiPath: `/bouldern/gym/${this.gym.id}/boulder/` +
+            `${this.selectedFeature.id}/`,
+        method: 'PATCH',
+        data: {'is_active': false},
+      }).then((response) => {
+        console.log(response);
+      });
+      this.featureCollection.remove(this.selectedFeature);
+      this.closePopover();
+    },
+    /**
      * Blurs the popover
      */
-    onSubmitted() {
+    onSubmitted(response) {
+      this.selectedFeature.id = response.data.id;
       this.popover.setPosition(undefined);
     },
     /**
@@ -480,14 +497,14 @@ export default {
 
       this.creating = event.type === 'drawend';
 
-      const feature = this.creating ? event.feature : event;
-      const geometry = feature.getGeometry();
+      this.selectedFeature = this.creating ? event.feature : event;
+      const geometry = this.selectedFeature.getGeometry();
       this.popover.setPosition(geometry.getCoordinates());
 
       if (this.creating) {
         this.selectedCoordinates = this.jsonFormat
             .writeGeometryObject(geometry);
-        feature.setStyle(this.getBoulderStyle(
+        this.selectedFeature.setStyle(this.getBoulderStyle(
             this.selectedColor.color, this.selectedDifficulty.color));
       }
     },
