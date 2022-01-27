@@ -118,6 +118,7 @@ export default {
       extent: [0, 0, 0, 0],
       featureCollection: new Collection(),
       loaded: false,
+      creating: false,
     };
   },
   computed: {
@@ -188,7 +189,7 @@ export default {
       }
     },
     /**
-     * Popover showing the position the user clicked
+     * Popover for creating or editing boulders
      *
      * @returns {Overlay} the popover
      */
@@ -261,9 +262,9 @@ export default {
         map.getTarget().style.cursor = hit ? 'pointer' : '';
       });
       map.on('click', (event) => {
-        const feature = map.forEachFeatureAtPixel(event.pixel,
-            (feature) => feature);
-        console.log(feature);
+        const feature = map
+            .forEachFeatureAtPixel(event.pixel, (feature) => feature);
+        if (feature) this.openPopover(feature);
       });
       return map;
     },
@@ -445,24 +446,29 @@ export default {
       this.popover.setPosition(undefined);
     },
     /**
-     * Handler for draw interaction. Sets created boulder as GeoJSON object and
-     * sets the position of the popover to the created boulder
+     * Opens the create / edit popover and closes the old one if still open. If
+     * called with draw event sets selected coordinates to the event's feature's
+     * coordinates and sets the drawn feature's style to the selected colors.
      *
-     * @param event the add feature event
+     * @param event the draw event or the clicked feature
      */
     openPopover(event) {
-      event.feature.setStyle(this.getBoulderStyle(
-          this.selectedColor.color, this.selectedDifficulty.color));
-
-      const geometry = event.feature.getGeometry();
-      this.selectedCoordinates = this.jsonFormat
-          .writeGeometryObject(geometry);
-
       if (this.popover.getPosition() !== undefined) {
         this.closePopover();
       }
-      const coordinate = geometry.getCoordinates();
-      this.popover.setPosition(coordinate);
+
+      this.creating = event.type === 'drawend';
+
+      const feature = this.creating ? event.feature : event;
+      const geometry = feature.getGeometry();
+      this.popover.setPosition(geometry.getCoordinates());
+
+      if (this.creating) {
+        this.selectedCoordinates = this.jsonFormat
+            .writeGeometryObject(geometry);
+        feature.setStyle(this.getBoulderStyle(
+            this.selectedColor.color, this.selectedDifficulty.color));
+      }
     },
   },
 };
