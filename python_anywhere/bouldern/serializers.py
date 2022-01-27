@@ -37,7 +37,10 @@ class BoulderSerializer(ModelSerializer):
         model = Boulder
         fields = [
             'coordinates', 'gym', 'id', 'color', 'color_id', 'difficulty',
-            'difficulty_id']
+            'difficulty_id', 'is_active']
+        extra_kwargs = {
+            'is_active': {'write_only': True}
+        }
 
 
 class GymSerializer(ModelSerializer):
