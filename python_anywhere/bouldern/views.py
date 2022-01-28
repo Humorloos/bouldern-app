@@ -17,7 +17,8 @@ class ColorAPI(ReversibleViewSet, ListModelMixin, CreateModelMixin):
     serializer_class = ColorSerializer
 
     def perform_create(self, serializer):
-        serializer.save(created_by=self.request.user)
+        serializer.save(created_by=self.request.user,
+                        modified_by=self.request.user)
 
 
 class GymAPI(ReversibleViewSet, ModelViewSet):
@@ -29,20 +30,24 @@ class GymAPI(ReversibleViewSet, ModelViewSet):
     filter_fields = ['name']
 
     def perform_create(self, serializer):
-        serializer.save(created_by=self.request.user)
+        serializer.save(created_by=self.request.user,
+                        modified_by=self.request.user)
 
 
-class BoulderAPI(ReversibleViewSet, ListModelMixin, CreateModelMixin):
+class BoulderAPI(ReversibleViewSet, ModelViewSet):
     """Rest API for reading and creating boulders in a specific gym"""
     basename = 'boulder'
     queryset = Boulder.objects.all()
     serializer_class = BoulderSerializer
+    filter_backends = [DjangoFilterBackend]
+    filter_fields = ['is_active']
 
     def get_queryset(self):
         return Boulder.objects.filter(gym_id=self.kwargs['gym_pk'])
 
     def perform_create(self, serializer):
         serializer.save(created_by=self.request.user,
+                        modified_by=self.request.user,
                         gym=Gym.objects.get(pk=self.kwargs['gym_pk']))
 
 

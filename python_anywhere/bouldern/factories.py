@@ -4,7 +4,8 @@ This script contains factories for building model instances of the bouldern app
 
 from random import choice
 
-from factory import Iterator, Faker, LazyAttribute, RelatedFactoryList
+from factory import Iterator, Faker, LazyAttribute, RelatedFactoryList, \
+    SubFactory
 from factory.django import DjangoModelFactory, ImageField
 
 from python_anywhere.accounts.models import User
@@ -23,6 +24,7 @@ class UGCFactory(DjangoModelFactory):
         abstract = True
 
     created_by = User.objects.first()
+    modified_by = User.objects.first()
 
 
 class ColorFactory(UGCFactory):
@@ -68,7 +70,7 @@ class BoulderFactory(UGCFactory):
         model = Boulder
 
     coordinates = Faker('point')
-    gym = Gym.objects.first()
+    gym = SubFactory(GymFactory)
     # set random difficulty from the boulder's gym
     difficulty = LazyAttribute(
         lambda o: DifficultyLevel.objects.get(pk=choice(

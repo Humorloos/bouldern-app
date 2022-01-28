@@ -37,17 +37,19 @@ class BoulderSerializer(ModelSerializer):
         model = Boulder
         fields = [
             'coordinates', 'gym', 'id', 'color', 'color_id', 'difficulty',
-            'difficulty_id']
+            'difficulty_id', 'is_active']
+        extra_kwargs = {
+            'is_active': {'write_only': True}
+        }
 
 
 class GymSerializer(ModelSerializer):
     """Serializer for Gym instances"""
     difficultylevel_set = DifficultyLevelSerializer(many=True)
-    boulder_set = BoulderSerializer(many=True, required=False)
 
     class Meta:
         model = Gym
-        fields = ['name', 'map', 'id', 'difficultylevel_set', 'boulder_set']
+        fields = ['name', 'map', 'id', 'difficultylevel_set']
 
     def create(self, validated_data):
         difficultylevel_set_data = validated_data.pop('difficultylevel_set')
