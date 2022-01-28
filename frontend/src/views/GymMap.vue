@@ -330,15 +330,10 @@ export default {
     /**
      * todo
      */
-    checkLayer(layerCandidate) {
-      return layerCandidate.getClassName() === this.vectorLayer.getClassName();
-    },
-    /**
-     * todo
-     */
     hasBoulderAtPixel(pixel) {
       return this.map.hasFeatureAtPixel(pixel, {
-        layerFilter: this.checkLayer,
+        layerFilter: (layer) => layer
+            .getClassName() === this.vectorLayer.getClassName(),
       });
     },
     /**
