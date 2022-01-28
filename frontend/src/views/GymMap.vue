@@ -295,6 +295,7 @@ export default {
       this.featureCollection.clear();
       this.selectedDifficulty = defaultColor;
       this.selectedColor = defaultColor;
+      if (this.popover.getPosition()) this.closePopover();
       this.loadGymMap();
     },
   },
