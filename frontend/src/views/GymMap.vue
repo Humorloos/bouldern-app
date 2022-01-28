@@ -328,7 +328,10 @@ export default {
       requestWithJwt: 'requestWithJwt',
     }),
     /**
-     * todo
+     * Checks if the map has a boulder at the provided pixel
+     *
+     * @param pixel [X, Y] array to check at whether there is a boulder
+     * @returns {boolean} whether there is a boulder at the pixel or not
      */
     hasBoulderAtPixel(pixel) {
       return this.map.hasFeatureAtPixel(pixel, {
