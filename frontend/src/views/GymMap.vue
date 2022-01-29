@@ -67,6 +67,21 @@
           </v-btn>
         </v-col>
       </v-row>
+      <v-row>
+        <v-col>
+          <v-radio-group
+            v-model="selectedAscendResult"
+            @change="setAscendStyle"
+          >
+            <v-radio
+              v-for="(result, index) in ascendResults"
+              :key="index"
+              :label="result"
+              :value="index.toString()"
+            />
+          </v-radio-group>
+        </v-col>
+      </v-row>
     </v-container>
   </div>
   <div
@@ -137,6 +152,24 @@ export default {
       loaded: false,
       creating: false,
       selectedFeature: undefined,
+      selectedAscendResult: null,
+      ascendIcons: [
+        {
+          name: 'target-circle', color: '#eeede9', scale: 0.64,
+        },
+        {
+          name: 'check-circle', color: '#eeede9', scale: 0.7,
+        },
+        {
+          name: 'check-underline-circle', color: '#eeede9', scale: 0.7,
+        },
+      ].map(({name, color, scale}) => new Icon({
+        src: this.axios.defaults.baseURL +
+            `static/bouldern/images/${name}.svg`,
+        color: color,
+        anchor: [0.1, 0.1],
+        scale: scale,
+      })),
     };
   },
   computed: {
@@ -144,6 +177,14 @@ export default {
       authToken: 'authToken',
       activeGym: 'activeGym',
     }),
+    /**
+     * Selectable options for the result of an attempt to ascend a boulder.
+     *
+     * @returns {string[]} array of selectable options
+     */
+    ascendResults() {
+      return [0, 1, 2].map((i) => this.$t(`ascendResults[${i}]`));
+    },
     /**
      * The openlayers gym map image source to be used in the image layer.
      *
@@ -328,6 +369,26 @@ export default {
       requestWithJwt: 'requestWithJwt',
     }),
     /**
+     * todo
+     */
+    setAscendStyle() {
+      const style = this.selectedFeature.getStyle();
+      style[2] = new Style({
+        image: this.ascendIcons[this.selectedAscendResult],
+      });
+      this.selectedFeature.setStyle(style);
+    },
+    /**
+     * todo
+     */
+    reportAscend() {
+      this.requestWithJwt({
+        apiPath: `/bouldern/boulder/${this.selectedFeature.id}/ascend/`,
+        data: {'result': this.selectedAscendResult},
+      });
+      this.selectedFeature.ascendResult = this.selectedAscendResult;
+    },
+    /**
      * Checks if the map has a boulder at the provided pixel
      *
      * @param pixel [X, Y] array to check at whether there is a boulder
@@ -429,7 +490,7 @@ export default {
           radius: 10,
         }),
       });
-      return [this.shadowStyle, colorStyle];
+      return [this.shadowStyle, colorStyle, new Style({})];
     },
     /**
      * Adjusts the currently selected hold color when selecting a difficulty
@@ -457,11 +518,16 @@ export default {
      * featureCollection and (always) blurs the popover.
      */
     closePopover() {
-      if (this.creating) this.featureCollection.pop();
+      if (this.creating) {
+        this.featureCollection.pop();
+      } else {
+        this.reportAscend();
+      }
       this.popover.setPosition(undefined);
     },
+    // todo: rename this.selectedFeature to selectedBoulder
     /**
-     *
+     * todo
      */
     retireBoulder() {
       this.requestWithJwt({
@@ -505,6 +571,8 @@ export default {
             .writeGeometryObject(geometry);
         this.selectedFeature.setStyle(this.getBoulderStyle(
             this.selectedColor.color, this.selectedDifficulty.color));
+      } else {
+        this.selectedAscendResult = null;
       }
     },
   },
