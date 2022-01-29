@@ -4,9 +4,9 @@ from rest_framework.mixins import CreateModelMixin, ListModelMixin
 from rest_framework.viewsets import ModelViewSet, GenericViewSet
 from url_filter.integrations.drf import DjangoFilterBackend
 
-from python_anywhere.bouldern.models import Boulder, Gym, Color
+from python_anywhere.bouldern.models import Boulder, Gym, Color, Ascend
 from python_anywhere.bouldern.serializers import GymSerializer, ColorSerializer, \
-    BoulderSerializer
+    BoulderSerializer, AscendSerializer
 from python_anywhere.views import ReversibleViewSet
 
 
@@ -49,6 +49,18 @@ class BoulderAPI(ReversibleViewSet, ModelViewSet, CreateUGCMixin):
     def perform_create(self, serializer, **kwargs):
         super().perform_create(
             serializer, gym=Gym.objects.get(pk=self.kwargs['gym_pk']))
+
+
+class AscendAPI(ReversibleViewSet, CreateUGCMixin):
+    """Rest API for reading and creating boulders in a specific gym"""
+    basename = 'ascend'
+    queryset = Ascend.objects.all()
+    serializer_class = AscendSerializer
+
+    def perform_create(self, serializer, **kwargs):
+        super().perform_create(
+            serializer,
+            boulder=Boulder.objects.get(pk=self.kwargs['boulder_pk']))
 
 
 def index(request):
