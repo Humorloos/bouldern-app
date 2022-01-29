@@ -57,3 +57,20 @@ class Boulder(UGC):
     gym = ForeignKey(Gym, on_delete=SET_NULL, null=True)
     difficulty = ForeignKey(DifficultyLevel, on_delete=PROTECT, null=True)
     color = ForeignKey(Color, on_delete=PROTECT, null=True)
+
+
+class Ascend(UGC):
+    """An attempt to ascend a boulder"""
+
+    PROJECT = 0
+    TOP = 1
+    FLASH = 2
+
+    RESULT_CHOICES = (
+        (PROJECT, 'Project'),
+        (TOP, 'Top'),
+        (FLASH, 'Flash'),
+    )
+
+    result = PositiveSmallIntegerField(choices=RESULT_CHOICES)
+    boulder = ForeignKey(Boulder, on_delete=PROTECT)
