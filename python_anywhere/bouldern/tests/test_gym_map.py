@@ -2,8 +2,8 @@
 from django.utils.http import urlencode
 from rest_framework.status import HTTP_201_CREATED, HTTP_200_OK
 
-from python_anywhere.bouldern.models import Boulder
-from python_anywhere.bouldern.views import BoulderAPI
+from python_anywhere.bouldern.models import Boulder, Ascend
+from python_anywhere.bouldern.views import BoulderAPI, AscendAPI
 
 
 def test_boulder_api_post(logged_in_client_rest, colors):
@@ -72,3 +72,27 @@ def test_boulder_api_retire(logged_in_client_rest, colors):
     assert not Boulder.objects.get(pk=boulder_2_retire.pk).is_active
     assert all(b.is_active for b in Boulder.objects.filter(
         pk__in={b.pk for b in active_boulders}))
+
+
+def test_ascend_api_post(logged_in_client_rest, colors):
+    """Test that post method works correctly"""
+    # Given
+    client, user = logged_in_client_rest
+
+    from python_anywhere.bouldern.factories import BoulderFactory
+    boulder = BoulderFactory()
+
+    from python_anywhere.bouldern.factories import AscendFactory
+    ascend_stub = AscendFactory.stub(boulder=boulder)
+
+    # When
+    response = client.post(
+        AscendAPI().reverse_action('list', args=[boulder.pk]),
+        data={'result': ascend_stub.result}, format='json')
+
+    # Then
+    assert response.status_code == HTTP_201_CREATED
+    ascend = Ascend.objects.first()
+    assert ascend.created_by == user
+    assert ascend.result == ascend_stub.result
+    assert ascend.boulder == boulder
