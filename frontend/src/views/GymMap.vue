@@ -383,7 +383,8 @@ export default {
      */
     reportAscend() {
       this.requestWithJwt({
-        apiPath: `/bouldern/boulder/${this.selectedFeature.id}/ascend/`,
+        apiPath: `/bouldern/gym/${this.gym.id}/boulder/` +
+            `${this.selectedFeature.id}/ascend/`,
         data: {'result': this.selectedAscendResult},
       });
       this.selectedFeature.ascendResult = this.selectedAscendResult;

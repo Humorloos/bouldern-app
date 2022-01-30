@@ -87,7 +87,7 @@ def test_ascend_api_post(logged_in_client_rest, colors):
 
     # When
     response = client.post(
-        AscendAPI().reverse_action('list', args=[boulder.pk]),
+        AscendAPI().reverse_action('list', args=[boulder.gym.pk, boulder.pk]),
         data={'result': ascend_stub.result}, format='json')
 
     # Then
