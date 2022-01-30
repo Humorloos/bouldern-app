@@ -5,17 +5,24 @@
     class="ol-popup"
     :style="{visibility: loaded ? 'visible' : 'hidden'}"
   >
-    <v-btn
-      id="popup-closer"
-      flat
-      size="small"
-      icon="mdi-close"
-      class="ol-popup-closer"
-      @click="close"
-    />
     <v-container
       id="popup-content"
     >
+      <v-row>
+        <v-spacer />
+        <slot name="toolbar" />
+        <v-col
+          cols="2"
+        >
+          <v-btn
+            id="popup-closer"
+            flat
+            size="small"
+            icon="mdi-close"
+            @click="close"
+          />
+        </v-col>
+      </v-row>
       <slot name="content" />
     </v-container>
   </div>
@@ -81,7 +88,7 @@ export default {
   position: absolute;
   background-color: white;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
-  padding: 15px;
+  padding: 0 15px 15px;
   border-radius: 10px;
   border: 1px solid #cccccc;
   bottom: 12px;
@@ -111,13 +118,6 @@ export default {
   border-width: 11px;
   left: 48px;
   margin-left: -11px;
-}
-
-.ol-popup-closer {
-  text-decoration: none;
-  position: absolute;
-  top: 2px;
-  right: 8px;
 }
 
 </style>
