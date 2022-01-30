@@ -390,17 +390,21 @@ export default {
      * todo
      */
     reportAscend() {
-      // todo: only update if changed
       // todo: add save button, only report on save, not on close
       const ascendApiPath = `/bouldern/gym/${this.gym.id}/boulder/` +
           `${this.selectedFeature.id}/ascend/`;
-      if (this.selectedFeature.ascend) {
-        this.requestWithJwt({
-          apiPath: `${ascendApiPath}${this.selectedFeature.ascend.id}/`,
-          data: {'result': this.selectedAscendResult},
-          method: 'PUT',
-        });
-        this.selectedFeature.ascend.result = this.selectedAscendResult;
+      if (this.selectedFeature.ascend !== undefined) {
+        // only update ascend result if it has changed
+        if (this.selectedAscendResult !==
+            this.selectedFeature.ascend.result.toString()) {
+          this.requestWithJwt({
+            apiPath: `${ascendApiPath}${this.selectedFeature.ascend.id}/`,
+            data: {'result': this.selectedAscendResult},
+            method: 'PUT',
+          });
+          this.selectedFeature.ascend.result = this.selectedAscendResult;
+        }
+      //  If there was no ascend entry yet, create a new one
       } else {
         this.requestWithJwt({
           apiPath: ascendApiPath,
@@ -616,7 +620,7 @@ export default {
             this.selectedColor.color, this.selectedDifficulty.color));
       } else {
         this.selectedAscendResult = this.selectedFeature.ascend ?
-        this.selectedFeature.ascend.result.toString() : null;
+            this.selectedFeature.ascend.result.toString() : null;
       }
     },
   },
