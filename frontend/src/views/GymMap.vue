@@ -167,19 +167,19 @@ export default {
       selectedAscendResult: null,
       ascendIcons: [
         {
-          name: 'target-circle', color: '#eeede9', scale: 0.64,
+          name: 'target-circle', scale: 0.64,
         },
         {
-          name: 'check-circle', color: '#eeede9', scale: 0.7,
+          name: 'check-circle', scale: 0.7,
         },
         {
-          name: 'check-underline-circle', color: '#eeede9', scale: 0.7,
+          name: 'check-underline-circle', scale: 0.7,
         },
-      ].map(({name, color, scale}) => new Icon({
+      ].map(({name, scale}) => new Icon({
         src: this.axios.defaults.baseURL +
             `static/bouldern/images/${name}.svg`,
-        color: color,
-        anchor: [0.1, 0.1],
+        color: '#FFFFFF',
+        anchor: [0, 0],
         scale: scale,
       })),
     };
