@@ -476,19 +476,10 @@ export default {
       image.setImage(this.mapImage);
     },
     /**
-     * Generates the openlayers style for a boulder with the given hold and
-     * difficulty color. The style is a cirle with four small border segments
-     * where the cirle is colored in the boulder's difficulty color and the
-     * border segments are colored in the boulder's hold color. Behind this
-     * style there is another style that serves as the icon's shadow.
-     *
-     * @param holdColor the boulder's hold color
-     * @param difficultyColor the boulder's difficulty color
-     * @returns {Style[]} the boulder's style consisting of the two-colored icon
-     * and a shadow
+     * todo
      */
-    getBoulderStyle(holdColor, difficultyColor) {
-      const colorStyle = new Style({
+    getColorStyle: function(holdColor, difficultyColor) {
+      return new Style({
         image: new Circle({
           fill: new Fill({
             color: difficultyColor,
@@ -502,7 +493,26 @@ export default {
           radius: 10,
         }),
       });
-      return [this.shadowStyle, colorStyle, new Style({})];
+    },
+    /**
+     * Generates the openlayers style for a boulder with the given hold and
+     * difficulty color. The style is a cirle with four small border segments
+     * where the cirle is colored in the boulder's difficulty color and the
+     * border segments are colored in the boulder's hold color. Behind this
+     * style there is another style that serves as the icon's shadow. todo
+     *
+     * @param holdColor the boulder's hold color
+     * @param difficultyColor the boulder's difficulty color
+     * @param [ascendResult] todo
+     * @returns {Style[]} the boulder's style consisting of the two-colored icon
+     * and a shadow
+     */
+    getBoulderStyle(holdColor, difficultyColor, ascendResult) {
+      const colorStyle = this.getColorStyle(holdColor, difficultyColor);
+      const ascendStyle = ascendResult ? new Style({
+        image: this.ascendIcons[ascendResult],
+      }) : new Style({});
+      return [this.shadowStyle, colorStyle, ascendStyle];
     },
     /**
      * Adjusts the currently selected hold color when selecting a difficulty
