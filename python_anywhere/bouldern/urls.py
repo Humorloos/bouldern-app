@@ -10,12 +10,12 @@ router.register(GymAPI.basename, GymAPI)
 router.register(ColorAPI.basename, ColorAPI)
 router.register(BoulderAPI.basename, BoulderAPI)
 
-boulder_router = NestedSimpleRouter(router, BoulderAPI.basename,
-                                    lookup=BoulderAPI.basename)
-boulder_router.register(AscendAPI.basename, AscendAPI)
-
 gym_router = NestedSimpleRouter(router, GymAPI.basename,
                                 lookup=GymAPI.basename)
 gym_router.register(BoulderAPI.basename, BoulderAPI)
+
+boulder_router = NestedSimpleRouter(gym_router, BoulderAPI.basename,
+                                    lookup=BoulderAPI.basename)
+boulder_router.register(AscendAPI.basename, AscendAPI)
 
 urlpatterns = router.urls + gym_router.urls + boulder_router.urls
