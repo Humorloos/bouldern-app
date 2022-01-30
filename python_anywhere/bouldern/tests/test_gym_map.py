@@ -96,3 +96,27 @@ def test_ascend_api_post(logged_in_client_rest, colors):
     assert ascend.created_by == user
     assert ascend.result == ascend_stub.result
     assert ascend.boulder == boulder
+
+
+def test_ascend_api_put(logged_in_client_rest, colors):
+    """Test that put method works correctly"""
+    # Given
+    client, user = logged_in_client_rest
+
+    from python_anywhere.bouldern.factories import AscendFactory
+    ascend = AscendFactory(result=Ascend.PROJECT)
+
+    boulder = ascend.boulder
+    # todo: in ascend model, use texts from i18n file instead
+    # When
+    response = client.put(
+        AscendAPI().reverse_action(
+            'detail', args=[boulder.gym.pk, boulder.pk, ascend.pk]),
+        data={'result': Ascend.TOP}, format='json')
+
+    # Then
+    assert response.status_code == HTTP_200_OK
+    ascend = Ascend.objects.first()
+    assert ascend.created_by == user
+    assert ascend.result == Ascend.TOP
+    assert ascend.boulder == boulder
