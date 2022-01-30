@@ -87,8 +87,6 @@
             @click="reportAscend"
           >
             <div>save</div>
-            <br>
-            <v-icon>mdi-content-save</v-icon>
           </v-btn>
         </v-col>
       </v-row>
