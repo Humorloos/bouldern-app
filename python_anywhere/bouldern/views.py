@@ -1,4 +1,5 @@
 """Module containing the views of the bouldern app"""
+from django.db.models import Max
 from django.shortcuts import render
 from rest_framework.mixins import CreateModelMixin, ListModelMixin, \
     UpdateModelMixin
@@ -52,11 +53,19 @@ class BoulderAPI(ReversibleViewSet, ModelViewSet, CreateUGCMixin):
             serializer, gym=Gym.objects.get(pk=self.kwargs['gym_pk']))
 
 
-class AscendAPI(ReversibleViewSet, UpdateModelMixin, CreateUGCMixin):
+class AscendAPI(ReversibleViewSet, UpdateModelMixin, CreateUGCMixin,
+                ListModelMixin):
     """Rest API for reading and creating boulders in a specific gym"""
     basename = 'ascend'
     queryset = Ascend.objects.all()
     serializer_class = AscendSerializer
+
+    def get_queryset(self):
+        return Ascend.objects.filter(
+            created_by=self.request.user,
+            boulder__is_active=True,
+            boulder__gym__id=self.kwargs['gym_pk'],
+        )
 
     def perform_create(self, serializer, **kwargs):
         super().perform_create(
