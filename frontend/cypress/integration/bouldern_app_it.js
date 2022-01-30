@@ -68,8 +68,19 @@ describe('The gym map view', () => {
   it('shows the edit popup when clicking a boulder', () => {
     cy.visit('');
     cy.window().its(`${GymMapView.name}.$data.loaded`).should('equal', true);
-    cy.get('#map-root').click(230, 330);
+    cy.window().its(
+        `${GymMapView.name}.$refs.overlay.popover.autoPan.animation.duration`,
+    ).then((duration) => {
+      cy.wait(duration);
+    });
+    cy.get('#map-root').click(240, 340);
+    cy.contains($t('ascendResults[0]')).click();
     cy.get('#popup-closer').click();
+    cy.get('#map-root').click(50, 370);
+    cy.contains($t('ascendResults[0]')).click();
+    cy.get('#save-boulder').click();
+    cy.get('#map-root').click(50, 370);
+    cy.get('#retire-boulder').click();
   });
 });
 
