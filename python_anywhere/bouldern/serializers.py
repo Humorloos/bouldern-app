@@ -64,7 +64,8 @@ class GymSerializer(ModelSerializer):
 
 class AscendSerializer(ModelSerializer):
     """Serializer for Ascend instances"""
+    boulder = PrimaryKeyRelatedField(read_only=True)
 
     class Meta:
         model = Ascend
-        fields = ['result', 'id']
+        fields = ['result', 'id', 'boulder']
