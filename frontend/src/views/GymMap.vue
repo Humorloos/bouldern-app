@@ -5,6 +5,20 @@
     @close="onClosePopover"
   >
     <template
+      v-if="!creating"
+      #toolbar
+    >
+      <v-col cols="2">
+        <v-btn
+          id="retire-boulder"
+          flat
+          size="small"
+          icon="mdi-package-down"
+          @click="retireBoulder"
+        />
+      </v-col>
+    </template>
+    <template
       v-if="creating"
       #content
     >
@@ -48,19 +62,6 @@
       v-else
       #content
     >
-      <v-row>
-        <v-col>
-          <v-btn
-            id="retire-boulder"
-            flat
-            @click="retireBoulder"
-          >
-            <div>retire</div>
-            <br>
-            <v-icon>mdi-package-down</v-icon>
-          </v-btn>
-        </v-col>
-      </v-row>
       <v-row>
         <v-col>
           <v-radio-group
