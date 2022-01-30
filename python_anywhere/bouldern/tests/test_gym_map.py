@@ -2,6 +2,7 @@
 from django.utils.http import urlencode
 from rest_framework.status import HTTP_201_CREATED, HTTP_200_OK
 
+from python_anywhere.accounts.factories import UserFactory
 from python_anywhere.bouldern.models import Boulder, Ascend
 from python_anywhere.bouldern.views import BoulderAPI, AscendAPI
 
@@ -120,3 +121,36 @@ def test_ascend_api_put(logged_in_client_rest, colors):
     assert ascend.created_by == user
     assert ascend.result == Ascend.TOP
     assert ascend.boulder == boulder
+
+
+def test_ascend_api_get(logged_in_client_rest, colors):
+    """Test that get method works correctly"""
+    # Given
+    client, user = logged_in_client_rest
+
+    from python_anywhere.bouldern.factories import AscendFactory
+    ascend = AscendFactory()
+    boulder = ascend.boulder
+
+    other_user = UserFactory()
+    ascend_by_other_user = AscendFactory(created_by=other_user,
+                                         boulder=boulder)
+
+    ascend_in_other_gym = AscendFactory()
+
+    old_ascend = AscendFactory(
+        boulder__is_active=False,
+        boulder__gym=boulder.gym,
+    )
+
+    # When
+    response = client.get(
+        AscendAPI().reverse_action('list', args=[boulder.gym.pk, '_']))
+
+    # Then
+    assert response.status_code == HTTP_200_OK
+    ascends = set(response.data.serializer.instance)
+    assert ascends == {ascend}
+    assert ascend_by_other_user not in ascends
+    assert ascend_in_other_gym not in ascends
+    assert old_ascend not in ascends
