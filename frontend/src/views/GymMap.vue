@@ -572,7 +572,7 @@ export default {
         this.selectedFeature.setStyle(this.getBoulderStyle(
             this.selectedColor.color, this.selectedDifficulty.color));
       } else {
-        this.selectedAscendResult = null;
+        this.selectedAscendResult = this.selectedFeature.ascendResult;
       }
     },
   },
