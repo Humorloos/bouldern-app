@@ -53,6 +53,7 @@
               color_id: selectedColor.id,
               difficulty_id: selectedDifficulty.id,
             }"
+            submit-button-label="Save"
             @submitted="onSubmitted"
           />
         </v-col>
@@ -325,7 +326,6 @@ export default {
       return map;
     },
   },
-  // todo rename submit button to save
   watch: {
     /**
      * Loads new gym map when gym name changes
