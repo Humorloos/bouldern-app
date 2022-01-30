@@ -390,23 +390,25 @@ export default {
      * todo
      */
     reportAscend() {
+      // todo: only update if changed
+      // todo: add save button, only report on save, not on close
       const ascendApiPath = `/bouldern/gym/${this.gym.id}/boulder/` +
           `${this.selectedFeature.id}/ascend/`;
       if (this.selectedFeature.ascend) {
         this.requestWithJwt({
-          apiPath: `${ascendApiPath}${this.selectedFeature.ascend.id}`,
+          apiPath: `${ascendApiPath}${this.selectedFeature.ascend.id}/`,
           data: {'result': this.selectedAscendResult},
           method: 'PUT',
         });
+        this.selectedFeature.ascend.result = this.selectedAscendResult;
       } else {
         this.requestWithJwt({
           apiPath: ascendApiPath,
           data: {'result': this.selectedAscendResult},
         }).then((response) => {
-          this.selectedFeature.ascend.id = response.data.id;
+          this.selectedFeature.ascend = response.data;
         });
       }
-      this.selectedFeature.ascend.result = this.selectedAscendResult;
     },
     /**
      * Checks if the map has a boulder at the provided pixel
@@ -447,18 +449,30 @@ export default {
           this.map.addInteraction(this.drawInteraction);
           if (onLoaded) onLoaded();
         };
-        this.requestWithJwt({
-          method: 'GET',
-          apiPath: `/bouldern/gym/${this.gym.id}/boulder/?is_active=true`,
-        }).then((response) => {
-          this.boulders = response.data;
+        Promise.all([
+          this.requestWithJwt({
+            method: 'GET',
+            apiPath: `/bouldern/gym/${this.gym.id}/boulder/?is_active=true`,
+          }),
+          this.requestWithJwt({
+            method: 'GET',
+            apiPath: `/bouldern/gym/${this.gym.id}/boulder/_/ascend/`,
+          }),
+        ]).then(([boulderResponse, ascendResponse]) => {
+          this.boulders = boulderResponse.data;
+          this.boulders.forEach((boulder) => {
+            boulder.ascend = ascendResponse.data
+                .find((ascend) => ascend.boulder === boulder.id);
+          });
           // Populate with initial features
           this.boulders.forEach((boulder) => {
             const feature = this.jsonFormat.readFeature(boulder.coordinates);
             feature.id = boulder.id;
+            feature.ascend = boulder.ascend;
             feature.setStyle(this.getBoulderStyle(
                 boulder.color.color,
                 boulder.difficulty.color.color,
+                boulder.ascend ? boulder.ascend.result : undefined,
             ));
             this.vectorSource.addFeature(feature);
           });
@@ -517,9 +531,10 @@ export default {
      */
     getBoulderStyle(holdColor, difficultyColor, ascendResult) {
       const colorStyle = this.getColorStyle(holdColor, difficultyColor);
-      const ascendStyle = ascendResult ? new Style({
-        image: this.ascendIcons[ascendResult],
-      }) : new Style({});
+      const ascendStyle = ascendResult !== undefined ?
+          new Style({
+            image: this.ascendIcons[ascendResult],
+          }) : new Style({});
       return [this.shadowStyle, colorStyle, ascendStyle];
     },
     /**
@@ -600,7 +615,8 @@ export default {
         this.selectedFeature.setStyle(this.getBoulderStyle(
             this.selectedColor.color, this.selectedDifficulty.color));
       } else {
-        this.selectedAscendResult = this.selectedFeature.ascend.result;
+        this.selectedAscendResult = this.selectedFeature.ascend ?
+        this.selectedFeature.ascend.result : undefined;
       }
     },
   },
