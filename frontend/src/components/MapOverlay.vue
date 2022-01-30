@@ -29,7 +29,7 @@
 </template>
 
 <script>
-/** @file todo */
+/** @file Popup/Overlay for open layers map */
 
 import {Overlay} from 'ol';
 
@@ -61,7 +61,7 @@ export default {
   },
   methods: {
     /**
-     * todo
+     * If popover is open emits the 'close' event and closes (blurs) it.
      */
     close() {
       if (this.popover.getPosition() !== undefined) {
@@ -70,12 +70,12 @@ export default {
       }
     },
     /**
-     * todo
+     * Closes the popover and opens it at the provided coordinates
+     *
+     * @param coordinates coordinates at which to open the popover
      */
     open(coordinates) {
-      if (this.popover.getPosition() !== undefined) {
-        this.close();
-      }
+      this.close();
       this.popover.setPosition(coordinates);
     },
   },
