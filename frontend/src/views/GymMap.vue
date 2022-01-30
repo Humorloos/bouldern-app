@@ -407,6 +407,7 @@ export default {
             method: 'PUT',
           });
           this.selectedBoulder.ascend.result = this.selectedAscendResult;
+          this.$refs.overlay.close();
         }
         //  If there was no ascend entry yet, create a new one
       } else {
@@ -415,9 +416,9 @@ export default {
           data: {'result': this.selectedAscendResult},
         }).then((response) => {
           this.selectedBoulder.ascend = response.data;
+          this.$refs.overlay.close();
         });
       }
-      this.$refs.overlay.close();
     },
     /**
      * Checks if the map has a boulder at the provided pixel
@@ -583,14 +584,18 @@ export default {
           this.featureCollection.pop();
         }
       } else {
-        if (
-          this.selectedBoulder.ascend !== undefined &&
-            this.selectedBoulder.ascend.result.toString() !==
-            this.selectedAscendResult
-        ) {
-          this.selectedAscendResult =
-              this.selectedBoulder.ascend.result.toString();
-          this.setAscendStyle();
+        if (this.selectedBoulder.ascend !== undefined) {
+          if (this.selectedBoulder.ascend.result.toString() !==
+              this.selectedAscendResult) {
+            this.selectedAscendResult =
+                this.selectedBoulder.ascend.result.toString();
+            this.setAscendStyle();
+          }
+        } else {
+          if (this.selectedAscendResult !== null) {
+            this.selectedAscendResult = null;
+            this.setAscendStyle();
+          }
         }
       }
     },
