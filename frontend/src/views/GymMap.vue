@@ -151,7 +151,7 @@ export default {
       featureCollection: new Collection(),
       loaded: false,
       creating: false,
-      selectedFeature: undefined,
+      selectedFeature: {ascend: undefined},
       selectedAscendResult: null,
       ascendIcons: [
         {
@@ -382,12 +382,23 @@ export default {
      * todo
      */
     reportAscend() {
-      this.requestWithJwt({
-        apiPath: `/bouldern/gym/${this.gym.id}/boulder/` +
-            `${this.selectedFeature.id}/ascend/`,
-        data: {'result': this.selectedAscendResult},
-      });
-      this.selectedFeature.ascendResult = this.selectedAscendResult;
+      const ascendApiPath = `/bouldern/gym/${this.gym.id}/boulder/` +
+          `${this.selectedFeature.id}/ascend/`;
+      if (this.selectedFeature.ascend) {
+        this.requestWithJwt({
+          apiPath: `${ascendApiPath}${this.selectedFeature.ascend.id}`,
+          data: {'result': this.selectedAscendResult},
+          method: 'PUT',
+        });
+      } else {
+        this.requestWithJwt({
+          apiPath: ascendApiPath,
+          data: {'result': this.selectedAscendResult},
+        }).then((response) => {
+          this.selectedFeature.ascend.id = response.data.id;
+        });
+      }
+      this.selectedFeature.ascend.result = this.selectedAscendResult;
     },
     /**
      * Checks if the map has a boulder at the provided pixel
@@ -573,7 +584,7 @@ export default {
         this.selectedFeature.setStyle(this.getBoulderStyle(
             this.selectedColor.color, this.selectedDifficulty.color));
       } else {
-        this.selectedAscendResult = this.selectedFeature.ascendResult;
+        this.selectedAscendResult = this.selectedFeature.ascend.result;
       }
     },
   },
