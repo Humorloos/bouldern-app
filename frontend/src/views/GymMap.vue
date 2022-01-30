@@ -1,21 +1,12 @@
 <template>
-  <div
-    id="popup"
-    ref="popup"
-    class="ol-popup"
-    :style="{visibility: loaded ? 'visible' : 'hidden'}"
+  <map-overlay
+    ref="overlay"
+    :loaded="loaded"
+    @close="onClosePopover"
   >
-    <v-btn
-      id="popup-closer"
-      flat
-      size="small"
-      icon="mdi-close"
-      class="ol-popup-closer"
-      @click="closePopover"
-    />
-    <v-container
+    <template
       v-if="creating"
-      id="popup-content"
+      #content
     >
       <v-row>
         <v-col>
@@ -52,8 +43,11 @@
           />
         </v-col>
       </v-row>
-    </v-container>
-    <v-container v-else>
+    </template>
+    <template
+      v-else
+      #content
+    >
       <v-row>
         <v-col>
           <v-btn
@@ -96,8 +90,8 @@
           </v-btn>
         </v-col>
       </v-row>
-    </v-container>
-  </div>
+    </template>
+  </map-overlay>
   <div
     id="map-root"
     ref="map-root"
@@ -108,7 +102,7 @@
 /** @file view with interactive gym map */
 
 import {mapActions, mapMutations, mapState} from 'vuex';
-import {Collection, Overlay} from 'ol';
+import {Collection} from 'ol';
 import {Projection} from 'ol/proj';
 import {ImageStatic, Vector as VectorSource} from 'ol/source';
 import {Draw} from 'ol/interaction';
@@ -120,6 +114,7 @@ import {GeoJSON} from 'ol/format';
 import VueForm from '../components/VueForm.vue';
 import ColorSelect from '../components/ColorSelect.vue';
 import {Circle, Fill, Icon, Stroke, Style} from 'ol/style';
+import MapOverlay from '../components/MapOverlay.vue';
 
 const defaultColor = {
   name: '',
@@ -130,6 +125,7 @@ const defaultColor = {
 export default {
   name: 'GymMap',
   components: {
+    MapOverlay,
     VueForm,
     ColorSelect,
   },
@@ -262,20 +258,6 @@ export default {
       }
     },
     /**
-     * Popover for creating or editing boulders
-     *
-     * @returns {Overlay} the popover
-     */
-    popover() {
-      return new Overlay({
-        element: this.$refs['popup'],
-        autoPan: true,
-        autoPanAnimation: {
-          duration: 250,
-        },
-      });
-    },
-    /**
      * Projecton from image coordinates to geo-coordinates
      *
      * @returns {Projection} the projection
@@ -328,7 +310,7 @@ export default {
       const map = new Map({
         target: this.$refs['map-root'],
       });
-      map.addOverlay(this.popover);
+      map.addOverlay(this.$refs.overlay.popover);
       map.on('pointermove', (event) => {
         const pixel = map.getEventPixel(event.originalEvent);
         const hit = this.hasBoulderAtPixel(pixel);
@@ -342,6 +324,7 @@ export default {
       return map;
     },
   },
+  // todo rename submit button to save
   watch: {
     /**
      * Loads new gym map when gym name changes
@@ -350,7 +333,7 @@ export default {
       this.featureCollection.clear();
       this.selectedDifficulty = defaultColor;
       this.selectedColor = defaultColor;
-      if (this.popover.getPosition()) this.closePopover();
+      this.$refs.overlay.close();
       this.loadGymMap();
     },
   },
@@ -427,7 +410,7 @@ export default {
           this.selectedFeature.ascend = response.data;
         });
       }
-      this.closePopover();
+      this.$refs.overlay.close();
     },
     /**
      * Checks if the map has a boulder at the provided pixel
@@ -580,18 +563,22 @@ export default {
      * featureCollection, otherwise resets ascend status if it was changed. Then
      * (always) blurs the popover.
      */
-    closePopover() {
+    onClosePopover() {
       if (this.creating) {
-        this.featureCollection.pop();
+        if (this.selectedFeature.id === undefined) {
+          this.featureCollection.pop();
+        }
       } else {
-        if (this.selectedAscendResult !==
-            this.selectedFeature.ascend.result.toString()) {
+        if (
+          this.selectedFeature.ascend !== undefined &&
+            this.selectedFeature.ascend.result.toString() !==
+            this.selectedAscendResult
+        ) {
           this.selectedAscendResult =
               this.selectedFeature.ascend.result.toString();
           this.setAscendStyle();
         }
       }
-      this.popover.setPosition(undefined);
     },
     // todo: rename this.selectedFeature to selectedBoulder
     /**
@@ -603,18 +590,16 @@ export default {
             `${this.selectedFeature.id}/`,
         method: 'PATCH',
         data: {'is_active': false},
-      }).then((response) => {
-        console.log(response);
       });
       this.featureCollection.remove(this.selectedFeature);
-      this.closePopover();
+      this.$refs.overlay.close();
     },
     /**
      * Blurs the popover
      */
     onSubmitted(response) {
       this.selectedFeature.id = response.data.id;
-      this.popover.setPosition(undefined);
+      this.$refs.overlay.close();
     },
     /**
      * Opens the create / edit popover and closes the old one if still open. If
@@ -624,15 +609,10 @@ export default {
      * @param event the draw event or the clicked feature
      */
     openPopover(event) {
-      if (this.popover.getPosition() !== undefined) {
-        this.closePopover();
-      }
-
       this.creating = event.type === 'drawend';
 
       this.selectedFeature = this.creating ? event.feature : event;
       const geometry = this.selectedFeature.getGeometry();
-      this.popover.setPosition(geometry.getCoordinates());
 
       if (this.creating) {
         this.selectedCoordinates = this.jsonFormat
@@ -643,6 +623,7 @@ export default {
         this.selectedAscendResult = this.selectedFeature.ascend ?
             this.selectedFeature.ascend.result.toString() : null;
       }
+      this.$refs.overlay.open(geometry.getCoordinates());
     },
   },
 };
@@ -654,48 +635,5 @@ export default {
 #map-root {
   width: 100%;
   height: 100%;
-}
-
-.ol-popup {
-  position: absolute;
-  background-color: white;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
-  padding: 15px;
-  border-radius: 10px;
-  border: 1px solid #cccccc;
-  bottom: 12px;
-  left: -50px;
-  min-width: 320px;
-}
-
-.ol-popup:after, .ol-popup:before {
-  top: 100%;
-  border: solid transparent;
-  content: " ";
-  height: 0;
-  width: 0;
-  position: absolute;
-  pointer-events: none;
-}
-
-.ol-popup:after {
-  border-top-color: white;
-  border-width: 10px;
-  left: 48px;
-  margin-left: -10px;
-}
-
-.ol-popup:before {
-  border-top-color: #cccccc;
-  border-width: 11px;
-  left: 48px;
-  margin-left: -11px;
-}
-
-.ol-popup-closer {
-  text-decoration: none;
-  position: absolute;
-  top: 2px;
-  right: 8px;
 }
 </style>
