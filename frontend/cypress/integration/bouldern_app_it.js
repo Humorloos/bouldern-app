@@ -48,7 +48,7 @@ describe('The gym map view', () => {
     cy.contains('5').click();
     cy.get('#id-color-select').click();
     cy.contains('Yellow').click();
-    cy.contains('Submit').click();
+    cy.contains('Save').click();
   });
 
   it('loads the last opened gym at root', () => {
