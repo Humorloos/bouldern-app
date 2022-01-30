@@ -104,18 +104,18 @@
 
 import {mapActions, mapMutations, mapState} from 'vuex';
 import {Collection} from 'ol';
+import {containsCoordinate, getCenter} from 'ol/extent';
+import {GeoJSON} from 'ol/format';
+import {Draw} from 'ol/interaction';
+import {Image as ImageLayer, Vector as VectorLayer} from 'ol/layer';
+import Map from 'ol/Map';
 import {Projection} from 'ol/proj';
 import {ImageStatic, Vector as VectorSource} from 'ol/source';
-import {Draw} from 'ol/interaction';
-import {containsCoordinate, getCenter} from 'ol/extent';
-import Map from 'ol/Map';
-import {Image as ImageLayer, Vector as VectorLayer} from 'ol/layer';
-import View from 'ol/View';
-import {GeoJSON} from 'ol/format';
-import VueForm from '../components/VueForm.vue';
-import ColorSelect from '../components/ColorSelect.vue';
 import {Circle, Fill, Icon, Stroke, Style} from 'ol/style';
+import View from 'ol/View';
+import ColorSelect from '../components/ColorSelect.vue';
 import MapOverlay from '../components/MapOverlay.vue';
+import VueForm from '../components/VueForm.vue';
 
 const defaultColor = {
   name: '',
