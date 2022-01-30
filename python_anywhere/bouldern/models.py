@@ -66,11 +66,7 @@ class Ascend(UGC):
     TOP = 1
     FLASH = 2
 
-    RESULT_CHOICES = (
-        (PROJECT, 'Project'),
-        (TOP, 'Top'),
-        (FLASH, 'Flash'),
-    )
+    RESULT_CHOICES = ((PROJECT, ''), (TOP, ''), (FLASH, ''))
 
     result = PositiveSmallIntegerField(choices=RESULT_CHOICES)
     boulder = ForeignKey(Boulder, on_delete=PROTECT)
