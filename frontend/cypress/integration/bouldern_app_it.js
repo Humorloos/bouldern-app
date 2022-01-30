@@ -48,7 +48,7 @@ describe('The gym map view', () => {
     cy.contains('5').click();
     cy.get('#id-color-select').click();
     cy.contains('Yellow').click();
-    cy.contains('Submit').click();
+    cy.contains('Save').click();
   });
 
   it('loads the last opened gym at root', () => {
@@ -69,7 +69,13 @@ describe('The gym map view', () => {
     cy.visit('');
     cy.window().its(`${GymMapView.name}.$data.loaded`).should('equal', true);
     cy.get('#map-root').click(230, 330);
+    cy.contains($t('ascendResults[0]')).click();
     cy.get('#popup-closer').click();
+    cy.get('#map-root').click(50, 370);
+    cy.contains($t('ascendResults[0]')).click();
+    cy.get('#save-boulder').click();
+    cy.get('#map-root').click(50, 370);
+    cy.get('#retire-boulder').click();
   });
 });
 
