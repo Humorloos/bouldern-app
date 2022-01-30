@@ -1,5 +1,4 @@
 """Module containing the views of the bouldern app"""
-from django.db.models import Max
 from django.shortcuts import render
 from rest_framework.mixins import CreateModelMixin, ListModelMixin, \
     UpdateModelMixin
