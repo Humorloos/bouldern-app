@@ -71,6 +71,7 @@
         <v-col>
           <v-radio-group
             v-model="selectedAscendResult"
+            label="Status"
             @change="setAscendStyle"
           >
             <v-radio
@@ -80,6 +81,19 @@
               :value="index.toString()"
             />
           </v-radio-group>
+        </v-col>
+      </v-row>
+      <v-spacer />
+      <v-row>
+        <v-col>
+          <v-btn
+            id="save-boulder"
+            @click="reportAscend"
+          >
+            <div>save</div>
+            <br>
+            <v-icon>mdi-content-save</v-icon>
+          </v-btn>
         </v-col>
       </v-row>
     </v-container>
@@ -404,7 +418,7 @@ export default {
           });
           this.selectedFeature.ascend.result = this.selectedAscendResult;
         }
-      //  If there was no ascend entry yet, create a new one
+        //  If there was no ascend entry yet, create a new one
       } else {
         this.requestWithJwt({
           apiPath: ascendApiPath,
@@ -413,6 +427,7 @@ export default {
           this.selectedFeature.ascend = response.data;
         });
       }
+      this.closePopover();
     },
     /**
      * Checks if the map has a boulder at the provided pixel
@@ -562,13 +577,19 @@ export default {
     },
     /**
      * If in create mode, removes the popover's feature from the
-     * featureCollection and (always) blurs the popover.
+     * featureCollection, otherwise resets ascend status if it was changed. Then
+     * (always) blurs the popover.
      */
     closePopover() {
       if (this.creating) {
         this.featureCollection.pop();
       } else {
-        this.reportAscend();
+        if (this.selectedAscendResult !==
+            this.selectedFeature.ascend.result.toString()) {
+          this.selectedAscendResult =
+              this.selectedFeature.ascend.result.toString();
+          this.setAscendStyle();
+        }
       }
       this.popover.setPosition(undefined);
     },
@@ -644,7 +665,7 @@ export default {
   border: 1px solid #cccccc;
   bottom: 12px;
   left: -50px;
-  min-width: 280px;
+  min-width: 320px;
 }
 
 .ol-popup:after, .ol-popup:before {
