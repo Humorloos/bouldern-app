@@ -163,7 +163,7 @@ export default {
       featureCollection: new Collection(),
       loaded: false,
       creating: false,
-      selectedFeature: {ascend: undefined},
+      selectedBoulder: {ascend: undefined},
       selectedAscendResult: null,
       ascendIcons: [
         {
@@ -367,40 +367,48 @@ export default {
       requestWithJwt: 'requestWithJwt',
     }),
     /**
-     * todo
+     * Sets the color style (hold and difficulty color) of the selected boulder
+     *
+     * @param holdColor the hold color to set
+     * @param difficultyColor the difficulty color to set
      */
     setColorStyle(holdColor, difficultyColor) {
-      const style = this.selectedFeature.getStyle();
+      const style = this.selectedBoulder.getStyle();
       style[1] = this.getColorStyle(holdColor, difficultyColor);
-      this.selectedFeature.setStyle(style);
+      this.selectedBoulder.setStyle(style);
     },
     /**
-     * todo
+     * Sets the ascend style of the selected boulder according to the currently
+     * selected ascend status
      */
     setAscendStyle() {
-      const style = this.selectedFeature.getStyle();
+      const style = this.selectedBoulder.getStyle();
       style[2] = new Style({
         image: this.ascendIcons[this.selectedAscendResult],
       });
-      this.selectedFeature.setStyle(style);
+      this.selectedBoulder.setStyle(style);
     },
     /**
-     * todo
+     * If the selected boulder is already associated with an ascend status,
+     * and the status has changed, updates the ascend status for the boulder
+     * and user via an api call and assigns the status to the selected boulder.
+     * Otherwise, if the selected boulder is not yet associated with an ascend
+     * status, creates a new ascend object and associates its id with the
+     * selected boulder. Finally, closes the edit popover.
      */
     reportAscend() {
-      // todo: add save button, only report on save, not on close
       const ascendApiPath = `/bouldern/gym/${this.gym.id}/boulder/` +
-          `${this.selectedFeature.id}/ascend/`;
-      if (this.selectedFeature.ascend !== undefined) {
+          `${this.selectedBoulder.id}/ascend/`;
+      if (this.selectedBoulder.ascend !== undefined) {
         // only update ascend result if it has changed
         if (this.selectedAscendResult !==
-            this.selectedFeature.ascend.result.toString()) {
+            this.selectedBoulder.ascend.result.toString()) {
           this.requestWithJwt({
-            apiPath: `${ascendApiPath}${this.selectedFeature.ascend.id}/`,
+            apiPath: `${ascendApiPath}${this.selectedBoulder.ascend.id}/`,
             data: {'result': this.selectedAscendResult},
             method: 'PUT',
           });
-          this.selectedFeature.ascend.result = this.selectedAscendResult;
+          this.selectedBoulder.ascend.result = this.selectedAscendResult;
         }
         //  If there was no ascend entry yet, create a new one
       } else {
@@ -408,7 +416,7 @@ export default {
           apiPath: ascendApiPath,
           data: {'result': this.selectedAscendResult},
         }).then((response) => {
-          this.selectedFeature.ascend = response.data;
+          this.selectedBoulder.ascend = response.data;
         });
       }
       this.$refs.overlay.close();
@@ -501,7 +509,14 @@ export default {
       image.setImage(this.mapImage);
     },
     /**
-     * todo
+     * Gets the openlayers style for a boulder with the given hold and
+     * difficulty color. The style is a cirle with four small border segments
+     * where the cirle is colored in the boulder's difficulty color and the
+     * border segments are colored in the boulder's hold color.
+     *
+     * @param holdColor the hold color to use for the style
+     * @param difficultyColor the difficulty color to use for the style
+     * @returns {Style} the color style
      */
     getColorStyle: function(holdColor, difficultyColor) {
       return new Style({
@@ -520,23 +535,23 @@ export default {
       });
     },
     /**
-     * Generates the openlayers style for a boulder with the given hold and
-     * difficulty color. The style is a cirle with four small border segments
-     * where the cirle is colored in the boulder's difficulty color and the
-     * border segments are colored in the boulder's hold color. Behind this
-     * style there is another style that serves as the icon's shadow. todo
+     * Generates the openlayers style for a boulder with the given hold color,
+     * difficulty color, and ascend status. The style consists of three layers:
+     * - A shadow for 3D effect
+     * - The color style with difficulty- and hold color.
+     * - The ascend status icon
      *
      * @param holdColor the boulder's hold color
      * @param difficultyColor the boulder's difficulty color
-     * @param [ascendResult] todo
-     * @returns {Style[]} the boulder's style consisting of the two-colored icon
-     * and a shadow
+     * @param [ascendStatus] the boulder's ascend status
+     * @returns {Style[]} the boulder's style consisting of the two-colored
+     * color icon, the ascend status icon, and a shadow
      */
-    getBoulderStyle(holdColor, difficultyColor, ascendResult) {
+    getBoulderStyle(holdColor, difficultyColor, ascendStatus) {
       const colorStyle = this.getColorStyle(holdColor, difficultyColor);
-      const ascendStyle = ascendResult !== undefined ?
+      const ascendStyle = ascendStatus !== undefined ?
           new Style({
-            image: this.ascendIcons[ascendResult],
+            image: this.ascendIcons[ascendStatus],
           }) : new Style({});
       return [this.shadowStyle, colorStyle, ascendStyle];
     },
@@ -566,40 +581,41 @@ export default {
      */
     onClosePopover() {
       if (this.creating) {
-        if (this.selectedFeature.id === undefined) {
+        if (this.selectedBoulder.id === undefined) {
           this.featureCollection.pop();
         }
       } else {
         if (
-          this.selectedFeature.ascend !== undefined &&
-            this.selectedFeature.ascend.result.toString() !==
+          this.selectedBoulder.ascend !== undefined &&
+            this.selectedBoulder.ascend.result.toString() !==
             this.selectedAscendResult
         ) {
           this.selectedAscendResult =
-              this.selectedFeature.ascend.result.toString();
+              this.selectedBoulder.ascend.result.toString();
           this.setAscendStyle();
         }
       }
     },
-    // todo: rename this.selectedFeature to selectedBoulder
     /**
-     * todo
+     * Sets the selected boulder inactive via an api call, removes it from the
+     * feature collection, and closes the edit popover
      */
     retireBoulder() {
       this.requestWithJwt({
         apiPath: `/bouldern/gym/${this.gym.id}/boulder/` +
-            `${this.selectedFeature.id}/`,
+            `${this.selectedBoulder.id}/`,
         method: 'PATCH',
         data: {'is_active': false},
       });
-      this.featureCollection.remove(this.selectedFeature);
+      this.featureCollection.remove(this.selectedBoulder);
       this.$refs.overlay.close();
     },
     /**
-     * Blurs the popover
+     * Sets the selected boulder's id to the created one's and closes the
+     * create popover
      */
     onSubmitted(response) {
-      this.selectedFeature.id = response.data.id;
+      this.selectedBoulder.id = response.data.id;
       this.$refs.overlay.close();
     },
     /**
@@ -612,17 +628,17 @@ export default {
     openPopover(event) {
       this.creating = event.type === 'drawend';
 
-      this.selectedFeature = this.creating ? event.feature : event;
-      const geometry = this.selectedFeature.getGeometry();
+      this.selectedBoulder = this.creating ? event.feature : event;
+      const geometry = this.selectedBoulder.getGeometry();
 
       if (this.creating) {
         this.selectedCoordinates = this.jsonFormat
             .writeGeometryObject(geometry);
-        this.selectedFeature.setStyle(this.getBoulderStyle(
+        this.selectedBoulder.setStyle(this.getBoulderStyle(
             this.selectedColor.color, this.selectedDifficulty.color));
       } else {
-        this.selectedAscendResult = this.selectedFeature.ascend ?
-            this.selectedFeature.ascend.result.toString() : null;
+        this.selectedAscendResult = this.selectedBoulder.ascend ?
+            this.selectedBoulder.ascend.result.toString() : null;
       }
       this.$refs.overlay.open(geometry.getCoordinates());
     },
