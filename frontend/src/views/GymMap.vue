@@ -371,6 +371,14 @@ export default {
     /**
      * todo
      */
+    setColorStyle(holdColor, difficultyColor) {
+      const style = this.selectedFeature.getStyle();
+      style[1] = this.getColorStyle(holdColor, difficultyColor);
+      this.selectedFeature.setStyle(style);
+    },
+    /**
+     * todo
+     */
     setAscendStyle() {
       const style = this.selectedFeature.getStyle();
       style[2] = new Style({
@@ -520,8 +528,7 @@ export default {
      * added boulder to the provided event's color
      */
     updateDifficultyLevel(event) {
-      this.selectedFeature
-          .setStyle(this.getBoulderStyle(event.color, event.color));
+      this.setColorStyle(event.color, event.color);
       this.selectedColor = this.colorOptions.filter(
           (colorOption) => colorOption.color === event.color)[0];
     },
@@ -532,8 +539,7 @@ export default {
      * @param event a color select update event
      */
     updateHoldColor(event) {
-      this.selectedFeature.setStyle(
-          this.getBoulderStyle(event.color, this.selectedDifficulty.color));
+      this.setColorStyle(event.color, this.selectedDifficulty.color);
     },
     /**
      * If in create mode, removes the popover's feature from the
