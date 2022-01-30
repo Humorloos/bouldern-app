@@ -108,7 +108,7 @@ def test_ascend_api_put(logged_in_client_rest, colors):
     ascend = AscendFactory(result=Ascend.PROJECT)
 
     boulder = ascend.boulder
-    # todo: in ascend model, use texts from i18n file instead
+
     # When
     response = client.put(
         AscendAPI().reverse_action(
