@@ -616,7 +616,7 @@ export default {
             this.selectedColor.color, this.selectedDifficulty.color));
       } else {
         this.selectedAscendResult = this.selectedFeature.ascend ?
-        this.selectedFeature.ascend.result : undefined;
+        this.selectedFeature.ascend.result.toString() : null;
       }
     },
   },
