@@ -2,7 +2,7 @@
   <v-app>
     <v-app-bar height="50">
       <v-app-bar-nav-icon
-        v-if="$vuetify.display.mobile"
+        v-if="display.mobile"
         @click.stop="drawer = !drawer"
       />
       <v-app-bar-title
@@ -11,6 +11,12 @@
       >
         Boulder Holder
       </v-app-bar-title>
+      <v-spacer />
+      <v-btn
+        id="retire-boulder"
+        flat
+        icon="mdi-filter"
+      />
     </v-app-bar>
     <v-navigation-drawer
       v-model="drawer"
@@ -86,68 +92,65 @@
 <script>
 /** @file highest level component of bouldern app */
 
-import {mapActions, mapGetters, mapMutations} from 'vuex';
+import {useDisplay} from 'vuetify';
+import {useRoute, useRouter} from 'vue-router';
+import {useStore} from 'vuex';
+import {computed, onMounted, ref, watch} from 'vue';
 
 export default {
-  name: 'App',
-  data() {
-    return {
-      drawer: false,
-      gymName: '',
-    };
-  },
-  computed: {
-    ...mapGetters({
-      isAuthenticated: 'isAuthenticated',
-    }),
-  },
-  watch: {
-    /**
-     * Closes the app drawer when navigating to another view
-     */
-    $route() {
-      if (this.$vuetify.display.mobile) this.drawer = false;
-    },
-  },
-  /**
-   * Tries to login the user when loading the app and exposes Vuex store to
-   * cypress tests
-   */
-  mounted() {
-    if (window.Cypress) {
-      const storeEventHandler = (storeEvent) => {
-        window.Cypress.cy.$log[
-            new Date().toISOString() + ' - ' + storeEvent.type] = {
-          payload: storeEvent.payload,
-        };
-      };
-      this.$store.subscribe(storeEventHandler);
-      this.$store.subscribeAction(storeEventHandler);
-      window['$store'] = this.$store;
-    }
-  },
-  /**
-   * Opens the navigation drawer on desktop
-   */
-  created() {
-    this.drawer = !this.$vuetify.display.mobile;
-  },
-  methods: {
-    ...mapMutations({commitLogout: 'logout'}),
-    ...mapActions({deleteAccountAndLogout: 'deleteAccountAndLogout'}),
+  setup() {
+    // close the app drawer on mobile when loading app
+    const display = useDisplay();
+    const drawer = ref(!display.mobile.value);
+    // Close the app drawer when navigating to another view
+    const route = useRoute();
+    watch(route, () => {
+      if (display.mobile.value) drawer.value = false;
+    });
+
+    const gymName = ref('');
+    const router = useRouter();
     /**
      * Redirects to gym map with name entered in text field
      */
-    openGymMap() {
-      this.$router.push(`/gym-map/${this.gymName}`);
-    },
+    function openGymMap() {
+      router.push(`/gym-map/${gymName.value}`);
+    }
+
+    const store = useStore();
     /**
      * Logs the user out and redirects to the login view
      */
-    logout() {
-      this.commitLogout();
-      this.$router.push(`/login`);
-    },
+    function logout() {
+      store.commit('logout');
+      router.push(`/login`);
+    }
+
+    // Expose Vuex store to cypress tests and attach log hooks when running
+    // cypress test
+    onMounted(() => {
+      if (window.Cypress) {
+        const storeEventHandler = (storeEvent) => {
+          window.Cypress.cy.$log[
+              new Date().toISOString() + ' - ' + storeEvent.type] = {
+            payload: storeEvent.payload,
+          };
+        };
+        this.$store.subscribe(storeEventHandler);
+        this.$store.subscribeAction(storeEventHandler);
+        window['$store'] = this.$store;
+      }
+    });
+
+    return {
+      display,
+      drawer,
+      gymName,
+      openGymMap,
+      logout,
+      isAuthenticated: computed(() => store.getters.isAuthenticated),
+      deleteAccountAndLogout: () => store.dispatch('deleteAccountAndLogout'),
+    };
   },
 };
 </script>
