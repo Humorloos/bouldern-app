@@ -1,101 +1,103 @@
 <template>
-  <map-overlay
-    ref="overlay"
-    :loaded="loaded"
-    @close="onClosePopover"
-  >
-    <template
-      v-if="!creating"
-      #toolbar
+  <app-view>
+    <map-overlay
+      ref="overlay"
+      :loaded="loaded"
+      @close="onClosePopover"
     >
-      <v-col cols="2">
-        <v-btn
-          id="retire-boulder"
-          flat
-          size="small"
-          icon="mdi-package-down"
-          @click="retireBoulder"
-        />
-      </v-col>
-    </template>
-    <template
-      v-if="creating"
-      #content
-    >
-      <v-row>
-        <v-col>
-          Difficulty:
-          <color-select
-            id="id-difficulty-select"
-            v-model="selectedDifficulty"
-            :color-options="gradeColors"
-            @update:model-value="updateGrade($event)"
-          />
-        </v-col>
-      </v-row>
-      <v-row>
-        <v-col>
-          Hold-Color:
-          <color-select
-            id="id-color-select"
-            v-model="selectedColor"
-            :color-options="colorOptions"
-            @update:model-value="updateHoldColor($event)"
-          />
-        </v-col>
-      </v-row>
-      <v-row>
-        <v-col>
-          <vue-form
-            :api-path="`/bouldern/gym/${gym.id}/boulder/`"
-            :form="{
-              coordinates: selectedCoordinates,
-              color_id: selectedColor.id,
-              difficulty_id: selectedDifficulty.id,
-            }"
-            submit-button-label="Save"
-            @submitted="onSubmitted"
-          />
-        </v-col>
-      </v-row>
-    </template>
-    <template
-      v-else
-      #content
-    >
-      <v-row>
-        <v-col>
-          <v-radio-group
-            v-model="selectedAscentResult"
-            label="Status"
-            @change="setAscentStyle"
-          >
-            <v-radio
-              v-for="(result, index) in ascentResults"
-              :key="index"
-              :label="result"
-              :value="index.toString()"
-            />
-          </v-radio-group>
-        </v-col>
-      </v-row>
-      <v-spacer />
-      <v-row>
-        <v-col>
+      <template
+        v-if="!creating"
+        #toolbar
+      >
+        <v-col cols="2">
           <v-btn
-            id="save-boulder"
-            @click="reportAscent"
-          >
-            <div>save</div>
-          </v-btn>
+            id="retire-boulder"
+            flat
+            size="small"
+            icon="mdi-package-down"
+            @click="retireBoulder"
+          />
         </v-col>
-      </v-row>
-    </template>
-  </map-overlay>
-  <div
-    id="map-root"
-    ref="map-root"
-  />
+      </template>
+      <template
+        v-if="creating"
+        #content
+      >
+        <v-row>
+          <v-col>
+            Difficulty:
+            <color-select
+              id="id-difficulty-select"
+              v-model="selectedDifficulty"
+              :color-options="gradeColors"
+              @update:model-value="updateGrade($event)"
+            />
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col>
+            Hold-Color:
+            <color-select
+              id="id-color-select"
+              v-model="selectedColor"
+              :color-options="colorOptions"
+              @update:model-value="updateHoldColor($event)"
+            />
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col>
+            <vue-form
+              :api-path="`/bouldern/gym/${gym.id}/boulder/`"
+              :form="{
+                coordinates: selectedCoordinates,
+                color_id: selectedColor.id,
+                difficulty_id: selectedDifficulty.id,
+              }"
+              submit-button-label="Save"
+              @submitted="onSubmitted"
+            />
+          </v-col>
+        </v-row>
+      </template>
+      <template
+        v-else
+        #content
+      >
+        <v-row>
+          <v-col>
+            <v-radio-group
+              v-model="selectedAscentResult"
+              label="Status"
+              @change="setAscentStyle"
+            >
+              <v-radio
+                v-for="(result, index) in ascentResults"
+                :key="index"
+                :label="result"
+                :value="index.toString()"
+              />
+            </v-radio-group>
+          </v-col>
+        </v-row>
+        <v-spacer />
+        <v-row>
+          <v-col>
+            <v-btn
+              id="save-boulder"
+              @click="reportAscent"
+            >
+              <div>save</div>
+            </v-btn>
+          </v-col>
+        </v-row>
+      </template>
+    </map-overlay>
+    <div
+      id="map-root"
+      ref="map-root"
+    />
+  </app-view>
 </template>
 
 <script>
@@ -115,6 +117,7 @@ import View from 'ol/View';
 import ColorSelect from '../components/ColorSelect.vue';
 import MapOverlay from '../components/MapOverlay.vue';
 import VueForm from '../components/VueForm.vue';
+import AppView from '../components/AppView.vue';
 
 const defaultColor = {
   name: '',
@@ -125,6 +128,7 @@ const defaultColor = {
 export default {
   name: 'GymMap',
   components: {
+    AppView,
     MapOverlay,
     VueForm,
     ColorSelect,

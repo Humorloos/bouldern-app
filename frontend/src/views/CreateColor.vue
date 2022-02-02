@@ -1,28 +1,30 @@
 <template>
-  <v-container>
-    <v-row>
-      <v-col>
-        <vue-form
-          :form="form"
-          :api-path="'/bouldern/color/'"
-          @submitted="onSubmitted"
-        >
-          <v-text-field
-            id="id_name"
-            v-model="form.name"
-            label="Name"
-            type="text"
-          />
-          <input
-            id="id_color"
-            v-model="form.color"
-            data-jscolor=""
-            class="jscolor-input"
+  <app-view>
+    <v-container>
+      <v-row>
+        <v-col>
+          <vue-form
+            :form="form"
+            :api-path="'/bouldern/color/'"
+            @submitted="onSubmitted"
           >
-        </vue-form>
-      </v-col>
-    </v-row>
-  </v-container>
+            <v-text-field
+              id="id_name"
+              v-model="form.name"
+              label="Name"
+              type="text"
+            />
+            <input
+              id="id_color"
+              v-model="form.color"
+              data-jscolor=""
+              class="jscolor-input"
+            >
+          </vue-form>
+        </v-col>
+      </v-row>
+    </v-container>
+  </app-view>
 </template>
 
 <script>
@@ -30,11 +32,13 @@
 
 import VueForm from '../components/VueForm.vue';
 import jscolor from '@eastdesire/jscolor/jscolor';
+import AppView from '../components/AppView.vue';
 
 
 export default {
   name: 'CreateColor',
   components: {
+    AppView,
     VueForm,
   },
   data() {
