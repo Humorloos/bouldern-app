@@ -240,7 +240,7 @@ export default {
     gradeColors() {
       return this.gym.grade_set.map(
           ({id, grade, color}) => (
-            {color: color.color, id: id, name: grade + 1}));
+            {color: color.color, id: id, name: grade}));
     },
     /**
      * Gets the name of the gym to show the map of and sets it as the active gym
