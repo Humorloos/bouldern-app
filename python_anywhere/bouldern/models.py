@@ -59,8 +59,8 @@ class Boulder(UGC):
     color = ForeignKey(Color, on_delete=PROTECT, null=True)
 
 
-class Ascend(UGC):
-    """An attempt to ascend a boulder"""
+class Ascent(UGC):
+    """An attempt to ascent a boulder"""
 
     PROJECT = 0
     TOP = 1

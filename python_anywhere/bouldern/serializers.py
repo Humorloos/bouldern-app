@@ -3,7 +3,7 @@ from rest_framework.relations import PrimaryKeyRelatedField
 from rest_framework.serializers import ModelSerializer
 
 from python_anywhere.bouldern.models import Gym, Color, DifficultyLevel, \
-    Boulder, Ascend
+    Boulder, Ascent
 
 
 class ColorSerializer(ModelSerializer):
@@ -62,10 +62,10 @@ class GymSerializer(ModelSerializer):
         return gym
 
 
-class AscendSerializer(ModelSerializer):
-    """Serializer for Ascend instances"""
+class AscentSerializer(ModelSerializer):
+    """Serializer for Ascent instances"""
     boulder = PrimaryKeyRelatedField(read_only=True)
 
     class Meta:
-        model = Ascend
+        model = Ascent
         fields = ['result', 'id', 'boulder']
