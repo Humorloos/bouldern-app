@@ -8,7 +8,7 @@ from factory.django import ImageField
 
 from python_anywhere.accounts.factories import UserFactory
 from python_anywhere.bouldern.factories import ColorFactory, GymFactory, \
-    BoulderFactory
+    BoulderFactory, AscentFactory
 from python_anywhere.bouldern.tests.conftest import default_colors
 from python_anywhere.settings import BASE_DIR, env, RESOURCES_DIR
 
@@ -43,8 +43,11 @@ class Command(BaseCommand):
             map=ImageField(from_path=RESOURCES_DIR / 'generic_gym.png'))
 
         # add boulders
-        BoulderFactory(gym=generic_gym, coordinates=Point(1041, 716))
+        boulder = BoulderFactory(gym=generic_gym, coordinates=Point(1041, 716))
         BoulderFactory(gym=generic_gym, coordinates=Point(799, 645))
+
+        # add ascent
+        AscentFactory(boulder=boulder)
 
         # add green gym
         GymFactory(

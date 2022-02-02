@@ -2,8 +2,9 @@
 from django.utils.http import urlencode
 from rest_framework.status import HTTP_201_CREATED, HTTP_200_OK
 
-from python_anywhere.bouldern.models import Boulder
-from python_anywhere.bouldern.views import BoulderAPI
+from python_anywhere.accounts.factories import UserFactory
+from python_anywhere.bouldern.models import Boulder, Ascent
+from python_anywhere.bouldern.views import BoulderAPI, AscentAPI
 
 
 def test_boulder_api_post(logged_in_client_rest, colors):
@@ -72,3 +73,84 @@ def test_boulder_api_retire(logged_in_client_rest, colors):
     assert not Boulder.objects.get(pk=boulder_2_retire.pk).is_active
     assert all(b.is_active for b in Boulder.objects.filter(
         pk__in={b.pk for b in active_boulders}))
+
+
+def test_ascent_api_post(logged_in_client_rest, colors):
+    """Test that post method works correctly"""
+    # Given
+    client, user = logged_in_client_rest
+
+    from python_anywhere.bouldern.factories import BoulderFactory
+    boulder = BoulderFactory()
+
+    from python_anywhere.bouldern.factories import AscentFactory
+    ascent_stub = AscentFactory.stub(boulder=boulder)
+
+    # When
+    response = client.post(
+        AscentAPI().reverse_action('list', args=[boulder.gym.pk, boulder.pk]),
+        data={'result': ascent_stub.result}, format='json')
+
+    # Then
+    assert response.status_code == HTTP_201_CREATED
+    ascent = Ascent.objects.first()
+    assert ascent.created_by == user
+    assert ascent.result == ascent_stub.result
+    assert ascent.boulder == boulder
+
+
+def test_ascent_api_put(logged_in_client_rest, colors):
+    """Test that put method works correctly"""
+    # Given
+    client, user = logged_in_client_rest
+
+    from python_anywhere.bouldern.factories import AscentFactory
+    ascent = AscentFactory(result=Ascent.PROJECT)
+
+    boulder = ascent.boulder
+
+    # When
+    response = client.put(
+        AscentAPI().reverse_action(
+            'detail', args=[boulder.gym.pk, boulder.pk, ascent.pk]),
+        data={'result': Ascent.TOP}, format='json')
+
+    # Then
+    assert response.status_code == HTTP_200_OK
+    ascent = Ascent.objects.first()
+    assert ascent.created_by == user
+    assert ascent.result == Ascent.TOP
+    assert ascent.boulder == boulder
+
+
+def test_ascent_api_get(logged_in_client_rest, colors):
+    """Test that get method works correctly"""
+    # Given
+    client, user = logged_in_client_rest
+
+    from python_anywhere.bouldern.factories import AscentFactory
+    ascent = AscentFactory()
+    boulder = ascent.boulder
+
+    other_user = UserFactory()
+    ascent_by_other_user = AscentFactory(created_by=other_user,
+                                         boulder=boulder)
+
+    ascent_in_other_gym = AscentFactory()
+
+    old_ascent = AscentFactory(
+        boulder__is_active=False,
+        boulder__gym=boulder.gym,
+    )
+
+    # When
+    response = client.get(
+        AscentAPI().reverse_action('list', args=[boulder.gym.pk, '_']))
+
+    # Then
+    assert response.status_code == HTTP_200_OK
+    ascents = set(response.data.serializer.instance)
+    assert ascents == {ascent}
+    assert ascent_by_other_user not in ascents
+    assert ascent_in_other_gym not in ascents
+    assert old_ascent not in ascents

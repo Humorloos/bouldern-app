@@ -1,21 +1,26 @@
 <template>
-  <div
-    id="popup"
-    ref="popup"
-    class="ol-popup"
-    :style="{visibility: loaded ? 'visible' : 'hidden'}"
+  <map-overlay
+    ref="overlay"
+    :loaded="loaded"
+    @close="onClosePopover"
   >
-    <v-btn
-      id="popup-closer"
-      flat
-      size="small"
-      icon="mdi-close"
-      class="ol-popup-closer"
-      @click="closePopover"
-    />
-    <v-container
+    <template
+      v-if="!creating"
+      #toolbar
+    >
+      <v-col cols="2">
+        <v-btn
+          id="retire-boulder"
+          flat
+          size="small"
+          icon="mdi-package-down"
+          @click="retireBoulder"
+        />
+      </v-col>
+    </template>
+    <template
       v-if="creating"
-      id="popup-content"
+      #content
     >
       <v-row>
         <v-col>
@@ -48,27 +53,45 @@
               color_id: selectedColor.id,
               difficulty_id: selectedDifficulty.id,
             }"
+            submit-button-label="Save"
             @submitted="onSubmitted"
           />
         </v-col>
       </v-row>
-    </v-container>
-    <v-container v-else>
+    </template>
+    <template
+      v-else
+      #content
+    >
+      <v-row>
+        <v-col>
+          <v-radio-group
+            v-model="selectedAscentResult"
+            label="Status"
+            @change="setAscentStyle"
+          >
+            <v-radio
+              v-for="(result, index) in ascentResults"
+              :key="index"
+              :label="result"
+              :value="index.toString()"
+            />
+          </v-radio-group>
+        </v-col>
+      </v-row>
+      <v-spacer />
       <v-row>
         <v-col>
           <v-btn
-            id="retire-boulder"
-            flat
-            @click="retireBoulder"
+            id="save-boulder"
+            @click="reportAscent"
           >
-            <div>retire</div>
-            <br>
-            <v-icon>mdi-package-down</v-icon>
+            <div>save</div>
           </v-btn>
         </v-col>
       </v-row>
-    </v-container>
-  </div>
+    </template>
+  </map-overlay>
   <div
     id="map-root"
     ref="map-root"
@@ -79,18 +102,19 @@
 /** @file view with interactive gym map */
 
 import {mapActions, mapMutations, mapState} from 'vuex';
-import {Collection, Overlay} from 'ol';
+import {Collection} from 'ol';
+import {containsCoordinate, getCenter} from 'ol/extent';
+import {GeoJSON} from 'ol/format';
+import {Draw} from 'ol/interaction';
+import {Image as ImageLayer, Vector as VectorLayer} from 'ol/layer';
+import Map from 'ol/Map';
 import {Projection} from 'ol/proj';
 import {ImageStatic, Vector as VectorSource} from 'ol/source';
-import {Draw} from 'ol/interaction';
-import {containsCoordinate, getCenter} from 'ol/extent';
-import Map from 'ol/Map';
-import {Image as ImageLayer, Vector as VectorLayer} from 'ol/layer';
-import View from 'ol/View';
-import {GeoJSON} from 'ol/format';
-import VueForm from '../components/VueForm.vue';
-import ColorSelect from '../components/ColorSelect.vue';
 import {Circle, Fill, Icon, Stroke, Style} from 'ol/style';
+import View from 'ol/View';
+import ColorSelect from '../components/ColorSelect.vue';
+import MapOverlay from '../components/MapOverlay.vue';
+import VueForm from '../components/VueForm.vue';
 
 const defaultColor = {
   name: '',
@@ -101,6 +125,7 @@ const defaultColor = {
 export default {
   name: 'GymMap',
   components: {
+    MapOverlay,
     VueForm,
     ColorSelect,
   },
@@ -136,7 +161,25 @@ export default {
       featureCollection: new Collection(),
       loaded: false,
       creating: false,
-      selectedFeature: undefined,
+      selectedBoulder: {ascent: undefined},
+      selectedAscentResult: null,
+      ascentIcons: [
+        {
+          name: 'target-circle', scale: 0.64,
+        },
+        {
+          name: 'check-circle', scale: 0.7,
+        },
+        {
+          name: 'check-underline-circle', scale: 0.7,
+        },
+      ].map(({name, scale}) => new Icon({
+        src: this.axios.defaults.baseURL +
+            `static/bouldern/images/${name}.svg`,
+        color: '#FFFFFF',
+        anchor: [0, 0],
+        scale: scale,
+      })),
     };
   },
   computed: {
@@ -144,6 +187,14 @@ export default {
       authToken: 'authToken',
       activeGym: 'activeGym',
     }),
+    /**
+     * Selectable options for the result of an attempt to ascent a boulder.
+     *
+     * @returns {string[]} array of selectable options
+     */
+    ascentResults() {
+      return [0, 1, 2].map((i) => this.$t(`ascentResults[${i}]`));
+    },
     /**
      * The openlayers gym map image source to be used in the image layer.
      *
@@ -207,20 +258,6 @@ export default {
       }
     },
     /**
-     * Popover for creating or editing boulders
-     *
-     * @returns {Overlay} the popover
-     */
-    popover() {
-      return new Overlay({
-        element: this.$refs['popup'],
-        autoPan: true,
-        autoPanAnimation: {
-          duration: 250,
-        },
-      });
-    },
-    /**
      * Projecton from image coordinates to geo-coordinates
      *
      * @returns {Projection} the projection
@@ -273,7 +310,7 @@ export default {
       const map = new Map({
         target: this.$refs['map-root'],
       });
-      map.addOverlay(this.popover);
+      map.addOverlay(this.$refs.overlay.popover);
       map.on('pointermove', (event) => {
         const pixel = map.getEventPixel(event.originalEvent);
         const hit = this.hasBoulderAtPixel(pixel);
@@ -295,7 +332,7 @@ export default {
       this.featureCollection.clear();
       this.selectedDifficulty = defaultColor;
       this.selectedColor = defaultColor;
-      if (this.popover.getPosition()) this.closePopover();
+      this.$refs.overlay.close();
       this.loadGymMap();
     },
   },
@@ -327,6 +364,62 @@ export default {
     ...mapActions({
       requestWithJwt: 'requestWithJwt',
     }),
+    /**
+     * Sets the color style (hold and difficulty color) of the selected boulder
+     *
+     * @param holdColor the hold color to set
+     * @param difficultyColor the difficulty color to set
+     */
+    setColorStyle(holdColor, difficultyColor) {
+      const style = this.selectedBoulder.getStyle();
+      style[1] = this.getColorStyle(holdColor, difficultyColor);
+      this.selectedBoulder.setStyle(style);
+    },
+    /**
+     * Sets the ascent style of the selected boulder according to the currently
+     * selected ascent status
+     */
+    setAscentStyle() {
+      const style = this.selectedBoulder.getStyle();
+      style[2] = new Style({
+        image: this.ascentIcons[this.selectedAscentResult],
+      });
+      this.selectedBoulder.setStyle(style);
+    },
+    /**
+     * If the selected boulder is already associated with an ascent status,
+     * and the status has changed, updates the ascent status for the boulder
+     * and user via an api call and assigns the status to the selected boulder.
+     * Otherwise, if the selected boulder is not yet associated with an ascent
+     * status, creates a new ascent object and associates its id with the
+     * selected boulder. Finally, closes the edit popover.
+     */
+    reportAscent() {
+      const ascentApiPath = `/bouldern/gym/${this.gym.id}/boulder/` +
+          `${this.selectedBoulder.id}/ascent/`;
+      if (this.selectedBoulder.ascent !== undefined) {
+        // only update ascent result if it has changed
+        if (this.selectedAscentResult !==
+            this.selectedBoulder.ascent.result.toString()) {
+          this.requestWithJwt({
+            apiPath: `${ascentApiPath}${this.selectedBoulder.ascent.id}/`,
+            data: {'result': this.selectedAscentResult},
+            method: 'PUT',
+          });
+          this.selectedBoulder.ascent.result = this.selectedAscentResult;
+          this.$refs.overlay.close();
+        }
+        //  If there was no ascent entry yet, create a new one
+      } else {
+        this.requestWithJwt({
+          apiPath: ascentApiPath,
+          data: {'result': this.selectedAscentResult},
+        }).then((response) => {
+          this.selectedBoulder.ascent = response.data;
+          this.$refs.overlay.close();
+        });
+      }
+    },
     /**
      * Checks if the map has a boulder at the provided pixel
      *
@@ -366,18 +459,30 @@ export default {
           this.map.addInteraction(this.drawInteraction);
           if (onLoaded) onLoaded();
         };
-        this.requestWithJwt({
-          method: 'GET',
-          apiPath: `/bouldern/gym/${this.gym.id}/boulder/?is_active=true`,
-        }).then((response) => {
-          this.boulders = response.data;
+        Promise.all([
+          this.requestWithJwt({
+            method: 'GET',
+            apiPath: `/bouldern/gym/${this.gym.id}/boulder/?is_active=true`,
+          }),
+          this.requestWithJwt({
+            method: 'GET',
+            apiPath: `/bouldern/gym/${this.gym.id}/boulder/_/ascent/`,
+          }),
+        ]).then(([boulderResponse, ascentResponse]) => {
+          this.boulders = boulderResponse.data;
+          this.boulders.forEach((boulder) => {
+            boulder.ascent = ascentResponse.data
+                .find((ascent) => ascent.boulder === boulder.id);
+          });
           // Populate with initial features
           this.boulders.forEach((boulder) => {
             const feature = this.jsonFormat.readFeature(boulder.coordinates);
             feature.id = boulder.id;
+            feature.ascent = boulder.ascent;
             feature.setStyle(this.getBoulderStyle(
                 boulder.color.color,
                 boulder.difficulty.color.color,
+                boulder.ascent ? boulder.ascent.result : undefined,
             ));
             this.vectorSource.addFeature(feature);
           });
@@ -403,19 +508,17 @@ export default {
       image.setImage(this.mapImage);
     },
     /**
-     * Generates the openlayers style for a boulder with the given hold and
+     * Gets the openlayers style for a boulder with the given hold and
      * difficulty color. The style is a cirle with four small border segments
      * where the cirle is colored in the boulder's difficulty color and the
-     * border segments are colored in the boulder's hold color. Behind this
-     * style there is another style that serves as the icon's shadow.
+     * border segments are colored in the boulder's hold color.
      *
-     * @param holdColor the boulder's hold color
-     * @param difficultyColor the boulder's difficulty color
-     * @returns {Style[]} the boulder's style consisting of the two-colored icon
-     * and a shadow
+     * @param holdColor the hold color to use for the style
+     * @param difficultyColor the difficulty color to use for the style
+     * @returns {Style} the color style
      */
-    getBoulderStyle(holdColor, difficultyColor) {
-      const colorStyle = new Style({
+    getColorStyle: function(holdColor, difficultyColor) {
+      return new Style({
         image: new Circle({
           fill: new Fill({
             color: difficultyColor,
@@ -429,7 +532,27 @@ export default {
           radius: 10,
         }),
       });
-      return [this.shadowStyle, colorStyle];
+    },
+    /**
+     * Generates the openlayers style for a boulder with the given hold color,
+     * difficulty color, and ascent status. The style consists of three layers:
+     * - A shadow for 3D effect
+     * - The color style with difficulty- and hold color.
+     * - The ascent status icon
+     *
+     * @param holdColor the boulder's hold color
+     * @param difficultyColor the boulder's difficulty color
+     * @param [ascentStatus] the boulder's ascent status
+     * @returns {Style[]} the boulder's style consisting of the two-colored
+     * color icon, the ascent status icon, and a shadow
+     */
+    getBoulderStyle(holdColor, difficultyColor, ascentStatus) {
+      const colorStyle = this.getColorStyle(holdColor, difficultyColor);
+      const ascentStyle = ascentStatus !== undefined ?
+          new Style({
+            image: this.ascentIcons[ascentStatus],
+          }) : new Style({});
+      return [this.shadowStyle, colorStyle, ascentStyle];
     },
     /**
      * Adjusts the currently selected hold color when selecting a difficulty
@@ -437,8 +560,7 @@ export default {
      * added boulder to the provided event's color
      */
     updateDifficultyLevel(event) {
-      this.selectedFeature
-          .setStyle(this.getBoulderStyle(event.color, event.color));
+      this.setColorStyle(event.color, event.color);
       this.selectedColor = this.colorOptions.filter(
           (colorOption) => colorOption.color === event.color)[0];
     },
@@ -449,38 +571,55 @@ export default {
      * @param event a color select update event
      */
     updateHoldColor(event) {
-      this.selectedFeature.setStyle(
-          this.getBoulderStyle(event.color, this.selectedDifficulty.color));
+      this.setColorStyle(event.color, this.selectedDifficulty.color);
     },
     /**
      * If in create mode, removes the popover's feature from the
-     * featureCollection and (always) blurs the popover.
+     * featureCollection, otherwise resets ascent status if it was changed. Then
+     * (always) blurs the popover.
      */
-    closePopover() {
-      if (this.creating) this.featureCollection.pop();
-      this.popover.setPosition(undefined);
+    onClosePopover() {
+      if (this.creating) {
+        if (this.selectedBoulder.id === undefined) {
+          this.featureCollection.pop();
+        }
+      } else {
+        if (this.selectedBoulder.ascent !== undefined) {
+          if (this.selectedBoulder.ascent.result.toString() !==
+              this.selectedAscentResult) {
+            this.selectedAscentResult =
+                this.selectedBoulder.ascent.result.toString();
+            this.setAscentStyle();
+          }
+        } else {
+          if (this.selectedAscentResult !== null) {
+            this.selectedAscentResult = null;
+            this.setAscentStyle();
+          }
+        }
+      }
     },
     /**
-     *
+     * Sets the selected boulder inactive via an api call, removes it from the
+     * feature collection, and closes the edit popover
      */
     retireBoulder() {
       this.requestWithJwt({
         apiPath: `/bouldern/gym/${this.gym.id}/boulder/` +
-            `${this.selectedFeature.id}/`,
+            `${this.selectedBoulder.id}/`,
         method: 'PATCH',
         data: {'is_active': false},
-      }).then((response) => {
-        console.log(response);
       });
-      this.featureCollection.remove(this.selectedFeature);
-      this.closePopover();
+      this.featureCollection.remove(this.selectedBoulder);
+      this.$refs.overlay.close();
     },
     /**
-     * Blurs the popover
+     * Sets the selected boulder's id to the created one's and closes the
+     * create popover
      */
     onSubmitted(response) {
-      this.selectedFeature.id = response.data.id;
-      this.popover.setPosition(undefined);
+      this.selectedBoulder.id = response.data.id;
+      this.$refs.overlay.close();
     },
     /**
      * Opens the create / edit popover and closes the old one if still open. If
@@ -490,22 +629,21 @@ export default {
      * @param event the draw event or the clicked feature
      */
     openPopover(event) {
-      if (this.popover.getPosition() !== undefined) {
-        this.closePopover();
-      }
-
       this.creating = event.type === 'drawend';
 
-      this.selectedFeature = this.creating ? event.feature : event;
-      const geometry = this.selectedFeature.getGeometry();
-      this.popover.setPosition(geometry.getCoordinates());
+      this.selectedBoulder = this.creating ? event.feature : event;
+      const geometry = this.selectedBoulder.getGeometry();
 
       if (this.creating) {
         this.selectedCoordinates = this.jsonFormat
             .writeGeometryObject(geometry);
-        this.selectedFeature.setStyle(this.getBoulderStyle(
+        this.selectedBoulder.setStyle(this.getBoulderStyle(
             this.selectedColor.color, this.selectedDifficulty.color));
+      } else {
+        this.selectedAscentResult = this.selectedBoulder.ascent ?
+            this.selectedBoulder.ascent.result.toString() : null;
       }
+      this.$refs.overlay.open(geometry.getCoordinates());
     },
   },
 };
@@ -517,48 +655,5 @@ export default {
 #map-root {
   width: 100%;
   height: 100%;
-}
-
-.ol-popup {
-  position: absolute;
-  background-color: white;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
-  padding: 15px;
-  border-radius: 10px;
-  border: 1px solid #cccccc;
-  bottom: 12px;
-  left: -50px;
-  min-width: 280px;
-}
-
-.ol-popup:after, .ol-popup:before {
-  top: 100%;
-  border: solid transparent;
-  content: " ";
-  height: 0;
-  width: 0;
-  position: absolute;
-  pointer-events: none;
-}
-
-.ol-popup:after {
-  border-top-color: white;
-  border-width: 10px;
-  left: 48px;
-  margin-left: -10px;
-}
-
-.ol-popup:before {
-  border-top-color: #cccccc;
-  border-width: 11px;
-  left: 48px;
-  margin-left: -11px;
-}
-
-.ol-popup-closer {
-  text-decoration: none;
-  position: absolute;
-  top: 2px;
-  right: 8px;
 }
 </style>

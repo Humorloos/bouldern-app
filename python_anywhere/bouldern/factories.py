@@ -10,7 +10,7 @@ from factory.django import DjangoModelFactory, ImageField
 
 from python_anywhere.accounts.models import User
 from python_anywhere.bouldern.models import Color, Gym, DifficultyLevel, UGC, \
-    Boulder
+    Boulder, Ascent
 from python_anywhere.bouldern.providers import GeoProvider
 from python_anywhere.settings import RESOURCES_DIR
 
@@ -19,6 +19,7 @@ Faker.add_provider(GeoProvider)
 
 class UGCFactory(DjangoModelFactory):
     """Abstract factory, serves as superclass for all UGC subclasses"""
+
     class Meta:
         model = UGC
         abstract = True
@@ -77,3 +78,13 @@ class BoulderFactory(UGCFactory):
             DifficultyLevel.objects.filter(gym=o.gym).values_list('pk'))[0]))
     # default color is difficultylevel's color
     color = LazyAttribute(lambda o: o.difficulty.color)
+
+
+class AscentFactory(UGCFactory):
+    """Factory for building ascents"""
+
+    class Meta:
+        model = Ascent
+
+    result = Ascent.TOP
+    boulder = SubFactory(BoulderFactory)
