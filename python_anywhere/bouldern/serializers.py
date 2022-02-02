@@ -2,7 +2,7 @@
 from rest_framework.relations import PrimaryKeyRelatedField
 from rest_framework.serializers import ModelSerializer
 
-from python_anywhere.bouldern.models import Gym, Color, DifficultyLevel, \
+from python_anywhere.bouldern.models import Gym, Color, Grade, \
     Boulder, Ascent
 
 
@@ -14,14 +14,14 @@ class ColorSerializer(ModelSerializer):
         fields = ['name', 'color', 'id']
 
 
-class DifficultyLevelSerializer(ModelSerializer):
-    """Serializer for DifficultyLevel instances"""
+class GradeSerializer(ModelSerializer):
+    """Serializer for Grade instances"""
     color = ColorSerializer(read_only=True)
     color_id = PrimaryKeyRelatedField(source='color',
                                       queryset=Color.objects.all())
 
     class Meta:
-        model = DifficultyLevel
+        model = Grade
         fields = ['level', 'color', 'color_id', 'id']
 
 
@@ -30,9 +30,9 @@ class BoulderSerializer(ModelSerializer):
     color = ColorSerializer(read_only=True)
     color_id = PrimaryKeyRelatedField(source='color',
                                       queryset=Color.objects.all())
-    difficulty = DifficultyLevelSerializer(read_only=True)
+    difficulty = GradeSerializer(read_only=True)
     difficulty_id = PrimaryKeyRelatedField(
-        source='difficulty', queryset=DifficultyLevel.objects.all())
+        source='difficulty', queryset=Grade.objects.all())
 
     class Meta:
         model = Boulder
@@ -46,17 +46,17 @@ class BoulderSerializer(ModelSerializer):
 
 class GymSerializer(ModelSerializer):
     """Serializer for Gym instances"""
-    difficultylevel_set = DifficultyLevelSerializer(many=True)
+    grade_set = GradeSerializer(many=True)
 
     class Meta:
         model = Gym
-        fields = ['name', 'map', 'id', 'difficultylevel_set']
+        fields = ['name', 'map', 'id', 'grade_set']
 
     def create(self, validated_data):
-        difficultylevel_set_data = validated_data.pop('difficultylevel_set')
+        grade_set_data = validated_data.pop('grade_set')
         gym = Gym.objects.create(**validated_data)
-        for difficulty_level_data in difficultylevel_set_data:
-            DifficultyLevel.objects.create(
+        for difficulty_level_data in grade_set_data:
+            Grade.objects.create(
                 gym=gym, created_by=validated_data['created_by'],
                 **difficulty_level_data)
         return gym
