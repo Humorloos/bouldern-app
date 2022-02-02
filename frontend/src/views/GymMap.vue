@@ -66,12 +66,12 @@
       <v-row>
         <v-col>
           <v-radio-group
-            v-model="selectedAscendResult"
+            v-model="selectedAscentResult"
             label="Status"
-            @change="setAscendStyle"
+            @change="setAscentStyle"
           >
             <v-radio
-              v-for="(result, index) in ascendResults"
+              v-for="(result, index) in ascentResults"
               :key="index"
               :label="result"
               :value="index.toString()"
@@ -84,7 +84,7 @@
         <v-col>
           <v-btn
             id="save-boulder"
-            @click="reportAscend"
+            @click="reportAscent"
           >
             <div>save</div>
           </v-btn>
@@ -161,9 +161,9 @@ export default {
       featureCollection: new Collection(),
       loaded: false,
       creating: false,
-      selectedBoulder: {ascend: undefined},
-      selectedAscendResult: null,
-      ascendIcons: [
+      selectedBoulder: {ascent: undefined},
+      selectedAscentResult: null,
+      ascentIcons: [
         {
           name: 'target-circle', scale: 0.64,
         },
@@ -188,12 +188,12 @@ export default {
       activeGym: 'activeGym',
     }),
     /**
-     * Selectable options for the result of an attempt to ascend a boulder.
+     * Selectable options for the result of an attempt to ascent a boulder.
      *
      * @returns {string[]} array of selectable options
      */
-    ascendResults() {
-      return [0, 1, 2].map((i) => this.$t(`ascendResults[${i}]`));
+    ascentResults() {
+      return [0, 1, 2].map((i) => this.$t(`ascentResults[${i}]`));
     },
     /**
      * The openlayers gym map image source to be used in the image layer.
@@ -376,46 +376,46 @@ export default {
       this.selectedBoulder.setStyle(style);
     },
     /**
-     * Sets the ascend style of the selected boulder according to the currently
-     * selected ascend status
+     * Sets the ascent style of the selected boulder according to the currently
+     * selected ascent status
      */
-    setAscendStyle() {
+    setAscentStyle() {
       const style = this.selectedBoulder.getStyle();
       style[2] = new Style({
-        image: this.ascendIcons[this.selectedAscendResult],
+        image: this.ascentIcons[this.selectedAscentResult],
       });
       this.selectedBoulder.setStyle(style);
     },
     /**
-     * If the selected boulder is already associated with an ascend status,
-     * and the status has changed, updates the ascend status for the boulder
+     * If the selected boulder is already associated with an ascent status,
+     * and the status has changed, updates the ascent status for the boulder
      * and user via an api call and assigns the status to the selected boulder.
-     * Otherwise, if the selected boulder is not yet associated with an ascend
-     * status, creates a new ascend object and associates its id with the
+     * Otherwise, if the selected boulder is not yet associated with an ascent
+     * status, creates a new ascent object and associates its id with the
      * selected boulder. Finally, closes the edit popover.
      */
-    reportAscend() {
-      const ascendApiPath = `/bouldern/gym/${this.gym.id}/boulder/` +
-          `${this.selectedBoulder.id}/ascend/`;
-      if (this.selectedBoulder.ascend !== undefined) {
-        // only update ascend result if it has changed
-        if (this.selectedAscendResult !==
-            this.selectedBoulder.ascend.result.toString()) {
+    reportAscent() {
+      const ascentApiPath = `/bouldern/gym/${this.gym.id}/boulder/` +
+          `${this.selectedBoulder.id}/ascent/`;
+      if (this.selectedBoulder.ascent !== undefined) {
+        // only update ascent result if it has changed
+        if (this.selectedAscentResult !==
+            this.selectedBoulder.ascent.result.toString()) {
           this.requestWithJwt({
-            apiPath: `${ascendApiPath}${this.selectedBoulder.ascend.id}/`,
-            data: {'result': this.selectedAscendResult},
+            apiPath: `${ascentApiPath}${this.selectedBoulder.ascent.id}/`,
+            data: {'result': this.selectedAscentResult},
             method: 'PUT',
           });
-          this.selectedBoulder.ascend.result = this.selectedAscendResult;
+          this.selectedBoulder.ascent.result = this.selectedAscentResult;
           this.$refs.overlay.close();
         }
-        //  If there was no ascend entry yet, create a new one
+        //  If there was no ascent entry yet, create a new one
       } else {
         this.requestWithJwt({
-          apiPath: ascendApiPath,
-          data: {'result': this.selectedAscendResult},
+          apiPath: ascentApiPath,
+          data: {'result': this.selectedAscentResult},
         }).then((response) => {
-          this.selectedBoulder.ascend = response.data;
+          this.selectedBoulder.ascent = response.data;
           this.$refs.overlay.close();
         });
       }
@@ -466,23 +466,23 @@ export default {
           }),
           this.requestWithJwt({
             method: 'GET',
-            apiPath: `/bouldern/gym/${this.gym.id}/boulder/_/ascend/`,
+            apiPath: `/bouldern/gym/${this.gym.id}/boulder/_/ascent/`,
           }),
-        ]).then(([boulderResponse, ascendResponse]) => {
+        ]).then(([boulderResponse, ascentResponse]) => {
           this.boulders = boulderResponse.data;
           this.boulders.forEach((boulder) => {
-            boulder.ascend = ascendResponse.data
-                .find((ascend) => ascend.boulder === boulder.id);
+            boulder.ascent = ascentResponse.data
+                .find((ascent) => ascent.boulder === boulder.id);
           });
           // Populate with initial features
           this.boulders.forEach((boulder) => {
             const feature = this.jsonFormat.readFeature(boulder.coordinates);
             feature.id = boulder.id;
-            feature.ascend = boulder.ascend;
+            feature.ascent = boulder.ascent;
             feature.setStyle(this.getBoulderStyle(
                 boulder.color.color,
                 boulder.difficulty.color.color,
-                boulder.ascend ? boulder.ascend.result : undefined,
+                boulder.ascent ? boulder.ascent.result : undefined,
             ));
             this.vectorSource.addFeature(feature);
           });
@@ -535,24 +535,24 @@ export default {
     },
     /**
      * Generates the openlayers style for a boulder with the given hold color,
-     * difficulty color, and ascend status. The style consists of three layers:
+     * difficulty color, and ascent status. The style consists of three layers:
      * - A shadow for 3D effect
      * - The color style with difficulty- and hold color.
-     * - The ascend status icon
+     * - The ascent status icon
      *
      * @param holdColor the boulder's hold color
      * @param difficultyColor the boulder's difficulty color
-     * @param [ascendStatus] the boulder's ascend status
+     * @param [ascentStatus] the boulder's ascent status
      * @returns {Style[]} the boulder's style consisting of the two-colored
-     * color icon, the ascend status icon, and a shadow
+     * color icon, the ascent status icon, and a shadow
      */
-    getBoulderStyle(holdColor, difficultyColor, ascendStatus) {
+    getBoulderStyle(holdColor, difficultyColor, ascentStatus) {
       const colorStyle = this.getColorStyle(holdColor, difficultyColor);
-      const ascendStyle = ascendStatus !== undefined ?
+      const ascentStyle = ascentStatus !== undefined ?
           new Style({
-            image: this.ascendIcons[ascendStatus],
+            image: this.ascentIcons[ascentStatus],
           }) : new Style({});
-      return [this.shadowStyle, colorStyle, ascendStyle];
+      return [this.shadowStyle, colorStyle, ascentStyle];
     },
     /**
      * Adjusts the currently selected hold color when selecting a difficulty
@@ -575,7 +575,7 @@ export default {
     },
     /**
      * If in create mode, removes the popover's feature from the
-     * featureCollection, otherwise resets ascend status if it was changed. Then
+     * featureCollection, otherwise resets ascent status if it was changed. Then
      * (always) blurs the popover.
      */
     onClosePopover() {
@@ -584,17 +584,17 @@ export default {
           this.featureCollection.pop();
         }
       } else {
-        if (this.selectedBoulder.ascend !== undefined) {
-          if (this.selectedBoulder.ascend.result.toString() !==
-              this.selectedAscendResult) {
-            this.selectedAscendResult =
-                this.selectedBoulder.ascend.result.toString();
-            this.setAscendStyle();
+        if (this.selectedBoulder.ascent !== undefined) {
+          if (this.selectedBoulder.ascent.result.toString() !==
+              this.selectedAscentResult) {
+            this.selectedAscentResult =
+                this.selectedBoulder.ascent.result.toString();
+            this.setAscentStyle();
           }
         } else {
-          if (this.selectedAscendResult !== null) {
-            this.selectedAscendResult = null;
-            this.setAscendStyle();
+          if (this.selectedAscentResult !== null) {
+            this.selectedAscentResult = null;
+            this.setAscentStyle();
           }
         }
       }
@@ -640,8 +640,8 @@ export default {
         this.selectedBoulder.setStyle(this.getBoulderStyle(
             this.selectedColor.color, this.selectedDifficulty.color));
       } else {
-        this.selectedAscendResult = this.selectedBoulder.ascend ?
-            this.selectedBoulder.ascend.result.toString() : null;
+        this.selectedAscentResult = this.selectedBoulder.ascent ?
+            this.selectedBoulder.ascent.result.toString() : null;
       }
       this.$refs.overlay.open(geometry.getCoordinates());
     },

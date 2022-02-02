@@ -74,10 +74,10 @@ describe('The gym map view', () => {
       cy.wait(duration);
     });
     cy.get('#map-root').click(240, 340);
-    cy.contains($t('ascendResults[0]')).click();
+    cy.contains($t('ascentResults[0]')).click();
     cy.get('#popup-closer').click();
     cy.get('#map-root').click(50, 370);
-    cy.contains($t('ascendResults[0]')).click();
+    cy.contains($t('ascentResults[0]')).click();
     cy.get('#save-boulder').click();
     cy.get('#map-root').click(50, 370);
     cy.get('#retire-boulder').click();

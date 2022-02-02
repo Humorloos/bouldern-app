@@ -10,7 +10,7 @@ from factory.django import DjangoModelFactory, ImageField
 
 from python_anywhere.accounts.models import User
 from python_anywhere.bouldern.models import Color, Gym, DifficultyLevel, UGC, \
-    Boulder, Ascend
+    Boulder, Ascent
 from python_anywhere.bouldern.providers import GeoProvider
 from python_anywhere.settings import RESOURCES_DIR
 
@@ -80,11 +80,11 @@ class BoulderFactory(UGCFactory):
     color = LazyAttribute(lambda o: o.difficulty.color)
 
 
-class AscendFactory(UGCFactory):
-    """Factory for building ascends"""
+class AscentFactory(UGCFactory):
+    """Factory for building ascents"""
 
     class Meta:
-        model = Ascend
+        model = Ascent
 
-    result = Ascend.TOP
+    result = Ascent.TOP
     boulder = SubFactory(BoulderFactory)
