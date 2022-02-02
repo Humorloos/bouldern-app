@@ -1,7 +1,7 @@
 from django.utils.http import urlencode
 from rest_framework.status import HTTP_200_OK, HTTP_201_CREATED
 
-from python_anywhere.bouldern.models import Gym, DifficultyLevel
+from python_anywhere.bouldern.models import Gym, Grade
 from python_anywhere.bouldern.views import GymAPI
 
 
@@ -25,13 +25,13 @@ def test_create_gym(logged_in_client_rest, colors):
     client, user = logged_in_client_rest
     n_difficulty_levels = 3
     difficulty_level_range = range(1, n_difficulty_levels + 1)
-    from python_anywhere.bouldern.factories import DifficultyLevelFactory
+    from python_anywhere.bouldern.factories import GradeFactory
     difficulty_level_stubs = [
-        DifficultyLevelFactory.stub(gym=gym_stub, level=i)
+        GradeFactory.stub(gym=gym_stub, level=i)
         for i in difficulty_level_range]
     json_payload = {
         'name': gym_stub.name,
-        'difficultylevel_set': [{
+        'grade_set': [{
             'color_id': level.color.pk,
             'level': level.level
         } for level in difficulty_level_stubs]
@@ -44,7 +44,7 @@ def test_create_gym(logged_in_client_rest, colors):
     assert response.status_code == HTTP_201_CREATED
     gym = Gym.objects.first()
     assert gym.name == gym_stub.name
-    difficulty_levels = DifficultyLevel.objects.all()
+    difficulty_levels = Grade.objects.all()
     assert len(difficulty_levels) == n_difficulty_levels
     for difficulty_level in difficulty_levels:
         assert difficulty_level.gym.name == gym_stub.name

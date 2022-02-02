@@ -28,8 +28,8 @@
           <color-select
             id="id-difficulty-select"
             v-model="selectedDifficulty"
-            :color-options="difficultyLevelColors"
-            @update:model-value="updateDifficultyLevel($event)"
+            :color-options="gradeColors"
+            @update:model-value="updateGrade($event)"
           />
         </v-col>
       </v-row>
@@ -134,7 +134,7 @@ export default {
       gym: {
         map: '',
         id: 0,
-        difficultylevel_set: [{
+        grade_set: [{
           id: -1,
           level: 0,
           color: defaultColor,
@@ -233,12 +233,12 @@ export default {
       });
     },
     /**
-     * The options for the difficulty level of newly created boulders
+     * The options for the grade of newly created boulders
      *
-     * @returns {{color: *, name: *, id: *}[]} the difficulty level options
+     * @returns {{color: *, name: *, id: *}[]} the grade options
      */
-    difficultyLevelColors() {
-      return this.gym.difficultylevel_set.map(
+    gradeColors() {
+      return this.gym.grade_set.map(
           ({id, level, color}) => (
             {color: color.color, id: id, name: level + 1}));
     },
@@ -559,7 +559,7 @@ export default {
      * level and Updates both the hold and difficulty color of the most recently
      * added boulder to the provided event's color
      */
-    updateDifficultyLevel(event) {
+    updateGrade(event) {
       this.setColorStyle(event.color, event.color);
       this.selectedColor = this.colorOptions.filter(
           (colorOption) => colorOption.color === event.color)[0];

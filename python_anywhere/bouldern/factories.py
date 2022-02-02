@@ -9,7 +9,7 @@ from factory import Iterator, Faker, LazyAttribute, RelatedFactoryList, \
 from factory.django import DjangoModelFactory, ImageField
 
 from python_anywhere.accounts.models import User
-from python_anywhere.bouldern.models import Color, Gym, DifficultyLevel, UGC, \
+from python_anywhere.bouldern.models import Color, Gym, Grade, UGC, \
     Boulder, Ascent
 from python_anywhere.bouldern.providers import GeoProvider
 from python_anywhere.settings import RESOURCES_DIR
@@ -38,13 +38,13 @@ class ColorFactory(UGCFactory):
     color = Faker('color')
 
 
-class DifficultyLevelFactory(UGCFactory):
-    """Factory for building difficulty level instances"""
+class GradeFactory(UGCFactory):
+    """Factory for building grade instances"""
 
     class Meta:
-        model = DifficultyLevel
+        model = Grade
 
-    level = LazyAttribute(lambda o: o.gym.difficultylevel_set.count() + 1)
+    level = LazyAttribute(lambda o: o.gym.grade_set.count() + 1)
     color = Iterator(Color.objects.all())
     gym = Gym.objects.first()
 
@@ -58,7 +58,7 @@ class GymFactory(UGCFactory):
     name = Faker('company')
     map = ImageField(from_path=RESOURCES_DIR / 'generic_gym.png')
     difficulty_levels = RelatedFactoryList(
-        DifficultyLevelFactory,
+        GradeFactory,
         factory_related_name='gym',
         size=7
     )
@@ -74,9 +74,9 @@ class BoulderFactory(UGCFactory):
     gym = SubFactory(GymFactory)
     # set random difficulty from the boulder's gym
     difficulty = LazyAttribute(
-        lambda o: DifficultyLevel.objects.get(pk=choice(
-            DifficultyLevel.objects.filter(gym=o.gym).values_list('pk'))[0]))
-    # default color is difficultylevel's color
+        lambda o: Grade.objects.get(pk=choice(
+            Grade.objects.filter(gym=o.gym).values_list('pk'))[0]))
+    # default color is grade's color
     color = LazyAttribute(lambda o: o.difficulty.color)
 
 

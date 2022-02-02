@@ -74,14 +74,14 @@ export default {
       'authToken',
     ]),
     /**
-     * Gets a form with the gym's name and all difficulty levels for submission
+     * Gets a form with the gym's name and all grades for submission
      *
      * @returns {object} the gym form
      */
     form() {
       return {
         name: this.gymName,
-        difficultylevel_set: this.colors.map((color, index) => {
+        grade_set: this.colors.map((color, index) => {
           return {color_id: color.id, level: index + 1};
         }),
       };
@@ -129,7 +129,7 @@ export default {
       this.$router.push('/');
     },
     /**
-     * Adds the last added color again to colors to create new difficulty level
+     * Adds the last added color again to colors to create new grade
      * select
      */
     addDifficultySelect() {

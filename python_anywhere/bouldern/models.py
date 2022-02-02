@@ -24,7 +24,7 @@ class UGC(Model):
 
 
 class Color(UGC):
-    """Color of holds or difficulty levels"""
+    """Color of holds or grades"""
     name = CharField(max_length=128, unique=True)
     color = ColorField(default='#FF0000')
 
@@ -41,8 +41,8 @@ class Gym(UGC):
         return self.name
 
 
-class DifficultyLevel(UGC):
-    """A difficulty level in a gym"""
+class Grade(UGC):
+    """A grade in a gym"""
     level = PositiveSmallIntegerField()
     color = ForeignKey(Color, on_delete=SET_NULL, null=True)
     gym = ForeignKey(Gym, on_delete=SET_NULL, null=True)
@@ -55,7 +55,7 @@ class Boulder(UGC):
     """A boulder in a gym"""
     coordinates = PointField()
     gym = ForeignKey(Gym, on_delete=SET_NULL, null=True)
-    difficulty = ForeignKey(DifficultyLevel, on_delete=PROTECT, null=True)
+    difficulty = ForeignKey(Grade, on_delete=PROTECT, null=True)
     color = ForeignKey(Color, on_delete=PROTECT, null=True)
 
 

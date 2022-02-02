@@ -22,7 +22,7 @@ class EmailAddressFactory(DjangoModelFactory):
 
 
 class UserFactory(DjangoModelFactory):
-    """Factory for building difficulty level instances"""
+    """Factory for building grade instances"""
 
     class Meta:
         model = User
