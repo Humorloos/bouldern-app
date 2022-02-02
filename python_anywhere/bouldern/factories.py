@@ -57,7 +57,7 @@ class GymFactory(UGCFactory):
 
     name = Faker('company')
     map = ImageField(from_path=RESOURCES_DIR / 'generic_gym.png')
-    difficulty_levels = RelatedFactoryList(
+    grades = RelatedFactoryList(
         GradeFactory,
         factory_related_name='gym',
         size=7

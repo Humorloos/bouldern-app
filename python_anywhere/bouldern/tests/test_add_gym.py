@@ -23,18 +23,18 @@ def test_create_gym(logged_in_client_rest, colors):
     from python_anywhere.bouldern.factories import GymFactory
     gym_stub = GymFactory.build()
     client, user = logged_in_client_rest
-    n_difficulty_levels = 3
-    difficulty_level_range = range(1, n_difficulty_levels + 1)
+    n_grades = 3
+    grade_range = range(1, n_grades + 1)
     from python_anywhere.bouldern.factories import GradeFactory
-    difficulty_level_stubs = [
+    grade_stubs = [
         GradeFactory.stub(gym=gym_stub, level=i)
-        for i in difficulty_level_range]
+        for i in grade_range]
     json_payload = {
         'name': gym_stub.name,
         'grade_set': [{
             'color_id': level.color.pk,
             'level': level.level
-        } for level in difficulty_level_stubs]
+        } for level in grade_stubs]
     }
 
     # When
@@ -44,13 +44,13 @@ def test_create_gym(logged_in_client_rest, colors):
     assert response.status_code == HTTP_201_CREATED
     gym = Gym.objects.first()
     assert gym.name == gym_stub.name
-    difficulty_levels = Grade.objects.all()
-    assert len(difficulty_levels) == n_difficulty_levels
-    for difficulty_level in difficulty_levels:
-        assert difficulty_level.gym.name == gym_stub.name
-        assert difficulty_level.color in colors
-        assert difficulty_level.level in difficulty_level_range
-        assert difficulty_level.created_by == user
+    grades = Grade.objects.all()
+    assert len(grades) == n_grades
+    for grade in grades:
+        assert grade.gym.name == gym_stub.name
+        assert grade.color in colors
+        assert grade.level in grade_range
+        assert grade.created_by == user
     # When
     multipart_payload = {'map': gym_stub.map}
     client.patch(
