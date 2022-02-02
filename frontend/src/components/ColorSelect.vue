@@ -16,7 +16,7 @@
 </template>
 
 <script>
-/** @file select field for color of a difficulty level */
+/** @file select field for color of a grade */
 
 import vSelect from 'vue-select';
 
@@ -38,10 +38,10 @@ export default {
   emits: ['update:modelValue'],
   computed: {
     /**
-     * Gets difficulty level select options (which require label property) for
+     * Gets grade select options (which require label property) for
      * color options.
      *
-     * @returns {object[]} array of difficulty level select options
+     * @returns {object[]} array of grade select options
      */
     options() {
       return this.colorOptions.map((color) => {
