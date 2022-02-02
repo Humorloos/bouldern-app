@@ -1,47 +1,49 @@
 <template>
   <app-view>
-    <v-container>
-      <v-row>
-        <v-col><h1>Create Gym</h1></v-col>
-      </v-row>
-      <v-row>
-        <v-col>
-          <vue-form
-            :form="form"
-            :api-path="apiPath"
-            @submitted="onSubmitted"
-          >
-            <v-text-field
-              id="id_name"
-              v-model="gymName"
-              label="Name"
-              type="text"
-            />
-            <v-file-input
-              id="id_map"
-              accept="image/*"
-              label="Map"
-              @change="onFileChange"
-            />
-
-            <color-select
-              v-for="(color, index) in colors"
-              :id="`id_color-grade-${index + 1}`"
-              :key="color.name"
-              v-model="colors[index]"
-              :color-options="colorOptions"
-            />
-            <v-btn
-              id="add-grade-button"
-              type="button"
-              @click="addDifficultySelect"
+    <template #main>
+      <v-container>
+        <v-row>
+          <v-col><h1>Create Gym</h1></v-col>
+        </v-row>
+        <v-row>
+          <v-col>
+            <vue-form
+              :form="form"
+              :api-path="apiPath"
+              @submitted="onSubmitted"
             >
-              Add Grade
-            </v-btn>
-          </vue-form>
-        </v-col>
-      </v-row>
-    </v-container>
+              <v-text-field
+                id="id_name"
+                v-model="gymName"
+                label="Name"
+                type="text"
+              />
+              <v-file-input
+                id="id_map"
+                accept="image/*"
+                label="Map"
+                @change="onFileChange"
+              />
+
+              <color-select
+                v-for="(color, index) in colors"
+                :id="`id_color-grade-${index + 1}`"
+                :key="color.name"
+                v-model="colors[index]"
+                :color-options="colorOptions"
+              />
+              <v-btn
+                id="add-grade-button"
+                type="button"
+                @click="addDifficultySelect"
+              >
+                Add Grade
+              </v-btn>
+            </vue-form>
+          </v-col>
+        </v-row>
+      </v-container>
+    </template>
   </app-view>
 </template>
 
