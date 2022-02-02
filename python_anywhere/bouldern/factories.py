@@ -44,7 +44,7 @@ class GradeFactory(UGCFactory):
     class Meta:
         model = Grade
 
-    level = LazyAttribute(lambda o: o.gym.grade_set.count() + 1)
+    grade = LazyAttribute(lambda o: o.gym.grade_set.count() + 1)
     color = Iterator(Color.objects.all())
     gym = Gym.objects.first()
 
@@ -57,7 +57,7 @@ class GymFactory(UGCFactory):
 
     name = Faker('company')
     map = ImageField(from_path=RESOURCES_DIR / 'generic_gym.png')
-    difficulty_levels = RelatedFactoryList(
+    grades = RelatedFactoryList(
         GradeFactory,
         factory_related_name='gym',
         size=7

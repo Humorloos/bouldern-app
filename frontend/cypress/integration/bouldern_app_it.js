@@ -29,7 +29,7 @@ describe('The color creation view', () => {
       cy.get('.v-form > #submit_button').click();
     }
     cy.visit('create-gym');
-    cy.get('#id_color-level-1').click();
+    cy.get('#id_color-grade-1').click();
     // newly created color should be in selectable
     cy.contains(constants.colorName).click();
   });
@@ -89,10 +89,10 @@ describe('The gym creation view', () => {
     cy.visit('create-gym');
     cy.get('#id_name').type(constants.newGymName);
     cy.get('#id_map').attachFile('generic_gym.png');
-    cy.get('#id_color-level-1').click();
+    cy.get('#id_color-grade-1').click();
     cy.contains('Blue').click();
-    cy.contains('Add Level').click();
-    cy.get('#id_color-level-2').click();
+    cy.contains('Add Grade').click();
+    cy.get('#id_color-grade-2').click();
     cy.contains('Yellow').click();
     for (const _ of waitingFor('POST', '/bouldern/gym')) {
       cy.contains('Submit').click();

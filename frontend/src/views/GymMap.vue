@@ -136,7 +136,7 @@ export default {
         id: 0,
         grade_set: [{
           id: -1,
-          level: 0,
+          grade: 0,
           color: defaultColor,
         }],
       },
@@ -239,8 +239,8 @@ export default {
      */
     gradeColors() {
       return this.gym.grade_set.map(
-          ({id, level, color}) => (
-            {color: color.color, id: id, name: level + 1}));
+          ({id, grade, color}) => (
+            {color: color.color, id: id, name: grade + 1}));
     },
     /**
      * Gets the name of the gym to show the map of and sets it as the active gym
@@ -555,8 +555,8 @@ export default {
       return [this.shadowStyle, colorStyle, ascentStyle];
     },
     /**
-     * Adjusts the currently selected hold color when selecting a difficulty
-     * level and Updates both the hold and difficulty color of the most recently
+     * Adjusts the currently selected hold color when selecting a grade
+     * and Updates both the hold and difficulty color of the most recently
      * added boulder to the provided event's color
      */
     updateGrade(event) {
