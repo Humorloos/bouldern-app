@@ -96,7 +96,7 @@
       </map-overlay>
       <div
         id="map-root"
-        ref="map-root"
+        ref="mapRoot"
       />
     </template>
   </app-view>
@@ -105,7 +105,9 @@
 <script>
 /** @file view with interactive gym map */
 
-import {mapActions, mapMutations, mapState} from 'vuex';
+import {useStore} from 'vuex';
+import {useRoute} from 'vue-router';
+import {useI18n} from 'vue-i18n';
 import {Collection} from 'ol';
 import {containsCoordinate, getCenter} from 'ol/extent';
 import {GeoJSON} from 'ol/format';
@@ -120,12 +122,7 @@ import ColorSelect from '../components/ColorSelect.vue';
 import MapOverlay from '../components/MapOverlay.vue';
 import VueForm from '../components/VueForm.vue';
 import AppView from '../components/AppView.vue';
-
-const defaultColor = {
-  name: '',
-  id: -1,
-  color: '#ffffff',
-};
+import {computed, getCurrentInstance, onMounted, ref, watch} from 'vue';
 
 export default {
   name: 'GymMap',
@@ -135,384 +132,78 @@ export default {
     VueForm,
     ColorSelect,
   },
-  data() {
-    return {
-      gym: {
-        map: '',
-        id: 0,
-        grade_set: [{
-          id: -1,
-          grade: 0,
-          color: defaultColor,
-        }],
-      },
-      boulders: [{
-        coordinates: '',
-      }],
-      colorOptions: [defaultColor],
-      selectedCoordinates: {},
-      selectedDifficulty: defaultColor,
-      selectedColor: defaultColor,
-      mapImage: new Image(),
-      jsonFormat: new GeoJSON(),
-      shadowStyle: new Style({
-        image: new Icon({
-          src: this.axios.defaults.baseURL +
-              'static/bouldern/images/shadow.png',
-          scale: 0.34,
-          opacity: 0.6,
-        }),
-      }),
-      extent: [0, 0, 0, 0],
-      featureCollection: new Collection(),
-      loaded: false,
-      creating: false,
-      selectedBoulder: {ascent: undefined},
-      selectedAscentResult: null,
-      ascentIcons: [
-        {
-          name: 'target-circle', scale: 0.64,
-        },
-        {
-          name: 'check-circle', scale: 0.7,
-        },
-        {
-          name: 'check-underline-circle', scale: 0.7,
-        },
-      ].map(({name, scale}) => new Icon({
-        src: this.axios.defaults.baseURL +
-            `static/bouldern/images/${name}.svg`,
-        color: '#FFFFFF',
-        anchor: [0, 0],
-        scale: scale,
-      })),
+  setup() {
+    // ############ used so often don't know that to do with it yet ####
+    const store = useStore();
+    const requestWithJwt = (options) =>
+      store.dispatch('requestWithJwt', options);
+    const axios = store.state.axios;
+
+    // ############ mounted
+    // Make the component available to cypress in test runs
+    onMounted(() => {
+      if (window.Cypress) {
+        window[getCurrentInstance().type.name] = getCurrentInstance();
+      }
+    });
+
+    // ############ loading the gym map
+    const defaultColor = {
+      name: '',
+      id: -1,
+      color: '#ffffff',
     };
-  },
-  computed: {
-    ...mapState({
-      authToken: 'authToken',
-      activeGym: 'activeGym',
-    }),
-    /**
-     * Selectable options for the result of an attempt to ascent a boulder.
-     *
-     * @returns {string[]} array of selectable options
-     */
-    ascentResults() {
-      return [0, 1, 2].map((i) => this.$t(`ascentResults[${i}]`));
-    },
-    /**
-     * The openlayers gym map image source to be used in the image layer.
-     *
-     * @returns {ImageStatic} the map image source.
-     */
-    mapImageSource() {
-      return new ImageStatic({
-        url: this.gym.map,
-        projection: this.projection,
-        imageExtent: this.extent,
-        imageLoadFunction: this.setMapImage,
-      });
-    },
-    /**
-     * This layer contains the map image
-     *
-     * @returns {ImageLayer} the map image layer
-     */
-    imageLayer() {
-      return new ImageLayer({
-        className: 'image-layer',
-        source: this.mapImageSource,
-      });
-    },
-    /**
-     * This layer is where icons are drawn on
-     *
-     * @returns {VectorLayer} the vector layer
-     */
-    vectorLayer() {
-      return new VectorLayer({
-        className: 'vector-layer',
-        source: this.vectorSource,
-        updateWhileAnimating: true,
-        updateWhileInteracting: true,
-      });
-    },
-    /**
-     * The options for the grade of newly created boulders
-     *
-     * @returns {{color: *, name: *, id: *}[]} the grade options
-     */
-    gradeColors() {
-      return this.gym.grade_set.map(
-          ({id, grade, color}) => (
-            {color: color.color, id: id, name: grade}));
-    },
+    const gym = ref({
+      map: '',
+      id: 0,
+      grade_set: [{
+        id: -1,
+        grade: 0,
+        color: defaultColor,
+      }],
+    });
+    const mapImage = ref(new Image());
+    const route = useRoute();
     /**
      * Gets the name of the gym to show the map of and sets it as the active gym
      * if a new gym was opened
      *
      * @returns {string} the name of the gym of which to show the map
      */
-    gymName() {
-      if (this.$route.matched.some(({name}) => name === 'gymMap')) {
-        const gymName = this.$route.params.gymName;
-        this.setActiveGym(gymName);
+    const gymName = computed(() => {
+      if (route.matched.some(({name}) => name === 'gymMap')) {
+        const gymName = route.params.gymName;
+        store.commit('setActiveGym', gymName);
         return gymName;
       } else {
-        return this.activeGym;
+        return store.state.activeGym;
       }
-    },
-    /**
-     * Projecton from image coordinates to geo-coordinates
-     *
-     * @returns {Projection} the projection
-     */
-    projection() {
-      return new Projection({
-        code: 'xkcd-image',
-        units: 'pixels',
-        extent: this.extent,
-      });
-    },
+    });
+    const featureCollection = ref(new Collection());
     /**
      * Vector source to draw boulders on
      *
      * @returns {VectorSource} the vector source
      */
-    vectorSource() {
+    const vectorSource = computed(() => {
       return new VectorSource({
-        features: this.featureCollection,
+        features: featureCollection.value,
         useSpatialIndex: false, // improves performance
       });
-    },
-    /**
-     * Icon drawing interaction for drawing boulder icons. Only allows drawing
-     * on the image, not outside of it.
-     *
-     * @returns {Draw} the draw interaction
-     */
-    drawInteraction() {
-      const drawInteraction = new Draw({
-        type: 'Point',
-        source: this.vectorSource,
-        style: new Style({}),
-        condition: (event) => {
-          return containsCoordinate(this.extent, event.coordinate) &&
-              !this.hasBoulderAtPixel(event.pixel);
-        },
-      });
-      drawInteraction.on('drawend', this.openPopover);
-      return drawInteraction;
-    },
-    /**
-     * Initializes the gym map with image layer, vector layer, popover, and
-     * draw interaction
-     *
-     * @returns {Map} the gym map
-     */
-    map() {
-      // Initialize map
-      const map = new Map({
-        target: this.$refs['map-root'],
-      });
-      map.addOverlay(this.$refs.overlay.popover);
-      map.on('pointermove', (event) => {
-        const pixel = map.getEventPixel(event.originalEvent);
-        const hit = this.hasBoulderAtPixel(pixel);
-        map.getTarget().style.cursor = hit ? 'pointer' : '';
-      });
-      map.on('click', (event) => {
-        const feature = map
-            .forEachFeatureAtPixel(event.pixel, (feature) => feature);
-        if (feature) this.openPopover(feature);
-      });
-      return map;
-    },
-  },
-  watch: {
-    /**
-     * Loads new gym map when gym name changes
-     */
-    gymName() {
-      this.featureCollection.clear();
-      this.selectedDifficulty = defaultColor;
-      this.selectedColor = defaultColor;
-      this.$refs.overlay.close();
-      this.loadGymMap();
-    },
-  },
-  /**
-   * Gets the gym data including the map image's url, saves it and loads the map
-   * once the image has loaded
-   */
-  created() {
-    this.loadGymMap(this.onGymMapLoaded);
-    this.requestWithJwt({
-      method: 'GET',
-      apiPath: `/bouldern/color/`,
-    }).then((response) => {
-      this.colorOptions = response.data;
     });
-  },
-  /**
-   * Makes the component available to cypress in test runs
-   */
-  mounted() {
-    if (window.Cypress) {
-      window[this.$options.name] = this;
-    }
-  },
-  methods: {
-    ...mapMutations({
-      setActiveGym: 'setActiveGym',
-    }),
-    ...mapActions({
-      requestWithJwt: 'requestWithJwt',
-    }),
     /**
-     * Sets the color style (hold and difficulty color) of the selected boulder
+     * This layer is where icons are drawn on
      *
-     * @param holdColor the hold color to set
-     * @param difficultyColor the difficulty color to set
+     * @returns {VectorLayer} the vector layer
      */
-    setColorStyle(holdColor, difficultyColor) {
-      const style = this.selectedBoulder.getStyle();
-      style[1] = this.getColorStyle(holdColor, difficultyColor);
-      this.selectedBoulder.setStyle(style);
-    },
-    /**
-     * Sets the ascent style of the selected boulder according to the currently
-     * selected ascent status
-     */
-    setAscentStyle() {
-      const style = this.selectedBoulder.getStyle();
-      style[2] = new Style({
-        image: this.ascentIcons[this.selectedAscentResult],
+    const vectorLayer = computed(() => {
+      return new VectorLayer({
+        className: 'vector-layer',
+        source: vectorSource.value,
+        updateWhileAnimating: true,
+        updateWhileInteracting: true,
       });
-      this.selectedBoulder.setStyle(style);
-    },
-    /**
-     * If the selected boulder is already associated with an ascent status,
-     * and the status has changed, updates the ascent status for the boulder
-     * and user via an api call and assigns the status to the selected boulder.
-     * Otherwise, if the selected boulder is not yet associated with an ascent
-     * status, creates a new ascent object and associates its id with the
-     * selected boulder. Finally, closes the edit popover.
-     */
-    reportAscent() {
-      const ascentApiPath = `/bouldern/gym/${this.gym.id}/boulder/` +
-          `${this.selectedBoulder.id}/ascent/`;
-      if (this.selectedBoulder.ascent !== undefined) {
-        // only update ascent result if it has changed
-        if (this.selectedAscentResult !==
-            this.selectedBoulder.ascent.result.toString()) {
-          this.requestWithJwt({
-            apiPath: `${ascentApiPath}${this.selectedBoulder.ascent.id}/`,
-            data: {'result': this.selectedAscentResult},
-            method: 'PUT',
-          });
-          this.selectedBoulder.ascent.result = this.selectedAscentResult;
-          this.$refs.overlay.close();
-        }
-        //  If there was no ascent entry yet, create a new one
-      } else {
-        this.requestWithJwt({
-          apiPath: ascentApiPath,
-          data: {'result': this.selectedAscentResult},
-        }).then((response) => {
-          this.selectedBoulder.ascent = response.data;
-          this.$refs.overlay.close();
-        });
-      }
-    },
-    /**
-     * Checks if the map has a boulder at the provided pixel
-     *
-     * @param pixel [X, Y] array to check at whether there is a boulder
-     * @returns {boolean} whether there is a boulder at the pixel or not
-     */
-    hasBoulderAtPixel(pixel) {
-      return this.map.hasFeatureAtPixel(pixel, {
-        layerFilter: (layer) => layer
-            .getClassName() === this.vectorLayer.getClassName(),
-      });
-    },
-    /**
-     * Gets the gym data from the API, loads the gym map image, and deserializes
-     * the gym's boulders into the feature collection
-     */
-    loadGymMap(onLoaded) {
-      this.requestWithJwt({
-        method: 'GET',
-        apiPath: `/bouldern/gym/?name=${this.gymName}`,
-      }).then((response) => {
-        this.gym = response.data[0];
-        this.mapImage.src = this.gym.map;
-        this.mapImage.onload = () => {
-          this.extent = [0, 0, this.mapImage.width, this.mapImage.height];
-          this.map.setLayers([
-            this.imageLayer,
-            this.vectorLayer,
-          ]);
-          this.map.setView(new View({
-            projection: this.projection,
-            center: getCenter(this.extent),
-            zoom: 1,
-            maxZoom: 8,
-          }));
-          this.map.removeInteraction(this.drawInteraction);
-          this.map.addInteraction(this.drawInteraction);
-          if (onLoaded) onLoaded();
-        };
-        Promise.all([
-          this.requestWithJwt({
-            method: 'GET',
-            apiPath: `/bouldern/gym/${this.gym.id}/boulder/?is_active=true`,
-          }),
-          this.requestWithJwt({
-            method: 'GET',
-            apiPath: `/bouldern/gym/${this.gym.id}/boulder/_/ascent/`,
-          }),
-        ]).then(([boulderResponse, ascentResponse]) => {
-          this.boulders = boulderResponse.data;
-          this.boulders.forEach((boulder) => {
-            boulder.ascent = ascentResponse.data
-                .find((ascent) => ascent.boulder === boulder.id);
-          });
-          // Populate with initial features
-          this.boulders.forEach((boulder) => {
-            const feature = this.jsonFormat.readFeature(boulder.coordinates);
-            feature.id = boulder.id;
-            feature.ascent = boulder.ascent;
-            feature.setStyle(this.getBoulderStyle(
-                boulder.color.color,
-                boulder.difficulty.color.color,
-                boulder.ascent ? boulder.ascent.result : undefined,
-            ));
-            this.vectorSource.addFeature(feature);
-          });
-        });
-      });
-    },
-    /**
-     * Sets the loaded flag and initializes the
-     * map
-     */
-    onGymMapLoaded() {
-      this.loaded = true;
-      this.map;
-    },
-    /**
-     * Assigns the map image to the provided image. The purpose of this method
-     * is to avoid loading the map image twice by assigning the already loaded
-     * image instead.
-     *
-     * @param image image object of map image source.
-     */
-    setMapImage(image) {
-      image.setImage(this.mapImage);
-    },
+    });
     /**
      * Gets the openlayers style for a boulder with the given hold and
      * difficulty color. The style is a cirle with four small border segments
@@ -523,7 +214,7 @@ export default {
      * @param difficultyColor the difficulty color to use for the style
      * @returns {Style} the color style
      */
-    getColorStyle: function(holdColor, difficultyColor) {
+    function getColorStyle(holdColor, difficultyColor) {
       return new Style({
         image: new Circle({
           fill: new Fill({
@@ -538,10 +229,30 @@ export default {
           radius: 10,
         }),
       });
-    },
+    }
+    const shadowStyle = ref(new Style({
+      image: new Icon({
+        src: axios.defaults.baseURL +
+            'static/bouldern/images/shadow.png',
+        scale: 0.34,
+        opacity: 0.6,
+      }),
+    }));
+    const ascentIcons = ref([
+      {name: 'target-circle', scale: 0.64},
+      {name: 'check-circle', scale: 0.7},
+      {name: 'check-underline-circle', scale: 0.7},
+    ].map(({name, scale}) => new Icon({
+      src: axios.defaults.baseURL +
+          `static/bouldern/images/${name}.svg`,
+      color: '#FFFFFF',
+      anchor: [0, 0],
+      scale: scale,
+    })));
     /**
      * Generates the openlayers style for a boulder with the given hold color,
-     * difficulty color, and ascent status. The style consists of three layers:
+     * difficulty color, and ascent status. The style consists of three
+     * layers:
      * - A shadow for 3D effect
      * - The color style with difficulty- and hold color.
      * - The ascent status icon
@@ -552,81 +263,212 @@ export default {
      * @returns {Style[]} the boulder's style consisting of the two-colored
      * color icon, the ascent status icon, and a shadow
      */
-    getBoulderStyle(holdColor, difficultyColor, ascentStatus) {
-      const colorStyle = this.getColorStyle(holdColor, difficultyColor);
+    function getBoulderStyle(holdColor, difficultyColor, ascentStatus) {
+      const colorStyle = getColorStyle(holdColor, difficultyColor);
       const ascentStyle = ascentStatus !== undefined ?
           new Style({
-            image: this.ascentIcons[ascentStatus],
+            image: ascentIcons.value[ascentStatus],
           }) : new Style({});
-      return [this.shadowStyle, colorStyle, ascentStyle];
-    },
+      return [shadowStyle.value, colorStyle, ascentStyle];
+    }
+    const mapRoot = ref(null);
     /**
-     * Adjusts the currently selected hold color when selecting a grade
-     * and Updates both the hold and difficulty color of the most recently
-     * added boulder to the provided event's color
-     */
-    updateGrade(event) {
-      this.setColorStyle(event.color, event.color);
-      this.selectedColor = this.colorOptions.filter(
-          (colorOption) => colorOption.color === event.color)[0];
-    },
-    /**
-     * Updates the hold color of the most recently added boulder to the provided
-     * event's color
+     * Initializes the gym map with image layer, vector layer, popover, and
+     * draw interaction
      *
-     * @param event a color select update event
+     * @returns {Map} the gym map
      */
-    updateHoldColor(event) {
-      this.setColorStyle(event.color, this.selectedDifficulty.color);
-    },
-    /**
-     * If in create mode, removes the popover's feature from the
-     * featureCollection, otherwise resets ascent status if it was changed. Then
-     * (always) blurs the popover.
-     */
-    onClosePopover() {
-      if (this.creating) {
-        if (this.selectedBoulder.id === undefined) {
-          this.featureCollection.pop();
-        }
-      } else {
-        if (this.selectedBoulder.ascent !== undefined) {
-          if (this.selectedBoulder.ascent.result.toString() !==
-              this.selectedAscentResult) {
-            this.selectedAscentResult =
-                this.selectedBoulder.ascent.result.toString();
-            this.setAscentStyle();
-          }
-        } else {
-          if (this.selectedAscentResult !== null) {
-            this.selectedAscentResult = null;
-            this.setAscentStyle();
-          }
-        }
-      }
-    },
-    /**
-     * Sets the selected boulder inactive via an api call, removes it from the
-     * feature collection, and closes the edit popover
-     */
-    retireBoulder() {
-      this.requestWithJwt({
-        apiPath: `/bouldern/gym/${this.gym.id}/boulder/` +
-            `${this.selectedBoulder.id}/`,
-        method: 'PATCH',
-        data: {'is_active': false},
+    const map = computed(() => {
+      // Initialize map
+      const map = new Map({
+        target: mapRoot.value,
       });
-      this.featureCollection.remove(this.selectedBoulder);
-      this.$refs.overlay.close();
-    },
+      map.addOverlay(overlay.value.popover);
+      map.on('pointermove', (event) => {
+        const pixel = map.getEventPixel(event.originalEvent);
+        const hit = hasBoulderAtPixel(pixel);
+        map.getTarget().style.cursor = hit ? 'pointer' : '';
+      });
+      // todo: see if I can separate this from the map component
+      map.on('click', (event) => {
+        const feature = map
+            .forEachFeatureAtPixel(event.pixel, (feature) => feature);
+        if (feature) openPopover(feature);
+      });
+      return map;
+    });
+    const jsonFormat = ref(new GeoJSON());
     /**
-     * Sets the selected boulder's id to the created one's and closes the
-     * create popover
+     * Checks if the map has a boulder at the provided pixel
+     *
+     * @param pixel [X, Y] array to check at whether there is a boulder
+     * @returns {boolean} whether there is a boulder at the pixel or not
      */
-    onSubmitted(response) {
-      this.selectedBoulder.id = response.data.id;
-      this.$refs.overlay.close();
-    },
+    function hasBoulderAtPixel(pixel) {
+      return map.value.hasFeatureAtPixel(pixel, {
+        layerFilter: (layer) => layer
+            .getClassName() === vectorLayer.value.getClassName(),
+      });
+    }
+    const extent = ref([0, 0, 0, 0]);
+    /**
+     * Projecton from image coordinates to geo-coordinates
+     *
+     * @returns {Projection} the projection
+     */
+    const projection = computed(() => {
+      return new Projection({
+        code: 'xkcd-image',
+        units: 'pixels',
+        extent: extent.value,
+      });
+    });
+    /**
+     * The openlayers gym map image source to be used in the image layer.
+     *
+     * @returns {ImageStatic} the map image source.
+     */
+    const mapImageSource = computed(() => {
+      return new ImageStatic({
+        url: gym.value.map,
+        projection: projection.value,
+        imageExtent: extent.value,
+        imageLoadFunction: (image) => image.setImage(mapImage.value),
+      });
+    });
+    /**
+     * This layer contains the map image
+     *
+     * @returns {ImageLayer} the map image layer
+     */
+    const imageLayer = computed(() => {
+      return new ImageLayer({
+        className: 'image-layer',
+        source: mapImageSource.value,
+      });
+    });
+
+    /**
+     * Icon drawing interaction for drawing boulder icons. Only allows drawing
+     * on the image, not outside of it.
+     *
+     * @returns {Draw} the draw interaction
+     */
+    const drawInteraction = computed(() => {
+      const drawInteraction = new Draw({
+        type: 'Point',
+        source: vectorSource.value,
+        style: new Style({}),
+        condition: (event) => {
+          return containsCoordinate(extent.value, event.coordinate) &&
+              !hasBoulderAtPixel(event.pixel);
+        },
+      });
+      // todo: see if I can separate this from here
+      drawInteraction.on('drawend', openPopover);
+      return drawInteraction;
+    });
+    const boulders = ref([{coordinates: ''}]);
+    /**
+     * Gets the gym data from the API, loads the gym map image, and deserializes
+     * the gym's boulders into the feature collection
+     */
+    function loadGymMap(onLoaded) {
+      requestWithJwt({
+        method: 'GET',
+        apiPath: `/bouldern/gym/?name=${gymName.value}`,
+      }).then((response) => {
+        gym.value = response.data[0];
+        mapImage.value.src = gym.value.map;
+        mapImage.value.onload = () => {
+          extent.value = [0, 0, mapImage.value.width, mapImage.value.height];
+          map.value.setLayers([
+            imageLayer.value,
+            vectorLayer.value,
+          ]);
+          map.value.setView(new View({
+            projection: projection.value,
+            center: getCenter(extent.value),
+            zoom: 1,
+            maxZoom: 8,
+          }));
+          map.value.removeInteraction(drawInteraction.value);
+          map.value.addInteraction(drawInteraction.value);
+          if (onLoaded) onLoaded();
+        };
+        Promise.all([
+          requestWithJwt({
+            method: 'GET',
+            apiPath: `/bouldern/gym/${gym.value.id}/boulder/?is_active=true`,
+          }),
+          requestWithJwt({
+            method: 'GET',
+            apiPath: `/bouldern/gym/${gym.value.id}/boulder/_/ascent/`,
+          }),
+        ]).then(([boulderResponse, ascentResponse]) => {
+          boulders.value = boulderResponse.data;
+          boulders.value.forEach((boulder) => {
+            boulder.ascent = ascentResponse.data
+                .find((ascent) => ascent.boulder === boulder.id);
+          });
+          // Populate with initial features
+          boulders.value.forEach((boulder) => {
+            const feature = jsonFormat.value.readFeature(boulder.coordinates);
+            feature.id = boulder.id;
+            feature.ascent = boulder.ascent;
+            feature.setStyle(getBoulderStyle(
+                boulder.color.color,
+                boulder.difficulty.color.color,
+                boulder.ascent ? boulder.ascent.result : undefined,
+            ));
+            vectorSource.value.addFeature(feature);
+          });
+        });
+      });
+    }
+    const loaded = ref(false);
+    /**
+     * Sets the loaded flag and initializes the
+     * map
+     */
+    function onGymMapLoaded() {
+      loaded.value = true;
+      map.value;
+    }
+    // load the gym map when opening this view
+    loadGymMap(onGymMapLoaded);
+    // Load new gym map when gym name changes
+    watch(gymName, () => {
+      featureCollection.value.clear();
+      loadGymMap();
+      // todo: check if I can separate this into two watchers, one resetting
+      //  map, one resetting popover related fields
+      selectedDifficulty.value = defaultColor;
+      selectedColor.value = defaultColor;
+      overlay.value.close();
+    });
+
+    // ########## load color options for holds when opening view
+
+    const colorOptions = ref([defaultColor]);
+    requestWithJwt({
+      method: 'GET',
+      apiPath: `/bouldern/color/`,
+    }).then((response) => {
+      colorOptions.value = response.data;
+    });
+
+    // ############## create / edit popover
+    // todo: separate this into openCreatePopover and openEditPopover
+
+    const selectedBoulder = ref({ascent: undefined});
+    const creating = ref(false);
+    const selectedCoordinates = ref({});
+    const selectedColor = ref(defaultColor);
+    // todo: rename to selectedGrade
+    const selectedDifficulty = ref(defaultColor);
+    const selectedAscentResult = ref(null);
+    const overlay = ref(null);
     /**
      * Opens the create / edit popover and closes the old one if still open. If
      * called with draw event sets selected coordinates to the event's feature's
@@ -634,23 +476,199 @@ export default {
      *
      * @param event the draw event or the clicked feature
      */
-    openPopover(event) {
-      this.creating = event.type === 'drawend';
+    function openPopover(event) {
+      creating.value = event.type === 'drawend';
 
-      this.selectedBoulder = this.creating ? event.feature : event;
-      const geometry = this.selectedBoulder.getGeometry();
+      selectedBoulder.value = creating.value ? event.feature : event;
+      const geometry = selectedBoulder.value.getGeometry();
 
-      if (this.creating) {
-        this.selectedCoordinates = this.jsonFormat
+      if (creating.value) {
+        selectedCoordinates.value = jsonFormat.value
             .writeGeometryObject(geometry);
-        this.selectedBoulder.setStyle(this.getBoulderStyle(
-            this.selectedColor.color, this.selectedDifficulty.color));
+        selectedBoulder.value.setStyle(getBoulderStyle(
+            selectedColor.value.color, selectedDifficulty.value.color));
       } else {
-        this.selectedAscentResult = this.selectedBoulder.ascent ?
-            this.selectedBoulder.ascent.result.toString() : null;
+        selectedAscentResult.value = selectedBoulder.value.ascent ?
+            selectedBoulder.value.ascent.result.toString() : null;
       }
-      this.$refs.overlay.open(geometry.getCoordinates());
-    },
+      overlay.value.open(geometry.getCoordinates());
+    }
+
+    /**
+     * Sets the color style (hold and difficulty color) of the selected boulder
+     *
+     * @param holdColor the hold color to set
+     * @param difficultyColor the difficulty color to set
+     */
+    function setColorStyle(holdColor, difficultyColor) {
+      const style = selectedBoulder.value.getStyle();
+      style[1] = getColorStyle(holdColor, difficultyColor);
+      selectedBoulder.value.setStyle(style);
+    }
+
+    /**
+     * Adjusts the currently selected hold color when selecting a grade
+     * and Updates both the hold and difficulty color of the most recently
+     * added boulder to the provided event's color
+     */
+    function updateGrade(event) {
+      setColorStyle(event.color, event.color);
+      selectedColor.value = colorOptions.value.filter(
+          (colorOption) => colorOption.color === event.color)[0];
+    }
+
+    /**
+     * Updates the hold color of the most recently added boulder to the provided
+     * event's color
+     *
+     * @param event a color select update event
+     */
+    function updateHoldColor(event) {
+      setColorStyle(event.color, selectedDifficulty.value.color);
+    }
+
+    /**
+     * The options for the grade of newly created boulders
+     *
+     * @returns {{color: *, name: *, id: *}[]} the grade options
+     */
+    const gradeColors = computed(() => {
+      return gym.value.grade_set.map(
+          ({id, grade, color}) => (
+            {color: color.color, id: id, name: grade}));
+    });
+
+    /**
+     * Sets the selected boulder's id to the created one's and closes the
+     * create popover
+     */
+    function onSubmitted(response) {
+      selectedBoulder.value.id = response.data.id;
+      overlay.value.close();
+    }
+    // todo: when clicking on map while in edit popover, the selected boulder
+    //  is removed, but it should happen the same as when closing the popover
+
+    /**
+     * Sets the ascent style of the selected boulder according to the currently
+     * selected ascent status
+     */
+    function setAscentStyle() {
+      const style = selectedBoulder.value.getStyle();
+      style[2] = new Style({
+        image: ascentIcons.value[selectedAscentResult.value],
+      });
+      selectedBoulder.value.setStyle(style);
+    }
+
+    /**
+     * If the selected boulder is already associated with an ascent status,
+     * and the status has changed, updates the ascent status for the boulder
+     * and user via an api call and assigns the status to the selected boulder.
+     * Otherwise, if the selected boulder is not yet associated with an ascent
+     * status, creates a new ascent object and associates its id with the
+     * selected boulder. Finally, closes the edit popover.
+     */
+    function reportAscent() {
+      const ascentApiPath = `/bouldern/gym/${gym.value.id}/boulder/` +
+          `${selectedBoulder.value.id}/ascent/`;
+      if (selectedBoulder.value.ascent !== undefined) {
+        // only update ascent result if it has changed
+        if (selectedAscentResult.value !==
+            selectedBoulder.value.ascent.result.toString()) {
+          requestWithJwt({
+            apiPath: `${ascentApiPath}${selectedBoulder.value.ascent.id}/`,
+            data: {'result': selectedAscentResult.value},
+            method: 'PUT',
+          });
+          selectedBoulder.value.ascent.result = selectedAscentResult.value;
+          overlay.value.close();
+        }
+        //  If there was no ascent entry yet, create a new one
+      } else {
+        requestWithJwt({
+          apiPath: ascentApiPath,
+          data: {'result': selectedAscentResult.value},
+        }).then((response) => {
+          selectedBoulder.value.ascent = response.data;
+          overlay.value.close();
+        });
+      }
+    }
+
+    const {t} = useI18n();
+    /**
+     * Selectable options for the result of an attempt to ascent a boulder.
+     *
+     * @returns {string[]} array of selectable options
+     */
+    const ascentResults = computed(() => {
+      return [0, 1, 2].map((i) => t(`ascentResults[${i}]`));
+    });
+
+    /**
+     * Sets the selected boulder inactive via an api call, removes it from the
+     * feature collection, and closes the edit popover
+     */
+    function retireBoulder() {
+      requestWithJwt({
+        apiPath: `/bouldern/gym/${gym.value.id}/boulder/` +
+            `${selectedBoulder.value.id}/`,
+        method: 'PATCH',
+        data: {'is_active': false},
+      });
+      featureCollection.value.remove(selectedBoulder.value);
+      overlay.value.close();
+    }
+
+    /**
+     * If in create mode, removes the popover's feature from the
+     * featureCollection, otherwise resets ascent status if it was changed. Then
+     * (always) blurs the popover.
+     */
+    function onClosePopover() {
+      if (creating.value) {
+        if (selectedBoulder.value.id === undefined) {
+          featureCollection.value.pop();
+        }
+      } else {
+        if (selectedBoulder.value.ascent !== undefined) {
+          if (selectedBoulder.value.ascent.result.toString() !==
+              selectedAscentResult.value) {
+            selectedAscentResult.value =
+                selectedBoulder.value.ascent.result.toString();
+            setAscentStyle();
+          }
+        } else {
+          if (selectedAscentResult.value !== null) {
+            selectedAscentResult.value = null;
+            setAscentStyle();
+          }
+        }
+      }
+    }
+
+    return {
+      creating,
+      loaded,
+      selectedCoordinates,
+      selectedColor,
+      selectedDifficulty,
+      selectedAscentResult,
+      overlay,
+      mapRoot,
+      gym,
+      ascentResults,
+      gradeColors,
+      colorOptions,
+      retireBoulder,
+      reportAscent,
+      onSubmitted,
+      updateGrade,
+      updateHoldColor,
+      onClosePopover,
+      setAscentStyle,
+    };
   },
 };
 </script>

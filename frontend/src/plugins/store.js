@@ -28,7 +28,6 @@ const getDefaultState = function() {
     },
     loginError: '',
     axios: http,
-    activeGym: 'Generic Gym',
   };
 };
 
