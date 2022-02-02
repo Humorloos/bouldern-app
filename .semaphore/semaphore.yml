@@ -16,7 +16,6 @@ global_job_config:
       value: /home/semaphore/bouldern-app
   prologue:
     commands:
-      - set -x
       - checkout
       - FRONTEND_DIR="$PROJECT_DIR"/frontend
       - CACHE_SUFFIX=$SEMAPHORE_GIT_BRANCH-$(checksum frontend/package-lock.json)-$(checksum .semaphore/semaphore.yml)
