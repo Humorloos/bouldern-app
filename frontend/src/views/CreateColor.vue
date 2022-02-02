@@ -1,29 +1,31 @@
 <template>
   <app-view>
-    <v-container>
-      <v-row>
-        <v-col>
-          <vue-form
-            :form="form"
-            :api-path="'/bouldern/color/'"
-            @submitted="onSubmitted"
-          >
-            <v-text-field
-              id="id_name"
-              v-model="form.name"
-              label="Name"
-              type="text"
-            />
-            <input
-              id="id_color"
-              v-model="form.color"
-              data-jscolor=""
-              class="jscolor-input"
+    <template #main>
+      <v-container>
+        <v-row>
+          <v-col>
+            <vue-form
+              :form="form"
+              :api-path="'/bouldern/color/'"
+              @submitted="onSubmitted"
             >
-          </vue-form>
-        </v-col>
-      </v-row>
-    </v-container>
+              <v-text-field
+                id="id_name"
+                v-model="form.name"
+                label="Name"
+                type="text"
+              />
+              <input
+                id="id_color"
+                v-model="form.color"
+                data-jscolor=""
+                class="jscolor-input"
+              >
+            </vue-form>
+          </v-col>
+        </v-row>
+      </v-container>
+    </template>
   </app-view>
 </template>
 

@@ -10,6 +10,8 @@
     >
       Boulder Holder
     </v-app-bar-title>
+    <v-spacer />
+    <slot name="app-bar-right" />
   </v-app-bar>
   <v-navigation-drawer
     v-model="drawer"
@@ -77,7 +79,7 @@
     </v-list>
   </v-navigation-drawer>
   <v-main>
-    <slot />
+    <slot name="main" />
   </v-main>
 </template>
 
