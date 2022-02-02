@@ -22,7 +22,7 @@ class GradeSerializer(ModelSerializer):
 
     class Meta:
         model = Grade
-        fields = ['level', 'color', 'color_id', 'id']
+        fields = ['grade', 'color', 'color_id', 'id']
 
 
 class BoulderSerializer(ModelSerializer):
