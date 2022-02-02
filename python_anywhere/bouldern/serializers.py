@@ -22,7 +22,7 @@ class GradeSerializer(ModelSerializer):
 
     class Meta:
         model = Grade
-        fields = ['level', 'color', 'color_id', 'id']
+        fields = ['grade', 'color', 'color_id', 'id']
 
 
 class BoulderSerializer(ModelSerializer):
@@ -55,10 +55,10 @@ class GymSerializer(ModelSerializer):
     def create(self, validated_data):
         grade_set_data = validated_data.pop('grade_set')
         gym = Gym.objects.create(**validated_data)
-        for difficulty_level_data in grade_set_data:
+        for grade_data in grade_set_data:
             Grade.objects.create(
                 gym=gym, created_by=validated_data['created_by'],
-                **difficulty_level_data)
+                **grade_data)
         return gym
 
 

@@ -25,17 +25,17 @@
 
           <color-select
             v-for="(color, index) in colors"
-            :id="`id_color-level-${index + 1}`"
+            :id="`id_color-grade-${index + 1}`"
             :key="color.name"
             v-model="colors[index]"
             :color-options="colorOptions"
           />
           <v-btn
-            id="add-level-button"
+            id="add-grade-button"
             type="button"
             @click="addDifficultySelect"
           >
-            Add Level
+            Add Grade
           </v-btn>
         </vue-form>
       </v-col>
@@ -82,7 +82,7 @@ export default {
       return {
         name: this.gymName,
         grade_set: this.colors.map((color, index) => {
-          return {color_id: color.id, level: index + 1};
+          return {color_id: color.id, grade: index + 1};
         }),
       };
     },

@@ -43,12 +43,12 @@ class Gym(UGC):
 
 class Grade(UGC):
     """A grade in a gym"""
-    level = PositiveSmallIntegerField()
+    grade = PositiveSmallIntegerField()
     color = ForeignKey(Color, on_delete=SET_NULL, null=True)
     gym = ForeignKey(Gym, on_delete=SET_NULL, null=True)
 
     def __str__(self):
-        return str(self.level)
+        return str(self.grade)
 
 
 class Boulder(UGC):
