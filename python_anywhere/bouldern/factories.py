@@ -44,7 +44,7 @@ class GradeFactory(UGCFactory):
     class Meta:
         model = Grade
 
-    level = LazyAttribute(lambda o: o.gym.grade_set.count() + 1)
+    grade = LazyAttribute(lambda o: o.gym.grade_set.count() + 1)
     color = Iterator(Color.objects.all())
     gym = Gym.objects.first()
 

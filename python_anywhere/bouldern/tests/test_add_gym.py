@@ -27,14 +27,14 @@ def test_create_gym(logged_in_client_rest, colors):
     grade_range = range(1, n_grades + 1)
     from python_anywhere.bouldern.factories import GradeFactory
     grade_stubs = [
-        GradeFactory.stub(gym=gym_stub, level=i)
+        GradeFactory.stub(gym=gym_stub, grade=i)
         for i in grade_range]
     json_payload = {
         'name': gym_stub.name,
         'grade_set': [{
-            'color_id': level.color.pk,
-            'level': level.level
-        } for level in grade_stubs]
+            'color_id': grade.color.pk,
+            'grade': grade.grade
+        } for grade in grade_stubs]
     }
 
     # When
@@ -49,7 +49,7 @@ def test_create_gym(logged_in_client_rest, colors):
     for grade in grades:
         assert grade.gym.name == gym_stub.name
         assert grade.color in colors
-        assert grade.level in grade_range
+        assert grade.grade in grade_range
         assert grade.created_by == user
     # When
     multipart_payload = {'map': gym_stub.map}
