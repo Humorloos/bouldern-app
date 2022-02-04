@@ -39,7 +39,7 @@ describe('The color creation view', () => {
 describe('The gym map view', () => {
   it('allows adding boulders', () => {
     cy.visit('');
-    cy.window().its(`${GymMapView.name}.$data.loaded`).should('equal', true);
+    cy.window().its(`${GymMapView.name}.loaded`).should('equal', true);
     cy.get('#map-root').click(140, 270);
     cy.contains('Difficulty');
     cy.get('#popup-closer').click();
@@ -62,12 +62,12 @@ describe('The gym map view', () => {
       cy.visit(`gym-map/${constants.gymName}`);
     }
     cy.get('.v-app-bar-title__placeholder').click();
-    cy.window().its(`${GymMapView.name}.$data.loaded`).should('equal', true);
+    cy.window().its(`${GymMapView.name}.loaded`).should('equal', true);
   });
 
   it('shows the edit popup when clicking a boulder', () => {
     cy.visit('');
-    cy.window().its(`${GymMapView.name}.$data.loaded`).should('equal', true);
+    cy.window().its(`${GymMapView.name}.loaded`).should('equal', true);
     cy.window().its(
         `${GymMapView.name}.$refs.overlay.popover.autoPan.animation.duration`,
     ).then((duration) => {
@@ -98,7 +98,7 @@ describe('The gym creation view', () => {
       cy.contains('Submit').click();
     }
     cy.visit(`gym-map/${constants.newGymName}`);
-    cy.window().its(`${GymMapView.name}.$data.loaded`).should('equal', true);
+    cy.window().its(`${GymMapView.name}.loaded`).should('equal', true);
   });
 });
 
@@ -120,6 +120,6 @@ describe('The app drawer', () => {
   it('allows navigating to a gym map view', () => {
     cy.get('#id_gym-name').type(constants.gymName);
     cy.get('#submit_button').click();
-    cy.window().its(`${GymMapView.name}.$data.loaded`).should('equal', true);
+    cy.window().its(`${GymMapView.name}.loaded`).should('equal', true);
   });
 });
