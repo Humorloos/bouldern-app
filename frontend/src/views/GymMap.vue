@@ -437,6 +437,7 @@ export default {
      * @param event the draw event
      */
     function openCreatePopover(event) {
+      overlay.value.close();
       creating.value = true;
 
       const feature = event.feature;
@@ -521,9 +522,6 @@ export default {
       }
     }
 
-    // todo: when clicking on map while in edit popover, the selected boulder
-    //  is removed, but it should happen the same as when closing the popover
-
     const selectedAscentResult = ref(null);
     /**
      * Opens the edit popover and closes the old one if still open.
@@ -531,6 +529,7 @@ export default {
      * @param feature the clicked boulder
      */
     function openEditPopover(feature) {
+      overlay.value.close();
       creating.value = false;
       selectedAscentResult.value = feature.ascent ?
           feature.ascent.result.toString() : null;
