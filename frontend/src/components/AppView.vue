@@ -89,7 +89,7 @@
  */
 
 import {useDisplay} from 'vuetify';
-import {computed, onMounted, ref, watch} from 'vue';
+import {computed, ref, watch} from 'vue';
 import {useRoute, useRouter} from 'vue-router';
 import {useStore} from 'vuex';
 
@@ -121,22 +121,6 @@ export default {
       store.commit('logout');
       router.push(`/login`);
     }
-
-    // Expose Vuex store to cypress tests and attach log hooks when running
-    // cypress test
-    onMounted(() => {
-      if (window.Cypress) {
-        const storeEventHandler = (storeEvent) => {
-          window.Cypress.cy.$log[
-              new Date().toISOString() + ' - ' + storeEvent.type] = {
-            payload: storeEvent.payload,
-          };
-        };
-        this.$store.subscribe(storeEventHandler);
-        this.$store.subscribeAction(storeEventHandler);
-        window['$store'] = this.$store;
-      }
-    });
 
     return {
       display,
