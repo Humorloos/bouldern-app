@@ -163,7 +163,6 @@ export default {
         color: defaultColor,
       }],
     });
-    const mapImage = ref(new Image());
     const route = useRoute();
     /**
      * Gets the name of the gym to show the map of and sets it as the active gym
@@ -180,30 +179,18 @@ export default {
         return store.state.activeGym;
       }
     });
-    const featureCollection = ref(new Collection());
-    /**
-     * Vector source to draw boulders on
-     *
-     * @returns {VectorSource} the vector source
-     */
-    const vectorSource = computed(() => {
-      return new VectorSource({
-        features: featureCollection.value,
-        useSpatialIndex: false, // improves performance
-      });
+    const featureCollection = new Collection();
+    // Vector source to draw boulders on
+    const vectorSource = new VectorSource({
+      features: featureCollection,
+      useSpatialIndex: false, // improves performance
     });
-    /**
-     * This layer is where icons are drawn on
-     *
-     * @returns {VectorLayer} the vector layer
-     */
-    const vectorLayer = computed(() => {
-      return new VectorLayer({
-        className: 'vector-layer',
-        source: vectorSource.value,
-        updateWhileAnimating: true,
-        updateWhileInteracting: true,
-      });
+    // This layer is where icons are drawn on
+    const vectorLayer = new VectorLayer({
+      className: 'vector-layer',
+      source: vectorSource,
+      updateWhileAnimating: true,
+      updateWhileInteracting: true,
     });
 
     /**
@@ -233,15 +220,15 @@ export default {
       });
     }
 
-    const shadowStyle = ref(new Style({
+    const shadowStyle = new Style({
       image: new Icon({
         src: axios.defaults.baseURL +
             'static/bouldern/images/shadow.png',
         scale: 0.34,
         opacity: 0.6,
       }),
-    }));
-    const ascentIcons = ref([
+    });
+    const ascentIcons = [
       {name: 'target-circle', scale: 0.64},
       {name: 'check-circle', scale: 0.7},
       {name: 'check-underline-circle', scale: 0.7},
@@ -251,7 +238,7 @@ export default {
       color: '#FFFFFF',
       anchor: [0, 0],
       scale: scale,
-    })));
+    }));
 
     /**
      * Generates the openlayers style for a boulder with the given hold color,
@@ -271,9 +258,9 @@ export default {
       const colorStyle = getColorStyle(holdColor, difficultyColor);
       const ascentStyle = ascentStatus !== undefined ?
           new Style({
-            image: ascentIcons.value[ascentStatus],
+            image: ascentIcons[ascentStatus],
           }) : new Style({});
-      return [shadowStyle.value, colorStyle, ascentStyle];
+      return [shadowStyle, colorStyle, ascentStyle];
     }
 
     const mapRoot = ref(null);
@@ -307,11 +294,11 @@ export default {
     function hasBoulderAtPixel(pixel) {
       return map.value.hasFeatureAtPixel(pixel, {
         layerFilter: (layer) => layer
-            .getClassName() === vectorLayer.value.getClassName(),
+            .getClassName() === vectorLayer.getClassName(),
       });
     }
 
-    const extent = ref([0, 0, 0, 0]);
+    const extent = [0, 0, 0, 0];
     /**
      * Projecton from image coordinates to geo-coordinates
      *
@@ -321,7 +308,7 @@ export default {
       return new Projection({
         code: 'xkcd-image',
         units: 'pixels',
-        extent: extent.value,
+        extent: extent,
       });
     });
     /**
@@ -333,8 +320,8 @@ export default {
       return new ImageStatic({
         url: gym.value.map,
         projection: projection.value,
-        imageExtent: extent.value,
-        imageLoadFunction: (image) => image.setImage(mapImage.value),
+        imageExtent: extent,
+        imageLoadFunction: (image) => image.setImage(mapImage),
       });
     });
     /**
@@ -358,15 +345,15 @@ export default {
     const drawInteraction = computed(() => {
       return new Draw({
         type: 'Point',
-        source: vectorSource.value,
+        source: vectorSource,
         style: new Style({}),
         condition: (event) => {
-          return containsCoordinate(extent.value, event.coordinate) &&
+          return containsCoordinate(extent, event.coordinate) &&
               !hasBoulderAtPixel(event.pixel);
         },
       });
     });
-    const boulders = ref([{coordinates: ''}]);
+    const mapImage = new Image();
 
     /**
      * Gets the gym data from the API, loads the gym map image, and deserializes
@@ -378,16 +365,17 @@ export default {
         apiPath: `/bouldern/gym/?name=${gymName.value}`,
       }).then((response) => {
         gym.value = response.data[0];
-        mapImage.value.src = gym.value.map;
-        mapImage.value.onload = () => {
-          extent.value = [0, 0, mapImage.value.width, mapImage.value.height];
+        mapImage.src = gym.value.map;
+        mapImage.onload = () => {
+          extent[2] = mapImage.width;
+          extent[3] = mapImage.height;
           map.value.setLayers([
             imageLayer.value,
-            vectorLayer.value,
+            vectorLayer,
           ]);
           map.value.setView(new View({
             projection: projection.value,
-            center: getCenter(extent.value),
+            center: getCenter(extent),
             zoom: 1,
             maxZoom: 8,
           }));
@@ -405,22 +393,20 @@ export default {
             apiPath: `/bouldern/gym/${gym.value.id}/boulder/_/ascent/`,
           }),
         ]).then(([boulderResponse, ascentResponse]) => {
-          boulders.value = boulderResponse.data;
-          boulders.value.forEach((boulder) => {
-            boulder.ascent = ascentResponse.data
-                .find((ascent) => ascent.boulder === boulder.id);
-          });
+          const boulders = boulderResponse.data;
+          boulders.forEach((boulder) => {
           // Populate with initial features
-          boulders.value.forEach((boulder) => {
             const feature = jsonFormat.value.readFeature(boulder.coordinates);
             feature.id = boulder.id;
-            feature.ascent = boulder.ascent;
+            const ascent = ascentResponse.data
+                .find((ascent) => ascent.boulder === boulder.id);
+            feature.ascent = ascent;
             feature.setStyle(getBoulderStyle(
                 boulder.color.color,
                 boulder.difficulty.color.color,
-                boulder.ascent ? boulder.ascent.result : undefined,
+                ascent ? ascent.result : undefined,
             ));
-            vectorSource.value.addFeature(feature);
+            vectorSource.addFeature(feature);
           });
         });
       });
@@ -446,7 +432,7 @@ export default {
     loadGymMap(onGymMapLoaded);
     // Load new gym map when gym name changes
     watch(gymName, () => {
-      featureCollection.value.clear();
+      featureCollection.clear();
       loadGymMap();
     });
 
@@ -569,7 +555,7 @@ export default {
      */
     function onCloseCreatePopover() {
       if (selectedBoulder.value.id === undefined) {
-        featureCollection.value.pop();
+        featureCollection.pop();
       }
     }
 
@@ -598,7 +584,7 @@ export default {
     function setAscentStyle() {
       const style = selectedBoulder.value.getStyle();
       style[2] = new Style({
-        image: ascentIcons.value[selectedAscentResult.value],
+        image: ascentIcons[selectedAscentResult.value],
       });
       selectedBoulder.value.setStyle(style);
     }
@@ -639,14 +625,8 @@ export default {
     }
 
     const {t} = useI18n();
-    /**
-     * Selectable options for the result of an attempt to ascent a boulder.
-     *
-     * @returns {string[]} array of selectable options
-     */
-    const ascentResults = computed(() => {
-      return [0, 1, 2].map((i) => t(`ascentResults[${i}]`));
-    });
+    // Selectable options for the result of an attempt to ascend a boulder.
+    const ascentResults = [0, 1, 2].map((i) => t(`ascentResults[${i}]`));
 
     /**
      * Sets the selected boulder inactive via an api call, removes it from the
@@ -659,7 +639,8 @@ export default {
         method: 'PATCH',
         data: {'is_active': false},
       });
-      featureCollection.value.remove(selectedBoulder.value);
+      featureCollection.remove(featureCollection.getArray()
+          .find((feature) => feature.id === selectedBoulder.value.id));
       overlay.value.close();
     }
 
