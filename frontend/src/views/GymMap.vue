@@ -133,13 +133,11 @@ export default {
     ColorSelect,
   },
   setup() {
-    // ############ used so often don't know that to do with it yet ####
     const store = useStore();
     const requestWithJwt = (options) =>
       store.dispatch('requestWithJwt', options);
     const axios = store.state.axios;
 
-    // ############ mounted
     // Make the component available to cypress in test runs
     onMounted(() => {
       if (window.Cypress) {
@@ -148,7 +146,6 @@ export default {
       }
     });
 
-    // ############ loading the gym map
     const defaultColor = {
       name: '',
       id: -1,
@@ -264,6 +261,21 @@ export default {
     }
 
     const mapRoot = ref(null);
+
+    /**
+     * Checks if the map has a boulder at the provided pixel
+     *
+     * @param pixel [X, Y] array to check at whether there is a boulder
+     * @returns {boolean} whether there is a boulder at the pixel or not
+     */
+    function hasBoulderAtPixel(pixel) {
+      return map.value.hasFeatureAtPixel(pixel, {
+        layerFilter: (layer) => layer
+            .getClassName() === vectorLayer.getClassName(),
+      });
+    }
+    const overlay = ref(null);
+
     /**
      * Initializes the gym map with image layer, vector layer, popover, and
      * draw interaction
@@ -285,19 +297,6 @@ export default {
     });
     const jsonFormat = ref(new GeoJSON());
 
-    /**
-     * Checks if the map has a boulder at the provided pixel
-     *
-     * @param pixel [X, Y] array to check at whether there is a boulder
-     * @returns {boolean} whether there is a boulder at the pixel or not
-     */
-    function hasBoulderAtPixel(pixel) {
-      return map.value.hasFeatureAtPixel(pixel, {
-        layerFilter: (layer) => layer
-            .getClassName() === vectorLayer.getClassName(),
-      });
-    }
-
     const extent = [0, 0, 0, 0];
     /**
      * Projecton from image coordinates to geo-coordinates
@@ -311,6 +310,8 @@ export default {
         extent: extent,
       });
     });
+    const mapImage = new Image();
+
     /**
      * The openlayers gym map image source to be used in the image layer.
      *
@@ -353,7 +354,6 @@ export default {
         },
       });
     });
-    const mapImage = new Image();
 
     /**
      * Gets the gym data from the API, loads the gym map image, and deserializes
@@ -414,30 +414,6 @@ export default {
 
     const loaded = ref(false);
 
-    /**
-     * Sets the loaded flag and initializes the
-     * map
-     */
-    function onGymMapLoaded() {
-      loaded.value = true;
-      drawInteraction.value.on('drawend', openCreatePopover);
-      map.value.on('click', (event) => {
-        const feature = map.value
-            .forEachFeatureAtPixel(event.pixel, (feature) => feature);
-        if (feature) openEditPopover(feature);
-      });
-    }
-
-    // load the gym map when opening this view
-    loadGymMap(onGymMapLoaded);
-    // Load new gym map when gym name changes
-    watch(gymName, () => {
-      featureCollection.clear();
-      loadGymMap();
-    });
-
-    // ########## load color options for holds when opening view
-
     const colorOptions = ref([defaultColor]);
     requestWithJwt({
       method: 'GET',
@@ -445,27 +421,13 @@ export default {
     }).then((response) => {
       colorOptions.value = response.data;
     });
+    const creating = ref(false);
 
-    /**
-     * If in create mode, , otherwise . Then
-     * (always) blurs the popover.
-     */
-    function onClosePopover() {
-      if (creating.value) onCloseCreatePopover();
-      else onCloseEditPopover();
-    }
-
-    // ############## create / edit popover
-    // todo: separate this into openCreatePopover and openEditPopover
 
     const selectedBoulder = ref({ascent: undefined});
-    const creating = ref(false);
     const selectedCoordinates = ref({});
     const selectedColor = ref(defaultColor);
-    // todo: rename to selectedGrade
-    const selectedDifficulty = ref(defaultColor);
-    const selectedAscentResult = ref(null);
-    const overlay = ref(null);
+    const selectedGrade = ref(defaultColor);
 
     /**
      * Opens the create popover and closes the old one if still open. Sets
@@ -483,7 +445,7 @@ export default {
       selectedCoordinates.value = jsonFormat.value
           .writeGeometryObject(geometry);
       feature.setStyle(getBoulderStyle(
-          selectedColor.value.color, selectedDifficulty.value.color));
+          selectedColor.value.color, selectedGrade.value.color));
 
       selectedBoulder.value = feature;
       overlay.value.open(geometry.getCoordinates());
@@ -491,7 +453,7 @@ export default {
 
     // reset selected colors and close popover when changing gym
     watch(gymName, () => {
-      selectedDifficulty.value = defaultColor;
+      selectedGrade.value = defaultColor;
       selectedColor.value = defaultColor;
       overlay.value.close();
     });
@@ -526,7 +488,7 @@ export default {
      * @param event a color select update event
      */
     function updateHoldColor(event) {
-      setColorStyle(event.color, selectedDifficulty.value.color);
+      setColorStyle(event.color, selectedGrade.value.color);
     }
 
     /**
@@ -562,8 +524,7 @@ export default {
     // todo: when clicking on map while in edit popover, the selected boulder
     //  is removed, but it should happen the same as when closing the popover
 
-    // ########################### edit popover
-
+    const selectedAscentResult = ref(null);
     /**
      * Opens the edit popover and closes the old one if still open.
      *
@@ -662,9 +623,36 @@ export default {
         }
       }
     }
-    // todo: split into composition functions as here:
-    // https://v3.vuejs.org/guide/composition-api-introduction.html#standalone
-    // -computed-properties
+
+    /**
+     * calls close popover handler for create / edit popover
+     */
+    function onClosePopover() {
+      if (creating.value) onCloseCreatePopover();
+      else onCloseEditPopover();
+    }
+
+    /**
+     * Sets the loaded flag and initializes the
+     * map
+     */
+    function onGymMapLoaded() {
+      loaded.value = true;
+      drawInteraction.value.on('drawend', openCreatePopover);
+      map.value.on('click', (event) => {
+        const feature = map.value
+            .forEachFeatureAtPixel(event.pixel, (feature) => feature);
+        if (feature) openEditPopover(feature);
+      });
+    }
+
+    // load the gym map when opening this view
+    loadGymMap(onGymMapLoaded);
+    // Load new gym map when gym name changes
+    watch(gymName, () => {
+      featureCollection.clear();
+      loadGymMap();
+    });
     return {
       gym,
       ascentResults,
@@ -677,7 +665,7 @@ export default {
       selectedCoordinates,
       selectedColor,
       gradeColors,
-      selectedDifficulty,
+      selectedDifficulty: selectedGrade,
       updateGrade,
       updateHoldColor,
       onSubmitted,
@@ -688,10 +676,8 @@ export default {
       reportAscent,
       onClosePopover,
     };
-  }
-  ,
-}
-;
+  },
+};
 </script>
 
 <style>
