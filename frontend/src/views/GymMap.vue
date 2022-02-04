@@ -143,7 +143,8 @@ export default {
     // Make the component available to cypress in test runs
     onMounted(() => {
       if (window.Cypress) {
-        window[getCurrentInstance().type.name] = getCurrentInstance();
+        const instance = getCurrentInstance();
+        window[instance.type.name] = instance.proxy;
       }
     });
 
@@ -204,6 +205,7 @@ export default {
         updateWhileInteracting: true,
       });
     });
+
     /**
      * Gets the openlayers style for a boulder with the given hold and
      * difficulty color. The style is a cirle with four small border segments
@@ -230,6 +232,7 @@ export default {
         }),
       });
     }
+
     const shadowStyle = ref(new Style({
       image: new Icon({
         src: axios.defaults.baseURL +
@@ -249,6 +252,7 @@ export default {
       anchor: [0, 0],
       scale: scale,
     })));
+
     /**
      * Generates the openlayers style for a boulder with the given hold color,
      * difficulty color, and ascent status. The style consists of three
@@ -271,6 +275,7 @@ export default {
           }) : new Style({});
       return [shadowStyle.value, colorStyle, ascentStyle];
     }
+
     const mapRoot = ref(null);
     /**
      * Initializes the gym map with image layer, vector layer, popover, and
@@ -289,15 +294,10 @@ export default {
         const hit = hasBoulderAtPixel(pixel);
         map.getTarget().style.cursor = hit ? 'pointer' : '';
       });
-      // todo: see if I can separate this from the map component
-      map.on('click', (event) => {
-        const feature = map
-            .forEachFeatureAtPixel(event.pixel, (feature) => feature);
-        if (feature) openPopover(feature);
-      });
       return map;
     });
     const jsonFormat = ref(new GeoJSON());
+
     /**
      * Checks if the map has a boulder at the provided pixel
      *
@@ -310,6 +310,7 @@ export default {
             .getClassName() === vectorLayer.value.getClassName(),
       });
     }
+
     const extent = ref([0, 0, 0, 0]);
     /**
      * Projecton from image coordinates to geo-coordinates
@@ -355,7 +356,7 @@ export default {
      * @returns {Draw} the draw interaction
      */
     const drawInteraction = computed(() => {
-      const drawInteraction = new Draw({
+      return new Draw({
         type: 'Point',
         source: vectorSource.value,
         style: new Style({}),
@@ -364,11 +365,9 @@ export default {
               !hasBoulderAtPixel(event.pixel);
         },
       });
-      // todo: see if I can separate this from here
-      drawInteraction.on('drawend', openPopover);
-      return drawInteraction;
     });
     const boulders = ref([{coordinates: ''}]);
+
     /**
      * Gets the gym data from the API, loads the gym map image, and deserializes
      * the gym's boulders into the feature collection
@@ -426,26 +425,29 @@ export default {
         });
       });
     }
+
     const loaded = ref(false);
+
     /**
      * Sets the loaded flag and initializes the
      * map
      */
     function onGymMapLoaded() {
       loaded.value = true;
-      map.value;
+      drawInteraction.value.on('drawend', openCreatePopover);
+      map.value.on('click', (event) => {
+        const feature = map.value
+            .forEachFeatureAtPixel(event.pixel, (feature) => feature);
+        if (feature) openEditPopover(feature);
+      });
     }
+
     // load the gym map when opening this view
     loadGymMap(onGymMapLoaded);
     // Load new gym map when gym name changes
     watch(gymName, () => {
       featureCollection.value.clear();
       loadGymMap();
-      // todo: check if I can separate this into two watchers, one resetting
-      //  map, one resetting popover related fields
-      selectedDifficulty.value = defaultColor;
-      selectedColor.value = defaultColor;
-      overlay.value.close();
     });
 
     // ########## load color options for holds when opening view
@@ -458,6 +460,15 @@ export default {
       colorOptions.value = response.data;
     });
 
+    /**
+     * If in create mode, , otherwise . Then
+     * (always) blurs the popover.
+     */
+    function onClosePopover() {
+      if (creating.value) onCloseCreatePopover();
+      else onCloseEditPopover();
+    }
+
     // ############## create / edit popover
     // todo: separate this into openCreatePopover and openEditPopover
 
@@ -469,30 +480,35 @@ export default {
     const selectedDifficulty = ref(defaultColor);
     const selectedAscentResult = ref(null);
     const overlay = ref(null);
+
     /**
-     * Opens the create / edit popover and closes the old one if still open. If
-     * called with draw event sets selected coordinates to the event's feature's
+     * Opens the create popover and closes the old one if still open. Sets
+     * selected coordinates to the event's feature's
      * coordinates and sets the drawn feature's style to the selected colors.
      *
-     * @param event the draw event or the clicked feature
+     * @param event the draw event
      */
-    function openPopover(event) {
-      creating.value = event.type === 'drawend';
+    function openCreatePopover(event) {
+      creating.value = true;
 
-      selectedBoulder.value = creating.value ? event.feature : event;
-      const geometry = selectedBoulder.value.getGeometry();
+      const feature = event.feature;
+      const geometry = feature.getGeometry();
 
-      if (creating.value) {
-        selectedCoordinates.value = jsonFormat.value
-            .writeGeometryObject(geometry);
-        selectedBoulder.value.setStyle(getBoulderStyle(
-            selectedColor.value.color, selectedDifficulty.value.color));
-      } else {
-        selectedAscentResult.value = selectedBoulder.value.ascent ?
-            selectedBoulder.value.ascent.result.toString() : null;
-      }
+      selectedCoordinates.value = jsonFormat.value
+          .writeGeometryObject(geometry);
+      feature.setStyle(getBoulderStyle(
+          selectedColor.value.color, selectedDifficulty.value.color));
+
+      selectedBoulder.value = feature;
       overlay.value.open(geometry.getCoordinates());
     }
+
+    // reset selected colors and close popover when changing gym
+    watch(gymName, () => {
+      selectedDifficulty.value = defaultColor;
+      selectedColor.value = defaultColor;
+      overlay.value.close();
+    });
 
     /**
      * Sets the color style (hold and difficulty color) of the selected boulder
@@ -546,8 +562,34 @@ export default {
       selectedBoulder.value.id = response.data.id;
       overlay.value.close();
     }
+
+
+    /**
+     * Removes the popover's feature from the featureCollection
+     */
+    function onCloseCreatePopover() {
+      if (selectedBoulder.value.id === undefined) {
+        featureCollection.value.pop();
+      }
+    }
+
     // todo: when clicking on map while in edit popover, the selected boulder
     //  is removed, but it should happen the same as when closing the popover
+
+    // ########################### edit popover
+
+    /**
+     * Opens the edit popover and closes the old one if still open.
+     *
+     * @param feature the clicked boulder
+     */
+    function openEditPopover(feature) {
+      creating.value = false;
+      selectedAscentResult.value = feature.ascent ?
+          feature.ascent.result.toString() : null;
+      selectedBoulder.value = feature;
+      overlay.value.open(feature.getGeometry().getCoordinates());
+    }
 
     /**
      * Sets the ascent style of the selected boulder according to the currently
@@ -622,55 +664,53 @@ export default {
     }
 
     /**
-     * If in create mode, removes the popover's feature from the
-     * featureCollection, otherwise resets ascent status if it was changed. Then
-     * (always) blurs the popover.
+     * Resets ascent status if it was changed.
      */
-    function onClosePopover() {
-      if (creating.value) {
-        if (selectedBoulder.value.id === undefined) {
-          featureCollection.value.pop();
+    function onCloseEditPopover() {
+      if (selectedBoulder.value.ascent !== undefined) {
+        if (selectedBoulder.value.ascent.result.toString() !==
+            selectedAscentResult.value) {
+          selectedAscentResult.value =
+              selectedBoulder.value.ascent.result.toString();
+          setAscentStyle();
         }
       } else {
-        if (selectedBoulder.value.ascent !== undefined) {
-          if (selectedBoulder.value.ascent.result.toString() !==
-              selectedAscentResult.value) {
-            selectedAscentResult.value =
-                selectedBoulder.value.ascent.result.toString();
-            setAscentStyle();
-          }
-        } else {
-          if (selectedAscentResult.value !== null) {
-            selectedAscentResult.value = null;
-            setAscentStyle();
-          }
+        if (selectedAscentResult.value !== null) {
+          selectedAscentResult.value = null;
+          setAscentStyle();
         }
       }
     }
-
+    // todo: split into composition functions as here:
+    // https://v3.vuejs.org/guide/composition-api-introduction.html#standalone
+    // -computed-properties
     return {
-      creating,
-      loaded,
-      selectedCoordinates,
-      selectedColor,
-      selectedDifficulty,
-      selectedAscentResult,
-      overlay,
-      mapRoot,
       gym,
       ascentResults,
-      gradeColors,
+      mapRoot,
+      loaded,
       colorOptions,
-      retireBoulder,
-      reportAscent,
-      onSubmitted,
+      overlay,
+      creating,
+      // create popover
+      selectedCoordinates,
+      selectedColor,
+      gradeColors,
+      selectedDifficulty,
       updateGrade,
       updateHoldColor,
-      onClosePopover,
+      onSubmitted,
+      // edit popover
+      selectedAscentResult,
       setAscentStyle,
+      retireBoulder,
+      reportAscent,
+      onClosePopover,
     };
-  },
-};
+  }
+  ,
+}
+;
 </script>
 
 <style>
