@@ -696,7 +696,7 @@ export default {
     const allGradesActive = ref(true);
 
     /**
-     * todo
+     * Sets all grades active / inactive when toggling "all" checkbox
      */
     function selectGrades(allGradesActive) {
       if (allGradesActive) {
