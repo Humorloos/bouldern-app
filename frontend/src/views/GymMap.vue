@@ -450,6 +450,8 @@ export default {
             const ascent = ascentResponse.data
                 .find((ascent) => ascent.boulder === boulder.id);
             feature.ascent = ascent;
+            feature.grade = boulder.grade;
+            feature.color = boulder.color;
             feature.setStyle(getBoulderStyle(
                 boulder.color.color,
                 boulder.grade.color.color,
@@ -560,6 +562,8 @@ export default {
      */
     function onSubmitted(response) {
       selectedBoulder.value.id = response.data.id;
+      selectedBoulder.value.grade = response.data.grade;
+      selectedBoulder.value.color = response.data.color;
       overlay.value.close();
     }
 
@@ -688,6 +692,7 @@ export default {
     // filtering by grade
 
     const filtering = ref(false);
+
     /**
      * todo
      */
@@ -705,7 +710,30 @@ export default {
         activeGrades.value = gym.value.grade_set.map((grade) => grade.id);
       } else activeGrades.value = [];
     }
+
     const activeGrades = ref([]);
+
+    // set boulders of filtered grades invisible and those of active grades
+    // visible
+    watch(activeGrades, () => {
+      featureCollection.forEach((boulder) => {
+        // if boulder's grade is active and boulder is invisible, show it
+        if (activeGrades.value.includes(boulder.grade.id)) {
+          if (boulder.getStyle().length === undefined) {
+            boulder.setStyle(getBoulderStyle(
+                boulder.color.color,
+                boulder.grade.color.color,
+                boulder.ascent ? boulder.ascent.result : undefined,
+            ));
+          }
+        //  if boulder's grade is inactive and boulder is visible, hide it
+        } else {
+          if (boulder.getStyle().length !== undefined) {
+            boulder.setStyle(new Style({}));
+          }
+        }
+      });
+    });
 
     // loading gym map
     /**
