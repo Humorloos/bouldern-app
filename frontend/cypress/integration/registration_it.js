@@ -16,7 +16,7 @@ describe('The register app', () => {
     // remove auth token
     cy.window().then((win) => win.$store.commit('setAuthTokenToken', ''));
     cy.visit(`gym-map/${constants.gymName}`);
-    cy.window().its(`${GymMapView.name}.$data.loaded`).should('equal', true);
+    cy.window().its(`${GymMapView.name}.loaded`).should('equal', true);
   });
 
   it('stays logged in after reloading the page', () => {

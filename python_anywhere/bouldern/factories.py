@@ -72,12 +72,12 @@ class BoulderFactory(UGCFactory):
 
     coordinates = Faker('point')
     gym = SubFactory(GymFactory)
-    # set random difficulty from the boulder's gym
-    difficulty = LazyAttribute(
+    # set random grade from the boulder's gym
+    grade = LazyAttribute(
         lambda o: Grade.objects.get(pk=choice(
             Grade.objects.filter(gym=o.gym).values_list('pk'))[0]))
     # default color is grade's color
-    color = LazyAttribute(lambda o: o.difficulty.color)
+    color = LazyAttribute(lambda o: o.grade.color)
 
 
 class AscentFactory(UGCFactory):

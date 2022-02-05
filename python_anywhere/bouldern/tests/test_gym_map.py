@@ -20,7 +20,7 @@ def test_boulder_api_post(logged_in_client_rest, colors):
     payload = {f'coordinates': boulder_stub.coordinates.geojson}
     payload.update({
         'color_id': boulder_stub.color.pk,
-        'difficulty_id': boulder_stub.difficulty.pk,
+        'grade_id': boulder_stub.grade.pk,
     })
     # When
     response = client.post(BoulderAPI().reverse_action('list', args=[gym.pk]),
@@ -32,7 +32,7 @@ def test_boulder_api_post(logged_in_client_rest, colors):
     assert boulder.coordinates.geojson == payload['coordinates']
     assert boulder.gym == gym
     assert boulder.color == boulder_stub.color
-    assert boulder.difficulty == boulder_stub.difficulty
+    assert boulder.grade == boulder_stub.grade
 
 
 def test_boulder_api_get(logged_in_client_rest, colors):
