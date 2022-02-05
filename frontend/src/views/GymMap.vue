@@ -138,12 +138,20 @@ export default {
       store.dispatch('requestWithJwt', options);
     const axios = store.state.axios;
 
-    // Make the component available to cypress in test runs
+    const mapRoot = ref(null);
+    const overlay = ref(null);
+    const map = new Map({});
+
     onMounted(() => {
+      // Make the component available to cypress in test runs
       if (window.Cypress) {
         const instance = getCurrentInstance();
         window[instance.type.name] = instance.proxy;
       }
+
+      // Mount map and popover
+      map.setTarget(mapRoot.value);
+      map.addOverlay(overlay.value.popover);
     });
 
     const defaultColor = {
@@ -260,7 +268,6 @@ export default {
       return [shadowStyle, colorStyle, ascentStyle];
     }
 
-    const mapRoot = ref(null);
 
     /**
      * Checks if the map has a boulder at the provided pixel
@@ -269,32 +276,12 @@ export default {
      * @returns {boolean} whether there is a boulder at the pixel or not
      */
     function hasBoulderAtPixel(pixel) {
-      return map.value.hasFeatureAtPixel(pixel, {
+      return map.hasFeatureAtPixel(pixel, {
         layerFilter: (layer) => layer
             .getClassName() === vectorLayer.getClassName(),
       });
     }
-    const overlay = ref(null);
 
-    /**
-     * Initializes the gym map with image layer, vector layer, popover, and
-     * draw interaction
-     *
-     * @returns {Map} the gym map
-     */
-    const map = computed(() => {
-      // Initialize map
-      const map = new Map({
-        target: mapRoot.value,
-      });
-      map.addOverlay(overlay.value.popover);
-      map.on('pointermove', (event) => {
-        const pixel = map.getEventPixel(event.originalEvent);
-        const hit = hasBoulderAtPixel(pixel);
-        map.getTarget().style.cursor = hit ? 'pointer' : '';
-      });
-      return map;
-    });
     const jsonFormat = ref(new GeoJSON());
 
     const extent = [0, 0, 0, 0];
@@ -369,18 +356,18 @@ export default {
         mapImage.onload = () => {
           extent[2] = mapImage.width;
           extent[3] = mapImage.height;
-          map.value.setLayers([
+          map.setLayers([
             imageLayer.value,
             vectorLayer,
           ]);
-          map.value.setView(new View({
+          map.setView(new View({
             projection: projection.value,
             center: getCenter(extent),
             zoom: 1,
             maxZoom: 8,
           }));
-          map.value.removeInteraction(drawInteraction.value);
-          map.value.addInteraction(drawInteraction.value);
+          map.removeInteraction(drawInteraction.value);
+          map.addInteraction(drawInteraction.value);
           if (onLoaded) onLoaded();
         };
         Promise.all([
@@ -395,7 +382,7 @@ export default {
         ]).then(([boulderResponse, ascentResponse]) => {
           const boulders = boulderResponse.data;
           boulders.forEach((boulder) => {
-          // Populate with initial features
+            // Populate with initial features
             const feature = jsonFormat.value.readFeature(boulder.coordinates);
             feature.id = boulder.id;
             const ascent = ascentResponse.data
@@ -523,6 +510,7 @@ export default {
     }
 
     const selectedAscentResult = ref(null);
+
     /**
      * Opens the edit popover and closes the old one if still open.
      *
@@ -638,10 +626,15 @@ export default {
     function onGymMapLoaded() {
       loaded.value = true;
       drawInteraction.value.on('drawend', openCreatePopover);
-      map.value.on('click', (event) => {
-        const feature = map.value
+      map.on('click', (event) => {
+        const feature = map
             .forEachFeatureAtPixel(event.pixel, (feature) => feature);
         if (feature) openEditPopover(feature);
+      });
+      map.on('pointermove', (event) => {
+        const pixel = map.getEventPixel(event.originalEvent);
+        const hit = hasBoulderAtPixel(pixel);
+        map.getTarget().style.cursor = hit ? 'pointer' : '';
       });
     }
 
