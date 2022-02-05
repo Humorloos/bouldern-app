@@ -75,8 +75,8 @@ def test_boulder_api_retire(logged_in_client_rest, colors):
         pk__in={b.pk for b in active_boulders}))
 
 
-def test_ascent_api_post(logged_in_client_rest, colors):
-    """Test that post method works correctly"""
+def test_ascent_api_post_new_ascent(logged_in_client_rest, colors):
+    """Test that post method creates new ascents"""
     # Given
     client, user = logged_in_client_rest
 
@@ -99,28 +99,32 @@ def test_ascent_api_post(logged_in_client_rest, colors):
     assert ascent.boulder == boulder
 
 
-def test_ascent_api_put(logged_in_client_rest, colors):
-    """Test that put method works correctly"""
+def test_ascent_api_post_existing_ascent(logged_in_client_rest, colors):
+    """
+    Test that post method sets existing ascents inactive when posting to
+    the same boulder for the same user
+    """
     # Given
     client, user = logged_in_client_rest
 
     from python_anywhere.bouldern.factories import AscentFactory
-    ascent = AscentFactory(result=Ascent.PROJECT)
+    existing_ascent = AscentFactory(result=Ascent.PROJECT)
 
-    boulder = ascent.boulder
+    boulder = existing_ascent.boulder
 
     # When
-    response = client.put(
-        AscentAPI().reverse_action(
-            'detail', args=[boulder.gym.pk, boulder.pk, ascent.pk]),
+    response = client.post(
+        AscentAPI().reverse_action('list', args=[boulder.gym.pk, boulder.pk]),
         data={'result': Ascent.TOP}, format='json')
 
     # Then
-    assert response.status_code == HTTP_200_OK
-    ascent = Ascent.objects.first()
-    assert ascent.created_by == user
-    assert ascent.result == Ascent.TOP
-    assert ascent.boulder == boulder
+    assert response.status_code == HTTP_201_CREATED
+    created_ascent = Ascent.objects.filter(is_active=True).first()
+    assert created_ascent.created_by == user
+    assert created_ascent.result == Ascent.TOP
+    assert created_ascent.boulder == boulder
+    existing_ascent = Ascent.objects.filter(is_active=False).first()
+    assert existing_ascent.boulder == boulder
 
 
 def test_ascent_api_get(logged_in_client_rest, colors):
