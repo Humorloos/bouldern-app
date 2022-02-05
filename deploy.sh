@@ -1,5 +1,7 @@
 # pull updated version of branch from repo
 cd humorloos.pythonanywhere.com || exit
+
+# fetch repository
 git fetch --all
 git reset --hard origin/"$1"
 
@@ -14,6 +16,9 @@ npm install
 echo "compiling vue files"
 npx vite build
 cd ..
+
+# make database backup
+sqlite3 db.sqlite ".backup db.backup.sqlite"
 
 # perform django migration task
 source ~/.env
