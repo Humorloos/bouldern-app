@@ -55,7 +55,7 @@ class Boulder(UGC):
     """A boulder in a gym"""
     coordinates = PointField()
     gym = ForeignKey(Gym, on_delete=SET_NULL, null=True)
-    difficulty = ForeignKey(Grade, on_delete=PROTECT, null=True)
+    grade = ForeignKey(Grade, on_delete=PROTECT, null=True)
     color = ForeignKey(Color, on_delete=PROTECT, null=True)
 
 
