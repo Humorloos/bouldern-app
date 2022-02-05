@@ -36,7 +36,7 @@ describe('The color creation view', () => {
 });
 
 
-describe('The gym map view', () => {
+describe.only('The gym map view', () => {
   it('allows adding boulders', () => {
     cy.visit('');
     cy.window().its(`${GymMapView.name}.loaded`).should('equal', true);

@@ -1,5 +1,15 @@
 <template>
-  <app-view>
+  <app-view
+    v-if="!filtering"
+  >
+    <template #app-bar-right>
+      <v-btn
+        id="filter"
+        flat
+        icon="mdi-filter"
+        @click="filtering=true"
+      />
+    </template>
     <template #main>
       <map-overlay
         ref="overlay"
@@ -100,6 +110,25 @@
       />
     </template>
   </app-view>
+  <app-view v-else>
+    <template #app-bar-left>
+      <v-btn
+        id="close-filter"
+        flat
+        icon="mdi-arrow-left"
+        @click="closeFilter"
+      />
+    </template>
+    <template #main>
+      <v-container>
+        <v-row>
+          <v-col>
+            <v-checkbox />
+          </v-col>
+        </v-row>
+      </v-container>
+    </template>
+  </app-view>
 </template>
 
 <script>
@@ -122,7 +151,14 @@ import ColorSelect from '../components/ColorSelect.vue';
 import MapOverlay from '../components/MapOverlay.vue';
 import VueForm from '../components/VueForm.vue';
 import AppView from '../components/AppView.vue';
-import {computed, getCurrentInstance, onMounted, ref, watch} from 'vue';
+import {
+  computed,
+  getCurrentInstance,
+  onMounted,
+  ref,
+  watch,
+  watchEffect,
+} from 'vue';
 
 export default {
   name: 'GymMap',
@@ -141,6 +177,24 @@ export default {
     const mapRoot = ref(null);
     const overlay = ref(null);
     const map = new Map({});
+    // Mount map and popover
+    watchEffect(() => {
+      if (mapRoot.value !== null) map.setTarget(mapRoot.value);
+    },
+    {
+      flush: 'post',
+    });
+    watchEffect(() => {
+      if (overlay.value !== null) {
+        const overlays = map.getOverlays();
+        if (overlays.getLength() > 0) map.removeOverlay(overlays.pop());
+        map.addOverlay(overlay.value.popover);
+        console.log(map.getOverlays().getLength());
+      }
+    },
+    {
+      flush: 'post',
+    });
 
     onMounted(() => {
       // Make the component available to cypress in test runs
@@ -148,10 +202,6 @@ export default {
         const instance = getCurrentInstance();
         window[instance.type.name] = instance.proxy;
       }
-
-      // Mount map and popover
-      map.setTarget(mapRoot.value);
-      map.addOverlay(overlay.value.popover);
     });
 
     const defaultColor = {
@@ -645,6 +695,17 @@ export default {
       featureCollection.clear();
       loadGymMap();
     });
+
+    const filtering= ref(false);
+    // todo use watch instead somehow, see
+    //  https://v3.vuejs.org/guide/composition-api-template-refs.html#watching-template-refs
+    /**
+     * todo
+     */
+    function closeFilter() {
+      filtering.value = false;
+    }
+
     return {
       gym,
       ascentResults,
@@ -667,6 +728,9 @@ export default {
       retireBoulder,
       reportAscent,
       onClosePopover,
+      //  filter
+      filtering,
+      closeFilter,
     };
   },
 };
