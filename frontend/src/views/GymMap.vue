@@ -171,7 +171,7 @@ import {
   onMounted,
   ref,
   watch,
-  watchEffect,
+  watchPostEffect,
 } from 'vue';
 
 export default {
@@ -192,22 +192,15 @@ export default {
     const overlay = ref(null);
     const map = new Map({});
     // Mount map and popover
-    watchEffect(() => {
+    watchPostEffect(() => {
       if (mapRoot.value !== null) map.setTarget(mapRoot.value);
-    },
-    {
-      flush: 'post',
     });
-    watchEffect(() => {
+    watchPostEffect(() => {
       if (overlay.value !== null) {
         const overlays = map.getOverlays();
         if (overlays.getLength() > 0) map.removeOverlay(overlays.pop());
         map.addOverlay(overlay.value.popover);
-        console.log(map.getOverlays().getLength());
       }
-    },
-    {
-      flush: 'post',
     });
 
     onMounted(() => {
