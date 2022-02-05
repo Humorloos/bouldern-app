@@ -36,15 +36,15 @@ describe('The color creation view', () => {
 });
 
 
-describe.only('The gym map view', () => {
+describe('The gym map view', () => {
   it('allows adding boulders', () => {
     cy.visit('');
     cy.window().its(`${GymMapView.name}.loaded`).should('equal', true);
     cy.get('#map-root').click(140, 270);
-    cy.contains('Difficulty');
+    cy.contains('Grade');
     cy.get('#popup-closer').click();
     cy.get('#map-root').click(280, 240);
-    cy.get('#id-difficulty-select').click();
+    cy.get('#id-grade-select').click();
     cy.contains('5').click();
     cy.get('#id-color-select').click();
     cy.contains('Yellow').click();
