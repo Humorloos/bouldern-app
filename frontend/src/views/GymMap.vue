@@ -125,7 +125,7 @@
         <v-row>
           <v-col cols="1">
             <v-checkbox
-              v-model="allGradesSelected"
+              v-model="allGradesActive"
               label="all"
               hide-details
               @update:model-value="selectGrades"
@@ -133,7 +133,8 @@
             <v-checkbox
               v-for="grade in gym.grade_set"
               :key="grade.id"
-              v-model="grade.selected"
+              v-model="activeGrades"
+              :value="grade.id"
               :label="grade.grade.toString()"
               :color="grade.color.color"
               hide-details
@@ -210,6 +211,8 @@ export default {
         window[instance.type.name] = instance.proxy;
       }
     });
+
+    // gym map
 
     const defaultColor = {
       name: '',
@@ -467,8 +470,10 @@ export default {
     }).then((response) => {
       colorOptions.value = response.data;
     });
-    const creating = ref(false);
 
+    // create popover
+
+    const creating = ref(false);
 
     const selectedBoulder = ref({ascent: undefined});
     const selectedCoordinates = ref({});
@@ -567,6 +572,8 @@ export default {
         featureCollection.pop();
       }
     }
+
+    // Edit popover
 
     const selectedAscentResult = ref(null);
 
@@ -678,6 +685,29 @@ export default {
       else onCloseEditPopover();
     }
 
+    // filtering by grade
+
+    const filtering = ref(false);
+    /**
+     * todo
+     */
+    function closeFilter() {
+      filtering.value = false;
+    }
+
+    const allGradesActive = ref(true);
+
+    /**
+     * todo
+     */
+    function selectGrades(allGradesActive) {
+      if (allGradesActive) {
+        activeGrades.value = gym.value.grade_set.map((grade) => grade.id);
+      } else activeGrades.value = [];
+    }
+    const activeGrades = ref([]);
+
+    // loading gym map
     /**
      * Sets the loaded flag and initializes the
      * map
@@ -695,6 +725,7 @@ export default {
         const hit = hasBoulderAtPixel(pixel);
         map.getTarget().style.cursor = hit ? 'pointer' : '';
       });
+      activeGrades.value = gym.value.grade_set.map((grade) => grade.id);
     }
 
     // load the gym map when opening this view
@@ -704,25 +735,6 @@ export default {
       featureCollection.clear();
       loadGymMap();
     });
-
-    const filtering = ref(false);
-    /**
-     * todo
-     */
-    function closeFilter() {
-      filtering.value = false;
-    }
-
-    const allGradesSelected = ref(true);
-
-    /**
-     * todo
-     */
-    function selectGrades(allGradesSelected) {
-      for (const grade of gym.value.grade_set) {
-        grade.selected = allGradesSelected;
-      }
-    }
 
     return {
       gym,
@@ -749,8 +761,9 @@ export default {
       //  filter
       filtering,
       closeFilter,
-      allGradesSelected,
+      allGradesActive,
       selectGrades,
+      activeGrades,
     };
   },
 };
