@@ -609,38 +609,17 @@ export default {
     }
 
     /**
-     * If the selected boulder is already associated with an ascent status,
-     * and the status has changed, updates the ascent status for the boulder
-     * and user via an api call and assigns the status to the selected boulder.
-     * Otherwise, if the selected boulder is not yet associated with an ascent
-     * status, creates a new ascent object and associates its id with the
-     * selected boulder. Finally, closes the edit popover.
+     * Submits the selected ascent result and closes the edit popover.
      */
     function reportAscent() {
-      const ascentApiPath = `/bouldern/gym/${gym.value.id}/boulder/` +
-          `${selectedBoulder.value.id}/ascent/`;
-      if (selectedBoulder.value.ascent !== undefined) {
-        // only update ascent result if it has changed
-        if (selectedAscentResult.value !==
-            selectedBoulder.value.ascent.result.toString()) {
-          requestWithJwt({
-            apiPath: `${ascentApiPath}${selectedBoulder.value.ascent.id}/`,
-            data: {'result': selectedAscentResult.value},
-            method: 'PUT',
-          });
-          selectedBoulder.value.ascent.result = selectedAscentResult.value;
-          overlay.value.close();
-        }
-        //  If there was no ascent entry yet, create a new one
-      } else {
-        requestWithJwt({
-          apiPath: ascentApiPath,
-          data: {'result': selectedAscentResult.value},
-        }).then((response) => {
-          selectedBoulder.value.ascent = response.data;
-          overlay.value.close();
-        });
-      }
+      requestWithJwt({
+        apiPath: `/bouldern/gym/${gym.value.id}/boulder/` +
+          `${selectedBoulder.value.id}/ascent/`,
+        data: {'result': selectedAscentResult.value},
+      }).then((response) => {
+        selectedBoulder.value.ascent = response.data;
+        overlay.value.close();
+      });
     }
 
     const {t} = useI18n();
