@@ -36,10 +36,10 @@
         >
           <v-row>
             <v-col>
-              Difficulty:
+              Grade:
               <color-select
-                id="id-difficulty-select"
-                v-model="selectedDifficulty"
+                id="id-grade-select"
+                v-model="selectedGrade"
                 :color-options="gradeColors"
                 @update:model-value="updateGrade($event)"
               />
@@ -63,7 +63,7 @@
                 :form="{
                   coordinates: selectedCoordinates,
                   color_id: selectedColor.id,
-                  difficulty_id: selectedDifficulty.id,
+                  grade_id: selectedGrade.id,
                 }"
                 submit-button-label="Save"
                 @submitted="onSubmitted"
@@ -258,19 +258,19 @@ export default {
 
     /**
      * Gets the openlayers style for a boulder with the given hold and
-     * difficulty color. The style is a cirle with four small border segments
-     * where the cirle is colored in the boulder's difficulty color and the
+     * grade color. The style is a cirle with four small border segments
+     * where the cirle is colored in the boulder's grade color and the
      * border segments are colored in the boulder's hold color.
      *
      * @param holdColor the hold color to use for the style
-     * @param difficultyColor the difficulty color to use for the style
+     * @param gradeColor the grade color to use for the style
      * @returns {Style} the color style
      */
-    function getColorStyle(holdColor, difficultyColor) {
+    function getColorStyle(holdColor, gradeColor) {
       return new Style({
         image: new Circle({
           fill: new Fill({
-            color: difficultyColor,
+            color: gradeColor,
           }),
           stroke: new Stroke({
             color: holdColor,
@@ -305,20 +305,20 @@ export default {
 
     /**
      * Generates the openlayers style for a boulder with the given hold color,
-     * difficulty color, and ascent status. The style consists of three
+     * grade color, and ascent status. The style consists of three
      * layers:
      * - A shadow for 3D effect
-     * - The color style with difficulty- and hold color.
+     * - The color style with grade- and hold color.
      * - The ascent status icon
      *
      * @param holdColor the boulder's hold color
-     * @param difficultyColor the boulder's difficulty color
+     * @param gradeColor the boulder's grade color
      * @param [ascentStatus] the boulder's ascent status
      * @returns {Style[]} the boulder's style consisting of the two-colored
      * color icon, the ascent status icon, and a shadow
      */
-    function getBoulderStyle(holdColor, difficultyColor, ascentStatus) {
-      const colorStyle = getColorStyle(holdColor, difficultyColor);
+    function getBoulderStyle(holdColor, gradeColor, ascentStatus) {
+      const colorStyle = getColorStyle(holdColor, gradeColor);
       const ascentStyle = ascentStatus !== undefined ?
           new Style({
             image: ascentIcons[ascentStatus],
@@ -449,7 +449,7 @@ export default {
             feature.ascent = ascent;
             feature.setStyle(getBoulderStyle(
                 boulder.color.color,
-                boulder.difficulty.color.color,
+                boulder.grade.color.color,
                 ascent ? ascent.result : undefined,
             ));
             vectorSource.addFeature(feature);
@@ -506,20 +506,20 @@ export default {
     });
 
     /**
-     * Sets the color style (hold and difficulty color) of the selected boulder
+     * Sets the color style (hold and grade color) of the selected boulder
      *
      * @param holdColor the hold color to set
-     * @param difficultyColor the difficulty color to set
+     * @param gradeColor the grade color to set
      */
-    function setColorStyle(holdColor, difficultyColor) {
+    function setColorStyle(holdColor, gradeColor) {
       const style = selectedBoulder.value.getStyle();
-      style[1] = getColorStyle(holdColor, difficultyColor);
+      style[1] = getColorStyle(holdColor, gradeColor);
       selectedBoulder.value.setStyle(style);
     }
 
     /**
      * Adjusts the currently selected hold color when selecting a grade
-     * and Updates both the hold and difficulty color of the most recently
+     * and Updates both the hold and grade color of the most recently
      * added boulder to the provided event's color
      */
     function updateGrade(event) {
@@ -706,8 +706,6 @@ export default {
     });
 
     const filtering = ref(false);
-    // todo use watch instead somehow, see
-    //  https://v3.vuejs.org/guide/composition-api-template-refs.html#watching-template-refs
     /**
      * todo
      */
@@ -738,7 +736,7 @@ export default {
       selectedCoordinates,
       selectedColor,
       gradeColors,
-      selectedDifficulty: selectedGrade,
+      selectedGrade,
       updateGrade,
       updateHoldColor,
       onSubmitted,

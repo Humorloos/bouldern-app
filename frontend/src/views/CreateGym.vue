@@ -35,7 +35,7 @@
               <v-btn
                 id="add-grade-button"
                 type="button"
-                @click="addDifficultySelect"
+                @click="addGradeSelect"
               >
                 Add Grade
               </v-btn>
@@ -138,7 +138,7 @@ export default {
      * Adds the last added color again to colors to create new grade
      * select
      */
-    addDifficultySelect() {
+    addGradeSelect() {
       this.colors.push(this.colors.at(-1));
     },
   },
