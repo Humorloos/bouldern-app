@@ -52,8 +52,7 @@ class BoulderAPI(ReversibleViewSet, ModelViewSet, CreateUGCMixin):
             serializer, gym=Gym.objects.get(pk=self.kwargs['gym_pk']))
 
 
-class AscentAPI(ReversibleViewSet, UpdateModelMixin, CreateUGCMixin,
-                ListModelMixin):
+class AscentAPI(ReversibleViewSet, CreateUGCMixin, ListModelMixin):
     """Rest API for reading and creating boulders in a specific gym"""
     basename = 'ascent'
     queryset = Ascent.objects.all()
@@ -67,15 +66,16 @@ class AscentAPI(ReversibleViewSet, UpdateModelMixin, CreateUGCMixin,
         )
 
     def perform_create(self, serializer, **kwargs):
+        boulder_id = self.kwargs['boulder_pk']
+        previous_ascents = Ascent.objects.filter(
+            boulder__pk=boulder_id, created_by=self.request.user,
+            is_active=True)
+        for ascent in previous_ascents:
+            ascent.is_active = False
+        Ascent.objects.bulk_update(previous_ascents, ['is_active'])
         super().perform_create(
             serializer,
-            boulder=Boulder.objects.get(pk=self.kwargs['boulder_pk']))
-
-    def perform_update(self, serializer):
-        serializer.save(
-            created_by=self.request.user,
-            modified_by=self.request.user,
-            boulder=Boulder.objects.get(pk=self.kwargs['boulder_pk']))
+            boulder=Boulder.objects.get(pk=boulder_id))
 
 
 def index(request):
