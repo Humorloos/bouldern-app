@@ -413,6 +413,7 @@ export default {
         apiPath: `/bouldern/gym/?name=${gymName.value}`,
       }).then((response) => {
         gym.value = response.data[0];
+        activeGrades.value = gym.value.grade_set.map((grade) => grade.id);
         for (const grade of gym.value.grade_set) grade.selected = true;
         mapImage.src = gym.value.map;
         mapImage.onload = () => {
@@ -730,11 +731,9 @@ export default {
 
     // loading gym map
     /**
-     * Sets the loaded flag and initializes the
-     * map
+     * Sets the loaded flag and initializes the map
      */
     function onGymMapLoaded() {
-      loaded.value = true;
       drawInteraction.value.on('drawend', openCreatePopover);
       map.on('click', (event) => {
         const feature = map
@@ -746,7 +745,7 @@ export default {
         const hit = hasBoulderAtPixel(pixel);
         map.getTarget().style.cursor = hit ? 'pointer' : '';
       });
-      activeGrades.value = gym.value.grade_set.map((grade) => grade.id);
+      loaded.value = true;
     }
 
     // load the gym map when opening this view
