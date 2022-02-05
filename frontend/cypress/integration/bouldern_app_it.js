@@ -37,18 +37,39 @@ describe('The color creation view', () => {
 
 
 describe('The gym map view', () => {
-  it('allows adding boulders', () => {
+  it('allows adding, editing, and retiring boulders', () => {
     cy.visit('');
-    cy.window().its(`${GymMapView.name}.$data.loaded`).should('equal', true);
+    cy.window().its(`${GymMapView.name}.loaded`).should('equal', true);
+
+    // open create popover and close it
     cy.get('#map-root').click(140, 270);
-    cy.contains('Difficulty');
+    cy.contains('Grade');
     cy.get('#popup-closer').click();
+
+    // open create popover and submit it
     cy.get('#map-root').click(280, 240);
-    cy.get('#id-difficulty-select').click();
+    cy.get('#id-grade-select').click();
     cy.contains('5').click();
     cy.get('#id-color-select').click();
     cy.contains('Yellow').click();
     cy.contains('Save').click();
+
+    // open edit popover and close it
+    cy.get('#map-root').click(50, 300);
+    // we have to click twice because there is a bug that the popover is not
+    // moved correctly the first time
+    cy.get('#map-root').click(50, 300);
+    cy.contains($t('ascentResults[0]')).click();
+    cy.get('#popup-closer').click();
+
+    // open edit popover, edit and submit
+    cy.get('#map-root').click(50, 370);
+    cy.contains($t('ascentResults[0]')).click();
+    cy.get('#save-boulder').click();
+
+    // open edit popover and retire boulder
+    cy.get('#map-root').click(50, 370);
+    cy.get('#retire-boulder').click();
   });
 
   it('loads the last opened gym at root', () => {
@@ -62,25 +83,35 @@ describe('The gym map view', () => {
       cy.visit(`gym-map/${constants.gymName}`);
     }
     cy.get('.v-app-bar-title__placeholder').click();
-    cy.window().its(`${GymMapView.name}.$data.loaded`).should('equal', true);
+    cy.window().its(`${GymMapView.name}.loaded`).should('equal', true);
   });
 
-  it('shows the edit popup when clicking a boulder', () => {
+  it('allows filtering by grade', () => {
     cy.visit('');
-    cy.window().its(`${GymMapView.name}.$data.loaded`).should('equal', true);
-    cy.window().its(
-        `${GymMapView.name}.$refs.overlay.popover.autoPan.animation.duration`,
-    ).then((duration) => {
-      cy.wait(duration);
-    });
+    cy.window().its(`${GymMapView.name}.loaded`).should('equal', true);
+
+    // check that boulder is clickable before filtering
     cy.get('#map-root').click(240, 340);
-    cy.contains($t('ascentResults[0]')).click();
+    cy.contains($t('ascentResults[0]'));
     cy.get('#popup-closer').click();
+
+    // activate filter and check that boulder is not clickable
+    cy.get('#filter').click();
+    cy.contains('1').click();
+    cy.get('#close-filter').click();
+
     cy.get('#map-root').click(50, 370);
-    cy.contains($t('ascentResults[0]')).click();
-    cy.get('#save-boulder').click();
+    cy.contains('Grade');
+    cy.get('#popup-closer').click();
+
+    // deactivate filter and check that boulder is clickable again
+    cy.get('#filter').click();
+    cy.contains('1').click();
+    cy.get('#close-filter').click();
+
     cy.get('#map-root').click(50, 370);
-    cy.get('#retire-boulder').click();
+    cy.contains($t('ascentResults[0]'));
+    cy.get('#popup-closer').click();
   });
 });
 
@@ -98,7 +129,7 @@ describe('The gym creation view', () => {
       cy.contains('Submit').click();
     }
     cy.visit(`gym-map/${constants.newGymName}`);
-    cy.window().its(`${GymMapView.name}.$data.loaded`).should('equal', true);
+    cy.window().its(`${GymMapView.name}.loaded`).should('equal', true);
   });
 });
 
@@ -120,6 +151,6 @@ describe('The app drawer', () => {
   it('allows navigating to a gym map view', () => {
     cy.get('#id_gym-name').type(constants.gymName);
     cy.get('#submit_button').click();
-    cy.window().its(`${GymMapView.name}.$data.loaded`).should('equal', true);
+    cy.window().its(`${GymMapView.name}.loaded`).should('equal', true);
   });
 });

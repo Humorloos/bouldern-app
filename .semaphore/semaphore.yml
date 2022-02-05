@@ -135,7 +135,8 @@ blocks:
             - SEARCH_PATTERN='ready'
             - npx vite > ${VUE_LOGFILE} &
             - tail -f -n0 ${VUE_LOGFILE} | grep -qe "${SEARCH_PATTERN}"
-            - npx cypress run --browser chrome
+            - npm run report
+            - test-results publish cypress/results/report.xml
       epilogue:
         always:
           commands:
