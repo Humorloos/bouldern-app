@@ -118,12 +118,26 @@
         icon="mdi-arrow-left"
         @click="closeFilter"
       />
+      <v-app-bar-title>Filter Grades</v-app-bar-title>
     </template>
     <template #main>
-      <v-container>
+      <v-container fluid>
         <v-row>
-          <v-col>
-            <v-checkbox />
+          <v-col cols="1">
+            <v-checkbox
+              v-model="allGradesSelected"
+              label="all"
+              hide-details
+              @update:model-value="selectGrades"
+            />
+            <v-checkbox
+              v-for="grade in gym.grade_set"
+              :key="grade.id"
+              v-model="grade.selected"
+              :label="grade.grade.toString()"
+              :color="grade.color.color"
+              hide-details
+            />
           </v-col>
         </v-row>
       </v-container>
@@ -216,6 +230,7 @@ export default {
         id: -1,
         grade: 0,
         color: defaultColor,
+        selected: true,
       }],
     });
     const route = useRoute();
@@ -402,6 +417,7 @@ export default {
         apiPath: `/bouldern/gym/?name=${gymName.value}`,
       }).then((response) => {
         gym.value = response.data[0];
+        for (const grade of gym.value.grade_set) grade.selected = true;
         mapImage.src = gym.value.map;
         mapImage.onload = () => {
           extent[2] = mapImage.width;
@@ -696,7 +712,7 @@ export default {
       loadGymMap();
     });
 
-    const filtering= ref(false);
+    const filtering = ref(false);
     // todo use watch instead somehow, see
     //  https://v3.vuejs.org/guide/composition-api-template-refs.html#watching-template-refs
     /**
@@ -704,6 +720,17 @@ export default {
      */
     function closeFilter() {
       filtering.value = false;
+    }
+
+    const allGradesSelected = ref(true);
+
+    /**
+     * todo
+     */
+    function selectGrades(allGradesSelected) {
+      for (const grade of gym.value.grade_set) {
+        grade.selected = allGradesSelected;
+      }
     }
 
     return {
@@ -731,6 +758,8 @@ export default {
       //  filter
       filtering,
       closeFilter,
+      allGradesSelected,
+      selectGrades,
     };
   },
 };
