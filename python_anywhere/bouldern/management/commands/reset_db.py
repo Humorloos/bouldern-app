@@ -43,8 +43,12 @@ class Command(BaseCommand):
             map=ImageField(from_path=RESOURCES_DIR / 'generic_gym.png'))
 
         # add boulders
-        boulder = BoulderFactory(gym=generic_gym, coordinates=Point(1041, 716))
-        BoulderFactory(gym=generic_gym, coordinates=Point(799, 645))
+        boulder = BoulderFactory(
+            gym=generic_gym,
+            coordinates=Point(799, 645),
+            grade=generic_gym.grade_set.first()
+        )
+        BoulderFactory(gym=generic_gym, coordinates=Point(1041, 716))
 
         # add ascent
         AscentFactory(boulder=boulder)
