@@ -37,18 +37,39 @@ describe('The color creation view', () => {
 
 
 describe('The gym map view', () => {
-  it('allows adding boulders', () => {
+  it('allows adding, editing, and retiring boulders', () => {
     cy.visit('');
     cy.window().its(`${GymMapView.name}.loaded`).should('equal', true);
+
+    // open create popover and close it
     cy.get('#map-root').click(140, 270);
     cy.contains('Grade');
     cy.get('#popup-closer').click();
+
+    // open create popover and submit it
     cy.get('#map-root').click(280, 240);
     cy.get('#id-grade-select').click();
     cy.contains('5').click();
     cy.get('#id-color-select').click();
     cy.contains('Yellow').click();
     cy.contains('Save').click();
+
+    // open edit popover and close it
+    cy.get('#map-root').click(50, 300);
+    // we have to click twice because there is a bug that the popover is not
+    // moved correctly the first time
+    cy.get('#map-root').click(50, 300);
+    cy.contains($t('ascentResults[0]')).click();
+    cy.get('#popup-closer').click();
+
+    // open edit popover, edit and submit
+    cy.get('#map-root').click(50, 370);
+    cy.contains($t('ascentResults[0]')).click();
+    cy.get('#save-boulder').click();
+
+    // open edit popover and retire boulder
+    cy.get('#map-root').click(50, 370);
+    cy.get('#retire-boulder').click();
   });
 
   it('loads the last opened gym at root', () => {
@@ -63,24 +84,6 @@ describe('The gym map view', () => {
     }
     cy.get('.v-app-bar-title__placeholder').click();
     cy.window().its(`${GymMapView.name}.loaded`).should('equal', true);
-  });
-
-  it('shows the edit popup when clicking a boulder', () => {
-    cy.visit('');
-    cy.window().its(`${GymMapView.name}.loaded`).should('equal', true);
-    cy.window().its(
-        `${GymMapView.name}.$refs.overlay.popover.autoPan.animation.duration`,
-    ).then((duration) => {
-      cy.wait(duration);
-    });
-    cy.get('#map-root').click(240, 340);
-    cy.contains($t('ascentResults[0]')).click();
-    cy.get('#popup-closer').click();
-    cy.get('#map-root').click(50, 370);
-    cy.contains($t('ascentResults[0]')).click();
-    cy.get('#save-boulder').click();
-    cy.get('#map-root').click(50, 370);
-    cy.get('#retire-boulder').click();
   });
 
   it('allows filtering by grade', () => {
