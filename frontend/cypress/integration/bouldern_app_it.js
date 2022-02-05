@@ -90,6 +90,12 @@ describe('The gym map view', () => {
     cy.visit('');
     cy.window().its(`${GymMapView.name}.loaded`).should('equal', true);
 
+    cy.window().its(
+        `${GymMapView.name}.$refs.overlay.popover.autoPan.animation.duration`,
+    ).then((duration) => {
+      cy.wait(duration);
+    });
+
     // check that boulder is clickable before filtering
     cy.get('#map-root').click(240, 340);
     cy.contains($t('ascentResults[0]'));
