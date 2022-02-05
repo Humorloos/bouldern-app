@@ -143,6 +143,13 @@ blocks:
             - artifact push job "$FRONTEND_DIR"/vue_server.log
             - artifact push job "$FRONTEND_DIR"/cypress/videos
             - artifact push job "$FRONTEND_DIR"/cypress/logs
+            - test-results publish cypress/results/report.xml
+after_pipeline:
+  task:
+    jobs:
+      - name: Publish Results
+        commands:
+          - test-results gen-pipeline-report
 
 promotions:
   - name: Deploy
