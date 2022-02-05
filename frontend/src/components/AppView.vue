@@ -1,19 +1,20 @@
 <template>
   <v-app-bar height="50">
-    <v-app-bar-nav-icon
-      v-if="display.mobile"
-      @click.stop="drawer = !drawer"
-    />
-    <v-app-bar-title
-      style="cursor:pointer"
-      @click="$router.push('/')"
-    >
-      Boulder Holder
-    </v-app-bar-title>
+    <slot name="app-bar-left">
+      <v-app-bar-nav-icon
+        v-if="display.mobile"
+        @click.stop="drawer = !drawer"
+      />
+      <v-app-bar-title
+        style="cursor:pointer"
+        @click="$router.push('/')"
+      >
+        Boulder Holder
+      </v-app-bar-title>
+    </slot>
     <v-spacer />
     <slot name="app-bar-right" />
-  </v-app-bar>
-  <v-navigation-drawer
+  </v-app-bar><v-navigation-drawer
     v-model="drawer"
   >
     <v-list-item>
