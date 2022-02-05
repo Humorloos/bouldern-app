@@ -116,7 +116,7 @@
         id="close-filter"
         flat
         icon="mdi-arrow-left"
-        @click="closeFilter"
+        @click="filtering = false"
       />
       <v-app-bar-title>Filter Grades</v-app-bar-title>
     </template>
@@ -692,13 +692,6 @@ export default {
     // filtering by grade
 
     const filtering = ref(false);
-
-    /**
-     * todo
-     */
-    function closeFilter() {
-      filtering.value = false;
-    }
 
     const allGradesActive = ref(true);
 
