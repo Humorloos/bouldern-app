@@ -82,6 +82,34 @@ describe('The gym map view', () => {
     cy.get('#map-root').click(50, 370);
     cy.get('#retire-boulder').click();
   });
+
+  it('allows filtering by grade', () => {
+    cy.visit('');
+    cy.window().its(`${GymMapView.name}.loaded`).should('equal', true);
+
+    // check that boulder is clickable before filtering
+    cy.get('#map-root').click(240, 340);
+    cy.contains($t('ascentResults[0]'));
+    cy.get('#popup-closer').click();
+
+    // activate filter and check that boulder is not clickable
+    cy.get('#filter').click();
+    cy.contains('1').click();
+    cy.get('#close-filter').click();
+
+    cy.get('#map-root').click(50, 370);
+    cy.contains('Grade');
+    cy.get('#popup-closer').click();
+
+    // deactivate filter and check that boulder is clickable again
+    cy.get('#filter').click();
+    cy.contains('1').click();
+    cy.get('#close-filter').click();
+
+    cy.get('#map-root').click(50, 370);
+    cy.contains($t('ascentResults[0]'));
+    cy.get('#popup-closer').click();
+  });
 });
 
 describe('The gym creation view', () => {
