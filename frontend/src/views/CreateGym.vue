@@ -1,46 +1,50 @@
 <template>
-  <v-container>
-    <v-row>
-      <v-col><h1>Create Gym</h1></v-col>
-    </v-row>
-    <v-row>
-      <v-col>
-        <vue-form
-          :form="form"
-          :api-path="apiPath"
-          @submitted="onSubmitted"
-        >
-          <v-text-field
-            id="id_name"
-            v-model="gymName"
-            label="Name"
-            type="text"
-          />
-          <v-file-input
-            id="id_map"
-            accept="image/*"
-            label="Map"
-            @change="onFileChange"
-          />
+  <app-view>
+    <template #main>
+      <v-container>
+        <v-row>
+          <v-col><h1>Create Gym</h1></v-col>
+        </v-row>
+        <v-row>
+          <v-col>
+            <vue-form
+              :form="form"
+              :api-path="apiPath"
+              @submitted="onSubmitted"
+            >
+              <v-text-field
+                id="id_name"
+                v-model="gymName"
+                label="Name"
+                type="text"
+              />
+              <v-file-input
+                id="id_map"
+                accept="image/*"
+                label="Map"
+                @change="onFileChange"
+              />
 
-          <color-select
-            v-for="(color, index) in colors"
-            :id="`id_color-grade-${index + 1}`"
-            :key="color.name"
-            v-model="colors[index]"
-            :color-options="colorOptions"
-          />
-          <v-btn
-            id="add-grade-button"
-            type="button"
-            @click="addDifficultySelect"
-          >
-            Add Grade
-          </v-btn>
-        </vue-form>
-      </v-col>
-    </v-row>
-  </v-container>
+              <color-select
+                v-for="(color, index) in colors"
+                :id="`id_color-grade-${index + 1}`"
+                :key="color.name"
+                v-model="colors[index]"
+                :color-options="colorOptions"
+              />
+              <v-btn
+                id="add-grade-button"
+                type="button"
+                @click="addGradeSelect"
+              >
+                Add Grade
+              </v-btn>
+            </vue-form>
+          </v-col>
+        </v-row>
+      </v-container>
+    </template>
+  </app-view>
 </template>
 
 <script>
@@ -49,10 +53,12 @@
 import VueForm from '../components/VueForm.vue';
 import {mapActions, mapState} from 'vuex';
 import ColorSelect from '../components/ColorSelect.vue';
+import AppView from '../components/AppView.vue';
 
 export default {
   name: 'CreateGym',
   components: {
+    AppView,
     VueForm,
     ColorSelect,
   },
@@ -132,7 +138,7 @@ export default {
      * Adds the last added color again to colors to create new grade
      * select
      */
-    addDifficultySelect() {
+    addGradeSelect() {
       this.colors.push(this.colors.at(-1));
     },
   },

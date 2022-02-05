@@ -30,15 +30,15 @@ class BoulderSerializer(ModelSerializer):
     color = ColorSerializer(read_only=True)
     color_id = PrimaryKeyRelatedField(source='color',
                                       queryset=Color.objects.all())
-    difficulty = GradeSerializer(read_only=True)
-    difficulty_id = PrimaryKeyRelatedField(
-        source='difficulty', queryset=Grade.objects.all())
+    grade = GradeSerializer(read_only=True)
+    grade_id = PrimaryKeyRelatedField(
+        source='grade', queryset=Grade.objects.all())
 
     class Meta:
         model = Boulder
         fields = [
-            'coordinates', 'gym', 'id', 'color', 'color_id', 'difficulty',
-            'difficulty_id', 'is_active']
+            'coordinates', 'gym', 'id', 'color', 'color_id', 'grade',
+            'grade_id', 'is_active']
         extra_kwargs = {
             'is_active': {'write_only': True}
         }
