@@ -4,7 +4,8 @@ from rest_framework.status import HTTP_201_CREATED, HTTP_200_OK
 
 from python_anywhere.accounts.factories import UserFactory
 from python_anywhere.bouldern.models import Boulder, Ascent
-from python_anywhere.bouldern.views import BoulderAPI, AscentAPI
+from python_anywhere.bouldern.views import BoulderAPI, AscentAPI, \
+    GymMapResourcesAPI
 
 
 def test_boulder_api_post(logged_in_client_rest, colors):
@@ -104,3 +105,54 @@ def test_ascent_api_post_existing_ascent(logged_in_client_rest, colors):
     assert created_ascent.boulder == boulder
     existing_ascent = Ascent.objects.filter(is_active=False).first()
     assert existing_ascent.boulder == boulder
+
+
+def test_gym_map_resources_api_get(colors, logged_in_client_rest):
+    client, user = logged_in_client_rest
+    incorrect_user = UserFactory()
+
+    from python_anywhere.bouldern.factories import GymFactory
+    correct_gym = GymFactory()
+    incorrect_gym = GymFactory()
+
+    from python_anywhere.bouldern.factories import BoulderFactory
+    correct_boulders_without_ascent = BoulderFactory \
+        .create_batch(3, gym=correct_gym)
+
+    boulders_in_other_gym = BoulderFactory.create_batch(3, gym=incorrect_gym)
+    inactive_boulder = BoulderFactory(gym=correct_gym, is_active=False)
+
+    from python_anywhere.bouldern.factories import AscentFactory
+    correct_ascents = AscentFactory.create_batch(3, boulder__gym=correct_gym,
+                                                 created_by=user)
+    correct_boulders = [a.boulder for a in correct_ascents]
+
+    [AscentFactory(created_by=user, boulder=b, is_active=False) for b in
+     correct_boulders]
+
+    [AscentFactory(created_by=incorrect_user, boulder=b) for b in
+     correct_boulders]
+
+    response = client.get(f'{GymMapResourcesAPI().reverse_action("list")}?'
+                          f'{urlencode({"name": correct_gym.name})}')
+    # then
+    assert response.status_code == HTTP_200_OK
+    # verify gym
+    response_data = response.data.serializer.instance
+    assert response_data['gym'] == correct_gym
+    # verify boulder features
+    response_boulders = {bf['boulder']
+                         for bf in response_data['boulder_features']}
+    response_ascents = {bf['boulder'].pk: bf['ascent']
+                        for bf in response_data['boulder_features']}
+    assert all(
+        b in response_boulders and response_ascents[b.pk] is None
+        for b in correct_boulders_without_ascent)
+    assert all(
+        b in response_boulders
+        and response_ascents[b.pk] in correct_ascents
+        for b in correct_boulders)
+    assert not any(b in response_boulders for b in boulders_in_other_gym)
+    assert inactive_boulder not in response_boulders
+    # verify colors
+    assert set(response_data['colors']) == set(colors)
