@@ -61,3 +61,30 @@ class AscentSerializer(ModelSerializer):
     class Meta:
         model = Ascent
         fields = ['result']
+
+
+class BoulderFeatureSerializer(Serializer):
+    """todo"""
+
+    boulder = BoulderSerializer()
+    ascent = AscentSerializer()
+
+    def update(self, instance, validated_data):
+        pass
+
+    def create(self, validated_data):
+        pass
+
+
+class GymMapResourcesSerializer(Serializer):
+    """todo"""
+
+    gym = GymSerializer()
+    boulder_features = BoulderFeatureSerializer(many=True)
+    colors = ColorSerializer(many=True)
+
+    def update(self, instance, validated_data):
+        pass
+
+    def create(self, validated_data):
+        pass
