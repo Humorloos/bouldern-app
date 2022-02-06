@@ -32,7 +32,7 @@ def test_create_gym(logged_in_client_rest, colors):
     json_payload = {
         'name': gym_stub.name,
         'grade_set': [{
-            'color_id': grade.color.pk,
+            'color': grade.color.pk,
             'grade': grade.grade
         } for grade in grade_stubs]
     }
