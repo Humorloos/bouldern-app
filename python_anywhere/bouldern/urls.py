@@ -3,12 +3,14 @@ from rest_framework.routers import SimpleRouter
 from rest_framework_nested.routers import NestedSimpleRouter
 
 from python_anywhere.bouldern.views import GymAPI, ColorAPI, BoulderAPI, \
-    AscentAPI
+    AscentAPI, GymMapResourcesAPI
 
 router = SimpleRouter()
 router.register(GymAPI.basename, GymAPI)
 router.register(ColorAPI.basename, ColorAPI)
 router.register(BoulderAPI.basename, BoulderAPI)
+router.register(GymMapResourcesAPI.basename, GymMapResourcesAPI,
+                basename=GymMapResourcesAPI.basename)
 
 gym_router = NestedSimpleRouter(router, GymAPI.basename,
                                 lookup=GymAPI.basename)

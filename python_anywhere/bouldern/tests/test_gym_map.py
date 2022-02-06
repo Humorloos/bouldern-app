@@ -4,7 +4,8 @@ from rest_framework.status import HTTP_201_CREATED, HTTP_200_OK
 
 from python_anywhere.accounts.factories import UserFactory
 from python_anywhere.bouldern.models import Boulder, Ascent
-from python_anywhere.bouldern.views import BoulderAPI, AscentAPI
+from python_anywhere.bouldern.views import BoulderAPI, AscentAPI, \
+    GymMapResourcesAPI
 
 
 def test_boulder_api_post(logged_in_client_rest, colors):
@@ -19,8 +20,8 @@ def test_boulder_api_post(logged_in_client_rest, colors):
     boulder_stub = BoulderFactory.stub(gym=gym)
     payload = {f'coordinates': boulder_stub.coordinates.geojson}
     payload.update({
-        'color_id': boulder_stub.color.pk,
-        'grade_id': boulder_stub.grade.pk,
+        'color': boulder_stub.color.pk,
+        'grade': boulder_stub.grade.pk,
     })
     # When
     response = client.post(BoulderAPI().reverse_action('list', args=[gym.pk]),
@@ -33,27 +34,6 @@ def test_boulder_api_post(logged_in_client_rest, colors):
     assert boulder.gym == gym
     assert boulder.color == boulder_stub.color
     assert boulder.grade == boulder_stub.grade
-
-
-def test_boulder_api_get(logged_in_client_rest, colors):
-    client, user = logged_in_client_rest
-    from python_anywhere.bouldern.factories import GymFactory
-    correct_gym = GymFactory()
-    incorrect_gym = GymFactory()
-    from python_anywhere.bouldern.factories import BoulderFactory
-    correct_boulders = {BoulderFactory(gym=correct_gym) for _ in range(3)}
-    incorrect_boulders = {BoulderFactory(gym=incorrect_gym) for _ in range(3)}
-    inactive_boulder = {BoulderFactory(gym=correct_gym, is_active=False)}
-    # when
-    response = client.get(
-        f'{BoulderAPI().reverse_action("list", args=[correct_gym.pk])}?'
-        f'{urlencode({"is_active": True})}')
-    # then
-    assert response.status_code == HTTP_200_OK
-    boulders = set(response.data.serializer.instance)
-    assert boulders.intersection(correct_boulders) == boulders
-    assert boulders.intersection(incorrect_boulders) == set()
-    assert inactive_boulder not in boulders
 
 
 def test_boulder_api_retire(logged_in_client_rest, colors):
@@ -75,8 +55,8 @@ def test_boulder_api_retire(logged_in_client_rest, colors):
         pk__in={b.pk for b in active_boulders}))
 
 
-def test_ascent_api_post(logged_in_client_rest, colors):
-    """Test that post method works correctly"""
+def test_ascent_api_post_new_ascent(logged_in_client_rest, colors):
+    """Test that post method creates new ascents"""
     # Given
     client, user = logged_in_client_rest
 
@@ -99,58 +79,78 @@ def test_ascent_api_post(logged_in_client_rest, colors):
     assert ascent.boulder == boulder
 
 
-def test_ascent_api_put(logged_in_client_rest, colors):
-    """Test that put method works correctly"""
+def test_ascent_api_post_existing_ascent(logged_in_client_rest, colors):
+    """
+    Test that post method sets existing ascents inactive when posting to
+    the same boulder for the same user
+    """
     # Given
     client, user = logged_in_client_rest
 
     from python_anywhere.bouldern.factories import AscentFactory
-    ascent = AscentFactory(result=Ascent.PROJECT)
+    existing_ascent = AscentFactory(result=Ascent.PROJECT)
 
-    boulder = ascent.boulder
+    boulder = existing_ascent.boulder
 
     # When
-    response = client.put(
-        AscentAPI().reverse_action(
-            'detail', args=[boulder.gym.pk, boulder.pk, ascent.pk]),
+    response = client.post(
+        AscentAPI().reverse_action('list', args=[boulder.gym.pk, boulder.pk]),
         data={'result': Ascent.TOP}, format='json')
 
     # Then
-    assert response.status_code == HTTP_200_OK
-    ascent = Ascent.objects.first()
-    assert ascent.created_by == user
-    assert ascent.result == Ascent.TOP
-    assert ascent.boulder == boulder
+    assert response.status_code == HTTP_201_CREATED
+    created_ascent = Ascent.objects.filter(is_active=True).first()
+    assert created_ascent.created_by == user
+    assert created_ascent.result == Ascent.TOP
+    assert created_ascent.boulder == boulder
+    existing_ascent = Ascent.objects.filter(is_active=False).first()
+    assert existing_ascent.boulder == boulder
 
 
-def test_ascent_api_get(logged_in_client_rest, colors):
-    """Test that get method works correctly"""
-    # Given
+def test_gym_map_resources_api_get(colors, logged_in_client_rest):
     client, user = logged_in_client_rest
+    incorrect_user = UserFactory()
+
+    from python_anywhere.bouldern.factories import GymFactory
+    correct_gym = GymFactory()
+    incorrect_gym = GymFactory()
+
+    from python_anywhere.bouldern.factories import BoulderFactory
+    correct_boulders_without_ascent = BoulderFactory \
+        .create_batch(3, gym=correct_gym)
+
+    boulders_in_other_gym = BoulderFactory.create_batch(3, gym=incorrect_gym)
+    inactive_boulder = BoulderFactory(gym=correct_gym, is_active=False)
 
     from python_anywhere.bouldern.factories import AscentFactory
-    ascent = AscentFactory()
-    boulder = ascent.boulder
+    correct_ascents = AscentFactory.create_batch(3, boulder__gym=correct_gym,
+                                                 created_by=user)
+    correct_boulders = [a.boulder for a in correct_ascents]
 
-    other_user = UserFactory()
-    ascent_by_other_user = AscentFactory(created_by=other_user,
-                                         boulder=boulder)
+    [AscentFactory(created_by=user, boulder=b, is_active=False) for b in
+     correct_boulders]
 
-    ascent_in_other_gym = AscentFactory()
+    [AscentFactory(created_by=incorrect_user, boulder=b) for b in
+     correct_boulders]
 
-    old_ascent = AscentFactory(
-        boulder__is_active=False,
-        boulder__gym=boulder.gym,
-    )
-
-    # When
-    response = client.get(
-        AscentAPI().reverse_action('list', args=[boulder.gym.pk, '_']))
-
-    # Then
+    response = client.get(f'{GymMapResourcesAPI().reverse_action("list")}?'
+                          f'{urlencode({"name": correct_gym.name})}')
+    # then
     assert response.status_code == HTTP_200_OK
-    ascents = set(response.data.serializer.instance)
-    assert ascents == {ascent}
-    assert ascent_by_other_user not in ascents
-    assert ascent_in_other_gym not in ascents
-    assert old_ascent not in ascents
+    # verify gym
+    response_data = response.data.serializer.instance
+    assert response_data['gym'] == correct_gym
+    # verify boulder features
+    response_boulders = {bf['boulder']
+                         for bf in response_data['boulder_features']}
+    response_ascents = {bf['boulder'].pk: bf['ascent']
+                        for bf in response_data['boulder_features']}
+    assert all(
+        b in response_boulders and response_ascents[b.pk] is None
+        for b in correct_boulders_without_ascent)
+    assert all(
+        b in response_boulders
+        and response_ascents[b.pk] in correct_ascents
+        for b in correct_boulders)
+    assert not any(b in response_boulders for b in boulders_in_other_gym)
+    assert inactive_boulder not in response_boulders
