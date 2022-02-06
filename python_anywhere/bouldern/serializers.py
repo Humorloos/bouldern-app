@@ -81,7 +81,6 @@ class GymMapResourcesSerializer(Serializer):
 
     gym = GymSerializer()
     boulder_features = BoulderFeatureSerializer(many=True)
-    colors = ColorSerializer(many=True)
 
     def update(self, instance, validated_data):
         pass
