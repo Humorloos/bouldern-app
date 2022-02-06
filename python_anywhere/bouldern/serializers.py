@@ -64,7 +64,10 @@ class AscentSerializer(ModelSerializer):
 
 
 class BoulderFeatureSerializer(Serializer):
-    """todo"""
+    """
+    Serializer for Boulder Features, consisting of a boulder and an ascent
+    instance
+    """
 
     boulder = BoulderSerializer()
     ascent = AscentSerializer()
@@ -77,7 +80,10 @@ class BoulderFeatureSerializer(Serializer):
 
 
 class GymMapResourcesSerializer(Serializer):
-    """todo"""
+    """
+    Serializer for gym map resources which consist of a Gym instance and a
+    collection of Boulder Feature instances
+    """
 
     gym = GymSerializer()
     boulder_features = BoulderFeatureSerializer(many=True)
