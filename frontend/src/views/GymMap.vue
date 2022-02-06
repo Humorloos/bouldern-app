@@ -402,26 +402,35 @@ export default {
       }});
 
     /**
-     * todo
+     * Gets the color associated to the provided ID.
+     *
+     * @param colorId the id to get the color for
+     * @returns {string} the color string
      */
     function getColor(colorId) {
-      return colorOptions.value.find((c) => c.id === colorId);
+      return colorOptions.value.find((c) => c.id === colorId).color;
     }
 
     /**
-     * todo
+     * Gets the grade object associated to the provided ID.
+     *
+     * @param gradeId the id to get the grade for.
+     * @returns {object} the grade object.
      */
     function getGrade(gradeId) {
       return gym.value.grade_set.find((g) => g.id === gradeId);
     }
 
     /**
-     * todo
+     * Sets the style of the provided boulder feature based on its color, grade,
+     * and ascent result
+     *
+     * @param boulder the boulder to set the style of
      */
     function setBoulderStyle(boulder) {
       boulder.setStyle(getBoulderStyle(
-          getColor(boulder.color).color,
-          getColor(getGrade(boulder.grade).color).color,
+          getColor(boulder.color),
+          getColor(getGrade(boulder.grade).color),
           boulder.ascent !== null ? boulder.ascent.result : undefined,
       ));
     }
@@ -557,7 +566,7 @@ export default {
     const gradeColors = computed(() => {
       return gym.value.grade_set.map(
           ({id, grade, color}) => (
-            {color: getColor(color).color, id: id, name: grade}));
+            {color: getColor(color), id: id, name: grade}));
     });
 
     /**
@@ -582,7 +591,6 @@ export default {
     }
 
     // Edit popover
-
     const selectedAscentResult = ref(null);
 
     /**

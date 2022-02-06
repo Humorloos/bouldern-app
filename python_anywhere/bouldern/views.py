@@ -67,7 +67,10 @@ class AscentAPI(ReversibleViewSet, CreateUGCMixin):
 
 class GymMapResourcesAPI(ReversibleViewSet):
     """
-    todo
+    API for serving all data required for populating a map of a gym:
+    - The gym
+    - The gym's active boulders
+    - The user's ascent results for the active boulders
     """
     basename = 'gym-map-resources'
     serializer_class = GymMapResourcesSerializer
@@ -75,6 +78,11 @@ class GymMapResourcesAPI(ReversibleViewSet):
     filter_fields = ['name']
 
     def list(self, request, *args, **kwargs):
+        """
+        Provides the gym map resources for the gym specified in the url
+        :param request: the gym map resources GET request
+        :return: the gym map resources
+        """
         queryset = self.get_queryset()
         serializer = self.get_serializer(queryset)
         return Response(serializer.data)
