@@ -59,17 +59,3 @@ def test_create_gym(logged_in_client_rest, colors):
     # Then
     gym = Gym.objects.first()
     assert_correct_gym(gym, json_payload | multipart_payload, user)
-
-
-def test_gym_api_get(logged_in_client_rest, colors):
-    # Given
-    from python_anywhere.bouldern.factories import GymFactory
-    correct_gym = GymFactory(name='testName')
-    GymFactory()
-    client, user = logged_in_client_rest
-    # When
-    response = client.get(f'{GymAPI().reverse_action("list")}?'
-                          f'{urlencode({"name": correct_gym.name})}')
-    # Then
-    assert response.status_code == HTTP_200_OK
-    assert set(response.data.serializer.instance) == {correct_gym}
