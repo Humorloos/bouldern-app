@@ -74,12 +74,12 @@ describe('The gym map view', () => {
 
   it('loads the last opened gym at root', () => {
     for (const _ of waitingFor(
-        'GET', `/bouldern/gym/?name=${constants.greenGymName}`)) {
+        'GET', `/bouldern/gym-map-resources/?name=${constants.greenGymName}`)) {
       cy.visit(`gym-map/${constants.greenGymName}`);
       cy.visit('');
     }
     for (const _ of waitingFor(
-        'GET', `/bouldern/gym/?name=${constants.gymName}`)) {
+        'GET', `/bouldern/gym-map-resources/?name=${constants.gymName}`)) {
       cy.visit(`gym-map/${constants.gymName}`);
     }
     cy.get('.v-app-bar-title__placeholder').click();
