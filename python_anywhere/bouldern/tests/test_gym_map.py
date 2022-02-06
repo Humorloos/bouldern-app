@@ -19,8 +19,8 @@ def test_boulder_api_post(logged_in_client_rest, colors):
     boulder_stub = BoulderFactory.stub(gym=gym)
     payload = {f'coordinates': boulder_stub.coordinates.geojson}
     payload.update({
-        'color_id': boulder_stub.color.pk,
-        'grade_id': boulder_stub.grade.pk,
+        'color': boulder_stub.color.pk,
+        'grade': boulder_stub.grade.pk,
     })
     # When
     response = client.post(BoulderAPI().reverse_action('list', args=[gym.pk]),
