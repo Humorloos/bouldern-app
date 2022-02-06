@@ -392,18 +392,14 @@ export default {
      *
      * @returns {Draw} the draw interaction
      */
-    const drawInteraction = computed(() => {
-      // todo: probably not necessarily computed
-      return new Draw({
-        type: 'Point',
-        source: vectorSource,
-        style: new Style({}),
-        condition: (event) => {
-          return containsCoordinate(extent, event.coordinate) &&
+    const drawInteraction = new Draw({
+      type: 'Point',
+      source: vectorSource,
+      style: new Style({}),
+      condition: (event) => {
+        return containsCoordinate(extent, event.coordinate) &&
               !hasBoulderAtPixel(event.pixel);
-        },
-      });
-    });
+      }});
 
     /**
      * todo
@@ -471,8 +467,8 @@ export default {
             zoom: 1,
             maxZoom: 8,
           }));
-          map.removeInteraction(drawInteraction.value);
-          map.addInteraction(drawInteraction.value);
+          map.removeInteraction(drawInteraction);
+          map.addInteraction(drawInteraction);
           if (onLoaded) onLoaded();
         };
       });
@@ -718,7 +714,7 @@ export default {
      * Sets the loaded flag and initializes the map
      */
     function onGymMapLoaded() {
-      drawInteraction.value.on('drawend', openCreatePopover);
+      drawInteraction.on('drawend', openCreatePopover);
       map.on('click', (event) => {
         const feature = map
             .forEachFeatureAtPixel(event.pixel, (feature) => feature);
