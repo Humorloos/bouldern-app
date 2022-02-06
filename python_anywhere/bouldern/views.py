@@ -70,14 +70,13 @@ class GymMapResourcesAPI(ReversibleViewSet):
     todo
     """
     basename = 'gym-map-resources'
-    serializer_class = GymSerializer
+    serializer_class = GymMapResourcesSerializer
     filter_backends = [DjangoFilterBackend]
     filter_fields = ['name']
 
     def list(self, request, *args, **kwargs):
         queryset = self.get_queryset()
-        serializer = GymMapResourcesSerializer(
-            queryset, context=self.get_serializer_context())
+        serializer = self.get_serializer(queryset)
         return Response(serializer.data)
 
     def get_queryset(self):
