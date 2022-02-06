@@ -76,7 +76,8 @@ class GymMapResourcesAPI(ReversibleViewSet):
 
     def list(self, request, *args, **kwargs):
         queryset = self.get_queryset()
-        serializer = GymMapResourcesSerializer(queryset)
+        serializer = GymMapResourcesSerializer(
+            queryset, context=self.get_serializer_context())
         return Response(serializer.data)
 
     def get_queryset(self):
@@ -89,11 +90,9 @@ class GymMapResourcesAPI(ReversibleViewSet):
                  is_active=True,
              ).first()}
             for boulder in boulders]
-        colors = Color.objects.all()
         return {
             'gym': gym,
             'boulder_features': boulder_features,
-            'colors': colors
         }
 
 

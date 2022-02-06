@@ -154,5 +154,3 @@ def test_gym_map_resources_api_get(colors, logged_in_client_rest):
         for b in correct_boulders)
     assert not any(b in response_boulders for b in boulders_in_other_gym)
     assert inactive_boulder not in response_boulders
-    # verify colors
-    assert set(response_data['colors']) == set(colors)
