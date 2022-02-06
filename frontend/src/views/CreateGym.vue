@@ -88,7 +88,7 @@ export default {
       return {
         name: this.gymName,
         grade_set: this.colors.map((color, index) => {
-          return {color_id: color.id, grade: index + 1};
+          return {color: color.id, grade: index + 1};
         }),
       };
     },

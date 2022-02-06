@@ -62,8 +62,8 @@
                 :api-path="`/bouldern/gym/${gym.id}/boulder/`"
                 :form="{
                   coordinates: selectedCoordinates,
-                  color_id: selectedColor.id,
-                  grade_id: selectedGrade.id,
+                  color: selectedColor.id,
+                  grade: selectedGrade.id,
                 }"
                 submit-button-label="Save"
                 @submitted="onSubmitted"
@@ -136,7 +136,7 @@
               v-model="activeGrades"
               :value="grade.id"
               :label="grade.grade.toString()"
-              :color="grade.color.color"
+              :color="getColor(grade.color).color"
               hide-details
             />
           </v-col>
@@ -212,13 +212,15 @@ export default {
       }
     });
 
-    // gym map
-
+    // colors
     const defaultColor = {
       name: '',
       id: -1,
       color: '#ffffff',
     };
+    const colorOptions = ref([defaultColor]);
+
+    // gym map
     const gym = ref({
       map: '',
       id: 0,
@@ -226,7 +228,6 @@ export default {
         id: -1,
         grade: 0,
         color: defaultColor,
-        selected: true,
       }],
     });
     const route = useRoute();
@@ -392,6 +393,7 @@ export default {
      * @returns {Draw} the draw interaction
      */
     const drawInteraction = computed(() => {
+      // todo: probably not necessarily computed
       return new Draw({
         type: 'Point',
         source: vectorSource,
@@ -404,17 +406,57 @@ export default {
     });
 
     /**
+     * todo
+     */
+    function getColor(colorId) {
+      return colorOptions.value.find((c) => c.id === colorId);
+    }
+
+    /**
+     * todo
+     */
+    function getGrade(gradeId) {
+      return gym.value.grade_set.find((g) => g.id === gradeId);
+    }
+
+    /**
+     * todo
+     */
+    function setBoulderStyle(boulder) {
+      boulder.setStyle(getBoulderStyle(
+          getColor(boulder.color).color,
+          getColor(getGrade(boulder.grade).color).color,
+          boulder.ascent !== null ? boulder.ascent.result : undefined,
+      ));
+    }
+
+    /**
      * Gets the gym data from the API, loads the gym map image, and deserializes
      * the gym's boulders into the feature collection
      */
     function loadGymMap(onLoaded) {
       requestWithJwt({
         method: 'GET',
-        apiPath: `/bouldern/gym/?name=${gymName.value}`,
+        apiPath: `/bouldern/gym-map-resources/?name=${gymName.value}`,
       }).then((response) => {
-        gym.value = response.data[0];
+        gym.value = response.data['gym'];
+        // set all grades active
         activeGrades.value = gym.value.grade_set.map((grade) => grade.id);
-        for (const grade of gym.value.grade_set) grade.selected = true;
+        // Load boulders
+        response.data.boulder_features.forEach((featureData) => {
+          const boulderData = featureData.boulder;
+          const boulder = Object.assign(
+              jsonFormat.value.readFeature(boulderData.coordinates),
+              (({id, color, grade}) => ({
+                id,
+                color,
+                grade,
+                ascent: featureData.ascent,
+              }))(boulderData));
+          setBoulderStyle(boulder);
+          vectorSource.addFeature(boulder);
+        });
+        // load map
         mapImage.src = gym.value.map;
         mapImage.onload = () => {
           extent[2] = mapImage.width;
@@ -433,46 +475,10 @@ export default {
           map.addInteraction(drawInteraction.value);
           if (onLoaded) onLoaded();
         };
-        Promise.all([
-          requestWithJwt({
-            method: 'GET',
-            apiPath: `/bouldern/gym/${gym.value.id}/boulder/?is_active=true`,
-          }),
-          requestWithJwt({
-            method: 'GET',
-            apiPath: `/bouldern/gym/${gym.value.id}/boulder/_/ascent/`,
-          }),
-        ]).then(([boulderResponse, ascentResponse]) => {
-          const boulders = boulderResponse.data;
-          boulders.forEach((boulder) => {
-            // Populate with initial features
-            const feature = jsonFormat.value.readFeature(boulder.coordinates);
-            feature.id = boulder.id;
-            const ascent = ascentResponse.data
-                .find((ascent) => ascent.boulder === boulder.id);
-            feature.ascent = ascent;
-            feature.grade = boulder.grade;
-            feature.color = boulder.color;
-            feature.setStyle(getBoulderStyle(
-                boulder.color.color,
-                boulder.grade.color.color,
-                ascent ? ascent.result : undefined,
-            ));
-            vectorSource.addFeature(feature);
-          });
-        });
       });
     }
 
     const loaded = ref(false);
-
-    const colorOptions = ref([defaultColor]);
-    requestWithJwt({
-      method: 'GET',
-      apiPath: `/bouldern/color/`,
-    }).then((response) => {
-      colorOptions.value = response.data;
-    });
 
     // create popover
 
@@ -495,6 +501,7 @@ export default {
       creating.value = true;
 
       const feature = event.feature;
+      feature.ascent = null;
       const geometry = feature.getGeometry();
 
       selectedCoordinates.value = jsonFormat.value
@@ -529,21 +536,23 @@ export default {
      * Adjusts the currently selected hold color when selecting a grade
      * and Updates both the hold and grade color of the most recently
      * added boulder to the provided event's color
+     *
+     * @param selectedOption the selected color Option
      */
-    function updateGrade(event) {
-      setColorStyle(event.color, event.color);
+    function updateGrade(selectedOption) {
+      setColorStyle(selectedOption.color, selectedOption.color);
       selectedColor.value = colorOptions.value.filter(
-          (colorOption) => colorOption.color === event.color)[0];
+          (colorOption) => colorOption.color === selectedOption.color)[0];
     }
 
     /**
      * Updates the hold color of the most recently added boulder to the provided
      * event's color
      *
-     * @param event a color select update event
+     * @param selectedOption the selected color Option
      */
-    function updateHoldColor(event) {
-      setColorStyle(event.color, selectedGrade.value.color);
+    function updateHoldColor(selectedOption) {
+      setColorStyle(selectedOption.color, selectedGrade.value.color);
     }
 
     /**
@@ -554,7 +563,7 @@ export default {
     const gradeColors = computed(() => {
       return gym.value.grade_set.map(
           ({id, grade, color}) => (
-            {color: color.color, id: id, name: grade}));
+            {color: getColor(color).color, id: id, name: grade}));
     });
 
     /**
@@ -646,7 +655,7 @@ export default {
      * Resets ascent status if it was changed.
      */
     function onCloseEditPopover() {
-      if (selectedBoulder.value.ascent !== undefined) {
+      if (selectedBoulder.value.ascent !== null) {
         if (selectedBoulder.value.ascent.result.toString() !==
             selectedAscentResult.value) {
           selectedAscentResult.value =
@@ -691,13 +700,9 @@ export default {
     watch(activeGrades, () => {
       featureCollection.forEach((boulder) => {
         // if boulder's grade is active and boulder is invisible, show it
-        if (activeGrades.value.includes(boulder.grade.id)) {
+        if (activeGrades.value.includes(boulder.grade)) {
           if (boulder.getStyle().length === undefined) {
-            boulder.setStyle(getBoulderStyle(
-                boulder.color.color,
-                boulder.grade.color.color,
-                boulder.ascent ? boulder.ascent.result : undefined,
-            ));
+            setBoulderStyle(boulder);
           }
         //  if boulder's grade is inactive and boulder is visible, hide it
         } else {
@@ -727,8 +732,14 @@ export default {
       loaded.value = true;
     }
 
-    // load the gym map when opening this view
-    loadGymMap(onGymMapLoaded);
+    // load colors and gym map when opening this view
+    requestWithJwt({
+      method: 'GET',
+      apiPath: `/bouldern/color/`,
+    }).then((response) => {
+      colorOptions.value = response.data;
+      loadGymMap(onGymMapLoaded);
+    });
     // Load new gym map when gym name changes
     watch(gymName, () => {
       featureCollection.clear();
@@ -736,6 +747,9 @@ export default {
     });
 
     return {
+      // colors
+      getColor,
+      // gym map
       gym,
       ascentResults,
       mapRoot,
