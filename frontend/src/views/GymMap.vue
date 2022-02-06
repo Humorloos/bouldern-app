@@ -467,8 +467,6 @@ export default {
             zoom: 1,
             maxZoom: 8,
           }));
-          map.removeInteraction(drawInteraction);
-          map.addInteraction(drawInteraction);
           if (onLoaded) onLoaded();
         };
       });
@@ -715,6 +713,7 @@ export default {
      */
     function onGymMapLoaded() {
       drawInteraction.on('drawend', openCreatePopover);
+      map.addInteraction(drawInteraction);
       map.on('click', (event) => {
         const feature = map
             .forEachFeatureAtPixel(event.pixel, (feature) => feature);
