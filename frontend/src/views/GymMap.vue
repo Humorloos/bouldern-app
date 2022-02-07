@@ -136,7 +136,7 @@
               v-model="activeGrades"
               :value="grade.id"
               :label="grade.grade.toString()"
-              :color="getColor(grade.color).color"
+              :color="getColor(grade.color)"
               hide-details
             />
           </v-col>
