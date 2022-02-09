@@ -17,21 +17,26 @@ const router = createRouter({
     {
       path: '/',
       component: HomeView,
-      meta: {requiresAuth: true}},
+      meta: {requiresAuth: true},
+    },
     {
       path: '/register',
-      component: Register},
+      component: Register,
+    },
     {
       path: '/login',
-      component: Login},
+      component: Login,
+    },
     {
       path: '/create-color',
       component: CreateColor,
-      meta: {requiresAuth: true}},
+      meta: {requiresAuth: true},
+    },
     {
       path: '/create-gym',
       component: CreateGym,
-      meta: {requiresAuth: true}},
+      meta: {requiresAuth: true},
+    },
     {
       path: '/gym-map/:gymName',
       component: GymMapView,
@@ -44,7 +49,8 @@ const router = createRouter({
     },
     {
       path: '/:pathMatch(.*)',
-      component: NotFound},
+      component: NotFound,
+    },
   ],
 });
 
