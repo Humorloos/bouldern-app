@@ -14,7 +14,8 @@
     </slot>
     <v-spacer />
     <slot name="app-bar-right" />
-  </v-app-bar><v-navigation-drawer
+  </v-app-bar>
+  <v-navigation-drawer
     v-model="drawer"
   >
     <v-list-item>
@@ -47,27 +48,7 @@
       >
         <v-list-item-title>Create Gym</v-list-item-title>
       </v-list-item>
-      <v-list-item v-if="isAuthenticated">
-        <v-list-item-subtitle class="text-h6">
-          Gym Map
-        </v-list-item-subtitle>
-      </v-list-item>
-      <v-list-item v-if="isAuthenticated">
-        <v-text-field
-          id="id_gym-name"
-          v-model="gymName"
-          label="Gym Name"
-          @keyup.enter="openGymMap"
-        />
-      </v-list-item>
-      <v-list-item v-if="isAuthenticated">
-        <v-btn
-          id="submit_button"
-          @click="openGymMap"
-        >
-          Open
-        </v-btn>
-      </v-list-item>
+      <gym-search v-if="gymSearch" />
       <v-list-item v-if="isAuthenticated">
         <v-btn
           color="error"
@@ -93,8 +74,16 @@ import {useDisplay} from 'vuetify';
 import {computed, ref, watch} from 'vue';
 import {useRoute, useRouter} from 'vue-router';
 import {useStore} from 'vuex';
+import GymSearch from './GymSearch.vue';
 
 export default {
+  components: {GymSearch},
+  props: {
+    gymSearch: {
+      type: Boolean,
+      default: true,
+    },
+  },
   setup() {
     // close the app drawer on mobile when loading app
     const display = useDisplay();
@@ -105,15 +94,7 @@ export default {
       if (display.mobile.value) drawer.value = false;
     });
 
-    const gymName = ref('');
     const router = useRouter();
-    /**
-     * Redirects to gym map with name entered in text field
-     */
-    function openGymMap() {
-      router.push(`/gym-map/${gymName.value}`);
-    }
-
     const store = useStore();
     /**
      * Logs the user out and redirects to the login view
@@ -126,8 +107,6 @@ export default {
     return {
       display,
       drawer,
-      gymName,
-      openGymMap,
       logout,
       isAuthenticated: computed(() => store.getters.isAuthenticated),
       deleteAccountAndLogout: () => store.dispatch('deleteAccountAndLogout'),
