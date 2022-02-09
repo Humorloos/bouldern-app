@@ -9,7 +9,7 @@ from python_anywhere.views import ReversibleViewSet
 
 
 class UserAPI(ReversibleViewSet, UpdateModelMixin):
-    """Rest API for reading and creating boulders in a specific gym"""
+    """Rest API for deleting users"""
     basename = 'user'
     queryset = User.objects.all()
     serializer_class = UserSerializer
