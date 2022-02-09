@@ -9,13 +9,14 @@ import CreateGym from '../views/CreateGym.vue';
 import ConfirmEmail from '../views/ConfirmEmail.vue';
 import GymMapView from '../views/GymMap.vue';
 import store from '../plugins/store';
+import HomeView from '../views/HomeView.vue';
 
 const router = createRouter({
   history: createWebHistory(),
   routes: [
     {
       path: '/',
-      component: GymMapView,
+      component: HomeView,
       meta: {requiresAuth: true}},
     {
       path: '/register',
