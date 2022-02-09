@@ -744,9 +744,11 @@ export default {
       loadGymMap(onGymMapLoaded);
     });
     // Load new gym map when gym name changes
-    watch(gymName, () => {
+    watch(gymName, (newGymName) => {
       featureCollection.clear();
-      loadGymMap();
+      if (newGymName !== null) {
+        loadGymMap();
+      }
     });
 
     return {
