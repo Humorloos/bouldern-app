@@ -38,7 +38,7 @@ describe('The color creation view', () => {
 
 describe('The gym map view', () => {
   it('allows adding, editing, and retiring boulders', () => {
-    cy.visit('');
+    cy.visit(`gym-map/${constants.gymName}`);
     cy.window().its(`${GymMapView.name}.loaded`).should('equal', true);
 
     // open create popover and close it
@@ -87,7 +87,7 @@ describe('The gym map view', () => {
   });
 
   it('allows filtering by grade', () => {
-    cy.visit('');
+    cy.visit(`gym-map/${constants.gymName}`);
     cy.window().its(`${GymMapView.name}.loaded`).should('equal', true);
 
     cy.window().its(
@@ -136,6 +136,13 @@ describe('The gym creation view', () => {
     }
     cy.visit(`gym-map/${constants.newGymName}`);
     cy.window().its(`${GymMapView.name}.loaded`).should('equal', true);
+  });
+});
+
+describe('The home view', () => {
+  it.only('shows the gym search when no gym is active', () => {
+    cy.visit('');
+    cy.contains('Find Gym');
   });
 });
 
