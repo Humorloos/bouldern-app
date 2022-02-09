@@ -139,6 +139,13 @@ describe('The gym creation view', () => {
   });
 });
 
+describe('The home view', () => {
+  it.only('shows the gym search when no gym is active', () => {
+    cy.visit('');
+    cy.contains('Find Gym');
+  });
+});
+
 describe('The app drawer', () => {
   beforeEach(() => {
     cy.get('.mdi-menu').click();
