@@ -10,6 +10,7 @@ import ConfirmEmail from '../views/ConfirmEmail.vue';
 import GymMapView from '../views/GymMap.vue';
 import store from '../plugins/store';
 import HomeView from '../views/HomeView.vue';
+import ResetPassword from '../views/ResetPassword.vue';
 
 const router = createRouter({
   history: createWebHistory(),
@@ -26,6 +27,10 @@ const router = createRouter({
     {
       path: '/login',
       component: Login,
+    },
+    {
+      path: '/reset-password',
+      component: ResetPassword,
     },
     {
       path: '/create-color',
