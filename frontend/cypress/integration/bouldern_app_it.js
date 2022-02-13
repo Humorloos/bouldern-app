@@ -59,6 +59,7 @@ describe('The gym map view', () => {
     // we have to click twice because there is a bug that the popover is not
     // moved correctly the first time
     cy.get('#map-root').click(50, 300);
+    cy.contains('Added 0 day(s) ago');
     cy.contains($t('ascentResults[0]')).click();
     cy.get('#popup-closer').click();
 
