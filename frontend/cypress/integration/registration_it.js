@@ -59,7 +59,7 @@ describe('The register app', () => {
     for (const _ of waitingFor('POST', '/registration/')) {
       cy.get('.v-form > #submit_button').click();
     }
-    cy.task('readConfirmationEmail')
+    cy.task('readLastEmail')
         .should('have.string', constants.newEmail)
         .then((mail) => {
           const confirmationLink = /(https?:\/\/[^\s]+)/g
