@@ -18,6 +18,19 @@
       >
         <template
           v-if="!creating"
+          #toolbar-left
+        >
+          <v-col
+            style="font-size: 0.75em"
+            class="text-grey-darken-1"
+            cols="8"
+            align-self="center"
+          >
+            Added {{ selectedBoulder.age }} day(s) ago
+          </v-col>
+        </template>
+        <template
+          v-if="!creating"
           #toolbar-right
         >
           <v-col cols="2">
@@ -160,7 +173,7 @@ import {Image as ImageLayer, Vector as VectorLayer} from 'ol/layer';
 import Map from 'ol/Map';
 import {Projection} from 'ol/proj';
 import {ImageStatic, Vector as VectorSource} from 'ol/source';
-import {Circle, Fill, Icon, Stroke, Style} from 'ol/style';
+import {Circle, Fill, Icon, Stroke, Style, Text} from 'ol/style';
 import View from 'ol/View';
 import ColorSelect from '../components/ColorSelect.vue';
 import MapOverlay from '../components/MapOverlay.vue';
@@ -317,17 +330,30 @@ export default {
      *
      * @param holdColor the boulder's hold color
      * @param gradeColor the boulder's grade color
+     * @param age the boulder's age in days
      * @param [ascentStatus] the boulder's ascent status
      * @returns {Style[]} the boulder's style consisting of the two-colored
-     * color icon, the ascent status icon, and a shadow
+     * color icon, the age in days, the ascent status icon, and a shadow
      */
-    function getBoulderStyle(holdColor, gradeColor, ascentStatus) {
+    function getBoulderStyle(holdColor, gradeColor, age, ascentStatus) {
       const colorStyle = getColorStyle(holdColor, gradeColor);
       const ascentStyle = ascentStatus !== undefined ?
           new Style({
             image: ascentIcons[ascentStatus],
           }) : new Style({});
-      return [shadowStyle, colorStyle, ascentStyle];
+      const ageStyle = new Style({
+        text: new Text({
+          fill: new Fill({color: '#FFFFFF'}),
+          stroke: new Stroke({
+            color: '#000000',
+            width: 2,
+          }),
+          offsetX: -10,
+          offsetY: 10,
+          text: age.toString(),
+        }),
+      });
+      return [shadowStyle, colorStyle, ascentStyle, ageStyle];
     }
 
 
@@ -431,6 +457,7 @@ export default {
       boulder.setStyle(getBoulderStyle(
           getColor(boulder.color),
           getColor(getGrade(boulder.grade).color),
+          boulder.age,
           boulder.ascent !== null ? boulder.ascent.result : undefined,
       ));
     }
@@ -452,10 +479,11 @@ export default {
           const boulderData = featureData.boulder;
           const boulder = Object.assign(
               jsonFormat.value.readFeature(boulderData.coordinates),
-              (({id, color, grade}) => ({
+              (({id, color, grade, age}) => ({
                 id,
                 color,
                 grade,
+                age,
                 ascent: featureData.ascent,
               }))(boulderData));
           setBoulderStyle(boulder);
@@ -510,7 +538,7 @@ export default {
       selectedCoordinates.value = jsonFormat.value
           .writeGeometryObject(geometry);
       feature.setStyle(getBoulderStyle(
-          selectedColor.value.color, selectedGrade.value.color));
+          selectedColor.value.color, selectedGrade.value.color, '0'));
 
       selectedBoulder.value = feature;
       overlay.value.open(geometry.getCoordinates());
@@ -577,6 +605,7 @@ export default {
       selectedBoulder.value.id = response.data.id;
       selectedBoulder.value.grade = response.data.grade;
       selectedBoulder.value.color = response.data.color;
+      selectedBoulder.value.age = 0;
       overlay.value.close();
     }
 
@@ -771,6 +800,7 @@ export default {
       updateHoldColor,
       onSubmitted,
       // edit popover
+      selectedBoulder,
       selectedAscentResult,
       setAscentStyle,
       retireBoulder,
