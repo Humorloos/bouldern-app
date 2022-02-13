@@ -57,7 +57,7 @@ describe('The register app', () => {
     cy.get('#id_password1').type(constants.newPassword);
     cy.get('#id_password2').type(constants.newPassword);
     for (const _ of waitingFor('POST', '/registration/')) {
-      cy.get('.v-form > #submit_button').click();
+      cy.get('#submit_button').click();
     }
     cy.task('readLastEmail')
         .should('have.string', constants.newEmail)
