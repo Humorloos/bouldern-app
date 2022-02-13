@@ -3,7 +3,9 @@
     <template #main>
       <v-container>
         <v-row>
-          <v-col>{{ $t('resetPasswordInstructions') }}</v-col>
+          <v-col>
+            {{ $t('resetPasswordInstructions') }}
+          </v-col>
         </v-row>
         <v-row>
           <v-col>
@@ -30,7 +32,7 @@
 </template>
 
 <script>
-/** @file todo */
+/** @file View for resetting one's password */
 import AppView from '../components/AppView.vue';
 import {ref} from 'vue';
 import {useStore} from 'vuex';
@@ -44,7 +46,7 @@ export default {
     const store = useStore();
     const axios = store.state.axios;
     /**
-     * todo
+     * Sends request to API endpoint for sending password reset email
      */
     function sendPasswordResetEmail() {
       axios.post('/registration/password/reset/', {email: email.value});
