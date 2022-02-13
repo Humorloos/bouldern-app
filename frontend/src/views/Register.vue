@@ -61,7 +61,7 @@ export default {
         },
         password2: {
           type: 'password',
-          label: 'Password confirmation',
+          label: 'Confirm password',
           value: '',
         },
       },
