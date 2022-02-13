@@ -80,6 +80,28 @@ describe('The register app', () => {
     cy.contains($t('wrongCredentialsMsg'));
   });
 
+  it('allows resetting one\'s password', () => {
+    cy.visit('reset-password');
+    cy.get('#id_email').type(constants.email);
+    for (const _ of waitingFor('POST', '/registration/password/reset/')) {
+      cy.get('#id_send').click();
+    }
+    cy.task('readLastEmail')
+        .should('have.string', constants.email)
+        .then((mail) => {
+          const confirmationLink = /(https?:\/\/[^\s]+)/g
+              .exec(mail)[0]
+              .replace('localhost:8000', 'localhost:8080');
+          cy.visit(confirmationLink);
+        });
+    cy.get('#id_password1').type(constants.password);
+    cy.get('#id_password2').type(constants.password);
+    for (const _ of waitingFor('POST',
+        '/registration/password/reset/confirm/')) {
+      cy.get('#id_submit').click();
+    }
+  });
+
   it('Redirects to login page when visiting gym map while logged out',
       () => {
         cy.visit(`gym-map/${constants.gymName}`);
