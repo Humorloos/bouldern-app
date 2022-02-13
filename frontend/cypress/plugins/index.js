@@ -73,12 +73,12 @@ module.exports = (on, config) => {
       return null;
     },
     /**
-     * Reads the content of the last confirmation email written by django to the
-     * logs directory during registration.
+     * Reads the content of the last email written by django to the
+     * logs directory.
      *
-     * @returns {string} the content of the last confirmation email
+     * @returns {string} the content of the last email
      */
-    readConfirmationEmail() {
+    readLastEmail() {
       const emailPath = 'cypress/logs/email';
       const filename = fs.readdirSync(emailPath).at(-1);
       return fs.readFileSync(`${emailPath}/${filename}`, 'utf8');

@@ -10,6 +10,8 @@ import ConfirmEmail from '../views/ConfirmEmail.vue';
 import GymMapView from '../views/GymMap.vue';
 import store from '../plugins/store';
 import HomeView from '../views/HomeView.vue';
+import ResetPassword from '../views/ResetPassword.vue';
+import ChangePassword from '../views/ChangePassword.vue';
 
 const router = createRouter({
   history: createWebHistory(),
@@ -17,21 +19,30 @@ const router = createRouter({
     {
       path: '/',
       component: HomeView,
-      meta: {requiresAuth: true}},
+      meta: {requiresAuth: true},
+    },
     {
       path: '/register',
-      component: Register},
+      component: Register,
+    },
     {
       path: '/login',
-      component: Login},
+      component: Login,
+    },
+    {
+      path: '/reset-password',
+      component: ResetPassword,
+    },
     {
       path: '/create-color',
       component: CreateColor,
-      meta: {requiresAuth: true}},
+      meta: {requiresAuth: true},
+    },
     {
       path: '/create-gym',
       component: CreateGym,
-      meta: {requiresAuth: true}},
+      meta: {requiresAuth: true},
+    },
     {
       path: '/gym-map/:gymName',
       component: GymMapView,
@@ -43,8 +54,13 @@ const router = createRouter({
       component: ConfirmEmail,
     },
     {
+      path: '/registration/password/reset/change/:uid/:token',
+      component: ChangePassword,
+    },
+    {
       path: '/:pathMatch(.*)',
-      component: NotFound},
+      component: NotFound,
+    },
   ],
 });
 

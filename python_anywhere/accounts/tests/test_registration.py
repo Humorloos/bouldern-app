@@ -1,3 +1,4 @@
+from django.core import mail
 from faker import Faker
 from rest_framework.reverse import reverse
 from rest_framework.status import HTTP_201_CREATED
@@ -20,6 +21,7 @@ def test_register(db):
     response = client.post(reverse('rest_register'), data=payload,
                            format='json')
     # Then
+    assert len(mail.outbox) == 1
     assert response.status_code == HTTP_201_CREATED
     created_user = User.objects.first()
     assert created_user.email == payload['email']

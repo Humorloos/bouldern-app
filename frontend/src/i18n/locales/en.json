@@ -6,5 +6,6 @@
     "Project",
     "Top",
     "Flash"
-  ]
+  ],
+  "resetPasswordInstructions": "Enter your user account's verified email address and we will send you a password reset link."
 }

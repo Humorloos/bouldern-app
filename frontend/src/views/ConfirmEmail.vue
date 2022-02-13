@@ -21,24 +21,13 @@ export default {
     const route = useRoute();
     const store = useStore();
     /**
-     * The email confirmation key to be sent to the validation api
-     *
-     * @returns {string} the email confirmation key
-     */
-    function key() {
-      return route.params.key;
-    }
-    /**
      * Sends the email confirmation key to the validation api
      */
     function confirmEmail() {
       store.state.axios.post(
-          '/registration/verify-email/', {key: key()});
+          '/registration/verify-email/', {key: route.params.key});
     }
-    return {
-      key,
-      confirmEmail,
-    };
+    return {confirmEmail};
   },
 };
 </script>

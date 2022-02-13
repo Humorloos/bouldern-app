@@ -34,8 +34,6 @@ urlpatterns = [
     path(f'{CALENDAR_URI}/', include('python_anywhere.calendar_app.urls')),
     re_path(r'^favicon\.ico$',
             RedirectView.as_view(url='/static/vue/favicon.ico')),
-    # Override email confirmation URL to redirect to frontend view
-    re_path(r'^registration/account-confirm-email/.*/$', index, name='index'),
     path('registration/', include('python_anywhere.accounts.urls')),
     path('registration/', include('dj_rest_auth.urls')),
     path('registration/', include('dj_rest_auth.registration.urls'))

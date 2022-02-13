@@ -3,37 +3,56 @@
     <template #main>
       <v-container>
         <v-row>
-          <v-col><h1>Log In</h1></v-col>
+          <v-col class="text-h4">
+            Log In
+          </v-col>
         </v-row>
         <v-row>
           <v-col>
             <v-form>
-              <p>{{ loginError }}</p>
-              <v-text-field
-                id="id_username"
-                v-model="form.username"
-                type="text"
-                label="E-Mail"
-              />
-              <v-text-field
-                id="id_password"
-                v-model="form.password"
-                type="password"
-                label="Password"
-              />
-              <v-btn
-                id="submit_button"
-                type="submit"
-                @click="submit"
-              >
-                Log In
-              </v-btn>
+              <v-container>
+                <v-row>
+                  <v-col>{{ loginError }}</v-col>
+                </v-row>
+                <v-row>
+                  <v-text-field
+                    id="id_username"
+                    v-model="form.username"
+                    type="text"
+                    label="E-Mail"
+                  />
+                </v-row>
+                <v-row>
+                  <v-text-field
+                    id="id_password"
+                    v-model="form.password"
+                    type="password"
+                    label="Password"
+                  />
+                </v-row>
+                <v-row>
+                  <v-col>
+                    <v-btn
+                      id="submit_button"
+                      type="submit"
+                      @click="submit"
+                    >
+                      Log In
+                    </v-btn>
+                  </v-col>
+                  <v-col>
+                    <router-link to="/reset-password">
+                      Forgot Password?
+                    </router-link>
+                  </v-col>
+                </v-row>
+              </v-container>
             </v-form>
           </v-col>
         </v-row>
         <v-row>
           <v-col
-            cols="8"
+            cols="7"
           >
             <p v-if="isAuthenticated">
               {{ $t('welcomeMsg', {user: user.email}) }}
@@ -44,7 +63,7 @@
           </v-col>
           <v-spacer />
           <v-col
-            cols="4"
+            cols="5"
           >
             <v-btn
               v-if="isAuthenticated"
