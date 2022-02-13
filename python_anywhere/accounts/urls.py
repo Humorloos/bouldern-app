@@ -12,5 +12,7 @@ router.register(UserAPI.basename, UserAPI)
 urlpatterns = router.urls + [
     re_path(r'^password/reset/change/(?P<uidb64>[0-9A-Za-z_\-]+)/'
             r'(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,32})/$',
-            index, name='password_reset_confirm')
+            index, name='password_reset_confirm'),
+    # Override email confirmation URL to redirect to frontend view
+    re_path(r'^account-confirm-email/.*/$', index, name='index'),
 ]
