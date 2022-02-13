@@ -1,5 +1,7 @@
 """Custom django command for resetting database to default state"""
+from datetime import timedelta
 
+from django.utils import timezone
 from subprocess import call
 
 from django.contrib.gis.geos import Point
@@ -48,6 +50,8 @@ class Command(BaseCommand):
             coordinates=Point(799, 645),
             grade=generic_gym.grade_set.first()
         )
+        boulder.created_at = timezone.now() - timedelta(days=15)
+        boulder.save()
         BoulderFactory(gym=generic_gym, coordinates=Point(1041, 716))
 
         # add ascent
