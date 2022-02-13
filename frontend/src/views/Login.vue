@@ -31,13 +31,20 @@
                   />
                 </v-row>
                 <v-row>
-                  <v-btn
-                    id="submit_button"
-                    type="submit"
-                    @click="submit"
-                  >
-                    Log In
-                  </v-btn>
+                  <v-col>
+                    <v-btn
+                      id="submit_button"
+                      type="submit"
+                      @click="submit"
+                    >
+                      Log In
+                    </v-btn>
+                  </v-col>
+                  <v-col>
+                    <router-link to="/reset-password">
+                      Forgot Password?
+                    </router-link>
+                  </v-col>
                 </v-row>
               </v-container>
             </v-form>
