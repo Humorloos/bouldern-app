@@ -41,7 +41,8 @@
 </template>
 
 <script>
-/** @file todo */
+/** @file view for changing one's password after resetting it */
+
 import AppView from '../components/AppView.vue';
 import {ref} from 'vue';
 import {useStore} from 'vuex';
@@ -59,7 +60,7 @@ export default {
     const route = useRoute();
 
     /**
-     * todo
+     * Sends a change password request with the entered password to the backend
      */
     function changePassword() {
       axios.post('/registration/password/reset/confirm/',
