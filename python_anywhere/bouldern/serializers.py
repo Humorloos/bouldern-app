@@ -31,7 +31,7 @@ class BoulderSerializer(ModelSerializer):
 
     class Meta:
         model = Boulder
-        fields = ['coordinates', 'id', 'color', 'grade', 'is_active']
+        fields = ['coordinates', 'id', 'color', 'grade', 'age', 'is_active']
         extra_kwargs = {
             'is_active': {'write_only': True}
         }
