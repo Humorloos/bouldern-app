@@ -10,6 +10,9 @@ from python_anywhere.bouldern.views import index
 router = SimpleRouter()
 router.register(UserAPI.basename, UserAPI)
 urlpatterns = router.urls + [
+    # Override path with name password_reset_confirm to redirect to frontend
+    # password change view
+    # (see https://dj-rest-auth.readthedocs.io/en/latest/faq.html)
     re_path(r'^password/reset/change/(?P<uidb64>[0-9A-Za-z_\-]+)/'
             r'(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,32})/$',
             index, name='password_reset_confirm'),
