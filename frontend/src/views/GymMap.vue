@@ -18,7 +18,7 @@
       >
         <template
           v-if="!creating"
-          #toolbar
+          #toolbar-right
         >
           <v-col cols="2">
             <v-btn
