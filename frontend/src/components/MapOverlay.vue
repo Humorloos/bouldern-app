@@ -9,8 +9,9 @@
       id="popup-content"
     >
       <v-row>
+        <slot name="toolbar-left" />
         <v-spacer />
-        <slot name="toolbar" />
+        <slot name="toolbar-right" />
         <v-col
           cols="2"
         >
