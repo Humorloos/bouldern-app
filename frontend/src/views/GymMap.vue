@@ -424,8 +424,9 @@ export default {
       style: new Style({}),
       condition: (event) => {
         return containsCoordinate(extent, event.coordinate) &&
-              !hasBoulderAtPixel(event.pixel);
-      }});
+            !hasBoulderAtPixel(event.pixel);
+      },
+    });
 
     /**
      * Gets the color associated to the provided ID.
@@ -654,7 +655,7 @@ export default {
     function reportAscent() {
       requestWithJwt({
         apiPath: `/bouldern/gym/${gym.value.id}/boulder/` +
-          `${selectedBoulder.value.id}/ascent/`,
+            `${selectedBoulder.value.id}/ascent/`,
         data: {'result': selectedAscentResult.value},
       }).then((response) => {
         selectedBoulder.value.ascent = response.data;
@@ -735,7 +736,7 @@ export default {
           if (boulder.getStyle().length === undefined) {
             setBoulderStyle(boulder);
           }
-        //  if boulder's grade is inactive and boulder is visible, hide it
+          //  if boulder's grade is inactive and boulder is visible, hide it
         } else {
           if (boulder.getStyle().length !== undefined) {
             boulder.setStyle(new Style({}));
