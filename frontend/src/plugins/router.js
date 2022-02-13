@@ -11,6 +11,7 @@ import GymMapView from '../views/GymMap.vue';
 import store from '../plugins/store';
 import HomeView from '../views/HomeView.vue';
 import ResetPassword from '../views/ResetPassword.vue';
+import ChangePassword from '../views/ChangePassword.vue';
 
 const router = createRouter({
   history: createWebHistory(),
@@ -51,6 +52,10 @@ const router = createRouter({
     {
       path: '/registration/account-confirm-email/:key',
       component: ConfirmEmail,
+    },
+    {
+      path: '/registration/password/reset/change/:uid/:token',
+      component: ChangePassword,
     },
     {
       path: '/:pathMatch(.*)',
