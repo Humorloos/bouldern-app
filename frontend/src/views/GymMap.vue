@@ -809,8 +809,8 @@ export default {
      */
     function setFavorite() {
       favorite.value = !favorite.value;
-      if (favorite.value) store.commit('addFavoriteGym', gymName.value);
-      else store.commit('removeFavoriteGym', gymName.value);
+      if (favorite.value) store.dispatch('addFavoriteGym', gymName.value);
+      else store.dispatch('removeFavoriteGym', gymName.value);
     }
 
     return {
