@@ -1,7 +1,7 @@
 """Module containing the views of the bouldern app"""
 from django.shortcuts import render
 from rest_framework.mixins import CreateModelMixin, ListModelMixin, \
-    UpdateModelMixin
+    UpdateModelMixin, DestroyModelMixin
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 from url_filter.integrations.drf import DjangoFilterBackend
@@ -37,16 +37,21 @@ class GymAPI(ReversibleViewSet, CreateUGCMixin, UpdateModelMixin):
     serializer_class = GymSerializer
 
 
-class FavoriteGymAPI(ReversibleViewSet, CreateUGCMixin):
+class FavoriteGymAPI(ReversibleViewSet, CreateUGCMixin, DestroyModelMixin):
     """Rest API for adding favorite gyms"""
     basename = 'favoritegym'
     queryset = FavoriteGym.objects.all()
     serializer_class = FavoriteGymSerializer
+    lookup_field = 'gym__name'
 
     def perform_create(self, serializer, **kwargs):
         super().perform_create(
             serializer, gym=Gym.objects.get(
                 name=self.request.data['gym']))
+
+    def perform_destroy(self, instance):
+        instance.is_active = False
+        instance.save()
 
 
 class BoulderAPI(ReversibleViewSet, CreateUGCMixin, UpdateModelMixin):
