@@ -75,17 +75,51 @@ export default createStore({
     /**
      * todo
      */
-    addFavoriteGym({favoriteGyms}, gymName) {
-      favoriteGyms.push(gymName);
+    addFavoriteGym(state, gymName) {
+      // todo: also add it via api
+      state.favoriteGyms.push(gymName);
     },
     /**
      * todo
      */
-    removeFavoriteGym({favoriteGyms}, gymName) {
-      favoriteGyms.splice(favoriteGyms.indexOf(gymName), 1);
+    removeFavoriteGym(state, gymName) {
+      state.favoriteGyms.splice(state.favoriteGyms.indexOf(gymName), 1);
+    },
+    setFavoriteGyms(state, loadedFavorites) {
+      state.favoriteGyms = loadedFavorites;
     },
   },
   actions: {
+    /**
+     * todo
+     */
+    async addFavoriteGym({dispatch, commit}, gymName) {
+      await dispatch('requestWithJwt', {
+        apiPath: '/bouldern/favorite-gym/',
+        data: {gym: gymName},
+      });
+      commit('addFavoriteGym', gymName);
+    },
+    /**
+     * todo
+     */
+    async removeFavoriteGym({dispatch, commit}, gymName) {
+      await dispatch('requestWithJwt', {
+        apiPath: `/bouldern/favorite-gym/${gymName}/`,
+        method: 'DELETE',
+      });
+      commit('removeFavoriteGym', gymName);
+    },
+    /**
+     * todo
+     */
+    async loadFavoriteGyms({dispatch, commit}) {
+      const response = await dispatch('requestWithJwt', {
+        apiPath: '/bouldern/favorite-gym/',
+        method: 'GET',
+      });
+      commit('setFavoriteGyms', response.data.map(({gym}) => gym));
+    },
     /**
      * De-activates currently logged-in account
      */

@@ -14,6 +14,8 @@ export default {
   setup() {
     const store = useStore();
 
+    store.dispatch('loadFavoriteGyms');
+
     // Expose Vuex store to cypress tests and attach log hooks when running
     // cypress test
     onMounted(() => {
