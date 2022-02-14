@@ -1,10 +1,10 @@
 """Serializers for the bouldern app"""
 
-from rest_framework.relations import PrimaryKeyRelatedField
+from rest_framework.relations import PrimaryKeyRelatedField, StringRelatedField
 from rest_framework.serializers import ModelSerializer, Serializer
 
 from python_anywhere.bouldern.models import Gym, Color, Grade, \
-    Boulder, Ascent
+    Boulder, Ascent, FavoriteGym
 
 
 class ColorSerializer(ModelSerializer):
@@ -93,3 +93,12 @@ class GymMapResourcesSerializer(Serializer):
 
     def create(self, validated_data):
         pass
+
+
+class FavoriteGymSerializer(ModelSerializer):
+    """todo"""
+    gym = StringRelatedField()
+
+    class Meta:
+        model = FavoriteGym
+        fields = ['gym']
