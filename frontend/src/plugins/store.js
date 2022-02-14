@@ -163,6 +163,7 @@ export default createStore({
             '/registration/login/', form);
         const loginData = response.data;
         dispatch('setLoginData', loginData);
+        dispatch('loadFavoriteGyms');
       } catch (error) {
         console.log(error);
         commit('setLoginError');
