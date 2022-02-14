@@ -28,6 +28,7 @@ const getDefaultState = function() {
     },
     loginError: '',
     axios: http,
+    favoriteGyms: [],
     activeGym: null,
   };
 };
@@ -70,6 +71,18 @@ export default createStore({
       // Merge rather than replace so we don't lose observers
       // https://github.com/vuejs/vuex/issues/1118
       Object.assign(state, getDefaultState());
+    },
+    /**
+     * todo
+     */
+    addFavoriteGym({favoriteGyms}, gymName) {
+      favoriteGyms.push(gymName);
+    },
+    /**
+     * todo
+     */
+    removeFavoriteGym({favoriteGyms}, gymName) {
+      favoriteGyms.splice(favoriteGyms.indexOf(gymName), 1);
     },
   },
   actions: {
