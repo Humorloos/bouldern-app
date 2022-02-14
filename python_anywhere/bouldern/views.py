@@ -6,9 +6,11 @@ from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 from url_filter.integrations.drf import DjangoFilterBackend
 
-from python_anywhere.bouldern.models import Boulder, Gym, Color, Ascent
+from python_anywhere.bouldern.models import Boulder, Gym, Color, Ascent, \
+    FavoriteGym
 from python_anywhere.bouldern.serializers import GymSerializer, ColorSerializer, \
-    BoulderSerializer, AscentSerializer, GymMapResourcesSerializer
+    BoulderSerializer, AscentSerializer, GymMapResourcesSerializer, \
+    FavoriteGymSerializer
 from python_anywhere.views import ReversibleViewSet
 
 
@@ -33,6 +35,18 @@ class GymAPI(ReversibleViewSet, CreateUGCMixin, UpdateModelMixin):
     basename = 'gym'
     queryset = Gym.objects.all()
     serializer_class = GymSerializer
+
+
+class FavoriteGymAPI(ReversibleViewSet, CreateUGCMixin):
+    """Rest API for adding favorite gyms"""
+    basename = 'favoritegym'
+    queryset = FavoriteGym.objects.all()
+    serializer_class = FavoriteGymSerializer
+
+    def perform_create(self, serializer, **kwargs):
+        super().perform_create(
+            serializer, gym=Gym.objects.get(
+                name=self.request.data['gym']))
 
 
 class BoulderAPI(ReversibleViewSet, CreateUGCMixin, UpdateModelMixin):
