@@ -7,7 +7,8 @@ from python_anywhere.bouldern.views import GymAPI, ColorAPI, BoulderAPI, \
 
 router = SimpleRouter()
 router.register(GymAPI.basename, GymAPI)
-router.register(FavoriteGymAPI.basename, FavoriteGymAPI)
+router.register(FavoriteGymAPI.basename, FavoriteGymAPI,
+                basename=FavoriteGymAPI.basename)
 router.register(ColorAPI.basename, ColorAPI)
 router.register(BoulderAPI.basename, BoulderAPI)
 router.register(GymMapResourcesAPI.basename, GymMapResourcesAPI,
