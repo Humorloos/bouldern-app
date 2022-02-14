@@ -61,6 +61,7 @@ class Boulder(UGC):
 
     @property
     def age(self):
+        """The boulder's age in days"""
         return (timezone.now() - self.created_at).days
 
 
