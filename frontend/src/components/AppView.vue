@@ -47,6 +47,7 @@
         v-for="(favoriteGym) in favoriteGyms"
         :key="favoriteGym"
         :to="`/gym-map/${favoriteGym}`"
+        class="d-block text-truncate"
       >
         {{ favoriteGym }}
       </v-list-item>
@@ -120,7 +121,7 @@ export default {
       logout,
       isAuthenticated: computed(() => store.getters.isAuthenticated),
       deleteAccountAndLogout: () => store.dispatch('deleteAccountAndLogout'),
-      favoriteGyms: store.state.favoriteGyms,
+      favoriteGyms: computed(() => store.state.favoriteGyms),
     };
   },
 };
