@@ -168,7 +168,7 @@ import {useI18n} from 'vue-i18n';
 import {Collection} from 'ol';
 import {containsCoordinate, getCenter} from 'ol/extent';
 import {GeoJSON} from 'ol/format';
-import {Draw} from 'ol/interaction';
+import {Draw, PinchRotate} from 'ol/interaction';
 import {Image as ImageLayer, Vector as VectorLayer} from 'ol/layer';
 import Map from 'ol/Map';
 import {Projection} from 'ol/proj';
@@ -207,6 +207,11 @@ export default {
     const map = new Map({
       moveTolerance: 4,
     });
+    // increase rotation threshold to make it less sensible during zooms
+    const interactions = map.getInteractions().getArray();
+    const pinchRotate = interactions
+        .filter((interaction) => interaction instanceof PinchRotate)[0];
+    pinchRotate.set('threshold', 2);
     // Mount map and popover
     watchPostEffect(() => {
       if (mapRoot.value !== null) map.setTarget(mapRoot.value);
