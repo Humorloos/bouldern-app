@@ -8,7 +8,7 @@ from factory.django import ImageField
 
 from python_anywhere.accounts.factories import UserFactory
 from python_anywhere.bouldern.factories import ColorFactory, GymFactory, \
-    BoulderFactory, AscentFactory
+    BoulderFactory, AscentFactory, FavoriteGymFactory
 from python_anywhere.bouldern.tests.conftest import default_colors
 from python_anywhere.settings import BASE_DIR, env, RESOURCES_DIR
 
@@ -29,7 +29,7 @@ class Command(BaseCommand):
                     is_staff=True, )
 
         # create test user
-        UserFactory(email='wetBonez@web.de',
+        test_user = UserFactory(email='wetBonez@web.de',
                     username='wetBonez',
                     password='youcantknowthispassword123')
 
@@ -59,3 +59,7 @@ class Command(BaseCommand):
         GymFactory(
             name='Green Gym',
             map=ImageField(from_path=RESOURCES_DIR / 'green_gym.png'))
+
+        # add favorite gym
+        FavoriteGymFactory(gym=generic_gym)
+        FavoriteGymFactory(created_by=test_user, gym=generic_gym)
