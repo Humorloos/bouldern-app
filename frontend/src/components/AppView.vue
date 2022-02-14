@@ -42,6 +42,15 @@
       >
         <v-list-item-title>Create Color</v-list-item-title>
       </v-list-item>
+      <v-divider v-if="favoriteGyms.length > 0" />
+      <v-list-item
+        v-for="(favoriteGym) in favoriteGyms"
+        :key="favoriteGym"
+        :to="`/gym-map/${favoriteGym}`"
+      >
+        {{ favoriteGym }}
+      </v-list-item>
+      <v-divider />
       <v-list-item
         v-if="isAuthenticated"
         to="/create-gym"
@@ -96,6 +105,7 @@ export default {
 
     const router = useRouter();
     const store = useStore();
+
     /**
      * Logs the user out and redirects to the login view
      */
@@ -110,6 +120,7 @@ export default {
       logout,
       isAuthenticated: computed(() => store.getters.isAuthenticated),
       deleteAccountAndLogout: () => store.dispatch('deleteAccountAndLogout'),
+      favoriteGyms: store.state.favoriteGyms,
     };
   },
 };
