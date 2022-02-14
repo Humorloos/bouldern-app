@@ -1,11 +1,9 @@
 """Custom django command for resetting database to default state"""
 from datetime import timedelta
-
-from django.utils import timezone
 from subprocess import call
-
 from django.contrib.gis.geos import Point
 from django.core.management import BaseCommand
+from django.utils import timezone
 from factory.django import ImageField
 
 from python_anywhere.accounts.factories import UserFactory
