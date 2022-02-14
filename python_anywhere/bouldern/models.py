@@ -76,3 +76,12 @@ class Ascent(UGC):
 
     result = PositiveSmallIntegerField(choices=RESULT_CHOICES)
     boulder = ForeignKey(Boulder, on_delete=PROTECT)
+
+
+class FavoriteGym(UGC):
+    """todo"""
+
+    gym = ForeignKey(Gym, on_delete=SET_NULL, null=True)
+
+    def __str__(self):
+        return self.gym.name
