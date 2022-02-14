@@ -204,7 +204,9 @@ export default {
 
     const mapRoot = ref(null);
     const overlay = ref(null);
-    const map = new Map({});
+    const map = new Map({
+      moveTolerance: 4,
+    });
     // Mount map and popover
     watchPostEffect(() => {
       if (mapRoot.value !== null) map.setTarget(mapRoot.value);
