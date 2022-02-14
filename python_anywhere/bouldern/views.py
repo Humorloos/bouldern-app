@@ -37,12 +37,16 @@ class GymAPI(ReversibleViewSet, CreateUGCMixin, UpdateModelMixin):
     serializer_class = GymSerializer
 
 
-class FavoriteGymAPI(ReversibleViewSet, CreateUGCMixin, DestroyModelMixin):
+class FavoriteGymAPI(ReversibleViewSet, CreateUGCMixin, DestroyModelMixin,
+                     ListModelMixin):
     """Rest API for adding favorite gyms"""
-    basename = 'favoritegym'
-    queryset = FavoriteGym.objects.all()
+    basename = 'favorite-gym'
     serializer_class = FavoriteGymSerializer
     lookup_field = 'gym__name'
+
+    def get_queryset(self):
+        return FavoriteGym.objects.filter(created_by=self.request.user,
+                                          is_active=True)
 
     def perform_create(self, serializer, **kwargs):
         super().perform_create(
