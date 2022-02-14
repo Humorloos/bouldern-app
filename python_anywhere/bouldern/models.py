@@ -3,6 +3,7 @@ from colorfield.fields import ColorField
 from django.contrib.gis.db.models import PointField
 from django.db.models import Model, CharField, ImageField, ForeignKey, \
     SET_NULL, PositiveSmallIntegerField, DateTimeField, PROTECT, BooleanField
+from django.utils import timezone
 
 from python_anywhere.accounts.models import User
 
@@ -57,6 +58,11 @@ class Boulder(UGC):
     gym = ForeignKey(Gym, on_delete=SET_NULL, null=True)
     grade = ForeignKey(Grade, on_delete=PROTECT, null=True)
     color = ForeignKey(Color, on_delete=PROTECT, null=True)
+
+    @property
+    def age(self):
+        """The boulder's age in days"""
+        return (timezone.now() - self.created_at).days
 
 
 class Ascent(UGC):
