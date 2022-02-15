@@ -26,7 +26,6 @@
     <template #main>
       <map-overlay
         ref="overlay"
-        :loaded="loaded"
         @close="onClosePopover"
       >
         <template
