@@ -62,17 +62,6 @@ module.exports = (on, config) => {
   on('file:preprocessor', require('@cypress/webpack-preprocessor')(options));
   on('task', {
     /**
-     * Prints the message to the cypress command line
-     *
-     * @param message the message to print
-     * @returns {null} tasks that return nothing have to return null
-     */
-    log(message) {
-      console.log(JSON.stringify(message, null, 2));
-
-      return null;
-    },
-    /**
      * Reads the content of the last email written by django to the
      * logs directory.
      *
