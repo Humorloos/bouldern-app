@@ -86,47 +86,35 @@
 <script>
 /** @file login view */
 
-import {mapActions, mapGetters, mapMutations, mapState} from 'vuex';
+import {useStore} from 'vuex';
 import AppView from '../components/AppView.vue';
+import {computed, ref} from 'vue';
 
 export default {
   name: 'Login',
   components: {AppView},
-  data() {
-    return {
-      form: {
-        username: '',
-        password: '',
-      },
-      error: {
-        visible: false,
-      },
-    };
-  },
-  computed: {
-    ...mapGetters({
-      isAuthenticated: 'isAuthenticated',
-    }),
-    ...mapState({
-      user: 'user',
-      loginError: 'loginError',
-    }),
-  },
-  methods: {
-    ...mapActions({
-      login: 'login',
-    }),
-    ...mapMutations({
-      logout: 'logout',
-    }),
+  setup() {
+    const form = ref({username: '', password: ''});
+    const store = useStore();
+
+    const login = (form) => store.dispatch('login', form);
     /**
      * Submits the login form to the login api and commits the returned data to
      * the store. In case of error shows an error message.
      */
-    submit() {
-      this.login(this.form).then(
-          () => Object.keys(this.form).forEach((key) => this.form[key] = ''));
-    },
+    function submit() {
+      login(form.value).then(
+          () => Object.keys(form.value).forEach((key) => form.value[key] = ''));
+    }
+
+    return {
+      form,
+      isAuthenticated: computed(() => store.getters.isAuthenticated),
+      user: computed(() => store.state.user),
+      loginError: computed(() => store.state.loginError),
+      logout: () => store.commit('logout'),
+      submit,
+    };
   },
 };
 </script>
