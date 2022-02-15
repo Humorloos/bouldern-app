@@ -249,4 +249,8 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated'
     ]
 }
+REST_AUTH_SERIALIZERS = {
+    'USER_DETAILS_SERIALIZER':
+        'python_anywhere.accounts.serializers.UserSerializer',
+}
 REST_USE_JWT = True
