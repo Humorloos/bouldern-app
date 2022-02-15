@@ -20,17 +20,17 @@ describe('The register app', () => {
   });
 
   it('stays logged in after reloading the page', () => {
+    cy.visit('profile');
     // log in with registered user
-    cy.contains($t('welcomeMsg', {user: constants.email}));
+    cy.contains($t('welcomeMsg', {user: constants.username}));
     cy.reload();
-    cy.contains($t('welcomeMsg', {user: constants.email}));
+    cy.contains($t('welcomeMsg', {user: constants.username}));
   });
 
   it('allows logging out', () => {
-    cy.contains($t('welcomeMsg', {user: constants.email}));
-    cy.get('.mdi-menu').click();
+    cy.visit('profile');
+    cy.contains($t('welcomeMsg', {user: constants.username}));
     cy.contains('Log Out').click();
-    cy.get('.mdi-menu').click();
     cy.contains($t('notLoggedInMsg'));
   });
 });
@@ -46,8 +46,8 @@ describe('The register app', () => {
 
   it('allows registering, logging in, and deleting one\'s account ' +
     'afterwards', () => {
+    // register
     cy.visit('register');
-
     cy.get('#id_username')
         .type(constants.newUsername)
         .should('have.value', constants.newUsername);
@@ -59,6 +59,7 @@ describe('The register app', () => {
     for (const _ of waitingFor('POST', '/registration/')) {
       cy.get('#submit_button').click();
     }
+    // confirm email via confirmation link sent via email
     cy.task('readLastEmail')
         .should('have.string', constants.newEmail)
         .then((mail) => {
@@ -70,12 +71,15 @@ describe('The register app', () => {
     for (const _ of waitingFor('POST', '/registration/verify-email/')) {
       cy.get('#id_confirm_email').click();
     }
+    // login with newly created credentials
     cy.visit('login');
     loginViaLogInLink(constants.newEmail, constants.newPassword);
-    cy.contains($t('welcomeMsg', {user: constants.newEmail}));
-    cy.get('.mdi-menu').click();
+    // check that user is logged in
+    cy.visit('profile');
+    cy.contains($t('welcomeMsg', {user: constants.newUsername}));
+    // delete account
     cy.contains('Delete Account').click();
-    cy.get('.mdi-menu').click();
+    // check that logging in with deleted account leads to error message
     loginViaLogInLink(constants.newEmail, constants.newPassword);
     cy.contains($t('wrongCredentialsMsg'));
   });
