@@ -35,7 +35,7 @@
                     <v-btn
                       id="submit_button"
                       type="submit"
-                      @click="submit"
+                      @click="login"
                     >
                       Log In
                     </v-btn>
@@ -88,15 +88,14 @@ export default {
     const form = ref({username: '', password: ''});
     const store = useStore();
 
-    const login = (form) => store.dispatch('login', form);
     const router = useRouter();
 
     /**
      * Submits the login form and in case of success, empties email and password
      * and redirects to the home view
      */
-    function submit() {
-      login(form.value).then(() => {
+    function login() {
+      store.dispatch('login', form.value).then(() => {
         Object.keys(form.value).forEach((key) => form.value[key] = '');
         router.push('/');
       });
@@ -104,10 +103,8 @@ export default {
 
     return {
       form,
-      user: computed(() => store.state.user),
+      login,
       loginError: computed(() => store.state.loginError),
-      logout: () => store.commit('logout'),
-      submit,
     };
   },
 };
