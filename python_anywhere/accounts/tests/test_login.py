@@ -22,6 +22,8 @@ def test_login(db):
 
     # Then
     assert response.status_code == HTTP_200_OK
+    assert response.data['user']['username'] == user.username
+    assert response.data['user']['email'] == user.email
     request = HttpRequest()
     request.META['HTTP_AUTHORIZATION'] = \
         f"Bearer {response.data['access_token']}"
