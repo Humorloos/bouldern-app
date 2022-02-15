@@ -32,7 +32,7 @@
 </template>
 
 <script>
-/** @file todo */
+/** @file User profile view for all user related actions */
 
 import AppView from '../components/AppView.vue';
 import {computed} from 'vue';
