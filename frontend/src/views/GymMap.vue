@@ -805,7 +805,7 @@ export default {
     const favorite = ref(false);
 
     /**
-     * todo
+     * Creates/removes a favorite gym entry for this gym
      */
     function setFavorite() {
       favorite.value = !favorite.value;

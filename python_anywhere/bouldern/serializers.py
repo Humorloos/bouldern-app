@@ -96,7 +96,7 @@ class GymMapResourcesSerializer(Serializer):
 
 
 class FavoriteGymSerializer(ModelSerializer):
-    """todo"""
+    """Serializer for favorite gym instances"""
     gym = StringRelatedField()
 
     class Meta:

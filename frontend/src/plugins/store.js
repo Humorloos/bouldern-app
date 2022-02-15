@@ -73,25 +73,28 @@ export default createStore({
       Object.assign(state, getDefaultState());
     },
     /**
-     * todo
+     * Adds the gym with the given name to the list of favorite gyms
      */
     addFavoriteGym(state, gymName) {
-      // todo: also add it via api
       state.favoriteGyms.push(gymName);
     },
     /**
-     * todo
+     * Removes the gym with the given name from the favorite gyms
      */
     removeFavoriteGym(state, gymName) {
       state.favoriteGyms.splice(state.favoriteGyms.indexOf(gymName), 1);
     },
+    /**
+     * Sets the favorite gyms to the provided ones
+     */
     setFavoriteGyms(state, loadedFavorites) {
       state.favoriteGyms = loadedFavorites;
     },
   },
   actions: {
     /**
-     * todo
+     * Creates a favorite gym entry for the gym with the provided name and adds
+     * it to the favorite gyms
      */
     async addFavoriteGym({dispatch, commit}, gymName) {
       await dispatch('requestWithJwt', {
@@ -101,7 +104,8 @@ export default createStore({
       commit('addFavoriteGym', gymName);
     },
     /**
-     * todo
+     * Removes the favorite gym entry for the gym with the provided name from
+     * the api and the favorite gym list
      */
     async removeFavoriteGym({dispatch, commit}, gymName) {
       await dispatch('requestWithJwt', {
@@ -111,7 +115,7 @@ export default createStore({
       commit('removeFavoriteGym', gymName);
     },
     /**
-     * todo
+     * Loads all favorite gyms via API and saves them to the favorite gym list
      */
     async loadFavoriteGyms({dispatch, commit}) {
       const response = await dispatch('requestWithJwt', {
