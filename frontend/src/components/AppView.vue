@@ -2,7 +2,7 @@
   <v-app-bar height="50">
     <slot name="app-bar-left">
       <v-app-bar-nav-icon
-        v-if="display.mobile"
+        v-if="display.mobile.value"
         @click.stop="drawer = !drawer"
       />
       <v-app-bar-title
@@ -67,7 +67,6 @@
       <gym-search v-if="gymSearch" />
     </v-list>
   </v-navigation-drawer>
-  <!--  todo: hide burger menu on desktop-->
   <v-main>
     <slot name="main" />
   </v-main>
@@ -80,7 +79,7 @@
 
 import {useDisplay} from 'vuetify';
 import {computed, ref, watch} from 'vue';
-import {useRoute, useRouter} from 'vue-router';
+import {useRoute} from 'vue-router';
 import {useStore} from 'vuex';
 import GymSearch from './GymSearch.vue';
 
