@@ -79,7 +79,7 @@ class Ascent(UGC):
 
 
 class FavoriteGym(UGC):
-    """todo"""
+    """An entry in a user's collection of favorite gyms"""
 
     gym = ForeignKey(Gym, on_delete=SET_NULL, null=True)
 
