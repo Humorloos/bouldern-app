@@ -16,7 +16,9 @@ window.loginViaLogInLink = (email, password) => {
       .type(email)
       .should('have.value', email);
   cy.get('#id_password').type(password);
-  cy.get('#submit_button').click();
+  for (const _ of waitingFor('POST', '/registration/login')) {
+    cy.get('#submit_button').click();
+  }
 };
 
 /**
