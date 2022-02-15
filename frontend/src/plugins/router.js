@@ -12,6 +12,7 @@ import store from '../plugins/store';
 import HomeView from '../views/HomeView.vue';
 import ResetPassword from '../views/ResetPassword.vue';
 import ChangePassword from '../views/ChangePassword.vue';
+import Profile from '../views/Profile.vue';
 
 const router = createRouter({
   history: createWebHistory(),
@@ -19,6 +20,11 @@ const router = createRouter({
     {
       path: '/',
       component: HomeView,
+      meta: {requiresAuth: true},
+    },
+    {
+      path: '/profile',
+      component: Profile,
       meta: {requiresAuth: true},
     },
     {
