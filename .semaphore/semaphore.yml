@@ -142,6 +142,7 @@ blocks:
             - artifact push job "$PROJECT_DIR"/django_server.log
             - artifact push job "$FRONTEND_DIR"/vue_server.log
             - artifact push job "$FRONTEND_DIR"/cypress/videos
+            - artifact push job "$FRONTEND_DIR"/cypress/screenshots
             - artifact push job "$FRONTEND_DIR"/cypress/logs
             - test-results publish cypress/results/report.xml
 after_pipeline:
