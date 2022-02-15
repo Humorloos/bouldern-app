@@ -54,10 +54,7 @@
           <v-col
             cols="7"
           >
-            <p v-if="isAuthenticated">
-              {{ $t('welcomeMsg', {user: user.email}) }}
-            </p>
-            <p v-else>
+            <p>
               {{ $t('notLoggedInMsg') }}
             </p>
           </v-col>
@@ -66,13 +63,6 @@
             cols="5"
           >
             <v-btn
-              v-if="isAuthenticated"
-              @click="logout"
-            >
-              Log Out
-            </v-btn>
-            <v-btn
-              v-else
               to="/register"
             >
               Register
@@ -89,6 +79,7 @@
 import {useStore} from 'vuex';
 import AppView from '../components/AppView.vue';
 import {computed, ref} from 'vue';
+import {useRouter} from 'vue-router';
 
 export default {
   name: 'Login',
@@ -98,18 +89,21 @@ export default {
     const store = useStore();
 
     const login = (form) => store.dispatch('login', form);
+    const router = useRouter();
+
     /**
-     * Submits the login form to the login api and commits the returned data to
-     * the store. In case of error shows an error message.
+     * Submits the login form and in case of success, empties email and password
+     * and redirects to the home view
      */
     function submit() {
-      login(form.value).then(
-          () => Object.keys(form.value).forEach((key) => form.value[key] = ''));
+      login(form.value).then(() => {
+        Object.keys(form.value).forEach((key) => form.value[key] = '');
+        router.push('/');
+      });
     }
 
     return {
       form,
-      isAuthenticated: computed(() => store.getters.isAuthenticated),
       user: computed(() => store.state.user),
       loginError: computed(() => store.state.loginError),
       logout: () => store.commit('logout'),
