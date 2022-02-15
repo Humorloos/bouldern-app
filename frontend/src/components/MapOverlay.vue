@@ -3,7 +3,6 @@
     id="popup"
     ref="popup"
     class="ol-popup"
-    :style="{visibility: loaded ? 'visible' : 'hidden'}"
   >
     <v-container
       id="popup-content"
@@ -37,12 +36,6 @@ import {Overlay} from 'ol';
 
 export default {
   name: 'MapOverlay',
-  props: {
-    loaded: {
-      type: Boolean,
-      default: false,
-    },
-  },
   emits: ['close'],
   computed: {
     /**

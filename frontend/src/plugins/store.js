@@ -21,10 +21,9 @@ const getDefaultState = function() {
       expiration: Date.now(),
     },
     user: {
+      id: -1,
       email: '',
-      first_name: '',
-      last_name: '',
-      pk: 0,
+      username: '',
     },
     loginError: '',
     axios: http,
@@ -129,7 +128,7 @@ export default createStore({
      */
     deleteAccount({state, dispatch}) {
       dispatch('requestWithJwt', {
-        apiPath: `/registration/user/${state.user.pk}/`,
+        apiPath: `/registration/user/${state.user.id}/`,
         method: 'PATCH',
         data: {is_active: false},
       });

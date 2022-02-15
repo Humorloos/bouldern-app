@@ -26,7 +26,6 @@
     <template #main>
       <map-overlay
         ref="overlay"
-        :loaded="loaded"
         @close="onClosePopover"
       >
         <template
@@ -34,8 +33,7 @@
           #toolbar-left
         >
           <v-col
-            style="font-size: 0.75em"
-            class="text-grey-darken-1"
+            class="text-caption"
             cols="8"
             align-self="center"
           >

@@ -34,7 +34,7 @@ describe('The color creation view', () => {
     }
     cy.visit('create-gym');
     cy.get('#id_color-grade-1').click();
-    // newly created color should be in selectable
+    cy.log('newly created color should be in selectable');
     cy.contains(constants.colorName).click();
   });
 });
@@ -44,12 +44,12 @@ describe('The gym map view', () => {
     cy.visit(`gym-map/${constants.gymName}`);
     cy.window().its(`${GymMapView.name}.loaded`).should('equal', true);
 
-    // open create popover and close it
+    cy.log('open create popover and close it');
     cy.get('#map-root').click(140, 270);
     cy.contains('Grade');
     cy.get('#popup-closer').click();
 
-    // open create popover and submit it
+    cy.log('open create popover and submit it');
     cy.get('#map-root').click(280, 240);
     cy.get('#id-grade-select').click();
     cy.contains('5').click();
@@ -57,7 +57,7 @@ describe('The gym map view', () => {
     cy.contains('Yellow').click();
     cy.contains('Save').click();
 
-    // open edit popover and close it
+    cy.log('open edit popover and close it');
     cy.get('#map-root').click(50, 300);
     // we have to click twice because there is a bug that the popover is not
     // moved correctly the first time
@@ -66,12 +66,12 @@ describe('The gym map view', () => {
     cy.contains($t('ascentResults[0]')).click();
     cy.get('#popup-closer').click();
 
-    // open edit popover, edit and submit
-    cy.get('#map-root').click(50, 370);
+    cy.log('open edit popover, edit and submit');
+    cy.get('#map-root').click(60, 370);
     cy.contains($t('ascentResults[0]')).click();
     cy.get('#save-boulder').click();
 
-    // open edit popover and retire boulder
+    cy.log('open edit popover and retire boulder');
     cy.get('#map-root').click(50, 370);
     cy.get('#retire-boulder').click();
   });
@@ -100,12 +100,12 @@ describe('The gym map view', () => {
       cy.wait(duration);
     });
 
-    // check that boulder is clickable before filtering
+    cy.log('check that boulder is clickable before filtering');
     cy.get('#map-root').click(240, 340);
     cy.contains($t('ascentResults[0]'));
     cy.get('#popup-closer').click();
 
-    // activate filter and check that boulder is not clickable
+    cy.log('activate filter and check that boulder is not clickable');
     cy.get('#filter').click();
     cy.contains('1').click();
     cy.get('#close-filter').click();
@@ -114,7 +114,7 @@ describe('The gym map view', () => {
     cy.contains('Grade');
     cy.get('#popup-closer').click();
 
-    // deactivate filter and check that boulder is clickable again
+    cy.log('deactivate filter and check that boulder is clickable again');
     cy.get('#filter').click();
     cy.contains('1').click();
     cy.get('#close-filter').click();
@@ -127,18 +127,18 @@ describe('The gym map view', () => {
   it('allows adding and removing favorite gyms', () => {
     cy.visit(`gym-map/${constants.gymName}`);
 
-    // by default, menu should show favorite
+    cy.log('by default, menu should show favorite');
     cy.get('.mdi-menu').click();
     cy.contains(constants.gymName);
 
-    // after disabling favorite, menu should not show favorite anymore
+    cy.log('after disabling favorite, menu should not show favorite anymore');
     cy.get('.mdi-menu').click();
     cy.get('#id_favorite').click();
 
     cy.get('.mdi-menu').click();
     cy.contains(constants.gymName).should('not.exist');
 
-    // after enabling favorite again, menu should show it again
+    cy.log('after enabling favorite again, menu should show it again');
     cy.get('.mdi-menu').click();
     cy.get('#id_favorite').click();
 

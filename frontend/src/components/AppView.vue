@@ -2,7 +2,7 @@
   <v-app-bar height="50">
     <slot name="app-bar-left">
       <v-app-bar-nav-icon
-        v-if="display.mobile"
+        v-if="display.mobile.value"
         @click.stop="drawer = !drawer"
       />
       <v-app-bar-title
@@ -18,20 +18,26 @@
   <v-navigation-drawer
     v-model="drawer"
   >
-    <v-list-item>
-      <v-list-item-title class="text-h5">
-        sup
-      </v-list-item-title>
-    </v-list-item>
     <v-list dense>
       <v-list-item
         v-if="isAuthenticated"
-        @click="logout"
+        to="/profile"
       >
-        <v-list-item-title>Log Out</v-list-item-title>
+        <v-container class="pa-0">
+          <v-row>
+            <v-col cols="3">
+              <v-avatar color="primary">
+                {{ user.username[0].toUpperCase() }}
+              </v-avatar>
+            </v-col>
+            <v-col class="align-self-center">
+              {{ user.username }}
+            </v-col>
+          </v-row>
+        </v-container>
       </v-list-item>
       <v-list-item
-        v-else
+        v-if="!isAuthenticated"
         to="/login"
       >
         <v-list-item-title>Log In</v-list-item-title>
@@ -59,15 +65,6 @@
         <v-list-item-title>Create Gym</v-list-item-title>
       </v-list-item>
       <gym-search v-if="gymSearch" />
-      <v-list-item v-if="isAuthenticated">
-        <v-btn
-          color="error"
-          size="small"
-          @click="deleteAccountAndLogout"
-        >
-          Delete Account
-        </v-btn>
-      </v-list-item>
     </v-list>
   </v-navigation-drawer>
   <v-main>
@@ -77,12 +74,13 @@
 
 <script>
 /**
- * @file
+ * @file This component is a wrapper for all views and provides an app bar and
+ * navigation drawer
  */
 
 import {useDisplay} from 'vuetify';
 import {computed, ref, watch} from 'vue';
-import {useRoute, useRouter} from 'vue-router';
+import {useRoute} from 'vue-router';
 import {useStore} from 'vuex';
 import GymSearch from './GymSearch.vue';
 
@@ -104,24 +102,14 @@ export default {
       if (display.mobile.value) drawer.value = false;
     });
 
-    const router = useRouter();
     const store = useStore();
-
-    /**
-     * Logs the user out and redirects to the login view
-     */
-    function logout() {
-      store.commit('logout');
-      router.push(`/login`);
-    }
 
     return {
       display,
       drawer,
-      logout,
       isAuthenticated: computed(() => store.getters.isAuthenticated),
-      deleteAccountAndLogout: () => store.dispatch('deleteAccountAndLogout'),
       favoriteGyms: computed(() => store.state.favoriteGyms),
+      user: computed(() => store.state.user),
     };
   },
 };
