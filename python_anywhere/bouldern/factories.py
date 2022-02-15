@@ -10,7 +10,7 @@ from factory.django import DjangoModelFactory, ImageField
 
 from python_anywhere.accounts.models import User
 from python_anywhere.bouldern.models import Color, Gym, Grade, UGC, \
-    Boulder, Ascent
+    Boulder, Ascent, FavoriteGym
 from python_anywhere.bouldern.providers import GeoProvider
 from python_anywhere.settings import RESOURCES_DIR
 
@@ -88,3 +88,12 @@ class AscentFactory(UGCFactory):
 
     result = Ascent.TOP
     boulder = SubFactory(BoulderFactory)
+
+
+class FavoriteGymFactory(UGCFactory):
+    """Factory for building favorite gyms"""
+
+    class Meta:
+        model = FavoriteGym
+
+    gym = SubFactory(GymFactory)

@@ -1,14 +1,16 @@
 """Module containing the views of the bouldern app"""
 from django.shortcuts import render
 from rest_framework.mixins import CreateModelMixin, ListModelMixin, \
-    UpdateModelMixin
+    UpdateModelMixin, DestroyModelMixin
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 from url_filter.integrations.drf import DjangoFilterBackend
 
-from python_anywhere.bouldern.models import Boulder, Gym, Color, Ascent
+from python_anywhere.bouldern.models import Boulder, Gym, Color, Ascent, \
+    FavoriteGym
 from python_anywhere.bouldern.serializers import GymSerializer, ColorSerializer, \
-    BoulderSerializer, AscentSerializer, GymMapResourcesSerializer
+    BoulderSerializer, AscentSerializer, GymMapResourcesSerializer, \
+    FavoriteGymSerializer
 from python_anywhere.views import ReversibleViewSet
 
 
@@ -33,6 +35,27 @@ class GymAPI(ReversibleViewSet, CreateUGCMixin, UpdateModelMixin):
     basename = 'gym'
     queryset = Gym.objects.all()
     serializer_class = GymSerializer
+
+
+class FavoriteGymAPI(ReversibleViewSet, CreateUGCMixin, DestroyModelMixin,
+                     ListModelMixin):
+    """Rest API for adding favorite gyms"""
+    basename = 'favorite-gym'
+    serializer_class = FavoriteGymSerializer
+    lookup_field = 'gym__name'
+
+    def get_queryset(self):
+        return FavoriteGym.objects.filter(created_by=self.request.user,
+                                          is_active=True)
+
+    def perform_create(self, serializer, **kwargs):
+        super().perform_create(
+            serializer, gym=Gym.objects.get(
+                name=self.request.data['gym']))
+
+    def perform_destroy(self, instance):
+        instance.is_active = False
+        instance.save()
 
 
 class BoulderAPI(ReversibleViewSet, CreateUGCMixin, UpdateModelMixin):

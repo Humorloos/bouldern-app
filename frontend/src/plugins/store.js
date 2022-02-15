@@ -28,6 +28,7 @@ const getDefaultState = function() {
     },
     loginError: '',
     axios: http,
+    favoriteGyms: [],
     activeGym: null,
   };
 };
@@ -71,8 +72,58 @@ export default createStore({
       // https://github.com/vuejs/vuex/issues/1118
       Object.assign(state, getDefaultState());
     },
+    /**
+     * Adds the gym with the given name to the list of favorite gyms
+     */
+    addFavoriteGym(state, gymName) {
+      state.favoriteGyms.push(gymName);
+    },
+    /**
+     * Removes the gym with the given name from the favorite gyms
+     */
+    removeFavoriteGym(state, gymName) {
+      state.favoriteGyms.splice(state.favoriteGyms.indexOf(gymName), 1);
+    },
+    /**
+     * Sets the favorite gyms to the provided ones
+     */
+    setFavoriteGyms(state, loadedFavorites) {
+      state.favoriteGyms = loadedFavorites;
+    },
   },
   actions: {
+    /**
+     * Creates a favorite gym entry for the gym with the provided name and adds
+     * it to the favorite gyms
+     */
+    async addFavoriteGym({dispatch, commit}, gymName) {
+      await dispatch('requestWithJwt', {
+        apiPath: '/bouldern/favorite-gym/',
+        data: {gym: gymName},
+      });
+      commit('addFavoriteGym', gymName);
+    },
+    /**
+     * Removes the favorite gym entry for the gym with the provided name from
+     * the api and the favorite gym list
+     */
+    async removeFavoriteGym({dispatch, commit}, gymName) {
+      await dispatch('requestWithJwt', {
+        apiPath: `/bouldern/favorite-gym/${gymName}/`,
+        method: 'DELETE',
+      });
+      commit('removeFavoriteGym', gymName);
+    },
+    /**
+     * Loads all favorite gyms via API and saves them to the favorite gym list
+     */
+    async loadFavoriteGyms({dispatch, commit}) {
+      const response = await dispatch('requestWithJwt', {
+        apiPath: '/bouldern/favorite-gym/',
+        method: 'GET',
+      });
+      commit('setFavoriteGyms', response.data.map(({gym}) => gym));
+    },
     /**
      * De-activates currently logged-in account
      */
@@ -116,6 +167,7 @@ export default createStore({
             '/registration/login/', form);
         const loginData = response.data;
         dispatch('setLoginData', loginData);
+        dispatch('loadFavoriteGyms');
       } catch (error) {
         console.log(error);
         commit('setLoginError');

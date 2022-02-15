@@ -4,6 +4,19 @@
   >
     <template #app-bar-right>
       <v-btn
+        id="id_favorite"
+        flat
+        icon
+        @click="setFavorite"
+      >
+        <v-icon v-if="favorite">
+          mdi-star
+        </v-icon>
+        <v-icon v-else>
+          mdi-star-outline
+        </v-icon>
+      </v-btn>
+      <v-btn
         id="filter"
         flat
         icon="mdi-filter"
@@ -515,6 +528,7 @@ export default {
           if (onLoaded) onLoaded();
         };
       });
+      favorite.value = store.state.favoriteGyms.includes(gymName.value);
     }
 
     const loaded = ref(false);
@@ -787,6 +801,17 @@ export default {
         loadGymMap();
       }
     });
+    // favorite gym toggle
+    const favorite = ref(false);
+
+    /**
+     * Creates/removes a favorite gym entry for this gym
+     */
+    function setFavorite() {
+      favorite.value = !favorite.value;
+      if (favorite.value) store.dispatch('addFavoriteGym', gymName.value);
+      else store.dispatch('removeFavoriteGym', gymName.value);
+    }
 
     return {
       // colors
@@ -814,11 +839,14 @@ export default {
       retireBoulder,
       reportAscent,
       onClosePopover,
-      //  filter
+      // filter
       filtering,
       allGradesActive,
       selectGrades,
       activeGrades,
+      // favorite
+      favorite,
+      setFavorite,
     };
   },
 };
