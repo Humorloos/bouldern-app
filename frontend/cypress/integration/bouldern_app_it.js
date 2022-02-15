@@ -67,7 +67,7 @@ describe('The gym map view', () => {
     cy.get('#popup-closer').click();
 
     cy.log('open edit popover, edit and submit');
-    cy.get('#map-root').click(50, 370);
+    cy.get('#map-root').click(60, 370);
     cy.contains($t('ascentResults[0]')).click();
     cy.get('#save-boulder').click();
 
