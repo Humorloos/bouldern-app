@@ -74,7 +74,8 @@
 
 <script>
 /**
- * @file todo
+ * @file This component is a wrapper for all views and provides an app bar and
+ * navigation drawer
  */
 
 import {useDisplay} from 'vuetify';
