@@ -9,6 +9,10 @@ beforeEach(() => {
     },
   });
   cy.window().its('$store.state.authToken.token').should('not.be.empty');
+  for (const _ of waitingFor('GET', '/bouldern/favorite-gym')) {
+    cy.window().its('$store')
+        .then((store) => store.dispatch('loadFavoriteGyms'));
+  }
 });
 
 describe('The color creation view', () => {
@@ -34,7 +38,6 @@ describe('The color creation view', () => {
     cy.contains(constants.colorName).click();
   });
 });
-
 
 describe('The gym map view', () => {
   it('allows adding, editing, and retiring boulders', () => {
@@ -120,6 +123,28 @@ describe('The gym map view', () => {
     cy.contains($t('ascentResults[0]'));
     cy.get('#popup-closer').click();
   });
+
+  it('allows adding and removing favorite gyms', () => {
+    cy.visit(`gym-map/${constants.gymName}`);
+
+    // by default, menu should show favorite
+    cy.get('.mdi-menu').click();
+    cy.contains(constants.gymName);
+
+    // after disabling favorite, menu should not show favorite anymore
+    cy.get('.mdi-menu').click();
+    cy.get('#id_favorite').click();
+
+    cy.get('.mdi-menu').click();
+    cy.contains(constants.gymName).should('not.exist');
+
+    // after enabling favorite again, menu should show it again
+    cy.get('.mdi-menu').click();
+    cy.get('#id_favorite').click();
+
+    cy.get('.mdi-menu').click();
+    cy.contains(constants.gymName);
+  });
 });
 
 describe('The gym creation view', () => {
@@ -165,6 +190,11 @@ describe('The app drawer', () => {
   it('allows navigating to a gym map view', () => {
     cy.get('#id_gym-name').type(constants.gymName);
     cy.get('#submit_button').click();
+    cy.window().its(`${GymMapView.name}.loaded`).should('equal', true);
+  });
+
+  it('allows navigating to favorite gyms', () => {
+    cy.contains(constants.gymName).click();
     cy.window().its(`${GymMapView.name}.loaded`).should('equal', true);
   });
 });
