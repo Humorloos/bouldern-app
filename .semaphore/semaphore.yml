@@ -7,6 +7,8 @@ agent:
   containers:
     - name: main
       image: 'registry.semaphoreci.com/android:30'
+    - name: node
+      image: 'registry.semaphoreci.com/node:15'
 auto_cancel:
   running:
     when: branch != 'master'
@@ -26,9 +28,6 @@ blocks:
   - name: Install Frontend Dependencies
     dependencies: []
     task:
-      prologue:
-        commands:
-          - nvm use
       jobs:
         - name: npm install and cache
           priority:
