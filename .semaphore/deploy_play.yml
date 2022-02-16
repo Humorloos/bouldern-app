@@ -19,6 +19,7 @@ global_job_config:
       - mv ~/gpp-key.json "$ANDROID_APP_DIR"/gpp-key.json
       - cd "$FRONTEND_DIR"/android
       - . /home/semaphore/.env
+      - sem-version java 11
 blocks:
   - name: Deploy app to playstore internal track
     task:
