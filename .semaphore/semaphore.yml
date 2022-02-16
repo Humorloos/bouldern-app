@@ -39,116 +39,131 @@ blocks:
             # Cache NPM dependencies and Cypress binary
             - cache store $NPM_KEY ~/.npm
             - cache store $CYPRESS_KEY ~/.cache/Cypress
-  - name: Install Backend Dependencies
-    dependencies: []
-    task:
-      secrets:
-        - name: private-repo
-      jobs:
-        - name: pip
-          priority:
-          - value: 4
-            when: "true"
-          commands:
-            # Restore dependencies from cache. This command will not fail in
-            # case of a cache miss. In case of a cache hit, pip can use it
-            # to speed up the installation.
-            # For more info on caching, see https://docs.semaphoreci.com/article/149-caching
-            - cache restore
-            # Install other python dependencies.
-            # If not found in the cache, pip will download them.
-            - sem-version python 3.9
-            - pip download --cache-dir .pip_cache -r requirements.txt
-            # Persist downloaded packages for future jobs.
-            - cache store
-        - name: private repositories
-          priority:
-          - value: 4
-            when: "true"
-          commands:
-            # Clone private repositories and cache them if not already cached
-            - . .semaphore/private_repos.sh
-        - name: gdal and spatialite
-          priority:
-          - value: 4
-            when: "true"
-          commands:
-            # Install gdal and spatialite and cache whole /usr directory
-            - . .semaphore/install_gdal_and_spatialite.sh
+#  - name: Install Backend Dependencies
+#    dependencies: []
+#    task:
+#      secrets:
+#        - name: private-repo
+#      jobs:
+#        - name: pip
+#          priority:
+#          - value: 4
+#            when: "true"
+#          commands:
+#            # Restore dependencies from cache. This command will not fail in
+#            # case of a cache miss. In case of a cache hit, pip can use it
+#            # to speed up the installation.
+#            # For more info on caching, see https://docs.semaphoreci.com/article/149-caching
+#            - cache restore
+#            # Install other python dependencies.
+#            # If not found in the cache, pip will download them.
+#            - sem-version python 3.9
+#            - pip download --cache-dir .pip_cache -r requirements.txt
+#            # Persist downloaded packages for future jobs.
+#            - cache store
+#        - name: private repositories
+#          priority:
+#          - value: 4
+#            when: "true"
+#          commands:
+#            # Clone private repositories and cache them if not already cached
+#            - . .semaphore/private_repos.sh
+#        - name: gdal and spatialite
+#          priority:
+#          - value: 4
+#            when: "true"
+#          commands:
+#            # Install gdal and spatialite and cache whole /usr directory
+#            - . .semaphore/install_gdal_and_spatialite.sh
   - name: Run Frontend Tests
     dependencies:
       - Install Frontend Dependencies
     task:
+      secrets:
+        - name: gpp-key
+        - name: release-keystore
       prologue:
         commands_file: frontend_prologue.sh
       # This block executes code analysis with ESLint
+#      todo: in build job, copy gpp key and keystore to android project directory
+#      todo: hook into semaphore pipeline and run ./gradlew bootstrapListing as mentioned here: https://github.com/Triple-T/gradle-play-publisher/#service-account which is part of step 3 from here: https://github.com/semaphoreci-demos/semaphore-demo-android#project-setup
       jobs:
-        - name: ESLint
+#        - name: ESLint
+#          priority:
+#          - value: 1
+#            when: "true"
+#          commands:
+#            - npx eslint .
+        - name: Build for android
           priority:
           - value: 1
             when: "true"
           commands:
-            - npx eslint .
-  - name: Run Backend Tests
-      # This block executes code analysis with pylint and backend integration
-      # tests.
-    dependencies:
-      - Install Backend Dependencies
-    task:
-      prologue:
-        commands_file: backend_prologue.sh
-      jobs:
-        - name: Pylint
-          priority:
-          - value: 2
-            when: "true"
-          commands:
-            - pylint python_anywhere --load-plugins=pylint_django
-        - name: Integration tests
-          priority:
-          - value: 3
-            when: "true"
-          commands:
-            - pytest
-  - name: Run E2E Tests
-      # This block executes code analysis with pylint and backend integration
-      # tests.
-    dependencies:
-      - Install Frontend Dependencies
-      - Install Backend Dependencies
-    task:
-      secrets:
-        - name: private-repo
-      prologue:
-        commands_file: e2e_prologue.sh
-      jobs:
-        - name: E2E Tests
-          priority:
-          - value: 4
-            when: "true"
-          commands:
-            - python manage.py runsslserver &
-            - cd frontend || exit
-            - VUE_LOGFILE=vue_server.log
-            - SEARCH_PATTERN='ready'
-            - npx vite > ${VUE_LOGFILE} &
-            - tail -f -n0 ${VUE_LOGFILE} | grep -qe "${SEARCH_PATTERN}"
-            - npm run report
-      epilogue:
-        always:
-          commands:
-            - artifact push job "$PROJECT_DIR"/django_server.log
-            - artifact push job "$FRONTEND_DIR"/vue_server.log
-            - artifact push job "$FRONTEND_DIR"/cypress/videos
-            - artifact push job "$FRONTEND_DIR"/cypress/screenshots
-            - artifact push job "$FRONTEND_DIR"/cypress/logs
-            - test-results publish cypress/results/report.xml
-after_pipeline:
-  task:
-    jobs:
-      - name: Publish Results
-        commands:
-          - test-results gen-pipeline-report
+            - npx vite build
+            - npx cap copy
+            - ANDROID_APP_DIR="$FRONTEND_DIR"/android/app
+            - mv ~/release-keystore.jks "$ANDROID_APP_DIR"/release-keystore.jks
+            - mv ~/gpp-key.json "$ANDROID_APP_DIR"/gpp-key.json
+#  - name: Run Backend Tests
+#      # This block executes code analysis with pylint and backend integration
+#      # tests.
+#    dependencies:
+#      - Install Backend Dependencies
+#    task:
+#      prologue:
+#        commands_file: backend_prologue.sh
+#      jobs:
+#        - name: Pylint
+#          priority:
+#          - value: 2
+#            when: "true"
+#          commands:
+#            - pylint python_anywhere --load-plugins=pylint_django
+#        - name: Integration tests
+#          priority:
+#          - value: 3
+#            when: "true"
+#          commands:
+#            - pytest
+#  - name: Run E2E Tests
+#      # This block executes code analysis with pylint and backend integration
+#      # tests.
+#    dependencies:
+#      - Install Frontend Dependencies
+#      - Install Backend Dependencies
+#    task:
+#      secrets:
+#        - name: private-repo
+#      prologue:
+#        commands_file: e2e_prologue.sh
+#      jobs:
+#        - name: E2E Tests
+#          priority:
+#          - value: 4
+#            when: "true"
+#          commands:
+#            - python manage.py runsslserver &
+#            - cd frontend || exit
+#            - VUE_LOGFILE=vue_server.log
+#            - SEARCH_PATTERN='ready'
+#            - npx vite > ${VUE_LOGFILE} &
+#            - tail -f -n0 ${VUE_LOGFILE} | grep -qe "${SEARCH_PATTERN}"
+#            - npm run report
+#      epilogue:
+#        always:
+#          commands:
+#            - artifact push job "$PROJECT_DIR"/django_server.log
+#            - artifact push job "$FRONTEND_DIR"/vue_server.log
+#            - artifact push job "$FRONTEND_DIR"/cypress/videos
+#            - artifact push job "$FRONTEND_DIR"/cypress/screenshots
+#            - artifact push job "$FRONTEND_DIR"/cypress/logs
+#            - test-results publish cypress/results/report.xml
+#after_pipeline:
+#  task:
+#    jobs:
+#      - name: Publish Results
+#        commands:
+#          - test-results gen-pipeline-report
 
 promotions:
   - name: Deploy
