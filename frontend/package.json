@@ -52,7 +52,8 @@
   "scripts": {
     "combine:reports": "jrm cypress/results/report.xml \"cypress/results/*.xml\"",
     "report": "cypress run --reporter cypress-multi-reporters --reporter-options configFile=reporter-config.json --browser chrome",
-    "postreport": "npm run combine:reports"
+    "postreport": "npm run combine:reports",
+    "release": "standard-version"
   },
   "browserslist": [
     "> 1%",

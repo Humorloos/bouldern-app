@@ -4,6 +4,9 @@ agent:
   machine:
     type: e1-standard-2
     os_image: ubuntu1804
+  containers:
+    - name: main
+      image: 'registry.semaphoreci.com/android:29'
 
 global_job_config:
   secrets:
@@ -19,6 +22,7 @@ global_job_config:
       - mv ~/gpp-key.json "$ANDROID_APP_DIR"/gpp-key.json
       - cd "$FRONTEND_DIR"/android
       - . /home/semaphore/.env
+      - sem-version java 11
 blocks:
   - name: Deploy app to playstore internal track
     task:
