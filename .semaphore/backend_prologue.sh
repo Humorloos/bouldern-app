@@ -11,5 +11,5 @@ cd "$PROJECT_DIR" || exit
 # install pip dependencies
 . ./.semaphore/install_pip_dependencies.sh
 
-python manage.py makemigrations
-python manage.py migrate
+python3 manage.py makemigrations
+python3 manage.py migrate
