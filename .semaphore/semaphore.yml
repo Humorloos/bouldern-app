@@ -38,6 +38,7 @@ blocks:
           commands:
             - checkout
             - ls
+            - cwd
             - ls /
             - ls /home/semaphore
             - ls "$PROJECT_DIR"
