@@ -66,13 +66,6 @@ blocks:
           commands:
             # Clone private repositories and cache them if not already cached
             - . .semaphore/private_repos.sh
-        - name: gdal and spatialite
-          priority:
-          - value: 4
-            when: "true"
-          commands:
-            # Install gdal and spatialite and cache whole /usr directory
-            - . .semaphore/install_gdal_and_spatialite.sh
   - name: Run Frontend Tests
     dependencies:
       - Install Frontend Dependencies
