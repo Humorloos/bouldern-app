@@ -112,7 +112,8 @@ blocks:
             - cd "$FRONTEND_DIR"/android
 #            - sem-version java 11
             - . /home/semaphore/.env
-            - . gradlew bundle
+            - chmod +x gradlew
+            - ./gradlew bundle
 #  - name: Run Backend Tests
 #      # This block executes code analysis with pylint and backend integration
 #      # tests.
