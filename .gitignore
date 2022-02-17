@@ -1,9 +1,7 @@
 /db.sqlite3
-/ssh key/
 /python_anywhere/bouldern/migrations/
 /python_anywhere/accounts/migrations/
 /media/
-/.env_semaphore
-/.env_production
 /python_anywhere/static/vue/
 /python_anywhere/bouldern/tests/.pytest_cache/
+/.semaphore/secrets/
