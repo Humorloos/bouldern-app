@@ -23,9 +23,9 @@ if ! cache has_key gdal_files | grep -q "exists"; then
   while read -r p; do
     mkdir --parents "$(dirname ~/gdal_files"$p")"
     cp -r "$p" ~/gdal_files"$p"
-  done < /home/semaphore/bouldern-app/.semaphore/gdal_paths
+  done < /root/bouldern-app/.semaphore/gdal_paths
   # cache collected files
-  cache store gdal_files /home/semaphore/gdal_files
+  cache store gdal_files /root/gdal_files
 else
   echo "gdal_files already in cache, skipping installation"
 fi
