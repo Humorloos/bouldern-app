@@ -110,7 +110,7 @@ blocks:
             - mv /home/semaphore/release-keystore.jks "$ANDROID_APP_DIR"/release-keystore.jks
             - mv /home/semaphore/gpp-key.json "$ANDROID_APP_DIR"/gpp-key.json
             - cd "$FRONTEND_DIR"/android
-            - sem-version java 11
+#            - sem-version java 11
             - . /home/semaphore/.env
             - . gradlew bundle
 #  - name: Run Backend Tests
