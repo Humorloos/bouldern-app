@@ -1,12 +1,12 @@
 ### changing .env for pipeline:
 
 - run `sem delete secret env`
-- run `sem create secret env -f ./.env_semaphore:/home/semaphore/.env` from project directory
+- run `sem create secret env -f ./.env_semaphore:/root/.env` from directory .semaphore/secrets
 
 ### changing .env for production:
 
 - run `sem delete secret env_production`
-- run `sem create secret env_production -f ./.env_production:/home/semaphore/.env_production` from project directory
+- run `sem create secret env_production -f ./.env_production:/root/.env_production` from directory .semaphore/secrets
 
 ### setting up virtualenv on server:
 - `mkvirtualenv humorloos.pythonanywhere.com --python=/usr/bin/python3.9`
