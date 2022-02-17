@@ -30,3 +30,4 @@ blocks:
         - name: Deploy app to playstore internal track
           commands:
             - . gradlew publishReleaseBundle --track internal --release-status draft
+# todo, maybe also requires vite build, cap copy, cap update android?
