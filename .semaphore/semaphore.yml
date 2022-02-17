@@ -36,6 +36,7 @@ blocks:
           - value: 4
             when: "true"
           commands:
+            - checkout
             - ls /
             - ls /home/semaphore
             - ls "$PROJECT_DIR"
