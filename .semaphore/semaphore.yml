@@ -37,7 +37,7 @@ blocks:
             when: "true"
           commands:
             - ls /
-            - ls /home
+            - ls /home/semaphore
             - ls "$PROJECT_DIR"
             - ls
             - cd "$FRONTEND_DIR"
