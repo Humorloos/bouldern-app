@@ -179,12 +179,6 @@ MEDIA_URL = '/media/'
 
 MEDIA_ROOT = BASE_DIR / 'media'
 
-# Spatialite
-try:
-    SPATIALITE_LIBRARY_PATH = env('SPATIALITE_LIBRARY_PATH')
-except ImproperlyConfigured:
-    pass
-
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
