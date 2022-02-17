@@ -70,9 +70,13 @@ blocks:
     dependencies:
       - Install Frontend Dependencies
     task:
+      secrets:
+        - name: gpp-key
+        - name: release-keystore
       prologue:
         commands_file: frontend_prologue.sh
       # This block executes code analysis with ESLint
+#      todo: only publish on merge into master when something in frontend has changed
       jobs:
         - name: ESLint
           priority:
@@ -80,6 +84,22 @@ blocks:
             when: "true"
           commands:
             - npx eslint .
+        - name: Build for android
+          priority:
+          - value: 1
+            when: "true"
+          commands:
+            - npx vite build
+            - npx cap copy
+            - npx cap update android
+            - ANDROID_APP_DIR="$FRONTEND_DIR"/android/app
+            - mv /root/release-keystore.jks "$ANDROID_APP_DIR"/release-keystore.jks
+            - mv /root/gpp-key.json "$ANDROID_APP_DIR"/gpp-key.json
+            - cd "$FRONTEND_DIR"/android
+            - . /root/.env
+            # make gradlew executable
+            - chmod +x gradlew
+            - ./gradlew bundle
   - name: Run Backend Tests
       # This block executes code analysis with pylint and backend integration
       # tests.
@@ -124,6 +144,8 @@ blocks:
             - SEARCH_PATTERN='ready'
             - npx vite > ${VUE_LOGFILE} &
             - tail -f -n0 ${VUE_LOGFILE} | grep -qe "${SEARCH_PATTERN}"
+            - Xvfb -ac :99 -screen 0 1280x1024x16 &
+            - export DISPLAY=:99
             - npm run report
       epilogue:
         always:
