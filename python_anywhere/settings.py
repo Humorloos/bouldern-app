@@ -179,6 +179,12 @@ MEDIA_URL = '/media/'
 
 MEDIA_ROOT = BASE_DIR / 'media'
 
+# GDAL
+try:
+    GDAL_LIBRARY_PATH = env('GDAL_LIBRARY_PATH')
+except ImproperlyConfigured:
+    pass
+
 # Spatialite
 try:
     SPATIALITE_LIBRARY_PATH = env('SPATIALITE_LIBRARY_PATH')
