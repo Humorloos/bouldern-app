@@ -2,10 +2,6 @@
 cd ~ || exit
 cache restore googleCalendarApp
 cache restore GoogleApiHelper
-# restore gdal
-cache restore gdal_files
-sudo cp -r /root/gdal_files/usr /
-
 cd "$PROJECT_DIR" || exit
 
 # install pip dependencies
