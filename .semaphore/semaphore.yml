@@ -18,7 +18,7 @@ global_job_config:
     commands:
       - checkout
 #      - PROJECT_DIR=/home/semaphore/"$SEMAPHORE_GIT_DIR"
-      - PROJECT_DIR=/"$SEMAPHORE_GIT_DIR"
+      - PROJECT_DIR=$(pwd)/"$SEMAPHORE_GIT_DIR"
       - FRONTEND_DIR="$PROJECT_DIR"/frontend
       - CACHE_SUFFIX=$SEMAPHORE_GIT_BRANCH-$(checksum frontend/package-lock.json)-$(checksum .semaphore/semaphore.yml)
       - NPM_KEY=npm-$CACHE_SUFFIX
