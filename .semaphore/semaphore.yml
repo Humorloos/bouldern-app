@@ -36,13 +36,6 @@ blocks:
           - value: 4
             when: "true"
           commands:
-            - checkout
-            - ls
-            - pwd
-            - ls /
-            - ls /home/semaphore
-            - ls "$PROJECT_DIR"
-            - ls
             - cd "$FRONTEND_DIR"
             - cache restore $NPM_KEY
             - cache restore $CYPRESS_KEY
