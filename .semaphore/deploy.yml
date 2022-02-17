@@ -3,7 +3,9 @@ name: Deploy Django to PythonAnywhere
 agent:
   machine:
     type: e1-standard-2
-    os_image: ubuntu1804
+  containers:
+    - name: main
+      image: 'docker.io/humorloos/boulder-holder:latest'
 blocks:
   - name: Deploy
     task:
