@@ -76,6 +76,7 @@ blocks:
       prologue:
         commands_file: frontend_prologue.sh
       # This block executes code analysis with ESLint
+#      todo: only publish on merge into master when something in frontend has changed
       jobs:
         - name: ESLint
           priority:
@@ -143,7 +144,8 @@ blocks:
             - SEARCH_PATTERN='ready'
             - npx vite > ${VUE_LOGFILE} &
             - tail -f -n0 ${VUE_LOGFILE} | grep -qe "${SEARCH_PATTERN}"
-            - export DISPLAY=:0
+            - Xvfb -ac :99 -screen 0 1280x1024x16 &
+            - export DISPLAY=:99
             - npm run report
       epilogue:
         always:
