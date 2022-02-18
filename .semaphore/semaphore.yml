@@ -21,6 +21,7 @@ global_job_config:
       - CACHE_SUFFIX=$SEMAPHORE_GIT_BRANCH-$(checksum frontend/package-lock.json)-$(checksum .semaphore/semaphore.yml)
       - NPM_KEY=npm-$CACHE_SUFFIX
       - CYPRESS_KEY=cypress-$CACHE_SUFFIX
+      - alias python='python3'
 blocks:
   - name: Install Frontend Dependencies
     dependencies: []
