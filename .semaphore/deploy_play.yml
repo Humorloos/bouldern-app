@@ -1,0 +1,42 @@
+version: v1.0
+name: Deploy app to playstore internal track
+agent:
+  machine:
+    type: e1-standard-2
+  containers:
+    - name: main
+      image: 'docker.io/humorloos/boulder-holder:latest'
+
+global_job_config:
+  secrets:
+    - name: gpp-key
+    - name: release-keystore
+    - name: env
+  prologue:
+    commands:
+      - checkout
+      - PROJECT_DIR=$(pwd)
+      - FRONTEND_DIR="$PROJECT_DIR"/frontend
+      - ANDROID_APP_DIR="$FRONTEND_DIR"/android/app
+      - mv /root/release-keystore.jks "$ANDROID_APP_DIR"/release-keystore.jks
+      - mv /root/gpp-key.json "$ANDROID_APP_DIR"/gpp-key.json
+      - . /root/.env
+blocks:
+  - name: Deploy app to playstore internal track
+    task:
+      prologue:
+        commands_file: frontend_prologue.sh
+      jobs:
+        - name: Deploy app to playstore internal track
+          commands:
+            - npx vite build
+            - npx cap copy
+            - npx cap update android
+            - cd "$FRONTEND_DIR"
+            - npm run release
+            - git push
+            - cd "$FRONTEND_DIR"/android
+            - . /root/.env
+            # make gradlew executable
+            - chmod +x gradlew
+            - . gradlew publishReleaseBundle --track internal --release-status draft
