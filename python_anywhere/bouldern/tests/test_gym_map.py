@@ -1,6 +1,7 @@
 """Tests for bouldern app"""
 from django.utils.http import urlencode
-from rest_framework.status import HTTP_201_CREATED, HTTP_200_OK
+from rest_framework.status import HTTP_201_CREATED, HTTP_200_OK, \
+    HTTP_204_NO_CONTENT
 
 from python_anywhere.accounts.factories import UserFactory
 from python_anywhere.bouldern.models import Boulder, Ascent
@@ -43,13 +44,12 @@ def test_boulder_api_retire(logged_in_client_rest, colors):
     active_boulders = {BoulderFactory(gym=boulder_2_retire.gym)
                        for _ in range(3)}
     # when
-    response = client.patch(
+    response = client.delete(
         BoulderAPI().reverse_action(
             'detail', args=[boulder_2_retire.gym.pk, boulder_2_retire.pk]),
-        data={'is_active': False},
         format='json')
     # then
-    assert response.status_code == HTTP_200_OK
+    assert response.status_code == HTTP_204_NO_CONTENT
     assert not Boulder.objects.get(pk=boulder_2_retire.pk).is_active
     assert all(b.is_active for b in Boulder.objects.filter(
         pk__in={b.pk for b in active_boulders}))
