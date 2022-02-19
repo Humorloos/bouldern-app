@@ -38,9 +38,10 @@ def test_boulder_api_post(logged_in_client_rest, colors):
 
 
 def test_boulder_api_retire(logged_in_client_rest, colors):
+    boulder_creator = UserFactory()
     client, user = logged_in_client_rest
     from python_anywhere.bouldern.factories import BoulderFactory
-    boulder_2_retire = BoulderFactory()
+    boulder_2_retire = BoulderFactory(created_by=boulder_creator)
     active_boulders = {BoulderFactory(gym=boulder_2_retire.gym)
                        for _ in range(3)}
     # when
@@ -50,7 +51,9 @@ def test_boulder_api_retire(logged_in_client_rest, colors):
         format='json')
     # then
     assert response.status_code == HTTP_204_NO_CONTENT
-    assert not Boulder.objects.get(pk=boulder_2_retire.pk).is_active
+    retired_boulder = Boulder.objects.get(pk=boulder_2_retire.pk)
+    assert not retired_boulder.is_active
+    assert retired_boulder.modified_by == user
     assert all(b.is_active for b in Boulder.objects.filter(
         pk__in={b.pk for b in active_boulders}))
 
