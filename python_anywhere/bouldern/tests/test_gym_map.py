@@ -1,6 +1,7 @@
 """Tests for bouldern app"""
 from django.utils.http import urlencode
-from rest_framework.status import HTTP_201_CREATED, HTTP_200_OK
+from rest_framework.status import HTTP_201_CREATED, HTTP_200_OK, \
+    HTTP_204_NO_CONTENT
 
 from python_anywhere.accounts.factories import UserFactory
 from python_anywhere.bouldern.models import Boulder, Ascent
@@ -37,20 +38,22 @@ def test_boulder_api_post(logged_in_client_rest, colors):
 
 
 def test_boulder_api_retire(logged_in_client_rest, colors):
+    boulder_creator = UserFactory()
     client, user = logged_in_client_rest
     from python_anywhere.bouldern.factories import BoulderFactory
-    boulder_2_retire = BoulderFactory()
+    boulder_2_retire = BoulderFactory(created_by=boulder_creator)
     active_boulders = {BoulderFactory(gym=boulder_2_retire.gym)
                        for _ in range(3)}
     # when
-    response = client.patch(
+    response = client.delete(
         BoulderAPI().reverse_action(
             'detail', args=[boulder_2_retire.gym.pk, boulder_2_retire.pk]),
-        data={'is_active': False},
         format='json')
     # then
-    assert response.status_code == HTTP_200_OK
-    assert not Boulder.objects.get(pk=boulder_2_retire.pk).is_active
+    assert response.status_code == HTTP_204_NO_CONTENT
+    retired_boulder = Boulder.objects.get(pk=boulder_2_retire.pk)
+    assert not retired_boulder.is_active
+    assert retired_boulder.modified_by == user
     assert all(b.is_active for b in Boulder.objects.filter(
         pk__in={b.pk for b in active_boulders}))
 
