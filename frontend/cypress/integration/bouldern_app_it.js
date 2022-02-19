@@ -186,7 +186,7 @@ describe('The app drawer', () => {
   });
 
   it('allows navigating to gym creation view', () => {
-    cy.contains('Create Gym').click();
+    cy.contains('New Gym').click();
     cy.get('#id_map');
   });
 
