@@ -42,7 +42,9 @@
       >
         <v-list-item-title>Log In</v-list-item-title>
       </v-list-item>
-      <v-divider v-if="favoriteGyms.length > 0" />
+      <v-list-subheader v-if="favoriteGyms.length > 0">
+        Favorite Gyms
+      </v-list-subheader>
       <v-list-item
         v-for="(favoriteGym) in favoriteGyms"
         :key="favoriteGym"
@@ -51,13 +53,12 @@
       >
         {{ favoriteGym }}
       </v-list-item>
-      <v-divider />
       <gym-search v-if="gymSearch" />
       <v-list-item
         v-if="isAuthenticated"
         to="/create-gym"
       >
-        <v-list-item-title>Create Gym</v-list-item-title>
+        <v-list-item-title>New Gym</v-list-item-title>
       </v-list-item>
     </v-list>
   </v-navigation-drawer>
