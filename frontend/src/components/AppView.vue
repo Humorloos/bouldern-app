@@ -42,12 +42,6 @@
       >
         <v-list-item-title>Log In</v-list-item-title>
       </v-list-item>
-      <v-list-item
-        v-if="isAuthenticated"
-        to="/create-color"
-      >
-        <v-list-item-title>Create Color</v-list-item-title>
-      </v-list-item>
       <v-divider v-if="favoriteGyms.length > 0" />
       <v-list-item
         v-for="(favoriteGym) in favoriteGyms"
