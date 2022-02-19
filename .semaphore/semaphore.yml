@@ -3,7 +3,9 @@ name: Python Anywhere Pipeline
 agent:
   machine:
     type: e1-standard-2
-    os_image: ubuntu1804
+  containers:
+    - name: main
+      image: 'docker.io/humorloos/boulder-holder:latest'
 auto_cancel:
   running:
     when: branch != 'master'
@@ -11,12 +13,10 @@ global_job_config:
   # Connect secret to all jobs in the pipeline
   secrets:
     - name: env
-  env_vars:
-    - name: PROJECT_DIR
-      value: /home/semaphore/bouldern-app
   prologue:
     commands:
       - checkout
+      - PROJECT_DIR=$(pwd)
       - FRONTEND_DIR="$PROJECT_DIR"/frontend
       - CACHE_SUFFIX=$SEMAPHORE_GIT_BRANCH-$(checksum frontend/package-lock.json)-$(checksum .semaphore/semaphore.yml)
       - NPM_KEY=npm-$CACHE_SUFFIX
@@ -25,16 +25,13 @@ blocks:
   - name: Install Frontend Dependencies
     dependencies: []
     task:
-      prologue:
-        commands:
-          - nvm use
       jobs:
         - name: npm install and cache
           priority:
           - value: 4
             when: "true"
           commands:
-            - cd frontend
+            - cd "$FRONTEND_DIR"
             - cache restore $NPM_KEY
             - cache restore $CYPRESS_KEY
             - npm ci
@@ -59,7 +56,6 @@ blocks:
             - cache restore
             # Install other python dependencies.
             # If not found in the cache, pip will download them.
-            - sem-version python 3.9
             - pip download --cache-dir .pip_cache -r requirements.txt
             # Persist downloaded packages for future jobs.
             - cache store
@@ -70,20 +66,17 @@ blocks:
           commands:
             # Clone private repositories and cache them if not already cached
             - . .semaphore/private_repos.sh
-        - name: gdal and spatialite
-          priority:
-          - value: 4
-            when: "true"
-          commands:
-            # Install gdal and spatialite and cache whole /usr directory
-            - . .semaphore/install_gdal_and_spatialite.sh
   - name: Run Frontend Tests
     dependencies:
       - Install Frontend Dependencies
     task:
+      secrets:
+        - name: gpp-key
+        - name: release-keystore
       prologue:
         commands_file: frontend_prologue.sh
       # This block executes code analysis with ESLint
+#      todo: only publish on merge into master when something in frontend has changed
       jobs:
         - name: ESLint
           priority:
@@ -91,6 +84,22 @@ blocks:
             when: "true"
           commands:
             - npx eslint .
+        - name: Build for android
+          priority:
+          - value: 1
+            when: "true"
+          commands:
+            - npx vite build
+            - npx cap copy
+            - npx cap update android
+            - ANDROID_APP_DIR="$FRONTEND_DIR"/android/app
+            - mv /root/release-keystore.jks "$ANDROID_APP_DIR"/release-keystore.jks
+            - mv /root/gpp-key.json "$ANDROID_APP_DIR"/gpp-key.json
+            - cd "$FRONTEND_DIR"/android
+            - . /root/.env
+            # make gradlew executable
+            - chmod +x gradlew
+            - ./gradlew bundle
   - name: Run Backend Tests
       # This block executes code analysis with pylint and backend integration
       # tests.
@@ -135,6 +144,8 @@ blocks:
             - SEARCH_PATTERN='ready'
             - npx vite > ${VUE_LOGFILE} &
             - tail -f -n0 ${VUE_LOGFILE} | grep -qe "${SEARCH_PATTERN}"
+            - Xvfb -ac :99 -screen 0 1280x1024x16 &
+            - export DISPLAY=:99
             - npm run report
       epilogue:
         always:
@@ -153,7 +164,9 @@ after_pipeline:
           - test-results gen-pipeline-report
 
 promotions:
-  - name: Deploy
+  - name: Deploy to pythonAnywhere
     pipeline_file: deploy.yml
     auto_promote:
       when: branch = 'master' AND result = 'passed'
+  - name: Deploy to google playstore internal track
+    pipeline_file: deploy_play.yml
