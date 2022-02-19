@@ -12,9 +12,13 @@
 - run `sem delete secret gpp-key`
 - run `sem create secret gpp-key -f ./gpp-key.json:/root/gpp-key.json` from directory .semaphore/secrets
 
-#### github ssh key:
+#### github ssh key for private repos:
 - run `sem delete secret private-repo`
 - run `sem create secret private-repo -f ./.ssh/id_rsa_semaphoreci:/root/.ssh/id_rsa_semaphoreci` from directory .semaphore/secrets
+
+#### github ssh key for release pushes:
+- run `sem delete secret github-push-key`
+- run `sem create secret github-push-key -f ./.ssh/id_rsa_semaphoreci_push:/root/.ssh/id_rsa_semaphoreci_push` from directory .semaphore/secrets
 
 #### pythonanywhere ssh key:
 - run `sem delete secret pythonanywhere-credentials`
