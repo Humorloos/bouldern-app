@@ -42,6 +42,15 @@
             </vue-form>
           </v-col>
         </v-row>
+        <v-row>
+          <v-col>
+            <v-btn
+              to="/create-color"
+            >
+              New Color
+            </v-btn>
+          </v-col>
+        </v-row>
       </v-container>
     </template>
   </app-view>
