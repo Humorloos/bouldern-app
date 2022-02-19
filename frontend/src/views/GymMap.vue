@@ -694,8 +694,7 @@ export default {
       requestWithJwt({
         apiPath: `/bouldern/gym/${gym.value.id}/boulder/` +
             `${selectedBoulder.value.id}/`,
-        method: 'PATCH',
-        data: {'is_active': false},
+        method: 'DELETE',
       });
       featureCollection.remove(featureCollection.getArray()
           .find((feature) => feature.id === selectedBoulder.value.id));
