@@ -2,6 +2,32 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### 0.1.4 (2022-02-19)
+
+
+### Features
+
+* **AppView:** Add Favorite Gyms subheader ([0422ae4](https://github.com/Humorloos/bouldern-app/commit/0422ae4ac52ae84e876c4da27c9066c5384fa0e7))
+* **appView:** add profile item to navigation drawer ([f5d7c68](https://github.com/Humorloos/bouldern-app/commit/f5d7c6863523894b1f7c8b2ae4473b59a7be4dc6))
+* **AppView:** Move Create Gym entry under Gym Search ([fc3079a](https://github.com/Humorloos/bouldern-app/commit/fc3079aa8777c25a7d5c5bbbd0a80eb0d61ee164))
+* **CreateGym:** Move create color link to create gym view ([d73f30a](https://github.com/Humorloos/bouldern-app/commit/d73f30a0c87ce7ff7b57c3aa27a7c05d64869483))
+* **i18n:** adjust welcome message ([096f5de](https://github.com/Humorloos/bouldern-app/commit/096f5de04a77a21af8563a2d4cb3507c6e9cecc1))
+* **login:** redirect to home view after successfully logging in ([c704b07](https://github.com/Humorloos/bouldern-app/commit/c704b0708e79509c3a51b90695047e3db7ddd9fb))
+* **router:** add route to profile view ([deaeae5](https://github.com/Humorloos/bouldern-app/commit/deaeae5703139384d2bf5f96b97b014a869cc9c8))
+* **serializers:** adjust UserSerializer to use for reading ([d4a02ef](https://github.com/Humorloos/bouldern-app/commit/d4a02ef0ed233d435d6e1590669fcab433c08033))
+* **settings:** set UserSerializer as rest user details serializer ([102dc40](https://github.com/Humorloos/bouldern-app/commit/102dc400f2ff7ba24db1d3b0dbeb7df366514800))
+* **store:** adjust user to new serializer ([13f5db5](https://github.com/Humorloos/bouldern-app/commit/13f5db5c0fdd602745ef4aa4c9f57f049620ba57))
+* **views:** add Profile view ([16a9cd7](https://github.com/Humorloos/bouldern-app/commit/16a9cd7ad3c91c1ff556f7ac94fc33bfd739ac4b))
+* **views:** allow destroying users via delete ([a57a2ae](https://github.com/Humorloos/bouldern-app/commit/a57a2ae6455dee204cd370a6e8d153c624ee1efe))
+
+
+### Bug Fixes
+
+* **appView:** hide app bar nav icon on desktop ([9cd8b27](https://github.com/Humorloos/bouldern-app/commit/9cd8b27b9e97412efdffd948fddabfcefc22ef39))
+* **bouldernAppIT:** fix map click position ([0e7a9b2](https://github.com/Humorloos/bouldern-app/commit/0e7a9b27943db3933b32b9f0f96ab8774456665e))
+* **cypress:** stop logging vuex events to command line ([84cb359](https://github.com/Humorloos/bouldern-app/commit/84cb3590d5a0e7f98165b10c8846f2721ad3126f))
+* **functions:** wait for login in logInViaLogInLink() ([1863e25](https://github.com/Humorloos/bouldern-app/commit/1863e2559deb08867586742bd87ee7e30a265a53))
+
 ### 0.1.3 (2022-02-19)
 
 
