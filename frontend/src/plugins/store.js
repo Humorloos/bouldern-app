@@ -129,8 +129,7 @@ export default createStore({
     deleteAccount({state, dispatch}) {
       dispatch('requestWithJwt', {
         apiPath: `/registration/user/${state.user.id}/`,
-        method: 'PATCH',
-        data: {is_active: false},
+        method: 'DELETE',
       });
     },
     /**
