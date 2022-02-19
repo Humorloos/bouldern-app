@@ -1,6 +1,6 @@
 {
   "name": "frontend",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "private": true,
   "dependencies": {
     "@capacitor/android": "3.3.4",
@@ -44,6 +44,7 @@
     "junit-report-merger": "^3.0.5",
     "mocha-junit-reporter": "^2.0.2",
     "native-run": "^1.5.0",
+    "standard-version": "^9.3.2",
     "vite": "^2.5.4",
     "vue-loader": "^16.8.3",
     "webpack": "^5.66.0"
@@ -51,7 +52,8 @@
   "scripts": {
     "combine:reports": "jrm cypress/results/report.xml \"cypress/results/*.xml\"",
     "report": "cypress run --reporter cypress-multi-reporters --reporter-options configFile=reporter-config.json --browser chrome",
-    "postreport": "npm run combine:reports"
+    "postreport": "npm run combine:reports",
+    "release": "standard-version"
   },
   "browserslist": [
     "> 1%",
