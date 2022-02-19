@@ -76,7 +76,6 @@ blocks:
       prologue:
         commands_file: frontend_prologue.sh
       # This block executes code analysis with ESLint
-#      todo: only publish on merge into master when something in frontend has changed
       jobs:
         - name: ESLint
           priority:
@@ -164,7 +163,9 @@ after_pipeline:
           - test-results gen-pipeline-report
 
 promotions:
-  - name: Deploy
+  - name: Deploy to pythonAnywhere
     pipeline_file: deploy.yml
     auto_promote:
       when: branch = 'master' AND result = 'passed'
+  - name: Deploy to google playstore internal track
+    pipeline_file: deploy_play.yml
