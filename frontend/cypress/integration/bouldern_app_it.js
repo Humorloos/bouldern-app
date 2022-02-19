@@ -148,8 +148,11 @@ describe('The gym map view', () => {
 });
 
 describe('The gym creation view', () => {
-  it('allows adding gyms', () => {
+  beforeEach(() => {
     cy.visit('create-gym');
+  });
+
+  it('allows adding gyms', () => {
     cy.get('#id_name').type(constants.newGymName);
     cy.get('#id_map').attachFile('generic_gym.png');
     cy.get('#id_color-grade-1').click();
@@ -162,6 +165,11 @@ describe('The gym creation view', () => {
     }
     cy.visit(`gym-map/${constants.newGymName}`);
     cy.window().its(`${GymMapView.name}.loaded`).should('equal', true);
+  });
+
+  it('allows navigating to color creation view', () => {
+    cy.contains('New Color').click();
+    cy.get('#id_color');
   });
 });
 
@@ -177,13 +185,8 @@ describe('The app drawer', () => {
     cy.get('.mdi-menu').click();
   });
 
-  it('allows navigating to color creation view', () => {
-    cy.contains('Create Color').click();
-    cy.get('#id_color');
-  });
-
   it('allows navigating to gym creation view', () => {
-    cy.contains('Create Gym').click();
+    cy.contains('New Gym').click();
     cy.get('#id_map');
   });
 

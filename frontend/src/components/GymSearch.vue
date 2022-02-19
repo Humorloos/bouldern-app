@@ -1,9 +1,7 @@
 <template>
-  <v-list-item v-if="isAuthenticated">
-    <v-list-item-subtitle class="text-h6">
-      Find Gym
-    </v-list-item-subtitle>
-  </v-list-item>
+  <v-list-subheader>
+    Find Gym
+  </v-list-subheader>
   <v-list-item v-if="isAuthenticated">
     <v-text-field
       id="id_gym-name"
