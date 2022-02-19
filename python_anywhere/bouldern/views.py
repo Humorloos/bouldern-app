@@ -28,6 +28,7 @@ class DestroyUGCMixin(DestroyModelMixin, GenericViewSet):
 
     def perform_destroy(self, instance):
         instance.is_active = False
+        instance.modified_by = self.request.user
         instance.save()
 
 
