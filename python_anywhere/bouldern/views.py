@@ -23,6 +23,14 @@ class CreateUGCMixin(CreateModelMixin, GenericViewSet):
                         **kwargs)
 
 
+class DestroyUGCMixin(DestroyModelMixin, GenericViewSet):
+    """Mixin for destroying UGC instances by setting them inactive"""
+
+    def perform_destroy(self, instance):
+        instance.is_active = False
+        instance.save()
+
+
 class ColorAPI(ReversibleViewSet, ListModelMixin, CreateUGCMixin):
     """REST API for adding colors"""
     basename = 'color'
@@ -37,7 +45,7 @@ class GymAPI(ReversibleViewSet, CreateUGCMixin, UpdateModelMixin):
     serializer_class = GymSerializer
 
 
-class FavoriteGymAPI(ReversibleViewSet, CreateUGCMixin, DestroyModelMixin,
+class FavoriteGymAPI(ReversibleViewSet, CreateUGCMixin, DestroyUGCMixin,
                      ListModelMixin):
     """Rest API for adding favorite gyms"""
     basename = 'favorite-gym'
@@ -53,12 +61,8 @@ class FavoriteGymAPI(ReversibleViewSet, CreateUGCMixin, DestroyModelMixin,
             serializer, gym=Gym.objects.get(
                 name=self.request.data['gym']))
 
-    def perform_destroy(self, instance):
-        instance.is_active = False
-        instance.save()
 
-
-class BoulderAPI(ReversibleViewSet, CreateUGCMixin, DestroyModelMixin):
+class BoulderAPI(ReversibleViewSet, CreateUGCMixin, DestroyUGCMixin):
     """Rest API for reading and creating boulders in a specific gym"""
     basename = 'boulder'
     queryset = Boulder.objects.all()
@@ -67,10 +71,6 @@ class BoulderAPI(ReversibleViewSet, CreateUGCMixin, DestroyModelMixin):
     def perform_create(self, serializer, **kwargs):
         super().perform_create(
             serializer, gym=Gym.objects.get(pk=self.kwargs['gym_pk']))
-
-    def perform_destroy(self, instance):
-        instance.is_active = False
-        instance.save()
 
 
 class AscentAPI(ReversibleViewSet, CreateUGCMixin):
