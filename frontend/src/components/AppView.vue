@@ -52,13 +52,13 @@
         {{ favoriteGym }}
       </v-list-item>
       <v-divider />
+      <gym-search v-if="gymSearch" />
       <v-list-item
         v-if="isAuthenticated"
         to="/create-gym"
       >
         <v-list-item-title>Create Gym</v-list-item-title>
       </v-list-item>
-      <gym-search v-if="gymSearch" />
     </v-list>
   </v-navigation-drawer>
   <v-main>
