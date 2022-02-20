@@ -155,7 +155,8 @@
               :key="grade.id"
               v-model="activeGrades"
               :value="grade.id"
-              :label="grade.grade.toString()"
+              :label="grade.grade === null ? 'undefined' :
+                grade.grade.toString()"
               :color="getColor(grade.color)"
               hide-details
             />
@@ -609,8 +610,11 @@ export default {
      */
     const gradeColors = computed(() => {
       return gym.value.grade_set.map(
-          ({id, grade, color}) => (
-            {color: getColor(color), id: id, name: grade}));
+          ({id, grade, color}) => ({
+            color: getColor(color),
+            id: id,
+            name: grade === null ? 'undefined' : grade,
+          }));
     });
 
     /**
