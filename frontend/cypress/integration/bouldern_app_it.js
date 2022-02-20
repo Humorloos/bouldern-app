@@ -153,16 +153,28 @@ describe('The gym creation view', () => {
   });
 
   it('allows adding gyms', () => {
+    // set name and map
     cy.get('#id_name').type(constants.newGymName);
     cy.get('#id_map').attachFile('generic_gym.png');
+
+    // set grades
     cy.get('#id_color-grade-1').click();
     cy.contains('Blue').click();
     cy.contains('Add Grade').click();
     cy.get('#id_color-grade-2').click();
     cy.contains('Yellow').click();
+
+    // set undefined grade
+    cy.get('#id_undefined_grade_active').click();
+    cy.get('#id_color-undefined').click();
+    cy.contains('Grey').click();
+
+    // submit
     for (const _ of waitingFor('POST', '/bouldern/gym')) {
       cy.contains('Submit').click();
     }
+
+    // open newly created gym
     cy.visit(`gym-map/${constants.newGymName}`);
     cy.window().its(`${GymMapView.name}.loaded`).should('equal', true);
   });
