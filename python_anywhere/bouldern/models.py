@@ -44,7 +44,7 @@ class Gym(UGC):
 
 class Grade(UGC):
     """A grade in a gym"""
-    grade = PositiveSmallIntegerField()
+    grade = PositiveSmallIntegerField(null=True)
     color = ForeignKey(Color, on_delete=SET_NULL, null=True)
     gym = ForeignKey(Gym, on_delete=SET_NULL, null=True)
 
