@@ -13,6 +13,7 @@ default_colors = {
     'Purple': '#8e24aa',
     'White': '#eeede9',
     'Black': '#000000',
+    'Grey': '#848284',
 }
 
 
