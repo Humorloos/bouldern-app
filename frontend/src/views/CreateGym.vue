@@ -80,6 +80,27 @@
               />
             </v-col>
           </v-row>
+          <v-row>
+            <v-col
+              class="flex-grow-0"
+              align-self="center"
+            >
+              <v-checkbox
+                id="id_undefined_grade_active"
+                hide-details
+                label="Use undefined grade?"
+                @click="toggleExtraColor"
+              />
+            </v-col>
+            <v-col align-self="center">
+              <color-select
+                id="id_color-undefined"
+                v-model="extraColor"
+                :disabled="!activeExtraColor"
+                :color-options="colorOptions"
+              />
+            </v-col>
+          </v-row>
         </vue-form>
       </v-container>
     </template>
@@ -110,6 +131,19 @@ export default {
       id: 0,
     };
     const colors = ref([defaultColor]);
+    const extraColor = ref(defaultColor);
+    const activeExtraColor = ref(false);
+    /**
+     * Activates/deactivates the undefined grade color selector, on deactivation
+     * also sets the selected color to the default value
+     */
+    function toggleExtraColor() {
+      if (activeExtraColor.value) {
+        extraColor.value = defaultColor;
+      }
+      activeExtraColor.value = !activeExtraColor.value;
+    }
+
     const gymName = ref('');
     const map = ref(undefined);
     const colorOptions = ref([]);
@@ -133,11 +167,16 @@ export default {
      * @returns {object} the gym form
      */
     const form = computed(() => {
+      const gradeSet = colors.value.map((color, index) => {
+        return {color: color.id, grade: index + 1};
+      });
+      if (activeExtraColor.value) {
+        gradeSet.push({
+          color: extraColor.value.id, grade: null});
+      }
       return {
         name: gymName.value,
-        grade_set: colors.value.map((color, index) => {
-          return {color: color.id, grade: index + 1};
-        }),
+        grade_set: gradeSet,
       };
     });
     /**
@@ -183,6 +222,9 @@ export default {
     }
     return {
       colors,
+      extraColor: extraColor,
+      activeExtraColor: activeExtraColor,
+      toggleExtraColor,
       gymName,
       colorOptions,
       form,
