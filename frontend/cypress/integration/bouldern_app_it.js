@@ -30,7 +30,7 @@ describe('The color creation view', () => {
         .click(150, 50);
     cy.get('.v-main__wrap').click();
     for (const _ of waitingFor('POST', '/bouldern/color')) {
-      cy.get('.v-form > #submit_button').click();
+      cy.get('.v-col > #submit_button').click();
     }
     cy.visit('create-gym');
     cy.get('#id_color-grade-1').click();
