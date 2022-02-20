@@ -80,20 +80,16 @@
               />
             </v-col>
           </v-row>
-          <v-row>
-            <v-col>
-              <vue-form
-                :api-path="`/bouldern/gym/${gym.id}/boulder/`"
-                :form="{
-                  coordinates: selectedCoordinates,
-                  color: selectedColor.id,
-                  grade: selectedGrade.id,
-                }"
-                submit-button-label="Save"
-                @submitted="onSubmitted"
-              />
-            </v-col>
-          </v-row>
+          <vue-form
+            :api-path="`/bouldern/gym/${gym.id}/boulder/`"
+            :form="{
+              coordinates: selectedCoordinates,
+              color: selectedColor.id,
+              grade: selectedGrade.id,
+            }"
+            submit-button-label="Save"
+            @submitted="onSubmitted"
+          />
         </template>
         <template
           v-else

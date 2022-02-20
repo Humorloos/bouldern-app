@@ -1,12 +1,16 @@
 <template>
   <v-form>
     <slot />
-    <v-btn
-      id="submit_button"
-      @click="submit"
-    >
-      {{ submitButtonLabel }}
-    </v-btn>
+    <v-row>
+      <v-col>
+        <v-btn
+          id="submit_button"
+          @click="submit"
+        >
+          {{ submitButtonLabel }}
+        </v-btn>
+      </v-col>
+    </v-row>
   </v-form>
 </template>
 
