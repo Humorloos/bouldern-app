@@ -8,7 +8,8 @@ from factory.django import ImageField
 
 from python_anywhere.accounts.factories import UserFactory
 from python_anywhere.bouldern.factories import ColorFactory, GymFactory, \
-    BoulderFactory, AscentFactory, FavoriteGymFactory
+    BoulderFactory, AscentFactory, FavoriteGymFactory, GradeFactory
+from python_anywhere.bouldern.models import Color
 from python_anywhere.bouldern.tests.conftest import default_colors
 from python_anywhere.settings import BASE_DIR, env, RESOURCES_DIR
 
@@ -41,6 +42,10 @@ class Command(BaseCommand):
         generic_gym = GymFactory(
             name='Generic Gym',
             map=ImageField(from_path=RESOURCES_DIR / 'generic_gym.png'))
+
+        # add undefined grade
+        GradeFactory(gym=generic_gym, grade=None,
+                     color=Color.objects.filter(name='Grey').first())
 
         # add boulders
         boulder = BoulderFactory(
