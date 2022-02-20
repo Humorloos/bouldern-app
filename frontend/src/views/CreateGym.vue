@@ -5,7 +5,11 @@
         <v-row>
           <v-col><h1>Create Gym</h1></v-col>
         </v-row>
-        <vue-form>
+        <vue-form
+          :form="form"
+          :api-path="apiPath"
+          @submitted="onSubmitted"
+        >
           <v-row>
             <v-col>
               <v-text-field
@@ -75,9 +79,11 @@
 /** @file view for creating gyms */
 
 import VueForm from '../components/VueForm.vue';
-import {mapActions, mapState} from 'vuex';
+import {useStore} from 'vuex';
 import ColorSelect from '../components/ColorSelect.vue';
 import AppView from '../components/AppView.vue';
+import {computed, ref} from 'vue';
+import {useRouter} from 'vue-router';
 
 export default {
   name: 'CreateGym',
@@ -86,60 +92,52 @@ export default {
     VueForm,
     ColorSelect,
   },
-  data() {
-    return {
-      colors: [{
-        color: 'white',
-        name: '',
-        id: 0,
-      }],
-      gymName: '',
-      map: undefined,
-      apiPath: '/bouldern/gym/',
-      colorOptions: [],
-    };
-  },
-  computed: {
-    ...mapState([
-      'authToken',
-    ]),
+  setup() {
+    const colors = ref([{
+      color: 'white',
+      name: '',
+      id: 0,
+    }]);
+    const gymName = ref('');
+    const map = ref(undefined);
+    const colorOptions = ref([]);
+
+    const store = useStore();
+    const requestWithJwt = (options) =>
+      store.dispatch('requestWithJwt', options);
+
+    // Get all possible colors from the api and saves them
+    requestWithJwt({
+      apiPath: '/bouldern/color/',
+      method: 'GET',
+    }).then((response) => {
+      colorOptions.value = response.data;
+    });
+
+
     /**
      * Gets a form with the gym's name and all grades for submission
      *
      * @returns {object} the gym form
      */
-    form() {
+    const form = computed(() => {
       return {
-        name: this.gymName,
-        grade_set: this.colors.map((color, index) => {
+        name: gymName.value,
+        grade_set: colors.value.map((color, index) => {
           return {color: color.id, grade: index + 1};
         }),
       };
-    },
-  },
-  /**
-   * Gets all possible colors from the api and saves them
-   */
-  created() {
-    this.requestWithJwt({
-      apiPath: '/bouldern/color/',
-      method: 'GET',
-    }).then((response) => {
-      this.colorOptions = response.data;
     });
-  },
-  methods: {
-    ...mapActions({
-      requestWithJwt: 'requestWithJwt',
-    }),
     /**
      * Handler for file upload
      *
      * @param event the file upload event
      */
-    onFileChange(event) {
-      this.map = event.target.files[0];
-    },
+    function onFileChange(event) {
+      map.value = event.target.files[0];
+    }
+    const router = useRouter();
+    const apiPath = '/bouldern/gym/';
     /**
      * Submits the gym map image after submitting the gym map form and redirects
      * to index
@@ -147,24 +145,34 @@ export default {
      * @param response the create response returned from the api after creating
      * the gym
      */
-    onSubmitted(response) {
+    function onSubmitted(response) {
       const formData = new FormData();
-      formData.append('map', this.map);
-      this.requestWithJwt({
-        apiPath: `${this.apiPath}${response.data.id}/`,
+      formData.append('map', map.value);
+      requestWithJwt({
+        apiPath: `${apiPath}${response.data.id}/`,
         method: 'PATCH',
         data: formData,
         contentType: 'multipart/form-data',
       });
-      this.$router.push('/');
-    },
+      router.push('/');
+    }
     /**
      * Adds the last added color again to colors to create new grade
      * select
      */
-    addGradeSelect() {
-      this.colors.push(this.colors.at(-1));
-    },
+    function addGradeSelect() {
+      colors.value.push(colors.value.at(-1));
+    }
+    return {
+      colors,
+      gymName,
+      colorOptions,
+      form,
+      apiPath,
+      onSubmitted,
+      addGradeSelect,
+      onFileChange,
+    };
   },
 };
 </script>
