@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### 0.1.5 (2022-02-20)
+
+
+### Features
+
+* **AppView:** Add Favorite Gyms subheader ([0422ae4](https://github.com/Humorloos/bouldern-app/commit/0422ae4ac52ae84e876c4da27c9066c5384fa0e7))
+* **AppView:** Move Create Gym entry under Gym Search ([fc3079a](https://github.com/Humorloos/bouldern-app/commit/fc3079aa8777c25a7d5c5bbbd0a80eb0d61ee164))
+* **CreateGym:** add numbers and title to grades ([3a27a08](https://github.com/Humorloos/bouldern-app/commit/3a27a08b63ee3b87fb1815f9115e1cb9a60400cf))
+* **CreateGym:** Move create color link to create gym view ([d73f30a](https://github.com/Humorloos/bouldern-app/commit/d73f30a0c87ce7ff7b57c3aa27a7c05d64869483))
+* **CreateGymView:** add undefined grade option ([8c06327](https://github.com/Humorloos/bouldern-app/commit/8c06327b5246ddf2aa82d6ba8597cf5e90a5f199))
+* **CreateGymView:** allow removing gym grades ([24bfd86](https://github.com/Humorloos/bouldern-app/commit/24bfd866844bf64a7ad548e2ae2b017ffbd08345))
+* **views:** allow destroying users via delete ([a57a2ae](https://github.com/Humorloos/bouldern-app/commit/a57a2ae6455dee204cd370a6e8d153c624ee1efe))
+
+
+### Bug Fixes
+
+* **appView:** hide app bar nav icon on desktop ([9cd8b27](https://github.com/Humorloos/bouldern-app/commit/9cd8b27b9e97412efdffd948fddabfcefc22ef39))
+* **bouldernAppIT:** fix map click position ([0e7a9b2](https://github.com/Humorloos/bouldern-app/commit/0e7a9b27943db3933b32b9f0f96ab8774456665e))
+* **cypress:** stop logging vuex events to command line ([84cb359](https://github.com/Humorloos/bouldern-app/commit/84cb3590d5a0e7f98165b10c8846f2721ad3126f))
+
 ### 0.1.4 (2022-02-19)
 
 
