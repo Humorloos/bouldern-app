@@ -5,33 +5,32 @@
         <v-row>
           <v-col><h1>Create Gym</h1></v-col>
         </v-row>
-        <v-row>
-          <v-col>
-            <vue-form
-              :form="form"
-              :api-path="apiPath"
-              @submitted="onSubmitted"
-            >
+        <vue-form>
+          <v-row>
+            <v-col>
               <v-text-field
                 id="id_name"
                 v-model="gymName"
                 label="Name"
                 type="text"
               />
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col>
               <v-file-input
                 id="id_map"
                 accept="image/*"
                 label="Map"
                 @change="onFileChange"
               />
-
-              <color-select
-                v-for="(color, index) in colors"
-                :id="`id_color-grade-${index + 1}`"
-                :key="color.name"
-                v-model="colors[index]"
-                :color-options="colorOptions"
-              />
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col class="text-subtitle-1">
+              Grades
+            </v-col>
+            <v-col>
               <v-btn
                 id="add-grade-button"
                 type="button"
@@ -39,18 +38,34 @@
               >
                 Add Grade
               </v-btn>
-            </vue-form>
-          </v-col>
-        </v-row>
-        <v-row>
-          <v-col>
-            <v-btn
-              to="/create-color"
+            </v-col>
+            <v-col>
+              <v-btn
+                to="/create-color"
+              >
+                New Color
+              </v-btn>
+            </v-col>
+          </v-row>
+          <v-row
+            v-for="(color, index) in colors"
+            :key="color.name"
+          >
+            <v-col
+              align-self="center"
+              class="flex-grow-0"
             >
-              New Color
-            </v-btn>
-          </v-col>
-        </v-row>
+              {{ index + 1 }}.
+            </v-col>
+            <v-col>
+              <color-select
+                :id="`id_color-grade-${index + 1}`"
+                v-model="colors[index]"
+                :color-options="colorOptions"
+              />
+            </v-col>
+          </v-row>
+        </vue-form>
       </v-container>
     </template>
   </app-view>
