@@ -61,11 +61,22 @@
             >
               {{ index + 1 }}.
             </v-col>
-            <v-col>
+            <v-col align-self="center">
               <color-select
                 :id="`id_color-grade-${index + 1}`"
                 v-model="colors[index]"
                 :color-options="colorOptions"
+              />
+            </v-col>
+            <v-col
+              align-self="center"
+              class="flex-grow-0"
+            >
+              <v-btn
+                icon="mdi-close"
+                flat
+                size="small"
+                @click="removeGradeSelect(index)"
               />
             </v-col>
           </v-row>
@@ -93,11 +104,12 @@ export default {
     ColorSelect,
   },
   setup() {
-    const colors = ref([{
+    const defaultColor = {
       color: 'white',
       name: '',
       id: 0,
-    }]);
+    };
+    const colors = ref([defaultColor]);
     const gymName = ref('');
     const map = ref(undefined);
     const colorOptions = ref([]);
@@ -157,11 +169,17 @@ export default {
       router.push('/');
     }
     /**
-     * Adds the last added color again to colors to create new grade
-     * select
+     * Adds the default color to colors to create new grade select
      */
     function addGradeSelect() {
-      colors.value.push(colors.value.at(-1));
+      colors.value.push(defaultColor);
+    }
+    /**
+     * Removes the color with provided index from colors to remove the
+     * corresponding grade select
+     */
+    function removeGradeSelect(index) {
+      colors.value.splice(index, 1);
     }
     return {
       colors,
@@ -170,8 +188,9 @@ export default {
       form,
       apiPath,
       onSubmitted,
-      addGradeSelect,
       onFileChange,
+      addGradeSelect,
+      removeGradeSelect,
     };
   },
 };
