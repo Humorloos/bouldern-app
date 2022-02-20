@@ -5,6 +5,7 @@
       :options="options"
       :searchable="false"
       :clearable="false"
+      :disabled="disabled"
     >
       <template #option="option">
         <span :style="`color: ${option.color}`">
@@ -33,6 +34,10 @@ export default {
     modelValue: {
       type: Object,
       default: () => {},
+    },
+    disabled: {
+      type: Boolean,
+      default: false,
     },
   },
   emits: ['update:modelValue'],

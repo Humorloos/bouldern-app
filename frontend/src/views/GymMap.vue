@@ -80,20 +80,16 @@
               />
             </v-col>
           </v-row>
-          <v-row>
-            <v-col>
-              <vue-form
-                :api-path="`/bouldern/gym/${gym.id}/boulder/`"
-                :form="{
-                  coordinates: selectedCoordinates,
-                  color: selectedColor.id,
-                  grade: selectedGrade.id,
-                }"
-                submit-button-label="Save"
-                @submitted="onSubmitted"
-              />
-            </v-col>
-          </v-row>
+          <vue-form
+            :api-path="`/bouldern/gym/${gym.id}/boulder/`"
+            :form="{
+              coordinates: selectedCoordinates,
+              color: selectedColor.id,
+              grade: selectedGrade.id,
+            }"
+            submit-button-label="Save"
+            @submitted="onSubmitted"
+          />
         </template>
         <template
           v-else
@@ -159,7 +155,8 @@
               :key="grade.id"
               v-model="activeGrades"
               :value="grade.id"
-              :label="grade.grade.toString()"
+              :label="grade.grade === null ? 'undefined' :
+                grade.grade.toString()"
               :color="getColor(grade.color)"
               hide-details
             />
@@ -613,8 +610,11 @@ export default {
      */
     const gradeColors = computed(() => {
       return gym.value.grade_set.map(
-          ({id, grade, color}) => (
-            {color: getColor(color), id: id, name: grade}));
+          ({id, grade, color}) => ({
+            color: getColor(color),
+            id: id,
+            name: grade === null ? 'undefined' : grade,
+          }));
     });
 
     /**
