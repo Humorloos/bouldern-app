@@ -30,77 +30,10 @@
               />
             </v-col>
           </v-row>
-          <v-row>
-            <v-col class="text-subtitle-1">
-              Grades
-            </v-col>
-            <v-col>
-              <v-btn
-                id="add-grade-button"
-                type="button"
-                @click="addGradeSelect"
-              >
-                Add Grade
-              </v-btn>
-            </v-col>
-            <v-col>
-              <v-btn
-                to="/create-color"
-              >
-                New Color
-              </v-btn>
-            </v-col>
-          </v-row>
-          <v-row
-            v-for="(color, index) in colors"
-            :key="color.name"
-          >
-            <v-col
-              align-self="center"
-              class="flex-grow-0"
-            >
-              {{ index + 1 }}.
-            </v-col>
-            <v-col align-self="center">
-              <color-select
-                :id="`id_color-grade-${index + 1}`"
-                v-model="colors[index]"
-                :color-options="colorOptions"
-              />
-            </v-col>
-            <v-col
-              align-self="center"
-              class="flex-grow-0"
-            >
-              <v-btn
-                icon="mdi-close"
-                flat
-                size="small"
-                @click="removeGradeSelect(index)"
-              />
-            </v-col>
-          </v-row>
-          <v-row>
-            <v-col
-              class="flex-grow-0"
-              align-self="center"
-            >
-              <v-checkbox
-                id="id_undefined_grade_active"
-                hide-details
-                label="Use undefined grade?"
-                @click="toggleExtraColor"
-              />
-            </v-col>
-            <v-col align-self="center">
-              <color-select
-                id="id_color-undefined"
-                v-model="extraColor"
-                :disabled="!activeExtraColor"
-                :color-options="colorOptions"
-              />
-            </v-col>
-          </v-row>
+          <grade-list
+            ref="gradeList"
+            :color-options="colorOptions"
+          />
         </vue-form>
       </v-container>
     </template>
@@ -112,38 +45,19 @@
 
 import VueForm from '../components/VueForm.vue';
 import {useStore} from 'vuex';
-import ColorSelect from '../components/ColorSelect.vue';
 import AppView from '../components/AppView.vue';
 import {computed, ref} from 'vue';
 import {useRouter} from 'vue-router';
+import GradeList from '../components/GradeList.vue';
 
 export default {
   name: 'CreateGym',
   components: {
+    GradeList,
     AppView,
     VueForm,
-    ColorSelect,
   },
   setup() {
-    const defaultColor = {
-      color: 'white',
-      name: '',
-      id: 0,
-    };
-    const colors = ref([defaultColor]);
-    const extraColor = ref(defaultColor);
-    const activeExtraColor = ref(false);
-    /**
-     * Activates/deactivates the undefined grade color selector, on deactivation
-     * also sets the selected color to the default value
-     */
-    function toggleExtraColor() {
-      if (activeExtraColor.value) {
-        extraColor.value = defaultColor;
-      }
-      activeExtraColor.value = !activeExtraColor.value;
-    }
-
     const gymName = ref('');
     const map = ref(undefined);
     const colorOptions = ref([]);
@@ -160,6 +74,7 @@ export default {
       colorOptions.value = response.data;
     });
 
+    const gradeList = ref(null);
 
     /**
      * Gets a form with the gym's name and all grades for submission
@@ -167,12 +82,15 @@ export default {
      * @returns {object} the gym form
      */
     const form = computed(() => {
-      const gradeSet = colors.value.map((color, index) => {
-        return {color: color.id, grade: index + 1};
-      });
-      if (activeExtraColor.value) {
-        gradeSet.push({
-          color: extraColor.value.id, grade: null});
+      let gradeSet;
+      if (gradeList.value !== null) {
+        gradeSet = gradeList.value.colors.map((color, index) => {
+          return {color: color.id, grade: index + 1};
+        });
+        if (gradeList.value.activeExtraColor) {
+          gradeSet.push({
+            color: gradeList.value.extraColor.id, grade: null});
+        }
       }
       return {
         name: gymName.value,
@@ -207,32 +125,14 @@ export default {
       });
       router.push('/');
     }
-    /**
-     * Adds the default color to colors to create new grade select
-     */
-    function addGradeSelect() {
-      colors.value.push(defaultColor);
-    }
-    /**
-     * Removes the color with provided index from colors to remove the
-     * corresponding grade select
-     */
-    function removeGradeSelect(index) {
-      colors.value.splice(index, 1);
-    }
     return {
-      colors,
-      extraColor: extraColor,
-      activeExtraColor: activeExtraColor,
-      toggleExtraColor,
       gymName,
       colorOptions,
       form,
       apiPath,
       onSubmitted,
       onFileChange,
-      addGradeSelect,
-      removeGradeSelect,
+      gradeList,
     };
   },
 };
