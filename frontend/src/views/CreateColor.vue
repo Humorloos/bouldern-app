@@ -39,6 +39,8 @@
 import VueForm from '../components/VueForm.vue';
 import jscolor from '@eastdesire/jscolor/jscolor';
 import AppView from '../components/AppView.vue';
+import {onMounted, ref} from 'vue';
+import {useRouter} from 'vue-router';
 
 
 export default {
@@ -47,27 +49,26 @@ export default {
     AppView,
     VueForm,
   },
-  data() {
-    return {
-      form: {
-        name: '',
-        color: '#FF7514',
-      },
-    };
-  },
-  /**
-   * Installs jscolor (required for jscolor widget to work)
-   */
-  mounted() {
-    jscolor.install();
-  },
-  methods: {
+  setup() {
+    const form = ref({
+      name: '',
+      color: '#FF7514',
+    });
+    const router = useRouter();
     /**
      * Redirects to index after form submission
      */
-    onSubmitted() {
-      this.$router.push('/');
-    },
+    function onSubmitted() {
+      router.push('/');
+    }
+
+    // Installs jscolor (required for jscolor widget to work)
+    onMounted(() => jscolor.install());
+
+    return {
+      form,
+      onSubmitted,
+    };
   },
 };
 </script>
