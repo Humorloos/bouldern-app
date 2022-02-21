@@ -60,19 +60,10 @@ export default {
   setup() {
     const gymName = ref('');
     const map = ref(undefined);
-    const colorOptions = ref([]);
 
     const store = useStore();
     const requestWithJwt = (options) =>
       store.dispatch('requestWithJwt', options);
-
-    // Get all possible colors from the api and saves them
-    requestWithJwt({
-      apiPath: '/bouldern/color/',
-      method: 'GET',
-    }).then((response) => {
-      colorOptions.value = response.data;
-    });
 
     const gradeList = ref(null);
 
@@ -127,12 +118,12 @@ export default {
     }
     return {
       gymName,
-      colorOptions,
       form,
       apiPath,
       onSubmitted,
       onFileChange,
       gradeList,
+      colorOptions: computed(() => store.state.colors),
     };
   },
 };

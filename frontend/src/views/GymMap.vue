@@ -4,6 +4,12 @@
   >
     <template #app-bar-right>
       <v-btn
+        id="filter"
+        flat
+        icon="mdi-filter"
+        @click="filtering=true"
+      />
+      <v-btn
         id="id_favorite"
         flat
         icon
@@ -17,10 +23,10 @@
         </v-icon>
       </v-btn>
       <v-btn
-        id="filter"
+        id="id_edit_gym"
         flat
-        icon="mdi-filter"
-        @click="filtering=true"
+        icon="mdi-pencil"
+        :to="`/edit-gym/${gymName}`"
       />
     </template>
     <template #main>
@@ -246,7 +252,7 @@ export default {
       id: -1,
       color: '#ffffff',
     };
-    const colorOptions = ref([defaultColor]);
+    const colorOptions = computed(() => store.state.colors);
 
     // gym map
     const gym = ref({
@@ -426,7 +432,8 @@ export default {
         source: mapImageSource.value,
       });
     });
-
+    // todo: colors have to be in store, and then grade list does not need
+    //  colors property but takes them from store
     /**
      * Icon drawing interaction for drawing boulder icons. Only allows drawing
      * on the image, not outside of it.
@@ -477,6 +484,9 @@ export default {
           boulder.ascent !== null ? boulder.ascent.result : undefined,
       ));
     }
+
+    // favorite gym toggle
+    const favorite = ref(false);
 
     /**
      * Gets the gym data from the API, loads the gym map image, and deserializes
@@ -782,15 +792,7 @@ export default {
       });
       loaded.value = true;
     }
-
-    // load colors and gym map when opening this view
-    requestWithJwt({
-      method: 'GET',
-      apiPath: `/bouldern/color/`,
-    }).then((response) => {
-      colorOptions.value = response.data;
-      loadGymMap(onGymMapLoaded);
-    });
+    loadGymMap(onGymMapLoaded);
     // Load new gym map when gym name changes
     watch(gymName, (newGymName) => {
       featureCollection.clear();
@@ -798,8 +800,6 @@ export default {
         loadGymMap();
       }
     });
-    // favorite gym toggle
-    const favorite = ref(false);
 
     /**
      * Creates/removes a favorite gym entry for this gym
@@ -844,6 +844,8 @@ export default {
       // favorite
       favorite,
       setFavorite,
+      // gym name
+      gymName,
     };
   },
 };

@@ -28,6 +28,7 @@ const getDefaultState = function() {
     loginError: '',
     axios: http,
     favoriteGyms: [],
+    colors: [],
     activeGym: null,
   };
 };
@@ -89,6 +90,18 @@ export default createStore({
     setFavoriteGyms(state, loadedFavorites) {
       state.favoriteGyms = loadedFavorites;
     },
+    /**
+     * todo
+     */
+    setColors(state, loadedColors) {
+      state.colors = loadedColors;
+    },
+    /**
+     * todo
+     */
+    addColor(state, color) {
+      state.colors.push(color);
+    },
   },
   actions: {
     /**
@@ -122,6 +135,16 @@ export default createStore({
         method: 'GET',
       });
       commit('setFavoriteGyms', response.data.map(({gym}) => gym));
+    },
+    /**
+     * Load colors todo
+     */
+    async loadColors({dispatch, commit}) {
+      const colorResponse = await dispatch('requestWithJwt', {
+        method: 'GET',
+        apiPath: `/bouldern/color/`,
+      });
+      commit('setColors', colorResponse.data);
     },
     /**
      * De-activates currently logged-in account
@@ -166,6 +189,7 @@ export default createStore({
         const loginData = response.data;
         dispatch('setLoginData', loginData);
         dispatch('loadFavoriteGyms');
+        dispatch('loadColors');
       } catch (error) {
         console.log(error);
         commit('setLoginError');

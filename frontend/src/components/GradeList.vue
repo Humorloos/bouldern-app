@@ -74,8 +74,14 @@
 <script>
 /** @file todo */
 
-import {ref} from 'vue';
+import {computed, ref} from 'vue';
 import ColorSelect from './ColorSelect.vue';
+import {useStore} from 'vuex';
+const defaultColor = {
+  color: 'white',
+  name: '',
+  id: 0,
+};
 
 export default {
   name: 'GradeList',
@@ -122,6 +128,8 @@ export default {
       colors.value.splice(index, 1);
     }
 
+    const store = useStore();
+
     return {
       defaultColor,
       colors,
@@ -130,6 +138,7 @@ export default {
       toggleExtraColor,
       addGradeSelect,
       removeGradeSelect,
+      colorOptions: computed(() => store.state.colors),
     };
   },
 };
