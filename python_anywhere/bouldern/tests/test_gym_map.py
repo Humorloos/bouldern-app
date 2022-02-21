@@ -5,6 +5,7 @@ from rest_framework.status import HTTP_201_CREATED, HTTP_200_OK, \
 
 from python_anywhere.accounts.factories import UserFactory
 from python_anywhere.bouldern.models import Boulder, Ascent
+from python_anywhere.bouldern.tests.test_gym_api import grade_2_dict
 from python_anywhere.bouldern.views import BoulderAPI, AscentAPI, \
     GymMapResourcesAPI
 
@@ -119,6 +120,7 @@ def test_gym_map_resources_api_get(colors, logged_in_client_rest):
     from python_anywhere.bouldern.factories import GradeFactory
     incorrect_gym = GymFactory()
     undefined_grade = GradeFactory(gym=correct_gym, grade=None)
+    inactive_grade = GradeFactory(gym=correct_gym, grade=4, is_active=False)
 
     from python_anywhere.bouldern.factories import BoulderFactory
     correct_boulders_without_ascent = BoulderFactory \
@@ -145,7 +147,9 @@ def test_gym_map_resources_api_get(colors, logged_in_client_rest):
     # verify gym
     response_data = response.data.serializer.instance
     assert response_data['gym'] == correct_gym
-    assert response.data['gym']['grade_set'][-1]['grade'] == 'undefined'
+    response_grade_set = response.data['gym']['grade_set']
+    assert response_grade_set[-1]['grade'] == 'undefined'
+    assert grade_2_dict(inactive_grade) not in response_grade_set
     # verify boulder features
     response_boulders = {bf['boulder']
                          for bf in response_data['boulder_features']}

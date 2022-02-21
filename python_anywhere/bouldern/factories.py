@@ -3,9 +3,8 @@ This script contains factories for building model instances of the bouldern app
 """
 
 from random import choice
-
 from factory import Iterator, Faker, LazyAttribute, RelatedFactoryList, \
-    SubFactory
+    SubFactory, SelfAttribute
 from factory.django import DjangoModelFactory, ImageField
 
 from python_anywhere.accounts.models import User
@@ -60,7 +59,9 @@ class GymFactory(UGCFactory):
     grades = RelatedFactoryList(
         GradeFactory,
         factory_related_name='gym',
-        size=7
+        size=7,
+        created_by=SelfAttribute('..created_by'),
+        modified_by=SelfAttribute('..modified_by')
     )
 
 

@@ -81,12 +81,6 @@ def test_update_gym_grades(logged_in_client_rest, colors):
 
     # removed grades
     removed_grades = [grades.pop() for _ in range(2)]
-    # boulders for removed grades
-    from python_anywhere.bouldern.factories import BoulderFactory
-    removed_grade_boulders = BoulderFactory(
-        grade=removed_grades[0],
-        gym=gym
-    )
 
     # updated grade
     updated_grade = grades[-1]
@@ -126,3 +120,4 @@ def test_update_gym_grades(logged_in_client_rest, colors):
         grade.refresh_from_db()
     assert all(grade.modified_by == gym_author for grade in grades[:-1])
     assert updated_grade.modified_by == user
+
