@@ -41,6 +41,7 @@ import jscolor from '@eastdesire/jscolor/jscolor';
 import AppView from '../components/AppView.vue';
 import {onMounted, ref} from 'vue';
 import {useRouter} from 'vue-router';
+import {useStore} from 'vuex';
 
 
 export default {
@@ -55,10 +56,12 @@ export default {
       color: '#FF7514',
     });
     const router = useRouter();
+    const store = useStore();
     /**
      * Redirects to index after form submission
      */
-    function onSubmitted() {
+    function onSubmitted(response) {
+      store.commit('addColor', response.data);
       router.push('/');
     }
 
