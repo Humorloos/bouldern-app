@@ -101,25 +101,20 @@ class GymSerializer(ModelSerializer):
             # create a new one
             else:
                 grade, created = instance.grade_set.update_or_create(
-                    is_active=False,
-                    gym=instance,
-                    grade=validated_grade_data['grade'],
+                    is_active=False, gym=instance, grade=grade_data['grade'],
                     defaults={
                         'is_active': True,
-                        'color': validated_grade_data['color'],
+                        'color': Color.objects.get(pk=grade_data['color']),
                         'modified_by': user
-                    }
-                )
+                    })
                 if created:
                     grade.created_by = user
                 grade.save()
-        # deactivate grades that are missing in grade set together with
-        # corresponding boulders
+        # deactivate grades that are missing in grade set
         for grade in original_grade_set.values():
             grade.is_active = False
             grade.modified_by = user
             grade.save()
-            grade.boulder_set.update(is_active=False)
         return instance
 
 
