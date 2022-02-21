@@ -1,5 +1,27 @@
 <template>
   <v-row>
+    <v-col>
+      <v-text-field
+        id="id_name"
+        v-model="gymName"
+        label="Name"
+        type="text"
+        :disabled="edit"
+      />
+    </v-col>
+  </v-row>
+  <v-row>
+    <v-col>
+      <v-file-input
+        id="id_map"
+        accept="image/*"
+        label="Map"
+        :disabled="edit"
+        @change="onFileChange"
+      />
+    </v-col>
+  </v-row>
+  <v-row>
     <v-col class="text-subtitle-1">
       Grades
     </v-col>
@@ -56,6 +78,7 @@
     >
       <v-checkbox
         id="id_undefined_grade_active"
+        v-model="activeExtraColor"
         hide-details
         label="Use undefined grade?"
         @click="toggleExtraColor"
@@ -84,25 +107,60 @@ const defaultColor = {
 };
 
 export default {
-  name: 'GradeList',
+  name: 'GymForm',
   components: {
     ColorSelect,
   },
   props: {
-    colorOptions: {
+    edit: {
+      type: Boolean,
+      default: false,
+    },
+    initialGymName: {
+      type: String,
+      default: '',
+    },
+    initialGradeIds: {
       type: Array,
-      default: () => [],
+      default: () => [0],
+    },
+    initialColors: {
+      type: Array,
+      default: () => [defaultColor],
+    },
+    initialExtraGradeId: {
+      type: Number,
+      default: null,
+    },
+    initialExtraColor: {
+      type: Object,
+      default: defaultColor,
+    },
+    initiallyActiveExtraColor: {
+      type: Boolean,
+      default: false,
     },
   },
-  setup() {
-    const defaultColor = {
-      color: 'white',
-      name: '',
-      id: 0,
-    };
-    const colors = ref([defaultColor]);
-    const extraColor = ref(defaultColor);
-    const activeExtraColor = ref(false);
+  setup(props) {
+    // gym
+    const gymName = ref(props.initialGymName);
+    const map = ref(undefined);
+
+    /**
+     * Handler for file upload
+     *
+     * @param event the file upload event
+     */
+    function onFileChange(event) {
+      map.value = event.target.files[0];
+    }
+
+    // grades
+    const gradeIds = ref(props.initialGradeIds);
+    const colors = ref(props.initialColors);
+    const extraGradeId = ref(props.initialExtraGradeId);
+    const extraColor = ref(props.initialExtraColor);
+    const activeExtraColor = ref(props.initiallyActiveExtraColor);
 
     /**
      * Activates/deactivates the undefined grade color selector, on deactivation
@@ -126,11 +184,53 @@ export default {
      */
     function removeGradeSelect(index) {
       colors.value.splice(index, 1);
+      if (gradeIds[index] !== undefined) {
+        gradeIds.value.splice(index, 1);
+      }
     }
 
     const store = useStore();
 
+    const grades = computed(() => {
+      const grades = colors.value.map((color, index) => {
+        const grade = {
+          color: color.id,
+          grade: index + 1,
+        };
+        if (gradeIds.value[index] !== undefined) {
+          grade.id = gradeIds.value[index];
+        }
+        return grade;
+      });
+      if (activeExtraColor.value) {
+        const extraGrade = {
+          color: extraColor.value.id,
+          grade: NaN,
+        };
+        if (extraGradeId.value !== null) extraGrade.id = extraGradeId.value;
+        grades.push(extraGrade);
+      }
+      return grades;
+    });
+
+    /**
+     * Gets a form with the gym's name and all grades for creation
+     *
+     * @returns {object} the gym form
+     */
+    const form = computed(() => {
+      return {
+        name: gymName.value,
+        grade_set: grades,
+      };
+    });
+
     return {
+      // gym properties
+      gymName,
+      map,
+      onFileChange,
+      // grade properties
       defaultColor,
       colors,
       extraColor,
@@ -139,6 +239,9 @@ export default {
       addGradeSelect,
       removeGradeSelect,
       colorOptions: computed(() => store.state.colors),
+      grades,
+      // general properties
+      form,
     };
   },
 };

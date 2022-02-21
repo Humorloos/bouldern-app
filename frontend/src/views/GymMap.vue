@@ -1,6 +1,69 @@
 <template>
+  <app-view v-if="editingGym">
+    <template #app-bar-left>
+      <v-btn
+        id="close-edit-gym"
+        flat
+        icon="mdi-arrow-left"
+        @click="editingGym = false"
+      />
+      <v-app-bar-title>Edit Gym</v-app-bar-title>
+    </template>
+    <template #main>
+      <v-container>
+        <gym-form
+          ref="gymForm"
+          :edit="true"
+          :initial-gym-name="gymName"
+          :initial-grade-ids="regularGrades.map((grade) => grade.id)"
+          :initial-colors="regularGradeColors"
+          :initial-extra-grade-id="extraGrade === undefined ? null :
+            extraGrade.id"
+          :initial-extra-color="extraColor"
+          :initially-active-extra-color="extraColor !== defaultColor"
+        />
+        <v-btn @click="updateGymGrades">
+          Save
+        </v-btn>
+      </v-container>
+    </template>
+  </app-view>
+  <app-view v-else-if="filtering">
+    <template #app-bar-left>
+      <v-btn
+        id="close-filter"
+        flat
+        icon="mdi-arrow-left"
+        @click="filtering = false"
+      />
+      <v-app-bar-title>Filter Grades</v-app-bar-title>
+    </template>
+    <template #main>
+      <v-container fluid>
+        <v-row>
+          <v-col cols="1">
+            <v-checkbox
+              v-model="allGradesActive"
+              label="all"
+              hide-details
+              @update:model-value="selectGrades"
+            />
+            <v-checkbox
+              v-for="grade in gym.grade_set"
+              :key="grade.id"
+              v-model="activeGrades"
+              :value="grade.id"
+              :label="grade.grade.toString()"
+              :color="getHexColor(grade.color)"
+              hide-details
+            />
+          </v-col>
+        </v-row>
+      </v-container>
+    </template>
+  </app-view>
   <app-view
-    v-if="!filtering"
+    v-else
   >
     <template #app-bar-right>
       <v-btn
@@ -26,7 +89,7 @@
         id="id_edit_gym"
         flat
         icon="mdi-pencil"
-        :to="`/edit-gym/${gymName}`"
+        @click="editingGym = true"
       />
     </template>
     <template #main>
@@ -136,41 +199,6 @@
       />
     </template>
   </app-view>
-  <app-view v-else>
-    <template #app-bar-left>
-      <v-btn
-        id="close-filter"
-        flat
-        icon="mdi-arrow-left"
-        @click="filtering = false"
-      />
-      <v-app-bar-title>Filter Grades</v-app-bar-title>
-    </template>
-    <template #main>
-      <v-container fluid>
-        <v-row>
-          <v-col cols="1">
-            <v-checkbox
-              v-model="allGradesActive"
-              label="all"
-              hide-details
-              @update:model-value="selectGrades"
-            />
-            <v-checkbox
-              v-for="grade in gym.grade_set"
-              :key="grade.id"
-              v-model="activeGrades"
-              :value="grade.id"
-              :label="grade.grade === null ? 'undefined' :
-                grade.grade.toString()"
-              :color="getColor(grade.color)"
-              hide-details
-            />
-          </v-col>
-        </v-row>
-      </v-container>
-    </template>
-  </app-view>
 </template>
 
 <script>
@@ -201,6 +229,7 @@ import {
   watch,
   watchPostEffect,
 } from 'vue';
+import GymForm from '../components/GymForm.vue';
 
 export default {
   name: 'GymMap',
@@ -209,6 +238,7 @@ export default {
     MapOverlay,
     VueForm,
     ColorSelect,
+    GymForm,
   },
   setup() {
     const store = useStore();
@@ -261,7 +291,7 @@ export default {
       grade_set: [{
         id: -1,
         grade: 0,
-        color: defaultColor,
+        color: 0,
       }],
     });
     const route = useRoute();
@@ -451,13 +481,21 @@ export default {
     });
 
     /**
+     * todo
+     */
+    function getColor(colorId) {
+      if (colorId === -1) return defaultColor;
+      return colorOptions.value.find((c) => c.id === colorId);
+    }
+
+    /**
      * Gets the color associated to the provided ID.
      *
      * @param colorId the id to get the color for
      * @returns {string} the color string
      */
-    function getColor(colorId) {
-      return colorOptions.value.find((c) => c.id === colorId).color;
+    function getHexColor(colorId) {
+      return getColor(colorId).color;
     }
 
     /**
@@ -467,9 +505,16 @@ export default {
      * @returns {object} the grade object.
      */
     function getGrade(gradeId) {
-      return gym.value.grade_set.find((g) => g.id === gradeId);
+      const grade = gym.value.grade_set.find((g) => g.id === gradeId);
+      if (grade === undefined) return defaultGrade;
+      return grade;
     }
 
+    const defaultGrade = {
+      grade: -1,
+      id: -1,
+      color: -1,
+    };
     /**
      * Sets the style of the provided boulder feature based on its color, grade,
      * and ascent result
@@ -478,8 +523,8 @@ export default {
      */
     function setBoulderStyle(boulder) {
       boulder.setStyle(getBoulderStyle(
-          getColor(boulder.color),
-          getColor(getGrade(boulder.grade).color),
+          getHexColor(boulder.color),
+          getHexColor(getGrade(boulder.grade).color),
           boulder.age,
           boulder.ascent !== null ? boulder.ascent.result : undefined,
       ));
@@ -621,9 +666,9 @@ export default {
     const gradeColors = computed(() => {
       return gym.value.grade_set.map(
           ({id, grade, color}) => ({
-            color: getColor(color),
+            color: getHexColor(color),
             id: id,
-            name: grade === null ? 'undefined' : grade,
+            name: grade,
           }));
     });
 
@@ -792,6 +837,7 @@ export default {
       });
       loaded.value = true;
     }
+
     loadGymMap(onGymMapLoaded);
     // Load new gym map when gym name changes
     watch(gymName, (newGymName) => {
@@ -810,9 +856,52 @@ export default {
       else store.dispatch('removeFavoriteGym', gymName.value);
     }
 
+    // edit gym view
+
+    const editingGym = ref(false);
+
+    const extraGrade = computed(() => {
+      return gym.value.grade_set.find(
+          (grade) => grade.grade === 'undefined');
+    });
+
+    const extraColor = computed(() => {
+      return extraGrade.value === undefined ? defaultColor :
+          getColor(extraGrade.value.color);
+    });
+
+    const regularGrades = computed(() => gym.value.grade_set
+        .filter((grade) => grade.grade !== 'undefined'));
+
+    const regularGradeColors = computed(() => {
+      return regularGrades.value
+          .map((grade) => getColor(grade.color));
+    });
+
+    const gymForm = ref(null);
+
+    /**
+     * todo
+     */
+    function updateGymGrades() {
+      requestWithJwt({
+        apiPath: `bouldern/gym/${gym.value.id}/`,
+        method: 'PATCH',
+        data: {grade_set: gymForm.value.grades},
+      }).then((response) => {
+        gym.value = response.data;
+        vectorSource.forEachFeature((boulder) => {
+          if (!gymForm.value.gradeIds.includes(boulder.grade)) {
+            vectorSource.removeFeature(boulder);
+          }
+        });
+        editingGym.value = false;
+      });
+    }
+
     return {
       // colors
-      getColor,
+      getHexColor,
       // gym map
       gym,
       ascentResults,
@@ -846,6 +935,15 @@ export default {
       setFavorite,
       // gym name
       gymName,
+      // edit gym
+      editingGym,
+      extraGrade,
+      extraColor,
+      regularGrades,
+      regularGradeColors,
+      gymForm,
+      updateGymGrades,
+      defaultColor,
     };
   },
 };

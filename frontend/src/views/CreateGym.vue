@@ -10,29 +10,8 @@
           :api-path="apiPath"
           @submitted="onSubmitted"
         >
-          <v-row>
-            <v-col>
-              <v-text-field
-                id="id_name"
-                v-model="gymName"
-                label="Name"
-                type="text"
-              />
-            </v-col>
-          </v-row>
-          <v-row>
-            <v-col>
-              <v-file-input
-                id="id_map"
-                accept="image/*"
-                label="Map"
-                @change="onFileChange"
-              />
-            </v-col>
-          </v-row>
-          <grade-list
-            ref="gradeList"
-            :color-options="colorOptions"
+          <gym-form
+            ref="gymForm"
           />
         </vue-form>
       </v-container>
@@ -48,54 +27,21 @@ import {useStore} from 'vuex';
 import AppView from '../components/AppView.vue';
 import {computed, ref} from 'vue';
 import {useRouter} from 'vue-router';
-import GradeList from '../components/GradeList.vue';
+import GymForm from '../components/GymForm.vue';
 
 export default {
   name: 'CreateGym',
   components: {
-    GradeList,
+    GymForm,
     AppView,
     VueForm,
   },
   setup() {
-    const gymName = ref('');
-    const map = ref(undefined);
-
     const store = useStore();
     const requestWithJwt = (options) =>
       store.dispatch('requestWithJwt', options);
 
-    const gradeList = ref(null);
-
-    /**
-     * Gets a form with the gym's name and all grades for submission
-     *
-     * @returns {object} the gym form
-     */
-    const form = computed(() => {
-      let gradeSet;
-      if (gradeList.value !== null) {
-        gradeSet = gradeList.value.colors.map((color, index) => {
-          return {color: color.id, grade: index + 1};
-        });
-        if (gradeList.value.activeExtraColor) {
-          gradeSet.push({
-            color: gradeList.value.extraColor.id, grade: null});
-        }
-      }
-      return {
-        name: gymName.value,
-        grade_set: gradeSet,
-      };
-    });
-    /**
-     * Handler for file upload
-     *
-     * @param event the file upload event
-     */
-    function onFileChange(event) {
-      map.value = event.target.files[0];
-    }
+    const gymForm = ref(null);
     const router = useRouter();
     const apiPath = '/bouldern/gym/';
     /**
@@ -107,7 +53,7 @@ export default {
      */
     function onSubmitted(response) {
       const formData = new FormData();
-      formData.append('map', map.value);
+      formData.append('map', gymForm.value.map);
       requestWithJwt({
         apiPath: `${apiPath}${response.data.id}/`,
         method: 'PATCH',
@@ -116,14 +62,13 @@ export default {
       });
       router.push('/');
     }
+    const form = computed(
+        () => gymForm.value !== null ? gymForm.value.form : {});
     return {
-      gymName,
-      form,
       apiPath,
       onSubmitted,
-      onFileChange,
-      gradeList,
-      colorOptions: computed(() => store.state.colors),
+      gymForm,
+      form,
     };
   },
 };
