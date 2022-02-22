@@ -13,7 +13,9 @@
       <v-container>
         <gym-form
           ref="gymForm"
-          :edit="true"
+          :editing="true"
+          :initial-data="gym"
+          :initial-map="mapImageFile"
           :initial-gym-name="gymName"
           :initial-grade-ids="regularGrades.map((grade) => grade.id)"
           :initial-colors="regularGradeColors"
@@ -89,7 +91,7 @@
         id="id_edit_gym"
         flat
         icon="mdi-pencil"
-        @click="editingGym = true"
+        @click="editGym"
       />
     </template>
     <template #main>
@@ -521,6 +523,13 @@ export default {
     // favorite gym toggle
     const favorite = ref(false);
 
+    const cleanMapFileName = computed(() => {
+      return /(.*)_[^_]*(\..*)/
+          .exec(gym.value.map.split('/').at(-1))
+          .slice(-2).join('');
+    });
+    const mapImageFile = ref(undefined);
+
     /**
      * Gets the gym data from the API, loads the gym map image, and deserializes
      * the gym's boulders into the feature collection
@@ -549,22 +558,31 @@ export default {
           vectorSource.addFeature(boulder);
         });
         // load map
-        mapImage.src = gym.value.map;
-        mapImage.onload = () => {
-          extent[2] = mapImage.width;
-          extent[3] = mapImage.height;
-          map.setLayers([
-            imageLayer.value,
-            vectorLayer,
-          ]);
-          map.setView(new View({
-            projection: projection.value,
-            center: getCenter(extent),
-            zoom: 1,
-            maxZoom: 8,
-          }));
-          if (onLoaded) onLoaded();
-        };
+        axios.get(gym.value.map, {responseType: 'blob'})
+            .then((response) => {
+              mapImageFile.value = new File(
+                  [response.data], cleanMapFileName.value);
+              const reader = new FileReader();
+              reader.onloadend = function() {
+                mapImage.onload = () => {
+                  extent[2] = mapImage.width;
+                  extent[3] = mapImage.height;
+                  map.setLayers([
+                    imageLayer.value,
+                    vectorLayer,
+                  ]);
+                  map.setView(new View({
+                    projection: projection.value,
+                    center: getCenter(extent),
+                    zoom: 1,
+                    maxZoom: 8,
+                  }));
+                  if (onLoaded) onLoaded();
+                };
+                mapImage.src = reader.result;
+              };
+              reader.readAsDataURL(response.data);
+            });
       });
       favorite.value = store.state.favoriteGyms.includes(gymName.value);
     }
@@ -847,6 +865,12 @@ export default {
     // edit gym view
 
     const editingGym = ref(false);
+    /**
+     * todo
+     */
+    function editGym() {
+      editingGym.value = true;
+    }
 
     const extraGrade = computed(() => {
       return gym.value.grade_set.find(
@@ -900,6 +924,7 @@ export default {
       colorOptions,
       overlay,
       creating,
+      mapImageFile,
       // create popover
       selectedCoordinates,
       selectedColor,
@@ -926,6 +951,7 @@ export default {
       // gym name
       gymName,
       // edit gym
+      editGym,
       editingGym,
       extraGrade,
       extraColor,

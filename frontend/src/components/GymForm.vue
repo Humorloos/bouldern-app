@@ -6,7 +6,17 @@
         v-model="gymName"
         label="Name"
         type="text"
-        :disabled="edit"
+        :disabled="editing"
+      />
+    </v-col>
+  </v-row>
+  <v-row>
+    <v-col>
+      <v-img
+        v-if="mapUrl !== ''"
+        :src="mapUrl"
+        max-height="300px"
+        transition="false"
       />
     </v-col>
   </v-row>
@@ -17,14 +27,7 @@
         v-model="map"
         accept="image/*"
         label="Map"
-        :disabled="edit"
-      />
-    </v-col>
-    <v-col>
-      <v-img
-        v-if="mapUrl !== ''"
-        :src="mapUrl"
-        transition="false"
+        :disabled="editing"
       />
     </v-col>
   </v-row>
@@ -107,6 +110,7 @@
 import {computed, ref} from 'vue';
 import ColorSelect from './ColorSelect.vue';
 import {useStore} from 'vuex';
+
 const defaultColor = {
   color: 'white',
   name: '',
@@ -119,9 +123,49 @@ export default {
     ColorSelect,
   },
   props: {
-    edit: {
+    editing: {
       type: Boolean,
       default: false,
+    },
+    initialData: {
+      type: Object,
+      default: () => {
+        return {
+          name: '',
+          grade_set:
+          [
+            {
+              'grade': 1,
+              'color': 1,
+              'id': 1,
+            },
+            {
+              'grade': 2,
+              'color': 2,
+              'id': 2,
+            },
+            {
+              'grade': 3,
+              'color': 3,
+              'id': 3,
+            },
+            {
+              'grade': 4,
+              'color': 4,
+              'id': 4,
+            },
+            {
+              'grade': 'undefined',
+              'color': 9,
+              'id': 8,
+            },
+          ],
+        };
+      },
+    },
+    initialMap: {
+      type: Object,
+      default: undefined,
     },
     initialGymName: {
       type: String,
@@ -150,8 +194,8 @@ export default {
   },
   setup(props) {
     // gym
-    const gymName = ref(props.initialGymName);
-    const map = ref([]);
+    const gymName = ref(props.initialData.name);
+    const map = ref(props.initialMap ? props.initialMap : []);
     const mapUrl = computed(() => {
       if (map.value.length !== 0) return URL.createObjectURL(map.value[0]);
       else return '';
@@ -174,12 +218,14 @@ export default {
       }
       activeExtraColor.value = !activeExtraColor.value;
     }
+
     /**
      * Adds the default color to colors to create new grade select
      */
     function addGradeSelect() {
       colors.value.push(defaultColor);
     }
+
     /**
      * Removes the color with provided index from colors to remove the
      * corresponding grade select
