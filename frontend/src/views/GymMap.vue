@@ -16,13 +16,6 @@
           :editing="true"
           :initial-data="gym"
           :initial-map="mapImageFile"
-          :initial-gym-name="gymName"
-          :initial-grade-ids="regularGrades.map((grade) => grade.id)"
-          :initial-colors="regularGradeColors"
-          :initial-extra-grade-id="extraGrade === undefined ? null :
-            extraGrade.id"
-          :initial-extra-color="extraColor"
-          :initially-active-extra-color="extraColor !== defaultColor"
         />
         <v-btn @click="updateGymGrades">
           Save
@@ -872,24 +865,6 @@ export default {
       editingGym.value = true;
     }
 
-    const extraGrade = computed(() => {
-      return gym.value.grade_set.find(
-          (grade) => grade.grade === 'undefined');
-    });
-
-    const extraColor = computed(() => {
-      return extraGrade.value === undefined ? defaultColor :
-          store.getters.colorById(extraGrade.value.color);
-    });
-
-    const regularGrades = computed(() => gym.value.grade_set
-        .filter((grade) => grade.grade !== 'undefined'));
-
-    const regularGradeColors = computed(() => {
-      return regularGrades.value
-          .map((grade) => store.getters.colorById(grade.color));
-    });
-
     const gymForm = ref(null);
 
     /**
@@ -953,10 +928,6 @@ export default {
       // edit gym
       editGym,
       editingGym,
-      extraGrade,
-      extraColor,
-      regularGrades,
-      regularGradeColors,
       gymForm,
       updateGymGrades,
       defaultColor,
