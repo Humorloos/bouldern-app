@@ -74,6 +74,7 @@
       class="flex-grow-0"
     >
       <v-btn
+        :id="`id_remove-grade-${index + 1}`"
         icon="mdi-close"
         flat
         size="small"

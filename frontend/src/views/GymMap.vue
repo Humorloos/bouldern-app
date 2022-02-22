@@ -17,7 +17,11 @@
           :initial-data="gym"
           :initial-map="mapImageFile"
         />
-        <v-btn @click="updateGymGrades">
+        <!--        todo: fix logged out app view, do not show favorite gyms and find gym title-->
+        <v-btn
+          id="id_save-gym"
+          @click="updateGymGrades"
+        >
           Save
         </v-btn>
       </v-container>
