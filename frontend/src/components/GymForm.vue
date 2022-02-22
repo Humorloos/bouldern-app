@@ -106,7 +106,7 @@
   </v-row>
 </template>
 <script>
-/** @file todo */
+/** @file form for creating or editing Gyms */
 
 import {computed, ref} from 'vue';
 import ColorSelect from './ColorSelect.vue';

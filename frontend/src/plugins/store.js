@@ -92,13 +92,13 @@ export default createStore({
       state.favoriteGyms = loadedFavorites;
     },
     /**
-     * todo
+     * Sets the colors to the provided ones
      */
     setColors(state, loadedColors) {
       state.colors = loadedColors;
     },
     /**
-     * todo
+     * Adds the provided color to colors
      */
     addColor(state, color) {
       state.colors.push(color);
@@ -138,7 +138,7 @@ export default createStore({
       commit('setFavoriteGyms', response.data.map(({gym}) => gym));
     },
     /**
-     * Load colors todo
+     * Loads all available colors from the API and saves them
      */
     async loadColors({dispatch, commit}) {
       const colorResponse = await dispatch('requestWithJwt', {
@@ -279,7 +279,10 @@ export default createStore({
       return getters.hasValidRefreshToken || getters.hasValidAuthToken;
     },
     /**
-     * todo
+     * Gets the color object with the provided id
+     *
+     * @returns {function(*)} function that returns the respective color or the
+     * default color if none is found
      */
     colorById(state) {
       return (colorId) => {

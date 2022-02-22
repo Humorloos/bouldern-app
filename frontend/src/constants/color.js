@@ -1,4 +1,4 @@
-/** @file todo  */
+/** @file color-related constants  */
 
 export const Colors = {
   DEFAULT_COLOR: {

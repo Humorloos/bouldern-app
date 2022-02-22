@@ -28,11 +28,10 @@ class Command(BaseCommand):
                     password='admin',
                     is_superuser=True,
                     is_staff=True, )
-        # todo in app bar show boulder holder if wide enough
         # create test user
         test_user = UserFactory(email='wetBonez@web.de',
-                    username='wetBonez',
-                    password='youcantknowthispassword123')
+                                username='wetBonez',
+                                password='youcantknowthispassword123')
 
         # add default colors
         for name, color in default_colors.items():
