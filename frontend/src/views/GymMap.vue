@@ -891,7 +891,9 @@ export default {
       }).then((response) => {
         gym.value = response.data;
         vectorSource.forEachFeature((boulder) => {
-          if (!gymForm.value.gradeIds.includes(boulder.grade)) {
+          if (gymForm.value.gradeIds.includes(boulder.grade)) {
+            setBoulderStyle(boulder);
+          } else {
             vectorSource.removeFeature(boulder);
           }
         });
