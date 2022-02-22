@@ -64,16 +64,17 @@ class GymSerializer(ModelSerializer):
             .data
 
     def create(self, validated_data):
-        grade_set_data = validated_data.pop('grade_set')
         gym = Gym.objects.create(**validated_data)
+        grade_set_data = self.initial_data['grade_set']
         for grade_data in grade_set_data:
-            Grade.objects.create(
-                gym=gym, created_by=validated_data['created_by'],
-                **grade_data)
+            grade_serializer = GradeSerializer(data=grade_data)
+            grade_serializer.is_valid(raise_exception=True)
+            grade_serializer.save(
+                gym=gym, created_by=validated_data['created_by'])
         return gym
 
     def update(self, instance, validated_data):
-        grade_set_data = self.initial_data['grade_set']
+        grade_set_data = self.initial_data.get('grade_set', [])
         original_grade_set = {
             grade.pk: grade for grade in instance.grade_set.filter(
                 is_active=True)
@@ -115,6 +116,8 @@ class GymSerializer(ModelSerializer):
             grade.is_active = False
             grade.modified_by = user
             grade.save()
+
+        super().update(instance, validated_data)
         return instance
 
 
