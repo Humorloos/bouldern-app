@@ -132,52 +132,13 @@ export default {
       default: () => {
         return {
           name: '',
-          grade_set:
-          [
-            {
-              'grade': 1,
-              'color': 1,
-              'id': 1,
-            },
-            {
-              'grade': 2,
-              'color': 2,
-              'id': 2,
-            },
-            {
-              'grade': 3,
-              'color': 3,
-              'id': 3,
-            },
-            {
-              'grade': 4,
-              'color': 4,
-              'id': 4,
-            },
-            {
-              'grade': 'undefined',
-              'color': 9,
-              'id': 8,
-            },
-          ],
+          grade_set: [{'grade': 1, 'color': -1}],
         };
       },
     },
     initialMap: {
       type: Object,
       default: undefined,
-    },
-    initialGymName: {
-      type: String,
-      default: '',
-    },
-    initialGradeIds: {
-      type: Array,
-      default: () => [0],
-    },
-    initialColors: {
-      type: Array,
-      default: () => [defaultColor],
     },
     initialExtraGradeId: {
       type: Number,
@@ -187,26 +148,32 @@ export default {
       type: Object,
       default: defaultColor,
     },
-    initiallyActiveExtraColor: {
-      type: Boolean,
-      default: false,
-    },
   },
   setup(props) {
     // gym
     const gymName = ref(props.initialData.name);
-    const map = ref(props.initialMap ? props.initialMap : []);
+    const map = ref(props.initialMap ? [props.initialMap] : []);
     const mapUrl = computed(() => {
       if (map.value.length !== 0) return URL.createObjectURL(map.value[0]);
       else return '';
     });
 
+    const store = useStore();
+
     // grades
-    const gradeIds = ref(props.initialGradeIds);
-    const colors = ref(props.initialColors);
-    const extraGradeId = ref(props.initialExtraGradeId);
-    const extraColor = ref(props.initialExtraColor);
-    const activeExtraColor = ref(props.initiallyActiveExtraColor);
+    const regularGrades = props.initialData.grade_set
+        .filter((grade) => grade.grade !== 'undefined');
+    const gradeIds = ref(regularGrades.map((grade) => grade.id));
+    const colors = ref(regularGrades
+        .map((grade) => store.getters.colorById(grade.color)));
+
+    const extraGrade = props.initialData.grade_set.find(
+        (grade) => grade.grade === 'undefined');
+    const extraGradeId = ref(extraGrade === undefined ?
+        null : extraGrade.id);
+    const extraColor = ref(extraGrade === undefined ?
+        defaultColor : store.getters.colorById(extraGrade.color));
+    const activeExtraColor = ref(extraGrade !== undefined);
 
     /**
      * Activates/deactivates the undefined grade color selector, on deactivation
@@ -236,8 +203,6 @@ export default {
         gradeIds.value.splice(index, 1);
       }
     }
-
-    const store = useStore();
 
     const grades = computed(() => {
       const grades = colors.value.map((color, index) => {
@@ -288,6 +253,7 @@ export default {
       removeGradeSelect,
       colorOptions: computed(() => store.state.colors),
       grades,
+      gradeIds,
       // general properties
       form,
     };
