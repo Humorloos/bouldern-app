@@ -457,8 +457,6 @@ export default {
         source: mapImageSource.value,
       });
     });
-    // todo: colors have to be in store, and then grade list does not need
-    //  colors property but takes them from store
     /**
      * Icon drawing interaction for drawing boulder icons. Only allows drawing
      * on the image, not outside of it.
@@ -861,18 +859,19 @@ export default {
 
     // edit gym view
 
+    const gymForm = ref(null);
     const editingGym = ref(false);
+
     /**
-     * todo
+     * Opens the edit gym view
      */
     function editGym() {
       editingGym.value = true;
     }
 
-    const gymForm = ref(null);
-
     /**
-     * todo
+     * Updates the gym's grades via PATCH request with the grades from the gym
+     * form
      */
     function updateGymGrades() {
       requestWithJwt({
