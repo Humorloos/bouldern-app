@@ -53,7 +53,7 @@ export default {
      */
     function onSubmitted(response) {
       const formData = new FormData();
-      formData.append('map', gymForm.value.map);
+      formData.append('map', gymForm.value.map[0]);
       requestWithJwt({
         apiPath: `${apiPath}${response.data.id}/`,
         method: 'PATCH',
@@ -62,8 +62,9 @@ export default {
       });
       router.push('/');
     }
-    const form = computed(
-        () => gymForm.value !== null ? gymForm.value.form : {});
+    const form = computed(() => {
+      return gymForm.value !== null ? gymForm.value.form : {};
+    });
     return {
       apiPath,
       onSubmitted,
