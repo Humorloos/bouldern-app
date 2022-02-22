@@ -102,10 +102,12 @@ class GymSerializer(ModelSerializer):
             # create a new one
             else:
                 grade, created = instance.grade_set.update_or_create(
-                    is_active=False, gym=instance, grade=grade_data['grade'],
+                    is_active=False,
+                    gym=instance,
+                    grade=validated_grade_data['grade'],
                     defaults={
                         'is_active': True,
-                        'color': Color.objects.get(pk=grade_data['color']),
+                        'color': validated_grade_data['color'],
                         'modified_by': user
                     })
                 if created:
