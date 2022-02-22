@@ -11,7 +11,7 @@ from python_anywhere.bouldern.factories import ColorFactory, GymFactory, \
     BoulderFactory, AscentFactory, FavoriteGymFactory, GradeFactory
 from python_anywhere.bouldern.models import Color
 from python_anywhere.bouldern.tests.conftest import default_colors
-from python_anywhere.settings import BASE_DIR, env, RESOURCES_DIR
+from python_anywhere.settings import BASE_DIR, RESOURCES_DIR
 
 
 class Command(BaseCommand):
