@@ -57,10 +57,11 @@ def test_create_gym(logged_in_client_rest, colors):
     assert grades[-1].grade is None
     # When
     multipart_payload = {'map': gym_stub.map}
-    client.patch(
+    response = client.patch(
         GymAPI().reverse_action('detail', args=[response.data['id']]),
         data=multipart_payload, format='multipart')
     # Then
+    assert response.status_code == HTTP_200_OK
     gym = Gym.objects.first()
     assert_correct_gym(gym, json_payload | multipart_payload, user)
 
