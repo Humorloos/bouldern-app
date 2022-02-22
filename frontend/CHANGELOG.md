@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### 0.1.6 (2022-02-22)
+
+
+### Features
+
+* **AppView:** Collapse Boulder Holder title to home button ([c6ddb89](https://github.com/Humorloos/bouldern-app/commit/c6ddb89092deffd9e76eecd8da9e69c4393b209b))
+* **CreateGym:** add numbers and title to grades ([3a27a08](https://github.com/Humorloos/bouldern-app/commit/3a27a08b63ee3b87fb1815f9115e1cb9a60400cf))
+* **CreateGymView:** add undefined grade option ([8c06327](https://github.com/Humorloos/bouldern-app/commit/8c06327b5246ddf2aa82d6ba8597cf5e90a5f199))
+* **CreateGymView:** allow removing gym grades ([24bfd86](https://github.com/Humorloos/bouldern-app/commit/24bfd866844bf64a7ad548e2ae2b017ffbd08345))
+* **GymAPI:** Allow updating a gym's grades ([3383d09](https://github.com/Humorloos/bouldern-app/commit/3383d09883c53943f643f86cf6e9872a26d390b0))
+* **GymForm:** Add preview image to map upload ([49b5ed8](https://github.com/Humorloos/bouldern-app/commit/49b5ed8a49f43bbd039b03fb730d6efa79be0f8a))
+* **GymMap:** Add view for editing gym grades ([16af04e](https://github.com/Humorloos/bouldern-app/commit/16af04ee109b953dc2e0f627483531a33e5d8ba3))
+* **views:** allow destroying users via delete ([a57a2ae](https://github.com/Humorloos/bouldern-app/commit/a57a2ae6455dee204cd370a6e8d153c624ee1efe))
+
+
+### Bug Fixes
+
+* **AppView:** Hide app drawer entries ([4564276](https://github.com/Humorloos/bouldern-app/commit/45642763a648b1c95d9f3693e9802b35dc3ea735))
+
 ### 0.1.5 (2022-02-20)
 
 
