@@ -4,6 +4,7 @@ import {createStore} from 'vuex';
 import http from '../http-common';
 import i18n from '../i18n';
 import createPersistedState from 'vuex-persistedstate';
+import {Colors} from '../constants/color.js';
 
 /**
  * Generates default state of store for initialization
@@ -31,12 +32,6 @@ const getDefaultState = function() {
     colors: [],
     activeGym: null,
   };
-};
-
-export const defaultColor = {
-  name: '',
-  id: -1,
-  color: '#ffffff',
 };
 
 export default createStore({
@@ -288,7 +283,8 @@ export default createStore({
      */
     colorById(state) {
       return (colorId) => {
-        return state.colors.find((c) => c.id === colorId) || defaultColor;
+        return state.colors.find((c) => c.id === colorId) ||
+            Colors.DEFAULT_COLOR;
       };
     },
     state: (state) => state,

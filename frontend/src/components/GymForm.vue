@@ -110,12 +110,7 @@
 import {computed, ref} from 'vue';
 import ColorSelect from './ColorSelect.vue';
 import {useStore} from 'vuex';
-
-const defaultColor = {
-  color: 'white',
-  name: '',
-  id: 0,
-};
+import {Colors} from '../constants/color';
 
 export default {
   name: 'GymForm',
@@ -146,7 +141,7 @@ export default {
     },
     initialExtraColor: {
       type: Object,
-      default: defaultColor,
+      default: Colors.DEFAULT_COLOR,
     },
   },
   setup(props) {
@@ -172,7 +167,7 @@ export default {
     const extraGradeId = ref(extraGrade === undefined ?
         null : extraGrade.id);
     const extraColor = ref(extraGrade === undefined ?
-        defaultColor : store.getters.colorById(extraGrade.color));
+        Colors.DEFAULT_COLOR : store.getters.colorById(extraGrade.color));
     const activeExtraColor = ref(extraGrade !== undefined);
 
     /**
@@ -181,7 +176,7 @@ export default {
      */
     function toggleExtraColor() {
       if (activeExtraColor.value) {
-        extraColor.value = defaultColor;
+        extraColor.value = Colors.DEFAULT_COLOR;
       }
       activeExtraColor.value = !activeExtraColor.value;
     }
@@ -190,7 +185,7 @@ export default {
      * Adds the default color to colors to create new grade select
      */
     function addGradeSelect() {
-      colors.value.push(defaultColor);
+      colors.value.push(Colors.DEFAULT_COLOR);
     }
 
     /**
@@ -244,7 +239,6 @@ export default {
       map,
       mapUrl,
       // grade properties
-      defaultColor,
       colors,
       extraColor,
       activeExtraColor,
