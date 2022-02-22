@@ -43,7 +43,7 @@ describe('The color creation view', () => {
 });
 
 describe('The boulder holder', () => {
-  it('loads the last opened gym at root', () => {
+  it.only('loads the last opened gym at root', () => {
     for (const _ of waitingFor(
         'GET', `/bouldern/gym-map-resources/?name=${constants.greenGymName}`)) {
       cy.visit(`gym-map/${constants.greenGymName}`);
@@ -53,7 +53,7 @@ describe('The boulder holder', () => {
         'GET', `/bouldern/gym-map-resources/?name=${constants.gymName}`)) {
       cy.visit(`gym-map/${constants.gymName}`);
     }
-    cy.get('.v-app-bar-title__placeholder').click();
+    cy.get('#id_home').click();
     cy.window().its(`${GymMapView.name}.loaded`).should('equal', true);
   });
 });
