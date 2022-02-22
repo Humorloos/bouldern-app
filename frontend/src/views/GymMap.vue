@@ -17,7 +17,6 @@
           :initial-data="gym"
           :initial-map="mapImageFile"
         />
-        <!--        todo: fix logged out app view, do not show favorite gyms and find gym title-->
         <v-btn
           id="id_save-gym"
           @click="updateGymGrades"
