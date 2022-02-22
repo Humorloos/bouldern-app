@@ -230,6 +230,7 @@ import {
   watchPostEffect,
 } from 'vue';
 import GymForm from '../components/GymForm.vue';
+import {defaultColor} from '../plugins/store.js';
 
 export default {
   name: 'GymMap',
@@ -277,11 +278,6 @@ export default {
     });
 
     // colors
-    const defaultColor = {
-      name: '',
-      id: -1,
-      color: '#ffffff',
-    };
     const colorOptions = computed(() => store.state.colors);
 
     // gym map
@@ -481,21 +477,13 @@ export default {
     });
 
     /**
-     * todo
-     */
-    function getColor(colorId) {
-      if (colorId === -1) return defaultColor;
-      return colorOptions.value.find((c) => c.id === colorId);
-    }
-
-    /**
      * Gets the color associated to the provided ID.
      *
      * @param colorId the id to get the color for
      * @returns {string} the color string
      */
     function getHexColor(colorId) {
-      return getColor(colorId).color;
+      return store.getters.colorById(colorId).color;
     }
 
     /**
@@ -867,7 +855,7 @@ export default {
 
     const extraColor = computed(() => {
       return extraGrade.value === undefined ? defaultColor :
-          getColor(extraGrade.value.color);
+          store.getters.colorById(extraGrade.value.color);
     });
 
     const regularGrades = computed(() => gym.value.grade_set
@@ -875,7 +863,7 @@ export default {
 
     const regularGradeColors = computed(() => {
       return regularGrades.value
-          .map((grade) => getColor(grade.color));
+          .map((grade) => store.getters.colorById(grade.color));
     });
 
     const gymForm = ref(null);

@@ -33,6 +33,12 @@ const getDefaultState = function() {
   };
 };
 
+export const defaultColor = {
+  name: '',
+  id: -1,
+  color: '#ffffff',
+};
+
 export default createStore({
   plugins: [createPersistedState()],
   state: getDefaultState(),
@@ -276,6 +282,14 @@ export default createStore({
      */
     isAuthenticated(state, getters) {
       return getters.hasValidRefreshToken || getters.hasValidAuthToken;
+    },
+    /**
+     * todo
+     */
+    colorById(state) {
+      return (colorId) => {
+        return state.colors.find((c) => c.id === colorId) || defaultColor;
+      };
     },
     state: (state) => state,
   },
