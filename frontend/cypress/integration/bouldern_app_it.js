@@ -11,7 +11,10 @@ beforeEach(() => {
   cy.window().its('$store.state.authToken.token').should('not.be.empty');
   for (const _ of waitingFor('GET', '/bouldern/favorite-gym')) {
     cy.window().its('$store')
-        .then((store) => store.dispatch('loadFavoriteGyms'));
+        .then((store) => {
+          store.dispatch('loadFavoriteGyms');
+          store.dispatch('loadColors');
+        });
   }
 });
 
