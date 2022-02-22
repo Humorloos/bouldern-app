@@ -16,10 +16,15 @@ class ColorSerializer(ModelSerializer):
 
 
 class GradeField(ModelField):
-    def to_representation(self, value):
-        if value.grade is None:
+    """
+    Field for serializing a Grade instance's grade field. Translates
+    'undefined' to None
+    """
+
+    def to_representation(self, obj):
+        if obj.grade is None:
             return 'undefined'
-        return value.grade
+        return obj.grade
 
     def to_internal_value(self, data):
         if data == "undefined":
@@ -59,9 +64,16 @@ class GymSerializer(ModelSerializer):
         model = Gym
         fields = ['name', 'map', 'id', 'grade_set']
 
-    def get_grade_set(self, obj):
-        return GradeSerializer(obj.grade_set.filter(is_active=True), many=True) \
-            .data
+    @staticmethod
+    def get_grade_set(obj):
+        """
+        Gets the gym's active grades
+
+        :param obj: the gym
+        :return: the gym's active grades
+        """
+        return GradeSerializer(
+            obj.grade_set.filter(is_active=True), many=True).data
 
     def create(self, validated_data):
         gym = Gym.objects.create(**validated_data)
