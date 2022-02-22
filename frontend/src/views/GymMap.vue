@@ -225,7 +225,7 @@ import {
   watchPostEffect,
 } from 'vue';
 import GymForm from '../components/GymForm.vue';
-import {defaultColor} from '../plugins/store.js';
+import {Colors} from '../constants/color.js';
 
 export default {
   name: 'GymMap',
@@ -588,8 +588,8 @@ export default {
 
     const selectedBoulder = ref({ascent: undefined});
     const selectedCoordinates = ref({});
-    const selectedColor = ref(defaultColor);
-    const selectedGrade = ref(defaultColor);
+    const selectedColor = ref(Colors.DEFAULT_COLOR);
+    const selectedGrade = ref(Colors.DEFAULT_COLOR);
 
     /**
      * Opens the create popover and closes the old one if still open. Sets
@@ -617,8 +617,8 @@ export default {
 
     // reset selected colors and close popover when changing gym
     watch(gymName, () => {
-      selectedGrade.value = defaultColor;
-      selectedColor.value = defaultColor;
+      selectedGrade.value = Colors.DEFAULT_COLOR;
+      selectedColor.value = Colors.DEFAULT_COLOR;
       overlay.value.close();
     });
 
@@ -930,7 +930,6 @@ export default {
       editingGym,
       gymForm,
       updateGymGrades,
-      defaultColor,
     };
   },
 };
