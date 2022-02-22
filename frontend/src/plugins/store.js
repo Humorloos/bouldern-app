@@ -4,6 +4,7 @@ import {createStore} from 'vuex';
 import http from '../http-common';
 import i18n from '../i18n';
 import createPersistedState from 'vuex-persistedstate';
+import {Colors} from '../constants/color.js';
 
 /**
  * Generates default state of store for initialization
@@ -28,6 +29,7 @@ const getDefaultState = function() {
     loginError: '',
     axios: http,
     favoriteGyms: [],
+    colors: [],
     activeGym: null,
   };
 };
@@ -89,6 +91,18 @@ export default createStore({
     setFavoriteGyms(state, loadedFavorites) {
       state.favoriteGyms = loadedFavorites;
     },
+    /**
+     * Sets the colors to the provided ones
+     */
+    setColors(state, loadedColors) {
+      state.colors = loadedColors;
+    },
+    /**
+     * Adds the provided color to colors
+     */
+    addColor(state, color) {
+      state.colors.push(color);
+    },
   },
   actions: {
     /**
@@ -122,6 +136,16 @@ export default createStore({
         method: 'GET',
       });
       commit('setFavoriteGyms', response.data.map(({gym}) => gym));
+    },
+    /**
+     * Loads all available colors from the API and saves them
+     */
+    async loadColors({dispatch, commit}) {
+      const colorResponse = await dispatch('requestWithJwt', {
+        method: 'GET',
+        apiPath: `/bouldern/color/`,
+      });
+      commit('setColors', colorResponse.data);
     },
     /**
      * De-activates currently logged-in account
@@ -166,6 +190,7 @@ export default createStore({
         const loginData = response.data;
         dispatch('setLoginData', loginData);
         dispatch('loadFavoriteGyms');
+        dispatch('loadColors');
       } catch (error) {
         console.log(error);
         commit('setLoginError');
@@ -252,6 +277,18 @@ export default createStore({
      */
     isAuthenticated(state, getters) {
       return getters.hasValidRefreshToken || getters.hasValidAuthToken;
+    },
+    /**
+     * Gets the color object with the provided id
+     *
+     * @returns {function(*)} function that returns the respective color or the
+     * default color if none is found
+     */
+    colorById(state) {
+      return (colorId) => {
+        return state.colors.find((c) => c.id === colorId) ||
+            Colors.DEFAULT_COLOR;
+      };
     },
     state: (state) => state,
   },

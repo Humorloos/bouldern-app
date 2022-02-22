@@ -1,8 +1,75 @@
 <template>
+  <app-view v-if="editingGym">
+    <template #app-bar-left>
+      <v-btn
+        id="close-edit-gym"
+        flat
+        icon="mdi-arrow-left"
+        @click="editingGym = false"
+      />
+      <v-app-bar-title>Edit Gym</v-app-bar-title>
+    </template>
+    <template #main>
+      <v-container>
+        <gym-form
+          ref="gymForm"
+          :editing="true"
+          :initial-data="gym"
+          :initial-map="mapImageFile"
+        />
+        <v-btn
+          id="id_save-gym"
+          @click="updateGymGrades"
+        >
+          Save
+        </v-btn>
+      </v-container>
+    </template>
+  </app-view>
+  <app-view v-else-if="filtering">
+    <template #app-bar-left>
+      <v-btn
+        id="close-filter"
+        flat
+        icon="mdi-arrow-left"
+        @click="filtering = false"
+      />
+      <v-app-bar-title>Filter Grades</v-app-bar-title>
+    </template>
+    <template #main>
+      <v-container fluid>
+        <v-row>
+          <v-col cols="1">
+            <v-checkbox
+              v-model="allGradesActive"
+              label="all"
+              hide-details
+              @update:model-value="selectGrades"
+            />
+            <v-checkbox
+              v-for="grade in gym.grade_set"
+              :key="grade.id"
+              v-model="activeGrades"
+              :value="grade.id"
+              :label="grade.grade.toString()"
+              :color="getHexColor(grade.color)"
+              hide-details
+            />
+          </v-col>
+        </v-row>
+      </v-container>
+    </template>
+  </app-view>
   <app-view
-    v-if="!filtering"
+    v-else
   >
     <template #app-bar-right>
+      <v-btn
+        id="filter"
+        flat
+        icon="mdi-filter"
+        @click="filtering=true"
+      />
       <v-btn
         id="id_favorite"
         flat
@@ -17,10 +84,10 @@
         </v-icon>
       </v-btn>
       <v-btn
-        id="filter"
+        id="id_edit_gym"
         flat
-        icon="mdi-filter"
-        @click="filtering=true"
+        icon="mdi-pencil"
+        @click="editGym"
       />
     </template>
     <template #main>
@@ -130,41 +197,6 @@
       />
     </template>
   </app-view>
-  <app-view v-else>
-    <template #app-bar-left>
-      <v-btn
-        id="close-filter"
-        flat
-        icon="mdi-arrow-left"
-        @click="filtering = false"
-      />
-      <v-app-bar-title>Filter Grades</v-app-bar-title>
-    </template>
-    <template #main>
-      <v-container fluid>
-        <v-row>
-          <v-col cols="1">
-            <v-checkbox
-              v-model="allGradesActive"
-              label="all"
-              hide-details
-              @update:model-value="selectGrades"
-            />
-            <v-checkbox
-              v-for="grade in gym.grade_set"
-              :key="grade.id"
-              v-model="activeGrades"
-              :value="grade.id"
-              :label="grade.grade === null ? 'undefined' :
-                grade.grade.toString()"
-              :color="getColor(grade.color)"
-              hide-details
-            />
-          </v-col>
-        </v-row>
-      </v-container>
-    </template>
-  </app-view>
 </template>
 
 <script>
@@ -195,6 +227,8 @@ import {
   watch,
   watchPostEffect,
 } from 'vue';
+import GymForm from '../components/GymForm.vue';
+import {Colors} from '../constants/color.js';
 
 export default {
   name: 'GymMap',
@@ -203,6 +237,7 @@ export default {
     MapOverlay,
     VueForm,
     ColorSelect,
+    GymForm,
   },
   setup() {
     const store = useStore();
@@ -241,12 +276,7 @@ export default {
     });
 
     // colors
-    const defaultColor = {
-      name: '',
-      id: -1,
-      color: '#ffffff',
-    };
-    const colorOptions = ref([defaultColor]);
+    const colorOptions = computed(() => store.state.colors);
 
     // gym map
     const gym = ref({
@@ -255,7 +285,7 @@ export default {
       grade_set: [{
         id: -1,
         grade: 0,
-        color: defaultColor,
+        color: 0,
       }],
     });
     const route = useRoute();
@@ -426,7 +456,6 @@ export default {
         source: mapImageSource.value,
       });
     });
-
     /**
      * Icon drawing interaction for drawing boulder icons. Only allows drawing
      * on the image, not outside of it.
@@ -449,8 +478,8 @@ export default {
      * @param colorId the id to get the color for
      * @returns {string} the color string
      */
-    function getColor(colorId) {
-      return colorOptions.value.find((c) => c.id === colorId).color;
+    function getHexColor(colorId) {
+      return store.getters.colorById(colorId).color;
     }
 
     /**
@@ -460,9 +489,16 @@ export default {
      * @returns {object} the grade object.
      */
     function getGrade(gradeId) {
-      return gym.value.grade_set.find((g) => g.id === gradeId);
+      const grade = gym.value.grade_set.find((g) => g.id === gradeId);
+      if (grade === undefined) return defaultGrade;
+      return grade;
     }
 
+    const defaultGrade = {
+      grade: -1,
+      id: -1,
+      color: -1,
+    };
     /**
      * Sets the style of the provided boulder feature based on its color, grade,
      * and ascent result
@@ -471,12 +507,22 @@ export default {
      */
     function setBoulderStyle(boulder) {
       boulder.setStyle(getBoulderStyle(
-          getColor(boulder.color),
-          getColor(getGrade(boulder.grade).color),
+          getHexColor(boulder.color),
+          getHexColor(getGrade(boulder.grade).color),
           boulder.age,
           boulder.ascent !== null ? boulder.ascent.result : undefined,
       ));
     }
+
+    // favorite gym toggle
+    const favorite = ref(false);
+
+    const cleanMapFileName = computed(() => {
+      return /(.*)_[^_]*(\..*)/
+          .exec(gym.value.map.split('/').at(-1))
+          .slice(-2).join('');
+    });
+    const mapImageFile = ref(undefined);
 
     /**
      * Gets the gym data from the API, loads the gym map image, and deserializes
@@ -506,22 +552,31 @@ export default {
           vectorSource.addFeature(boulder);
         });
         // load map
-        mapImage.src = gym.value.map;
-        mapImage.onload = () => {
-          extent[2] = mapImage.width;
-          extent[3] = mapImage.height;
-          map.setLayers([
-            imageLayer.value,
-            vectorLayer,
-          ]);
-          map.setView(new View({
-            projection: projection.value,
-            center: getCenter(extent),
-            zoom: 1,
-            maxZoom: 8,
-          }));
-          if (onLoaded) onLoaded();
-        };
+        axios.get(gym.value.map, {responseType: 'blob'})
+            .then((response) => {
+              mapImageFile.value = new File(
+                  [response.data], cleanMapFileName.value);
+              const reader = new FileReader();
+              reader.onloadend = function() {
+                mapImage.onload = () => {
+                  extent[2] = mapImage.width;
+                  extent[3] = mapImage.height;
+                  map.setLayers([
+                    imageLayer.value,
+                    vectorLayer,
+                  ]);
+                  map.setView(new View({
+                    projection: projection.value,
+                    center: getCenter(extent),
+                    zoom: 1,
+                    maxZoom: 8,
+                  }));
+                  if (onLoaded) onLoaded();
+                };
+                mapImage.src = reader.result;
+              };
+              reader.readAsDataURL(response.data);
+            });
       });
       favorite.value = store.state.favoriteGyms.includes(gymName.value);
     }
@@ -534,8 +589,8 @@ export default {
 
     const selectedBoulder = ref({ascent: undefined});
     const selectedCoordinates = ref({});
-    const selectedColor = ref(defaultColor);
-    const selectedGrade = ref(defaultColor);
+    const selectedColor = ref(Colors.DEFAULT_COLOR);
+    const selectedGrade = ref(Colors.DEFAULT_COLOR);
 
     /**
      * Opens the create popover and closes the old one if still open. Sets
@@ -563,8 +618,8 @@ export default {
 
     // reset selected colors and close popover when changing gym
     watch(gymName, () => {
-      selectedGrade.value = defaultColor;
-      selectedColor.value = defaultColor;
+      selectedGrade.value = Colors.DEFAULT_COLOR;
+      selectedColor.value = Colors.DEFAULT_COLOR;
       overlay.value.close();
     });
 
@@ -611,9 +666,9 @@ export default {
     const gradeColors = computed(() => {
       return gym.value.grade_set.map(
           ({id, grade, color}) => ({
-            color: getColor(color),
+            color: getHexColor(color),
             id: id,
-            name: grade === null ? 'undefined' : grade,
+            name: grade,
           }));
     });
 
@@ -783,14 +838,7 @@ export default {
       loaded.value = true;
     }
 
-    // load colors and gym map when opening this view
-    requestWithJwt({
-      method: 'GET',
-      apiPath: `/bouldern/color/`,
-    }).then((response) => {
-      colorOptions.value = response.data;
-      loadGymMap(onGymMapLoaded);
-    });
+    loadGymMap(onGymMapLoaded);
     // Load new gym map when gym name changes
     watch(gymName, (newGymName) => {
       featureCollection.clear();
@@ -798,8 +846,6 @@ export default {
         loadGymMap();
       }
     });
-    // favorite gym toggle
-    const favorite = ref(false);
 
     /**
      * Creates/removes a favorite gym entry for this gym
@@ -810,9 +856,43 @@ export default {
       else store.dispatch('removeFavoriteGym', gymName.value);
     }
 
+    // edit gym view
+
+    const gymForm = ref(null);
+    const editingGym = ref(false);
+
+    /**
+     * Opens the edit gym view
+     */
+    function editGym() {
+      editingGym.value = true;
+    }
+
+    /**
+     * Updates the gym's grades via PATCH request with the grades from the gym
+     * form
+     */
+    function updateGymGrades() {
+      requestWithJwt({
+        apiPath: `bouldern/gym/${gym.value.id}/`,
+        method: 'PATCH',
+        data: {grade_set: gymForm.value.grades},
+      }).then((response) => {
+        gym.value = response.data;
+        vectorSource.forEachFeature((boulder) => {
+          if (gymForm.value.gradeIds.includes(boulder.grade)) {
+            setBoulderStyle(boulder);
+          } else {
+            vectorSource.removeFeature(boulder);
+          }
+        });
+        editingGym.value = false;
+      });
+    }
+
     return {
       // colors
-      getColor,
+      getHexColor,
       // gym map
       gym,
       ascentResults,
@@ -821,6 +901,7 @@ export default {
       colorOptions,
       overlay,
       creating,
+      mapImageFile,
       // create popover
       selectedCoordinates,
       selectedColor,
@@ -844,6 +925,13 @@ export default {
       // favorite
       favorite,
       setFavorite,
+      // gym name
+      gymName,
+      // edit gym
+      editGym,
+      editingGym,
+      gymForm,
+      updateGymGrades,
     };
   },
 };

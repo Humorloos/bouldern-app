@@ -11,7 +11,7 @@ from python_anywhere.bouldern.factories import ColorFactory, GymFactory, \
     BoulderFactory, AscentFactory, FavoriteGymFactory, GradeFactory
 from python_anywhere.bouldern.models import Color
 from python_anywhere.bouldern.tests.conftest import default_colors
-from python_anywhere.settings import BASE_DIR, env, RESOURCES_DIR
+from python_anywhere.settings import BASE_DIR, RESOURCES_DIR
 
 
 class Command(BaseCommand):
@@ -23,16 +23,15 @@ class Command(BaseCommand):
         call(manage_args + ['flush', '--no-input'], cwd=BASE_DIR)
 
         # create super user
-        UserFactory(email=env('ADMIN_EMAIL'),
+        UserFactory(email='admin@boulder-holder.com',
                     username='admin',
-                    password=env('ADMIN_PASSWORD'),
+                    password='admin',
                     is_superuser=True,
                     is_staff=True, )
-
         # create test user
         test_user = UserFactory(email='wetBonez@web.de',
-                    username='wetBonez',
-                    password='youcantknowthispassword123')
+                                username='wetBonez',
+                                password='youcantknowthispassword123')
 
         # add default colors
         for name, color in default_colors.items():

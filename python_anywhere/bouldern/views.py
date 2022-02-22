@@ -45,6 +45,9 @@ class GymAPI(ReversibleViewSet, CreateUGCMixin, UpdateModelMixin):
     queryset = Gym.objects.all()
     serializer_class = GymSerializer
 
+    def perform_update(self, serializer):
+        serializer.save(modified_by=self.request.user)
+
 
 class FavoriteGymAPI(ReversibleViewSet, CreateUGCMixin, DestroyUGCMixin,
                      ListModelMixin):
