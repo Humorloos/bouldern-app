@@ -213,7 +213,7 @@ export default {
       if (activeExtraColor.value) {
         const extraGrade = {
           color: extraColor.value.id,
-          grade: NaN,
+          grade: 'undefined',
         };
         if (extraGradeId.value !== null) extraGrade.id = extraGradeId.value;
         grades.push(extraGrade);
@@ -229,7 +229,7 @@ export default {
     const form = computed(() => {
       return {
         name: gymName.value,
-        grade_set: grades,
+        grade_set: grades.value,
       };
     });
 
