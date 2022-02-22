@@ -28,46 +28,46 @@
   >
     <v-list dense>
       <v-list-item
-        v-if="isAuthenticated"
-        to="/profile"
-      >
-        <v-container class="pa-0">
-          <v-row>
-            <v-col cols="3">
-              <v-avatar color="primary">
-                {{ user.username[0].toUpperCase() }}
-              </v-avatar>
-            </v-col>
-            <v-col class="align-self-center">
-              {{ user.username }}
-            </v-col>
-          </v-row>
-        </v-container>
-      </v-list-item>
-      <v-list-item
         v-if="!isAuthenticated"
         to="/login"
       >
         <v-list-item-title>Log In</v-list-item-title>
       </v-list-item>
-      <v-list-subheader v-if="favoriteGyms.length > 0">
-        Favorite Gyms
-      </v-list-subheader>
-      <v-list-item
-        v-for="(favoriteGym) in favoriteGyms"
-        :key="favoriteGym"
-        :to="`/gym-map/${favoriteGym}`"
-        class="d-block text-truncate"
-      >
-        {{ favoriteGym }}
-      </v-list-item>
-      <gym-search v-if="gymSearch" />
-      <v-list-item
-        v-if="isAuthenticated"
-        to="/create-gym"
-      >
-        <v-list-item-title>New Gym</v-list-item-title>
-      </v-list-item>
+      <div v-if="isAuthenticated">
+        <v-list-item
+          to="/profile"
+        >
+          <v-container class="pa-0">
+            <v-row>
+              <v-col cols="3">
+                <v-avatar color="primary">
+                  {{ user.username[0].toUpperCase() }}
+                </v-avatar>
+              </v-col>
+              <v-col class="align-self-center">
+                {{ user.username }}
+              </v-col>
+            </v-row>
+          </v-container>
+        </v-list-item>
+        <v-list-subheader v-if="favoriteGyms.length > 0">
+          Favorite Gyms
+        </v-list-subheader>
+        <v-list-item
+          v-for="(favoriteGym) in favoriteGyms"
+          :key="favoriteGym"
+          :to="`/gym-map/${favoriteGym}`"
+          class="d-block text-truncate"
+        >
+          {{ favoriteGym }}
+        </v-list-item>
+        <gym-search v-if="gymSearch" />
+        <v-list-item
+          to="/create-gym"
+        >
+          <v-list-item-title>New Gym</v-list-item-title>
+        </v-list-item>
+      </div>
     </v-list>
   </v-navigation-drawer>
   <v-main>
