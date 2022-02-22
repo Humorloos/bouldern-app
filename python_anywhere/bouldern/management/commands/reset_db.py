@@ -23,12 +23,12 @@ class Command(BaseCommand):
         call(manage_args + ['flush', '--no-input'], cwd=BASE_DIR)
 
         # create super user
-        UserFactory(email=env('ADMIN_EMAIL'),
+        UserFactory(email='admin@boulder-holder.com',
                     username='admin',
-                    password=env('ADMIN_PASSWORD'),
+                    password='admin',
                     is_superuser=True,
                     is_staff=True, )
-
+        # todo in app bar show boulder holder if wide enough
         # create test user
         test_user = UserFactory(email='wetBonez@web.de',
                     username='wetBonez',
