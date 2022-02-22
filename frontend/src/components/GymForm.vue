@@ -11,13 +11,20 @@
     </v-col>
   </v-row>
   <v-row>
-    <v-col>
+    <v-col align-self="center">
       <v-file-input
         id="id_map"
+        v-model="map"
         accept="image/*"
         label="Map"
         :disabled="edit"
-        @change="onFileChange"
+      />
+    </v-col>
+    <v-col>
+      <v-img
+        v-if="mapUrl !== ''"
+        :src="mapUrl"
+        transition="false"
       />
     </v-col>
   </v-row>
@@ -144,16 +151,11 @@ export default {
   setup(props) {
     // gym
     const gymName = ref(props.initialGymName);
-    const map = ref(undefined);
-
-    /**
-     * Handler for file upload
-     *
-     * @param event the file upload event
-     */
-    function onFileChange(event) {
-      map.value = event.target.files[0];
-    }
+    const map = ref([]);
+    const mapUrl = computed(() => {
+      if (map.value.length !== 0) return URL.createObjectURL(map.value[0]);
+      else return '';
+    });
 
     // grades
     const gradeIds = ref(props.initialGradeIds);
@@ -229,7 +231,7 @@ export default {
       // gym properties
       gymName,
       map,
-      onFileChange,
+      mapUrl,
       // grade properties
       defaultColor,
       colors,
