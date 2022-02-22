@@ -11,7 +11,10 @@ beforeEach(() => {
   cy.window().its('$store.state.authToken.token').should('not.be.empty');
   for (const _ of waitingFor('GET', '/bouldern/favorite-gym')) {
     cy.window().its('$store')
-        .then((store) => store.dispatch('loadFavoriteGyms'));
+        .then((store) => {
+          store.dispatch('loadFavoriteGyms');
+          store.dispatch('loadColors');
+        });
   }
 });
 
@@ -39,11 +42,28 @@ describe('The color creation view', () => {
   });
 });
 
+describe('The boulder holder', () => {
+  it.only('loads the last opened gym at root', () => {
+    for (const _ of waitingFor(
+        'GET', `/bouldern/gym-map-resources/?name=${constants.greenGymName}`)) {
+      cy.visit(`gym-map/${constants.greenGymName}`);
+      cy.visit('');
+    }
+    for (const _ of waitingFor(
+        'GET', `/bouldern/gym-map-resources/?name=${constants.gymName}`)) {
+      cy.visit(`gym-map/${constants.gymName}`);
+    }
+    cy.get('#id_home').click();
+    cy.window().its(`${GymMapView.name}.loaded`).should('equal', true);
+  });
+});
+
 describe('The gym map view', () => {
-  it('allows adding, editing, and retiring boulders', () => {
+  beforeEach(() => {
     cy.visit(`gym-map/${constants.gymName}`);
     cy.window().its(`${GymMapView.name}.loaded`).should('equal', true);
-
+  });
+  it('allows adding, editing, and retiring boulders', () => {
     cy.log('open create popover and close it');
     cy.get('#map-root').click(140, 270);
     cy.contains('Grade');
@@ -76,24 +96,7 @@ describe('The gym map view', () => {
     cy.get('#retire-boulder').click();
   });
 
-  it('loads the last opened gym at root', () => {
-    for (const _ of waitingFor(
-        'GET', `/bouldern/gym-map-resources/?name=${constants.greenGymName}`)) {
-      cy.visit(`gym-map/${constants.greenGymName}`);
-      cy.visit('');
-    }
-    for (const _ of waitingFor(
-        'GET', `/bouldern/gym-map-resources/?name=${constants.gymName}`)) {
-      cy.visit(`gym-map/${constants.gymName}`);
-    }
-    cy.get('.v-app-bar-title__placeholder').click();
-    cy.window().its(`${GymMapView.name}.loaded`).should('equal', true);
-  });
-
   it('allows filtering by grade', () => {
-    cy.visit(`gym-map/${constants.gymName}`);
-    cy.window().its(`${GymMapView.name}.loaded`).should('equal', true);
-
     cy.window().its(
         `${GymMapView.name}.$refs.overlay.popover.autoPan.animation.duration`,
     ).then((duration) => {
@@ -125,8 +128,6 @@ describe('The gym map view', () => {
   });
 
   it('allows adding and removing favorite gyms', () => {
-    cy.visit(`gym-map/${constants.gymName}`);
-
     cy.log('by default, menu should show favorite');
     cy.get('.mdi-menu').click();
     cy.contains(constants.gymName);
@@ -144,6 +145,39 @@ describe('The gym map view', () => {
 
     cy.get('.mdi-menu').click();
     cy.contains(constants.gymName);
+  });
+  it('allows editing grades', () => {
+    // open edit view
+    cy.get('#id_edit_gym').click();
+
+    // change grade
+    cy.get('#id_color-grade-1').click();
+    cy.contains('Blue').click();
+
+    // add grade
+    cy.contains('Add Grade').click();
+    cy.get('#id_color-grade-8').click();
+    cy.contains('Grey').click();
+
+    // remove grade
+    cy.get('#id_remove-grade-4').click();
+
+    // deactivate undefined grade
+    cy.get('#id_undefined_grade_active').click();
+
+    // save
+    cy.get('#id_save-gym').click();
+
+    // open edit view again
+    cy.get('#id_edit_gym').click();
+
+    // activate undefined grade again
+    cy.get('#id_undefined_grade_active').click();
+    cy.get('#id_color-undefined').click();
+    cy.contains('Black').click();
+
+    // save
+    cy.get('#id_save-gym').click();
   });
 });
 
