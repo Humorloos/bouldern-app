@@ -824,7 +824,7 @@ export default {
       map.on('pointermove', (event) => {
         const pixel = map.getEventPixel(event.originalEvent);
         const hit = hasBoulderAtPixel(pixel);
-        map.getTarget().style.cursor = hit ? 'pointer' : '';
+        map.getViewport().style.cursor = hit ? 'pointer' : '';
       });
       loaded.value = true;
     }
