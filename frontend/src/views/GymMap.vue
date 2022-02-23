@@ -433,6 +433,13 @@ export default {
     const mapImage = new Image();
 
     /**
+     * Sets the image layer's source's image to the loaded map image
+     */
+    function setMapImage(image) {
+      image.setImage(mapImage);
+    }
+
+    /**
      * The openlayers gym map image source to be used in the image layer.
      *
      * @returns {ImageStatic} the map image source.
@@ -442,7 +449,7 @@ export default {
         url: gym.value.map,
         projection: projection.value,
         imageExtent: extent,
-        imageLoadFunction: (image) => image.setImage(mapImage),
+        imageLoadFunction: setMapImage,
       });
     });
     /**
