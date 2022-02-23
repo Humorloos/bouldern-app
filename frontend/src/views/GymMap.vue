@@ -517,10 +517,8 @@ export default {
     // favorite gym toggle
     const favorite = ref(false);
 
-    const cleanMapFileName = computed(() => {
-      return /(.*)_[^_]*(\..*)/
-          .exec(gym.value.map.split('/').at(-1))
-          .slice(-2).join('');
+    const mapFileName = computed(() => {
+      return gym.value.map.split('/').at(-1);
     });
     const mapImageFile = ref(undefined);
 
@@ -555,7 +553,7 @@ export default {
         axios.get(gym.value.map, {responseType: 'blob'})
             .then((response) => {
               mapImageFile.value = new File(
-                  [response.data], cleanMapFileName.value);
+                  [response.data], mapFileName.value);
               const reader = new FileReader();
               reader.onloadend = function() {
                 mapImage.onload = () => {
