@@ -45,3 +45,5 @@
 ### chrome https configuration:
 - incase of error `NET::ERR_CERT_AUTHORITY_INVALID` in chrome, visit `chrome://flags/#allow-insecure-localhost` and set "Allow invalid certificates for resources loaded from localhost" to Enabled
 
+### debugging android with devtools:
+- visit chrome://inspect/#devices and devtools by clicking inspect for the device
