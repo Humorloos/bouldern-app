@@ -128,13 +128,10 @@ export default {
       default: () => {
         return {
           name: '',
+          map: '',
           grade_set: [{'grade': 1, 'color': -1}],
         };
       },
-    },
-    initialMap: {
-      type: Object,
-      default: undefined,
     },
     initialExtraGradeId: {
       type: Number,
@@ -148,10 +145,10 @@ export default {
   setup(props) {
     // gym
     const gymName = ref(props.initialData.name);
-    const map = ref(props.initialMap ? [props.initialMap] : []);
+    const map = ref([new File([], props.initialData.map.split('/').at(-1))]);
     const mapUrl = computed(() => {
-      if (map.value.length !== 0) return URL.createObjectURL(map.value[0]);
-      else return '';
+      if (map.value[0].size !== 0) return URL.createObjectURL(map.value[0]);
+      else return props.initialData.map;
     });
 
     const store = useStore();
