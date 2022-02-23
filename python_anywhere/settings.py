@@ -10,6 +10,9 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 import sys
+from corsheaders.middleware import CorsMiddleware
+from django.contrib.staticfiles import handlers
+from django.contrib.staticfiles.handlers import StaticFilesHandler
 from pathlib import Path
 
 from corsheaders.defaults import default_headers
@@ -67,6 +70,23 @@ if DEVELOPMENT:
     ]
     CORS_ALLOWED_ORIGINS = [f'https://{VUE_DEV_SERVER_DOMAIN_NAME}']
     CORS_ALLOW_HEADERS = list(default_headers)
+
+
+# extend StaticFilesHandler to add "Access-Control-Allow-Origin" to every
+# response
+class CORSStaticFilesHandler(StaticFilesHandler):
+    cors_middleware = CorsMiddleware()
+    def serve(self, request):
+        response = super().serve(request)
+        print('########## CORS HANDLER CALL')
+        response = self.cors_middleware.process_response(request, response)
+        response['Access-Control-Allow-Origin'] = '*'
+        return response
+
+
+# monkeypatch handlers to use our class instead of the original
+# StaticFilesHandler
+handlers.StaticFilesHandler = CORSStaticFilesHandler
 
 # Application definition
 
