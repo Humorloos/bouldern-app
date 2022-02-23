@@ -78,6 +78,7 @@ class CORSStaticFilesHandler(StaticFilesHandler):
     cors_middleware = CorsMiddleware()
     def serve(self, request):
         response = super().serve(request)
+        print('########## CORS HANDLER CALL')
         response = self.cors_middleware.process_response(request, response)
         response['Access-Control-Allow-Origin'] = '*'
         return response
