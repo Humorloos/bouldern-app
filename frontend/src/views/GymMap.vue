@@ -557,31 +557,73 @@ export default {
           vectorSource.addFeature(boulder);
         });
         // load map
-        axios.get(gym.value.map, {responseType: 'blob'})
-            .then((response) => {
-              mapImageFile.value = new File(
-                  [response.data], mapFileName.value);
-              const reader = new FileReader();
-              reader.onloadend = function() {
-                mapImage.onload = () => {
-                  extent[2] = mapImage.width;
-                  extent[3] = mapImage.height;
-                  map.setLayers([
-                    imageLayer.value,
-                    vectorLayer,
-                  ]);
-                  map.setView(new View({
-                    projection: projection.value,
-                    center: getCenter(extent),
-                    zoom: 1,
-                    maxZoom: 8,
-                  }));
-                  if (onLoaded) onLoaded();
-                };
-                mapImage.src = reader.result;
-              };
-              reader.readAsDataURL(response.data);
-            });
+
+        // set image crossOrigin to anonymous to avoid tainting canvas in
+        // development, see: https://stackoverflow.com/a/22716873/12566791
+        mapImage.crossOrigin = 'anonymous';
+        mapImage.src = gym.value.map;
+        mapImage.onload = () => {
+          // set map image layer
+          extent[2] = mapImage.naturalWidth;
+          extent[3] = mapImage.naturalHeight;
+          map.setLayers([
+            imageLayer.value,
+            vectorLayer,
+          ]);
+          map.setView(new View({
+            projection: projection.value,
+            center: getCenter(extent),
+            zoom: 1,
+            maxZoom: 8,
+          }));
+          // load image for gym form input
+          // render image using canvas
+          // (see https://stackoverflow.com/a/20285053/12566791)
+          const canvas = document.createElement('CANVAS');
+          const ctx = canvas.getContext('2d');
+          canvas.height = mapImage.naturalHeight;
+          canvas.width = mapImage.naturalWidth;
+          ctx.drawImage(mapImage, 0, 0);
+          const dataURI = canvas.toDataURL();
+          // convert data URL into Blob
+          // (see https://stackoverflow.com/a/12300351/12566791)
+          const byteString = atob(dataURI.split(',')[1]);
+          const mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+          const ab = new ArrayBuffer(byteString.length);
+          const ia = new Uint8Array(ab);
+          for (let i = 0; i < byteString.length; i++) {
+            ia[i] = byteString.charCodeAt(i);
+          }
+          const blob = new Blob([ab], {type: mimeString});
+          // use blob for map image file
+          mapImageFile.value = new File([blob], mapFileName.value);
+          if (onLoaded) onLoaded();
+        };
+      //   axios.get(gym.value.map, {responseType: 'blob'})
+      //       .then((response) => {
+      //         mapImageFile.value = new File(
+      //             [response.data], mapFileName.value);
+      //         const reader = new FileReader();
+      //         reader.onloadend = function() {
+      //           mapImage.onload = () => {
+      //             extent[2] = mapImage.width;
+      //             extent[3] = mapImage.height;
+      //             map.setLayers([
+      //               imageLayer.value,
+      //               vectorLayer,
+      //             ]);
+      //             map.setView(new View({
+      //               projection: projection.value,
+      //               center: getCenter(extent),
+      //               zoom: 1,
+      //               maxZoom: 8,
+      //             }));
+      //             if (onLoaded) onLoaded();
+      //           };
+      //           mapImage.src = reader.result;
+      //         };
+      //         reader.readAsDataURL(response.data);
+      //       });
       });
       favorite.value = store.state.favoriteGyms.includes(gymName.value);
     }
