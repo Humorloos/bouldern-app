@@ -15,7 +15,6 @@
           ref="gymForm"
           :editing="true"
           :initial-data="gym"
-          :initial-map="mapImageFile"
         />
         <v-btn
           id="id_save-gym"
@@ -433,6 +432,13 @@ export default {
     const mapImage = new Image();
 
     /**
+     * Sets the image layer's source's image to the loaded map image
+     */
+    function setMapImage(image) {
+      image.setImage(mapImage);
+    }
+
+    /**
      * The openlayers gym map image source to be used in the image layer.
      *
      * @returns {ImageStatic} the map image source.
@@ -442,7 +448,7 @@ export default {
         url: gym.value.map,
         projection: projection.value,
         imageExtent: extent,
-        imageLoadFunction: (image) => image.setImage(mapImage),
+        imageLoadFunction: setMapImage,
       });
     });
     /**
@@ -517,11 +523,6 @@ export default {
     // favorite gym toggle
     const favorite = ref(false);
 
-    const mapFileName = computed(() => {
-      return gym.value.map.split('/').at(-1);
-    });
-    const mapImageFile = ref(undefined);
-
     /**
      * Gets the gym data from the API, loads the gym map image, and deserializes
      * the gym's boulders into the feature collection
@@ -550,31 +551,23 @@ export default {
           vectorSource.addFeature(boulder);
         });
         // load map
-        axios.get(gym.value.map, {responseType: 'blob'})
-            .then((response) => {
-              mapImageFile.value = new File(
-                  [response.data], mapFileName.value);
-              const reader = new FileReader();
-              reader.onloadend = function() {
-                mapImage.onload = () => {
-                  extent[2] = mapImage.width;
-                  extent[3] = mapImage.height;
-                  map.setLayers([
-                    imageLayer.value,
-                    vectorLayer,
-                  ]);
-                  map.setView(new View({
-                    projection: projection.value,
-                    center: getCenter(extent),
-                    zoom: 1,
-                    maxZoom: 8,
-                  }));
-                  if (onLoaded) onLoaded();
-                };
-                mapImage.src = reader.result;
-              };
-              reader.readAsDataURL(response.data);
-            });
+        mapImage.onload = () => {
+          // set map image layer
+          extent[2] = mapImage.naturalWidth;
+          extent[3] = mapImage.naturalHeight;
+          map.setLayers([
+            imageLayer.value,
+            vectorLayer,
+          ]);
+          map.setView(new View({
+            projection: projection.value,
+            center: getCenter(extent),
+            zoom: 1,
+            maxZoom: 8,
+          }));
+          if (onLoaded) onLoaded();
+        };
+        mapImage.src = gym.value.map;
       });
       favorite.value = store.state.favoriteGyms.includes(gymName.value);
     }
@@ -899,7 +892,6 @@ export default {
       colorOptions,
       overlay,
       creating,
-      mapImageFile,
       // create popover
       selectedCoordinates,
       selectedColor,
