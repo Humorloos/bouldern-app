@@ -1,4 +1,5 @@
 """Tests for bouldern app"""
+from django.contrib.gis.geos import Point
 from django.utils.http import urlencode
 from rest_framework.status import HTTP_201_CREATED, HTTP_200_OK, \
     HTTP_204_NO_CONTENT
@@ -57,6 +58,25 @@ def test_boulder_api_retire(logged_in_client_rest, colors):
     assert retired_boulder.modified_by == user
     assert all(b.is_active for b in Boulder.objects.filter(
         pk__in={b.pk for b in active_boulders}))
+
+
+def test_boulder_api_move(logged_in_client_rest, colors):
+    boulder_creator = UserFactory()
+    client, user = logged_in_client_rest
+    from python_anywhere.bouldern.factories import BoulderFactory
+    boulder = BoulderFactory(created_by=boulder_creator)
+    new_position = Point(799, 645).geojson
+    data = {'coordinates': new_position}
+    # when
+    response = client.patch(
+        BoulderAPI().reverse_action(
+            'detail', args=[boulder.gym.pk, boulder.pk]),
+        data=data, format='json')
+    # then
+    assert response.status_code == HTTP_200_OK
+    boulder.refresh_from_db()
+    assert boulder.modified_by == user
+    assert boulder.coordinates.geojson == new_position
 
 
 def test_ascent_api_post_new_ascent(logged_in_client_rest, colors):
