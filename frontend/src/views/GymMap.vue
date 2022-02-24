@@ -204,10 +204,16 @@
 import {useStore} from 'vuex';
 import {useRoute} from 'vue-router';
 import {useI18n} from 'vue-i18n';
-import {Collection} from 'ol';
+import {Collection, Kinetic} from 'ol';
 import {containsCoordinate, getCenter} from 'ol/extent';
 import {GeoJSON} from 'ol/format';
-import {Draw, PinchRotate} from 'ol/interaction';
+import {
+  defaults as defaultInteractions,
+  DragPan,
+  Draw,
+  Modify,
+  PinchRotate,
+} from 'ol/interaction';
 import {Image as ImageLayer, Vector as VectorLayer} from 'ol/layer';
 import Map from 'ol/Map';
 import {Projection} from 'ol/proj';
@@ -248,6 +254,7 @@ export default {
     const overlay = ref(null);
     const map = new Map({
       moveTolerance: 4,
+      interactions: defaultInteractions({dragPan: false}),
     });
     // increase rotation threshold to make it less sensible during zooms
     const interactions = map.getInteractions().getArray();
@@ -316,6 +323,7 @@ export default {
       updateWhileAnimating: true,
       updateWhileInteracting: true,
     });
+    const boulderRadius = 10;
 
     /**
      * Gets the openlayers style for a boulder with the given hold and
@@ -339,17 +347,17 @@ export default {
             lineDash: [7.4, 8.05],
             lineDashOffset: 3.45,
           }),
-          radius: 10,
+          radius: boulderRadius,
         }),
       });
     }
-
     const shadowStyle = new Style({
       image: new Icon({
         src: axios.defaults.baseURL +
             'static/bouldern/images/shadow.png',
         scale: 0.34,
         opacity: 0.6,
+        color: 'Black',
       }),
     });
     const ascentIcons = [
@@ -363,6 +371,8 @@ export default {
       anchor: [0, 0],
       scale: scale,
     }));
+
+    const invisible = new Style({});
 
     /**
      * Generates the openlayers style for a boulder with the given hold color,
@@ -381,10 +391,10 @@ export default {
      */
     function getBoulderStyle(holdColor, gradeColor, age, ascentStatus) {
       const colorStyle = getColorStyle(holdColor, gradeColor);
-      const ascentStyle = ascentStatus !== undefined ?
+      const ascentStyle = ascentStatus === undefined ? invisible :
           new Style({
             image: ascentIcons[ascentStatus],
-          }) : new Style({});
+          });
       const ageStyle = new Style({
         text: new Text({
           fill: new Fill({color: '#FFFFFF'}),
@@ -456,12 +466,7 @@ export default {
      *
      * @returns {ImageLayer} the map image layer
      */
-    const imageLayer = computed(() => {
-      return new ImageLayer({
-        className: 'image-layer',
-        source: mapImageSource.value,
-      });
-    });
+    const imageLayer = new ImageLayer({className: 'image-layer'});
     /**
      * Icon drawing interaction for drawing boulder icons. Only allows drawing
      * on the image, not outside of it.
@@ -471,11 +476,35 @@ export default {
     const drawInteraction = new Draw({
       type: 'Point',
       source: vectorSource,
-      style: new Style({}),
+      style: invisible,
+      dragVertexDelay: 99999999,
       condition: (event) => {
         return containsCoordinate(extent, event.coordinate) &&
             !hasBoulderAtPixel(event.pixel);
       },
+    });
+
+    // interaction for moving boulders
+    const modifyTouchThreshold = 500;
+    const modifyInteraction = new Modify({
+      source: vectorSource,
+      style: invisible,
+      pixelTolerance: 20,
+      condition: (event) => {
+        // on touch screen, start moving only after holding for some time
+        if (event.originalEvent.pointerType === 'touch') {
+          return getEventDelay(event) >= modifyTouchThreshold;
+        } else {
+          return hasBoulderAtPixel(event.pixel);
+        }
+      },
+    });
+    const moving = ref(false);
+    const dragPanInteraction = new DragPan({
+      condition: (event) => {
+        return getEventDelay(event) < modifyTouchThreshold;
+      },
+      kinetic: new Kinetic(-0.005, 0.05, 100),
     });
 
     /**
@@ -555,8 +584,9 @@ export default {
           // set map image layer
           extent[2] = mapImage.naturalWidth;
           extent[3] = mapImage.naturalHeight;
+          imageLayer.setSource(mapImageSource.value);
           map.setLayers([
-            imageLayer.value,
+            imageLayer,
             vectorLayer,
           ]);
           map.setView(new View({
@@ -803,28 +833,155 @@ export default {
           //  if boulder's grade is inactive and boulder is visible, hide it
         } else {
           if (boulder.getStyle().length !== undefined) {
-            boulder.setStyle(new Style({}));
+            boulder.setStyle(invisible);
           }
         }
       });
     });
 
     // loading gym map
+    const grabbingBoulder = ref(false);
+    let timer;
+
+    /**
+     * todo
+     */
+    function getDelay(timeStamp) {
+      return performance.now() - timeStamp;
+    }
+
+    /**
+     * todo
+     */
+    function getEventDelay(event) {
+      return getDelay(event.originalEvent.timeStamp);
+    }
+
+    /**
+     * todo
+     */
+    function setCursorStyle(style) {
+      map.getViewport().style.cursor = style;
+    }
+
+    /**
+     * todo
+     */
+    function getBoulderAtPixel(pixel) {
+      const boulder = map
+          .forEachFeatureAtPixel(pixel, (feature) => feature);
+      if (boulder && boulder.getStyle() !== invisible) {
+        return boulder;
+      }
+      return undefined;
+    }
+
+    /**
+     * todo
+     */
+    function setBoulderRadius(boulder, radius) {
+      const style = boulder.getStyle();
+      const colorStyle = style[1].getImage();
+      colorStyle.setRadius(radius);
+      style[1].setImage(colorStyle);
+      boulder.setStyle(style);
+    }
+
+    const clickStart = ref(NaN);
+
     /**
      * Sets the loaded flag and initializes the map
      */
     function onGymMapLoaded() {
       drawInteraction.on('drawend', openCreatePopover);
       map.addInteraction(drawInteraction);
+      map.addInteraction(dragPanInteraction);
+
+      let initialBoulderCoordinates;
+      modifyInteraction.on('modifystart', (event) => {
+        initialBoulderCoordinates = event.features.getArray()[0]
+            .getGeometry().getCoordinates();
+        // deactivate drag pan
+        dragPanInteraction.setActive(false);
+        setCursorStyle('grabbing');
+        grabbingBoulder.value = true;
+      });
+      modifyInteraction.on('modifyend', (event) => {
+        const boulder = event.features.getArray()[0];
+        if (event.mapBrowserEvent.originalEvent.pointerType === 'touch') {
+          setBoulderRadius(boulder, boulderRadius);
+        }
+        const boulderGeometry = boulder.getGeometry();
+        if (!containsCoordinate(extent, boulderGeometry.getCoordinates())) {
+          boulderGeometry.setCoordinates(initialBoulderCoordinates);
+        } else {
+          requestWithJwt({
+            apiPath: `/bouldern/gym/${gym.value.id}/boulder/` +
+            `${boulder.id}/`,
+            method: 'PATCH',
+            data: {
+              coordinates: jsonFormat.value
+                  .writeGeometryObject(boulderGeometry),
+            },
+          });
+        }
+        dragPanInteraction.setActive(true);
+        grabbingBoulder.value = false;
+      });
+      map.addInteraction(modifyInteraction);
+
+      // fire pointerdown events a second time after some delay to tigger moving
+      // boulders on touch screens
+      map.on('pointerdown', (event) => {
+        clickStart.value = event.originalEvent.timeStamp;
+        const boulder = getBoulderAtPixel(event.pixel);
+        if (boulder) {
+          if (event.originalEvent.pointerType === 'touch') {
+            timer = setTimeout(() => {
+              // fire event only once and only if not panning the map
+              if (getEventDelay(event) < 2 * modifyTouchThreshold &&
+                  !moving.value) {
+                setBoulderRadius(boulder, 35);
+                map.mapBrowserEventHandler_.dispatchEvent(event);
+              }
+            },
+            modifyTouchThreshold,
+            );
+          } else {
+            setCursorStyle('grabbing');
+            grabbingBoulder.value = true;
+          }
+        }
+      });
+      map.on('pointerup', (event) => {
+        if (hasBoulderAtPixel(event.pixel)) {
+          setCursorStyle('');
+          grabbingBoulder.value = false;
+        }
+        clearTimeout(timer);
+      });
       map.on('click', (event) => {
-        const feature = map
-            .forEachFeatureAtPixel(event.pixel, (feature) => feature);
-        if (feature) openEditPopover(feature);
+        const boulder = getBoulderAtPixel(event.pixel);
+        if (boulder) {
+          if (getDelay(clickStart.value) >= modifyTouchThreshold) {
+            setBoulderRadius(boulder, boulderRadius);
+          } else {
+            openEditPopover(boulder);
+          }
+        }
       });
       map.on('pointermove', (event) => {
         const pixel = map.getEventPixel(event.originalEvent);
         const hit = hasBoulderAtPixel(pixel);
-        map.getTarget().style.cursor = hit ? 'pointer' : '';
+        setCursorStyle(hit ?
+            grabbingBoulder.value ? 'grabbing' :
+                'pointer' : '');
+      });
+      map.on('movestart', () => {
+        moving.value = true;
+      });
+      map.on('moveend', () => {
+        moving.value = false;
       });
       loaded.value = true;
     }
@@ -922,6 +1079,8 @@ export default {
       editingGym,
       gymForm,
       updateGymGrades,
+      // moving boulders
+      modifyTouchThreshold,
     };
   },
 };

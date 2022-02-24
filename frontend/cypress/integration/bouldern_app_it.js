@@ -43,7 +43,7 @@ describe('The color creation view', () => {
 });
 
 describe('The boulder holder', () => {
-  it.only('loads the last opened gym at root', () => {
+  it('loads the last opened gym at root', () => {
     for (const _ of waitingFor(
         'GET', `/bouldern/gym-map-resources/?name=${constants.greenGymName}`)) {
       cy.visit(`gym-map/${constants.greenGymName}`);
