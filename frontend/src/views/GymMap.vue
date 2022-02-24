@@ -456,12 +456,7 @@ export default {
      *
      * @returns {ImageLayer} the map image layer
      */
-    const imageLayer = computed(() => {
-      return new ImageLayer({
-        className: 'image-layer',
-        source: mapImageSource.value,
-      });
-    });
+    const imageLayer = new ImageLayer({className: 'image-layer'});
     /**
      * Icon drawing interaction for drawing boulder icons. Only allows drawing
      * on the image, not outside of it.
@@ -555,8 +550,9 @@ export default {
           // set map image layer
           extent[2] = mapImage.naturalWidth;
           extent[3] = mapImage.naturalHeight;
+          imageLayer.setSource(mapImageSource.value);
           map.setLayers([
-            imageLayer.value,
+            imageLayer,
             vectorLayer,
           ]);
           map.setView(new View({
