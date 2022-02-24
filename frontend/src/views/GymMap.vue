@@ -959,7 +959,6 @@ export default {
       map.on('click', (event) => {
         const boulder = getBoulderAtPixel(event.pixel);
         if (boulder) {
-          console.log(getDelay(clickStart.value));
           if (getDelay(clickStart.value) >= modifyTouchThreshold) {
             setBoulderRadius(boulder, boulderRadius);
           } else {
@@ -1076,6 +1075,8 @@ export default {
       editingGym,
       gymForm,
       updateGymGrades,
+      // moving boulders
+      modifyTouchThreshold,
     };
   },
 };
