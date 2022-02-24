@@ -350,6 +350,7 @@ export default {
             'static/bouldern/images/shadow.png',
         scale: 0.34,
         opacity: 0.6,
+        color: 'Black',
       }),
     });
     const ascentIcons = [
