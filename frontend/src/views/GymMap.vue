@@ -495,7 +495,7 @@ export default {
         if (event.originalEvent.pointerType === 'touch') {
           return getEventDelay(event) >= modifyTouchThreshold;
         } else {
-          return true;
+          return hasBoulderAtPixel(event.pixel);
         }
       },
     });
@@ -868,8 +868,12 @@ export default {
      * todo
      */
     function getBoulderAtPixel(pixel) {
-      return map
+      const boulder = map
           .forEachFeatureAtPixel(pixel, (feature) => feature);
+      if (boulder && boulder.getStyle() !== invisible) {
+        return boulder;
+      }
+      return undefined;
     }
 
     /**
