@@ -66,7 +66,8 @@ class FavoriteGymAPI(ReversibleViewSet, CreateUGCMixin, DestroyUGCMixin,
                 name=self.request.data['gym']))
 
 
-class BoulderAPI(ReversibleViewSet, CreateUGCMixin, DestroyUGCMixin):
+class BoulderAPI(ReversibleViewSet, CreateUGCMixin, DestroyUGCMixin,
+                 UpdateModelMixin):
     """Rest API for reading and creating boulders in a specific gym"""
     basename = 'boulder'
     queryset = Boulder.objects.all()
@@ -75,6 +76,9 @@ class BoulderAPI(ReversibleViewSet, CreateUGCMixin, DestroyUGCMixin):
     def perform_create(self, serializer, **kwargs):
         super().perform_create(
             serializer, gym=Gym.objects.get(pk=self.kwargs['gym_pk']))
+
+    def perform_update(self, serializer):
+        serializer.save(modified_by=self.request.user)
 
 
 class AscentAPI(ReversibleViewSet, CreateUGCMixin):
