@@ -45,16 +45,6 @@ def test_create_gym(logged_in_client_rest, colors):
                            data=json_payload, format='json')
     # Then
     assert response.status_code == HTTP_201_CREATED
-    gym = Gym.objects.first()
-    assert gym.name == gym_stub.name
-    grades = list(Grade.objects.all())
-    assert len(grades) == n_grades + 1
-    for grade in grades[:-1]:
-        assert grade.gym.name == gym_stub.name
-        assert grade.color in colors
-        assert grade.grade in grade_range
-        assert grade.created_by == user
-    assert grades[-1].grade is None
     # When
     multipart_payload = {'map': gym_stub.map}
     response = client.patch(
@@ -62,8 +52,19 @@ def test_create_gym(logged_in_client_rest, colors):
         data=multipart_payload, format='multipart')
     # Then
     assert response.status_code == HTTP_200_OK
+
     gym = Gym.objects.first()
+    assert gym.name == gym_stub.name
     assert_correct_gym(gym, json_payload | multipart_payload, user)
+    grades = list(Grade.objects.all())
+    assert grades[-1].grade is None
+    assert len(grades) == n_grades + 1
+    for grade in grades[:-1]:
+        assert grade.gym.name == gym_stub.name
+        assert grade.color in colors
+        assert grade.grade in grade_range
+        assert grade.created_by == user
+        assert grade.is_active
 
 
 def grade_2_dict(grade):
