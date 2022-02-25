@@ -187,30 +187,38 @@ describe('The gym creation view', () => {
   });
 
   it('allows adding gyms', () => {
-    // set name and map
+    cy.log('set name and map');
     cy.get('#id_name').type(constants.newGymName);
     cy.get('#id_map').attachFile('generic_gym.png');
 
-    // set grades
+    cy.log('set grades');
     cy.get('#id_color-grade-1').click();
     cy.contains('Blue').click();
     cy.contains('Add Grade').click();
     cy.get('#id_color-grade-2').click();
     cy.contains('Yellow').click();
 
-    // set undefined grade
+    cy.log('set undefined grade');
     cy.get('#id_undefined_grade_active').click();
     cy.get('#id_color-undefined').click();
     cy.contains('Grey').click();
 
-    // submit
+    cy.log('submit');
     for (const _ of waitingFor('POST', '/bouldern/gym')) {
       cy.contains('Submit').click();
     }
 
-    // open newly created gym
+    cy.log('open newly created gym');
     cy.visit(`gym-map/${constants.newGymName}`);
     cy.window().its(`${GymMapView.name}.loaded`).should('equal', true);
+
+    cy.log('open create popover in newly created gym and submit it');
+    cy.get('#map-root').click(280, 240);
+    cy.get('#id-grade-select').click();
+    cy.contains('2').click();
+    cy.get('#id-color-select').click();
+    cy.contains('Red').click();
+    cy.contains('Save').click();
   });
 
   it('allows navigating to color creation view', () => {
