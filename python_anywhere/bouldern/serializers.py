@@ -125,11 +125,11 @@ class GymSerializer(ModelSerializer):
                 if created:
                     grade.created_by = user
                 grade.save()
-        # deactivate grades that are missing in grade set
-        for grade in original_grade_set.values():
-            grade.is_active = False
-            grade.modified_by = user
-            grade.save()
+        if len(grade_set_data) > 0:
+            for grade in original_grade_set.values():
+                grade.is_active = False
+                grade.modified_by = user
+                grade.save()
 
         super().update(instance, validated_data)
         return instance
