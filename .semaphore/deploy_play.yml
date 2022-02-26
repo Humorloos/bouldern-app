@@ -43,6 +43,7 @@ blocks:
             - ssh-add ~/.ssh/id_rsa_semaphoreci_push
             # ${<variable>-fallback} evaluates to fallback if variable is not set and to variable otherwise
             - git push origin HEAD:${SEMAPHORE_GIT_PR_BRANCH-master}
+            - git push origin $(git describe --tags --abbrev=0)
             - cd "$FRONTEND_DIR"/android
             - . /root/.env
             # make gradlew executable
