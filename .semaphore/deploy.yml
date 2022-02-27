@@ -18,4 +18,6 @@ blocks:
       jobs:
         - name: Deploy to PythonAnywhere
           commands:
-            - . ./deploy_python_anywhere.sh
+            - checkout
+            # Execute script manually
+            - . .semaphore/deploy_python_anywhere.sh
