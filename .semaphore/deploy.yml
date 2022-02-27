@@ -17,4 +17,4 @@ blocks:
           value: Humorloos
       jobs:
         - name: Deploy to PythonAnywhere
-          commands_file: frontend_prologue.sh
+          commands_file: deploy_python_anywhere.sh
