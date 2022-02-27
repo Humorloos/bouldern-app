@@ -148,13 +148,7 @@ blocks:
             - npm run report
       epilogue:
         always:
-          commands:
-            - artifact push job "$PROJECT_DIR"/django_server.log
-            - artifact push job "$FRONTEND_DIR"/vue_server.log
-            - artifact push job "$FRONTEND_DIR"/cypress/videos
-            - artifact push job "$FRONTEND_DIR"/cypress/screenshots
-            - artifact push job "$FRONTEND_DIR"/cypress/logs
-            - test-results publish cypress/results/report.xml
+          commands_file: e2e_epilogue.sh
 after_pipeline:
   task:
     jobs:
