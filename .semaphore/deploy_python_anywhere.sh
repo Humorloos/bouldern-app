@@ -1,4 +1,5 @@
-if [[ $(git log -1 --pretty=%B) == "chore(release): "* ]]; then
+if [[ $(git log -1 --pretty=%B) == "chore(release): "* ]]
+then
   echo "Skipping deployment to pythonanywhere due to release commit"
 else
   checkout
