@@ -17,5 +17,8 @@ blocks:
           value: Humorloos
       jobs:
         - name: Deploy to PythonAnywhere
-          commands_file:
-            deploy_python_anywhere.sh
+          commands:
+            - checkout
+            # Execute script manually since using it in commands_file
+            # led to problems with execution of if statements
+            - . .semaphore/deploy_python_anywhere.sh
