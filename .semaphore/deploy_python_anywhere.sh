@@ -1,7 +1,6 @@
 if [[ $(git log -1 --pretty=%B) == "chore(release): "* ]]; then
   echo "Skipping deployment to pythonanywhere due to release commit"
 else
-  checkout
   chmod 0600 ~/.ssh/id_rsa_pa
   ssh-keyscan -H ssh.pythonanywhere.com >> ~/.ssh/known_hosts
   ssh-add ~/.ssh/id_rsa_pa
