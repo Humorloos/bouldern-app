@@ -17,11 +17,5 @@ blocks:
           value: Humorloos
       jobs:
         - name: Deploy to PythonAnywhere
-          commands:
-            - checkout
-            - chmod 0600 ~/.ssh/id_rsa_pa
-            - ssh-keyscan -H ssh.pythonanywhere.com >> ~/.ssh/known_hosts
-            - ssh-add ~/.ssh/id_rsa_pa
-            - cd ~
-            - sftp ${SSH_USER}@ssh.pythonanywhere.com <<< $'put bouldern-app/deploy.sh deploy.sh\n put .env_production .env'
-            - ssh ${SSH_USER}@ssh.pythonanywhere.com bash deploy.sh ${SEMAPHORE_GIT_PR_BRANCH-master}
+          commands_file:
+            deploy_python_anywhere.sh
