@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### 0.1.11 (2022-02-27)
+
+
+### Features
+
+* **AppView:** Collapse Boulder Holder title to home button ([c6ddb89](https://github.com/Humorloos/bouldern-app/commit/c6ddb89092deffd9e76eecd8da9e69c4393b209b))
+* **BoulderAPI:** Add support for patch requests ([40c83b6](https://github.com/Humorloos/bouldern-app/commit/40c83b694a7ed720d6af7bda8b04a1bd5a530830))
+* **GymAPI:** Allow updating a gym's grades ([3383d09](https://github.com/Humorloos/bouldern-app/commit/3383d09883c53943f643f86cf6e9872a26d390b0))
+* **GymForm:** Add preview image to map upload ([49b5ed8](https://github.com/Humorloos/bouldern-app/commit/49b5ed8a49f43bbd039b03fb730d6efa79be0f8a))
+* **GymMap:** Add view for editing gym grades ([16af04e](https://github.com/Humorloos/bouldern-app/commit/16af04ee109b953dc2e0f627483531a33e5d8ba3))
+* **GymMap:** Allow moving boulders ([f2a0033](https://github.com/Humorloos/bouldern-app/commit/f2a003373c34c693a521423d977766acadd9851f))
+
+
+### Bug Fixes
+
+* **AppView:** Hide app drawer entries ([4564276](https://github.com/Humorloos/bouldern-app/commit/45642763a648b1c95d9f3693e9802b35dc3ea735))
+* **GymApi:** fix grades not appearing after creating a new gym ([6ddb6a7](https://github.com/Humorloos/bouldern-app/commit/6ddb6a789ba5ccdadb21788558694efa0c1cb2e0))
+* **GymMap:** fix broken gym map ([1e0d0a8](https://github.com/Humorloos/bouldern-app/commit/1e0d0a8184065d31eb9989cb53550329a8b2b49d))
+* **GymMap:** Fix broken gym map on android ([13bc871](https://github.com/Humorloos/bouldern-app/commit/13bc87197f41118442e72db3632aa62138a8af3b))
+* **GymMap:** Fix cursor changing to pointer when over boulder ([63f97f1](https://github.com/Humorloos/bouldern-app/commit/63f97f15b445d5e4b94f4bd1f7e9526cf0db5459))
+
 ### 0.1.10 (2022-02-24)
 
 
