@@ -17,5 +17,5 @@ blocks:
           value: Humorloos
       jobs:
         - name: Deploy to PythonAnywhere
-          commands_file:
-            deploy_python_anywhere.sh
+          commands:
+            - echo "test"
