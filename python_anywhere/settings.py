@@ -202,6 +202,7 @@ else:
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
 ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 7
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
 
 JWT_AUTH_RETURN_EXPIRATION = True
 # only send jwt tokens via https
@@ -246,5 +247,11 @@ REST_FRAMEWORK = {
 REST_AUTH_SERIALIZERS = {
     'USER_DETAILS_SERIALIZER':
         'python_anywhere.accounts.serializers.UserSerializer',
+    'LOGIN_SERIALIZER':
+        'python_anywhere.accounts.serializers.CustomLoginSerializer',
+}
+REST_AUTH_REGISTER_SERIALIZERS = {
+    'REGISTER_SERIALIZER':
+        'python_anywhere.accounts.serializers.CustomRegisterSerializer',
 }
 REST_USE_JWT = True

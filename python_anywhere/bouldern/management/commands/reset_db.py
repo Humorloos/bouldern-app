@@ -29,7 +29,7 @@ class Command(BaseCommand):
                     is_superuser=True,
                     is_staff=True, )
         # create test user
-        test_user = UserFactory(email='wetBonez@web.de',
+        test_user = UserFactory(email='wetbonez@web.de',
                                 username='wetBonez',
                                 password='youcantknowthispassword123')
 

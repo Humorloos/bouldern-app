@@ -37,47 +37,50 @@
 /** @file view for registering */
 
 import AppView from '../components/AppView.vue';
+import {ref} from 'vue';
+import {useStore} from 'vuex';
 
 export default {
   name: 'Register',
   components: {AppView},
-  data() {
-    return {
-      form: {
-        username: {
-          type: 'text',
-          label: 'Username',
-          value: '',
-        },
-        email: {
-          type: 'text',
-          label: 'Email',
-          value: '',
-        },
-        password1: {
-          type: 'password',
-          label: 'Password',
-          value: '',
-        },
-        password2: {
-          type: 'password',
-          label: 'Confirm password',
-          value: '',
-        },
+  setup() {
+    const form = ref({
+      username: {
+        type: 'text',
+        label: 'Username',
+        value: '',
       },
-    };
-  },
-  methods: {
+      email: {
+        type: 'text',
+        label: 'Email',
+        value: '',
+      },
+      password1: {
+        type: 'password',
+        label: 'Password',
+        value: '',
+      },
+      password2: {
+        type: 'password',
+        label: 'Confirm password',
+        value: '',
+      },
+    });
+    const store = useStore();
+    const axios = store.state.axios;
+
     /**
      * Posts the registration form to the registration api
      */
-    submit() {
-      this.axios.post('/registration/',
-          Object.keys(this.form).reduce((payload, key) => {
-            payload[key] = this.form[key].value;
+    function submit() {
+      axios.post('/registration/',
+          Object.keys(form.value).reduce((payload, key) => {
+            payload[key] = form.value[key].value;
             return payload;
           }, {}));
-    },
+    }
+
+    return {form, submit};
   },
 };
 </script>

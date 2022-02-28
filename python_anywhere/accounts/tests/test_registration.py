@@ -27,3 +27,23 @@ def test_register(db):
     assert created_user.email == payload['email']
     assert created_user.username == payload['username']
     assert created_user.check_password(password)
+
+
+def test_lower_case_email(db):
+    """
+    Test that emails used in registration are transformed to lower case.
+    """
+    # Given
+    client = APIClient()
+    password = Faker().password()
+    user = UserFactory.build(password=password, email='Myemail@provider.com')
+    payload = {key: user.__dict__[key] for key in ['username', 'email']}
+    payload.update({f'password{i}': password for i in [1, 2]})
+
+    # When
+    response = client.post(reverse('rest_register'), data=payload,
+                           format='json')
+    # Then
+    assert response.status_code == HTTP_201_CREATED
+    created_user = User.objects.first()
+    assert created_user.email == payload['email'].lower()

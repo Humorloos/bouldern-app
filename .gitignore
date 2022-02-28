@@ -5,3 +5,7 @@
 /python_anywhere/static/vue/
 /python_anywhere/bouldern/tests/.pytest_cache/
 /.semaphore/secrets/
+/.idea/
+/frontend/cypress/logs/
+/frontend/cypress/screenshots/
+/production_db/
