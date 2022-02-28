@@ -32,11 +32,27 @@ def test_login(db):
 
 
 def test_cannot_login_with_inactive_user(db):
-    """Test that users can login"""
+    """Test that users whose account was deactivated cannot login"""
     # Given
     client = APIClient()
     password = Faker().password()
     user = UserFactory(password=password, is_active=False)
+
+    payload = {'username': user.__dict__['email'], 'password': password}
+
+    # When
+    response = client.post(reverse('rest_login'), data=payload, format='json')
+
+    # Then
+    assert response.status_code == HTTP_400_BAD_REQUEST
+
+
+def test_cannot_login_with_unverified_user(db):
+    """Test that users whose email has not been verified cannot log in"""
+    # Given
+    client = APIClient()
+    password = Faker().password()
+    user = UserFactory(password=password, verified=False)
 
     payload = {'username': user.__dict__['email'], 'password': password}
 
