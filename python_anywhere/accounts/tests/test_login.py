@@ -61,3 +61,24 @@ def test_cannot_login_with_unverified_user(db):
 
     # Then
     assert response.status_code == HTTP_400_BAD_REQUEST
+
+
+def test_can_login_with_uppercase_email(db):
+    """
+    Test that users can login when they use upper case characters in their email
+    """
+    # Given
+    client = APIClient()
+    password = Faker().password()
+    user = UserFactory(password=password, email='myemail@provider.com')
+
+    payload = {
+        'email': user.email.upper(),
+        'password': password
+    }
+
+    # When
+    response = client.post(reverse('rest_login'), data=payload, format='json')
+
+    # Then
+    assert response.status_code == HTTP_200_OK
