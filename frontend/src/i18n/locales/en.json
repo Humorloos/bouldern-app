@@ -7,5 +7,6 @@
     "Top",
     "Flash"
   ],
-  "resetPasswordInstructions": "Enter your user account's verified email address and we will send you a password reset link."
+  "resetPasswordInstructions": "Enter your user account's verified email address and we will send you a password reset link.",
+  "confirmationEmailAlert": "We have sent an email to {email}. You may need to check your spam folder."
 }
