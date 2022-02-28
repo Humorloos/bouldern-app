@@ -59,6 +59,7 @@ describe('The register app', () => {
     for (const _ of waitingFor('POST', '/registration/')) {
       cy.get('#submit_button').click();
     }
+    cy.contains($t('confirmationEmailAlert', {email: constants.newEmail}));
     // confirm email via confirmation link sent via email
     cy.task('readLastEmail')
         .should('have.string', constants.newEmail.toLowerCase())
