@@ -27,9 +27,23 @@ class LowerCaseEmailField(EmailField):
 
 class CustomRegisterSerializer(RegisterSerializer):
     """Serializer for transforming emails to lower case during registration"""
+
+    def update(self, instance, validated_data):
+        pass
+
+    def create(self, validated_data):
+        pass
+
     email = LowerCaseEmailField(required=True)
 
 
 class CustomLoginSerializer(LoginSerializer):
     """Serializer for transforming emails to lower case during login"""
+
+    def update(self, instance, validated_data):
+        pass
+
+    def create(self, validated_data):
+        pass
+
     email = LowerCaseEmailField(required=True)
