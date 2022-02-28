@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.14](https://github.com/Humorloos/bouldern-app/compare/v0.1.12...v0.1.14) (2022-02-28)
+
+
+### Bug Fixes
+
+* make emails case insensitive ([abe8deb](https://github.com/Humorloos/bouldern-app/commit/abe8debbff8647c07bb08a4de22be2a03c406fe1))
+
 ### [0.1.13](https://github.com/Humorloos/bouldern-app/compare/v0.1.12...v0.1.13) (2022-02-27)
 
 ### 0.1.12 (2022-02-27)
