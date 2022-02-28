@@ -15,7 +15,7 @@ def test_login(db):
     password = Faker().password()
     user = UserFactory(password=password)
 
-    payload = {'username': user.__dict__['email'], 'password': password}
+    payload = {'email': user.email, 'password': password}
 
     # When
     response = client.post(reverse('rest_login'), data=payload, format='json')
@@ -38,7 +38,7 @@ def test_cannot_login_with_inactive_user(db):
     password = Faker().password()
     user = UserFactory(password=password, is_active=False)
 
-    payload = {'username': user.__dict__['email'], 'password': password}
+    payload = {'email': user.email, 'password': password}
 
     # When
     response = client.post(reverse('rest_login'), data=payload, format='json')
@@ -54,7 +54,7 @@ def test_cannot_login_with_unverified_user(db):
     password = Faker().password()
     user = UserFactory(password=password, verified=False)
 
-    payload = {'username': user.__dict__['email'], 'password': password}
+    payload = {'email': user.email, 'password': password}
 
     # When
     response = client.post(reverse('rest_login'), data=payload, format='json')

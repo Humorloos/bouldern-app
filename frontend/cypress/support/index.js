@@ -28,7 +28,7 @@ before(() => {
   cy.exec('cd .. && python manage.py reset_db');
   // get login data
   cy.request('POST', 'https://localhost:8000/registration/login/', {
-    username: constants.email,
+    email: constants.email,
     password: constants.password,
   }).its('body')
       .then((res) => {

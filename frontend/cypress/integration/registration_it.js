@@ -61,7 +61,7 @@ describe('The register app', () => {
     }
     // confirm email via confirmation link sent via email
     cy.task('readLastEmail')
-        .should('have.string', constants.newEmail)
+        .should('have.string', constants.newEmail.toLowerCase())
         .then((mail) => {
           const confirmationLink = /(https?:\/\/[^\s]+)/g
               .exec(mail)[0]
