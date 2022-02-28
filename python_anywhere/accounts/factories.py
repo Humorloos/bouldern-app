@@ -38,4 +38,8 @@ class UserFactory(DjangoModelFactory):
         EmailAddressFactory,
         factory_related_name='user',
         email=SelfAttribute('..email'),
+        verified=SelfAttribute('..verified')
     )
+
+    class Params:
+        verified = True
