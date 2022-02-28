@@ -16,8 +16,8 @@
                 </v-row>
                 <v-row>
                   <v-text-field
-                    id="id_username"
-                    v-model="form.username"
+                    id="id_email"
+                    v-model="form.email"
                     type="text"
                     label="E-Mail"
                   />
@@ -85,7 +85,7 @@ export default {
   name: 'Login',
   components: {AppView},
   setup() {
-    const form = ref({username: '', password: ''});
+    const form = ref({email: '', password: ''});
     const store = useStore();
 
     const router = useRouter();

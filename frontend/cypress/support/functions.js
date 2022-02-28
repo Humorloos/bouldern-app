@@ -12,7 +12,7 @@ window.$t = i18n.global.t;
 window.loginViaLogInLink = (email, password) => {
   cy.contains('You are not logged in');
   cy.url().should('include', '/login');
-  cy.get('#id_username')
+  cy.get('#id_email')
       .type(email)
       .should('have.value', email);
   cy.get('#id_password').type(password);

@@ -2,7 +2,10 @@
   "extends": [
     "plugin:cypress/recommended"
   ],
-  "plugins": ["cypress"],
+  "plugins": [
+    "cypress",
+    "no-only-tests"
+  ],
   "rules": {
     // allow triple slash at beginnings of files
     "spaced-comment": [
@@ -13,7 +16,8 @@
           "/"
         ]
       }
-    ]
+    ],
+    "no-only-tests/no-only-tests": "error"
   },
   "globals": {
     "$t": "readonly",
