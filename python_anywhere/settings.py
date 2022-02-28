@@ -246,5 +246,11 @@ REST_FRAMEWORK = {
 REST_AUTH_SERIALIZERS = {
     'USER_DETAILS_SERIALIZER':
         'python_anywhere.accounts.serializers.UserSerializer',
+    'LOGIN_SERIALIZER':
+        'python_anywhere.accounts.serializers.CustomLoginSerializer',
+}
+REST_AUTH_REGISTER_SERIALIZERS = {
+    'REGISTER_SERIALIZER':
+        'python_anywhere.accounts.serializers.CustomRegisterSerializer',
 }
 REST_USE_JWT = True
