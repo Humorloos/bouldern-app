@@ -28,6 +28,17 @@
             </v-form>
           </v-col>
         </v-row>
+        <v-row>
+          <v-col>
+            <v-alert
+              v-model="alert"
+              type="info"
+              transition="slide-y-reverse-transition"
+            >
+              {{ $t('confirmationEmailAlert', {email: form.email.value}) }}
+            </v-alert>
+          </v-col>
+        </v-row>
       </v-container>
     </template>
   </app-view>
@@ -69,6 +80,7 @@ export default {
     const store = useStore();
     const axios = store.state.axios;
 
+    const alert = ref(false);
     /**
      * Posts the registration form to the registration api
      */
@@ -77,10 +89,13 @@ export default {
           Object.keys(form.value).reduce((payload, key) => {
             payload[key] = form.value[key].value;
             return payload;
-          }, {}));
+          }, {})).then(() => {
+        alert.value = true;
+      });
     }
 
-    return {form, submit};
+
+    return {form, submit, alert};
   },
 };
 </script>
