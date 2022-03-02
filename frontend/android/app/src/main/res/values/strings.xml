@@ -2,6 +2,6 @@
 <resources>
     <string name="app_name">Bouldern App</string>
     <string name="title_activity_main">Bouldern App</string>
-    <string name="package_name">com.pythonanywhere.humorloos</string>
-    <string name="custom_url_scheme">com.pythonanywhere.humorloos</string>
+    <string name="package_name">com.boulderholder.www</string>
+    <string name="custom_url_scheme">com.boulderholder.www</string>
 </resources>
