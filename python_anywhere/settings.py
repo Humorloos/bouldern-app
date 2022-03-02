@@ -42,7 +42,7 @@ SECRET_KEY = env('SECRET_KEY')
 DEVELOPMENT = env('DEBUG')
 DEBUG = DEVELOPMENT
 PIPELINE = env('PIPELINE') == 'True'
-DOMAIN_NAME = 'humorloos.pythonanywhere.com'
+DOMAIN_NAME = 'www.boulderholder.com'
 BOULDERN_URL_SEGMENT = 'bouldern'
 
 ALLOWED_HOSTS = [
