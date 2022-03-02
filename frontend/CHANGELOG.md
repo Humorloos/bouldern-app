@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.15](https://github.com/Humorloos/bouldern-app/compare/v0.1.14...v0.1.15) (2022-03-02)
+
+
+### Features
+
+* **Register:** Show alert about confirmation email ([09943a8](https://github.com/Humorloos/bouldern-app/commit/09943a8b2d0a493a709f98efcead6a610e803e69))
+
 ### [0.1.14](https://github.com/Humorloos/bouldern-app/compare/v0.1.12...v0.1.14) (2022-02-28)
 
 
