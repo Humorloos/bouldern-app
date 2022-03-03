@@ -64,10 +64,10 @@
   >
     <template #app-bar-right>
       <v-btn
-        id="filter"
+        id="id_edit_gym"
         flat
-        icon="mdi-filter"
-        @click="filtering=true"
+        icon="mdi-pencil"
+        @click="editGym"
       />
       <v-btn
         id="id_favorite"
@@ -83,10 +83,10 @@
         </v-icon>
       </v-btn>
       <v-btn
-        id="id_edit_gym"
+        id="filter"
         flat
-        icon="mdi-pencil"
-        @click="editGym"
+        icon="mdi-filter"
+        @click="filtering=true"
       />
     </template>
     <template #main>
