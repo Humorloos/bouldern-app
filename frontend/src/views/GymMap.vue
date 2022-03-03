@@ -75,7 +75,10 @@
         icon
         @click="setFavorite"
       >
-        <v-icon v-if="favorite">
+        <v-icon
+          v-if="favorite"
+          color="#E3B341"
+        >
           mdi-star
         </v-icon>
         <v-icon v-else>
