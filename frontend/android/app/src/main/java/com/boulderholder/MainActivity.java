@@ -1,4 +1,4 @@
-package com.pythonanywhere.humorloos;
+package com.boulderholder;
 
 import com.getcapacitor.BridgeActivity;
 

@@ -6,7 +6,7 @@ def packageJson = new groovy.json.JsonSlurper().parseText inputFile.text
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
     defaultConfig {
-        applicationId "com.pythonanywhere.humorloos"
+        applicationId "com.boulderholder"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode packageJson["version"].split("\\.").collect {"0".multiply(3 - it.length()) + it}.join() as Integer
