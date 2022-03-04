@@ -64,10 +64,10 @@
   >
     <template #app-bar-right>
       <v-btn
-        id="filter"
+        id="id_edit_gym"
         flat
-        icon="mdi-filter"
-        @click="filtering=true"
+        icon="mdi-pencil"
+        @click="editGym"
       />
       <v-btn
         id="id_favorite"
@@ -75,7 +75,10 @@
         icon
         @click="setFavorite"
       >
-        <v-icon v-if="favorite">
+        <v-icon
+          v-if="favorite"
+          color="#E3B341"
+        >
           mdi-star
         </v-icon>
         <v-icon v-else>
@@ -83,10 +86,10 @@
         </v-icon>
       </v-btn>
       <v-btn
-        id="id_edit_gym"
+        id="filter"
         flat
-        icon="mdi-pencil"
-        @click="editGym"
+        icon="mdi-filter"
+        @click="filtering=true"
       />
     </template>
     <template #main>
@@ -146,16 +149,9 @@
               />
             </v-col>
           </v-row>
-          <vue-form
-            :api-path="`/bouldern/gym/${gym.id}/boulder/`"
-            :form="{
-              coordinates: selectedCoordinates,
-              color: selectedColor.id,
-              grade: selectedGrade.id,
-            }"
-            submit-button-label="Save"
-            @submitted="onSubmitted"
-          />
+          <v-btn @click="createBoulder">
+            Save
+          </v-btn>
         </template>
         <template
           v-else
@@ -222,7 +218,6 @@ import {Circle, Fill, Icon, Stroke, Style, Text} from 'ol/style';
 import View from 'ol/View';
 import ColorSelect from '../components/ColorSelect.vue';
 import MapOverlay from '../components/MapOverlay.vue';
-import VueForm from '../components/VueForm.vue';
 import AppView from '../components/AppView.vue';
 import {
   computed,
@@ -240,7 +235,6 @@ export default {
   components: {
     AppView,
     MapOverlay,
-    VueForm,
     ColorSelect,
     GymForm,
   },
@@ -694,14 +688,25 @@ export default {
     });
 
     /**
-     * Sets the selected boulder's id to the created one's and closes the
-     * create popover
+     * Creates a new boulder via API call, sets the selected boulder's id to the
+     * created one's and closes the create popover
      */
-    function onSubmitted(response) {
-      selectedBoulder.value.id = response.data.id;
-      selectedBoulder.value.grade = response.data.grade;
-      selectedBoulder.value.color = response.data.color;
-      selectedBoulder.value.age = 0;
+    function createBoulder() {
+      const boulder = selectedBoulder.value;
+      boulder.id = -1;
+      boulder.grade = selectedGrade.value;
+      boulder.color = selectedColor.value;
+      boulder.age = 0;
+      requestWithJwt({
+        apiPath: `/bouldern/gym/${gym.value.id}/boulder/`,
+        data: {
+          coordinates: selectedCoordinates.value,
+          color: selectedColor.value.id,
+          grade: selectedGrade.value.id,
+        },
+      }).then((response) => {
+        boulder.id = response.data.id;
+      });
       overlay.value.close();
     }
 
@@ -748,14 +753,15 @@ export default {
      * Submits the selected ascent result and closes the edit popover.
      */
     function reportAscent() {
+      const boulder = selectedBoulder.value;
+      const ascent = {'result': selectedAscentResult.value};
       requestWithJwt({
         apiPath: `/bouldern/gym/${gym.value.id}/boulder/` +
-            `${selectedBoulder.value.id}/ascent/`,
-        data: {'result': selectedAscentResult.value},
-      }).then((response) => {
-        selectedBoulder.value.ascent = response.data;
-        overlay.value.close();
+            `${boulder.id}/ascent/`,
+        data: ascent,
       });
+      boulder.ascent = ascent;
+      overlay.value.close();
     }
 
     const {t} = useI18n();
@@ -844,28 +850,42 @@ export default {
     let timer;
 
     /**
-     * todo
+     * Gets the time that has passed since the provided timestamp
+     *
+     * @param timeStamp timestamp to get the delay for, has to be same unit as
+     * performance.now()
+     * @returns {number} time that has passed since the provided timestamp in
+     * milliseconds
      */
     function getDelay(timeStamp) {
       return performance.now() - timeStamp;
     }
 
     /**
-     * todo
+     * Gets the time that has passed since the provided event
+     *
+     * @param event openlayers map event to get the delay for
+     * @returns {number} time that has passed since the provided event in
+     * milliseconds
      */
     function getEventDelay(event) {
       return getDelay(event.originalEvent.timeStamp);
     }
 
     /**
-     * todo
+     * Sets the cursor's style on the map to the provided one
      */
     function setCursorStyle(style) {
       map.getViewport().style.cursor = style;
     }
 
     /**
-     * todo
+     * Gets the boulder feature at the provided pixel. Ignores invisible
+     * boulders
+     *
+     * @param pixel pixel at which to look for a boulder
+     * @returns {undefined | object} the boulder feature at the provided pixel
+     * if there is one, undefined otherwise
      */
     function getBoulderAtPixel(pixel) {
       const boulder = map
@@ -877,7 +897,8 @@ export default {
     }
 
     /**
-     * todo
+     * Sets the radius of the provided boulder's color style to the provided
+     * value
      */
     function setBoulderRadius(boulder, radius) {
       const style = boulder.getStyle();
@@ -902,8 +923,8 @@ export default {
         initialBoulderCoordinates = event.features.getArray()[0]
             .getGeometry().getCoordinates();
         // deactivate drag pan
-        dragPanInteraction.setActive(false);
         setCursorStyle('grabbing');
+        dragPanInteraction.setActive(false);
         grabbingBoulder.value = true;
       });
       modifyInteraction.on('modifyend', (event) => {
@@ -1056,7 +1077,7 @@ export default {
       selectedGrade,
       updateGrade,
       updateHoldColor,
-      onSubmitted,
+      createBoulder,
       // edit popover
       selectedBoulder,
       selectedAscentResult,

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-select
+    <vue-select
       v-model="value"
       :options="options"
       :searchable="false"
@@ -12,7 +12,7 @@
           {{ option.label }}
         </span>
       </template>
-    </v-select>
+    </vue-select>
   </div>
 </template>
 
@@ -24,7 +24,7 @@ import vSelect from 'vue-select';
 export default {
   name: 'ColorSelect',
   components: {
-    vSelect,
+    vueSelect: vSelect,
   },
   props: {
     colorOptions: {

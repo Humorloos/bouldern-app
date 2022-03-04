@@ -48,8 +48,10 @@ export default {
     /**
      * Sends request to API endpoint for sending password reset email
      */
-    function sendPasswordResetEmail() {
-      axios.post('/registration/password/reset/', {email: email.value});
+    async function sendPasswordResetEmail() {
+      for (const _ of await store.dispatch('showingSpinner')) {
+        await axios.post('/registration/password/reset/', {email: email.value});
+      }
     }
     return {email, sendPasswordResetEmail};
   },
