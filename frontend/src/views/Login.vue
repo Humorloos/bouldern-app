@@ -94,8 +94,9 @@ export default {
      * Submits the login form and in case of success, empties email and password
      * and redirects to the home view
      */
-    function login() {
+    async function login() {
       store.dispatch('login', form.value).then(() => {
+        // todo: check if this is necessary
         Object.keys(form.value).forEach((key) => form.value[key] = '');
         router.push('/');
       });
