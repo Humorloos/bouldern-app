@@ -31,7 +31,7 @@
         <v-row>
           <v-col>
             <v-alert
-              v-model="alert"
+              v-model="confirmationMailSentAlert"
               type="info"
               transition="slide-y-reverse-transition"
             >
@@ -80,22 +80,23 @@ export default {
     const store = useStore();
     const axios = store.state.axios;
 
-    const alert = ref(false);
+    const confirmationMailSentAlert = ref(false);
+
     /**
      * Posts the registration form to the registration api
      */
-    function submit() {
-      axios.post('/registration/',
-          Object.keys(form.value).reduce((payload, key) => {
-            payload[key] = form.value[key].value;
-            return payload;
-          }, {})).then(() => {
-        alert.value = true;
-      });
+    async function submit() {
+      for (const _ of await store.dispatch('showingSpinner')) {
+        await axios.post('/registration/',
+            Object.keys(form.value).reduce((payload, key) => {
+              payload[key] = form.value[key].value;
+              return payload;
+            }, {}));
+        confirmationMailSentAlert.value = true;
+      }
     }
 
-
-    return {form, submit, alert};
+    return {form, submit, confirmationMailSentAlert};
   },
 };
 </script>

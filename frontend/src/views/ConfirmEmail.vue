@@ -20,13 +20,17 @@ export default {
   setup() {
     const route = useRoute();
     const store = useStore();
+
     /**
      * Sends the email confirmation key to the validation api
      */
-    function confirmEmail() {
-      store.state.axios.post(
-          '/registration/verify-email/', {key: route.params.key});
+    async function confirmEmail() {
+      for (const _ of await store.dispatch('showingSpinner')) {
+        await store.state.axios.post(
+            '/registration/verify-email/', {key: route.params.key});
+      }
     }
+
     return {confirmEmail};
   },
 };

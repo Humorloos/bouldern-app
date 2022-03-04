@@ -87,12 +87,12 @@ describe('The gym map view', () => {
     cy.get('#popup-closer').click();
 
     cy.log('open edit popover, edit and submit');
-    cy.get('#map-root').click(60, 370);
+    cy.get('#map-root').click(60, 360);
     cy.contains($t('ascentResults[0]')).click();
     cy.get('#save-boulder').click();
 
     cy.log('open edit popover and retire boulder');
-    cy.get('#map-root').click(50, 370);
+    cy.get('#map-root').click(50, 360);
     cy.get('#retire-boulder').click();
   });
 
@@ -113,7 +113,7 @@ describe('The gym map view', () => {
     cy.contains('1').click();
     cy.get('#close-filter').click();
 
-    cy.get('#map-root').click(50, 370);
+    cy.get('#map-root').click(50, 310);
     cy.contains('Grade');
     cy.get('#popup-closer').click();
 

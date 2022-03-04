@@ -46,7 +46,7 @@ describe('The register app', () => {
 
   it('allows registering, logging in, and deleting one\'s account ' +
     'afterwards', () => {
-    // register
+    cy.log('register');
     cy.visit('register');
     cy.get('#id_username')
         .type(constants.newUsername)
@@ -60,7 +60,8 @@ describe('The register app', () => {
       cy.get('#submit_button').click();
     }
     cy.contains($t('confirmationEmailAlert', {email: constants.newEmail}));
-    // confirm email via confirmation link sent via email
+
+    cy.log('confirm email via confirmation link sent via email');
     cy.task('readLastEmail')
         .should('have.string', constants.newEmail.toLowerCase())
         .then((mail) => {
@@ -72,15 +73,21 @@ describe('The register app', () => {
     for (const _ of waitingFor('POST', '/registration/verify-email/')) {
       cy.get('#id_confirm_email').click();
     }
-    // login with newly created credentials
+
+    cy.log('login with newly created credentials');
     cy.visit('login');
     loginViaLogInLink(constants.newEmail, constants.newPassword);
-    // check that user is logged in
+
+    cy.log('check that user is logged in');
     cy.visit('profile');
     cy.contains($t('welcomeMsg', {user: constants.newUsername}));
-    // delete account
-    cy.contains('Delete Account').click();
-    // check that logging in with deleted account leads to error message
+
+    cy.log('delete account');
+    for (const _ of waitingFor('DELETE', '/registration/user/3/')) {
+      cy.contains('Delete Account').click();
+    }
+
+    cy.log('check that logging in with deleted account leads to error message');
     loginViaLogInLink(constants.newEmail, constants.newPassword);
     cy.contains($t('wrongCredentialsMsg'));
   });
