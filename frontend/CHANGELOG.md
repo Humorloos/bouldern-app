@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.17](https://github.com/Humorloos/bouldern-app/compare/v0.1.16...v0.1.17) (2022-03-04)
+
+
+### Features
+
+* add loading animation ([bbd47ab](https://github.com/Humorloos/bouldern-app/commit/bbd47ab04d2a7d17846023aaa857bc0cafe9b829))
+* **GymMap:** Make favorite button yellow ([0fd377e](https://github.com/Humorloos/bouldern-app/commit/0fd377eb3958baeabeeaf0728a004bf667a0ddfc))
+* **GymMap:** Swap position of edit and filter button ([6c73c65](https://github.com/Humorloos/bouldern-app/commit/6c73c6500d3300794750ee6311a3a93873735409))
+
 ### [0.1.16](https://github.com/Humorloos/bouldern-app/compare/v0.1.14...v0.1.16) (2022-03-02)
 
 
