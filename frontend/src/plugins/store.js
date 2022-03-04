@@ -265,7 +265,8 @@ export default createStore({
       return response;
     },
     /**
-     * todo
+     * Context manager for executing code while showing the loading spinner
+     * animation
      */
     * showingSpinner({commit}) {
       commit('setLoading', true);

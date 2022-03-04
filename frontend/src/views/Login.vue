@@ -96,7 +96,6 @@ export default {
      */
     async function login() {
       store.dispatch('login', form.value).then(() => {
-        // todo: check if this is necessary
         Object.keys(form.value).forEach((key) => form.value[key] = '');
         router.push('/');
       });
