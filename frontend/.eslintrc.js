@@ -13,7 +13,6 @@ module.exports = {
   ],
   plugins: ['jsdoc'],
   rules: {
-    'valid-jsdoc': 0, // eslint-jsdoc takes care of jsdoc validation
     'jsdoc/require-description': 2,
     'jsdoc/require-file-overview': 2,
     'jsdoc/require-jsdoc': [2, {
@@ -34,6 +33,11 @@ module.exports = {
       ],
     }],
     'jsdoc/require-param-type': 0, // for now, no types in jsdoc
-    'no-unused-vars': ['error', {'varsIgnorePattern': '^_$'}],
+    'no-unused-vars': [2, {'varsIgnorePattern': '^_$'}],
+    'valid-jsdoc': 0, // eslint-jsdoc takes care of jsdoc validation
+    'no-warning-comments': [2, {
+      terms: ['todo'],
+      location: 'anywhere',
+    }],
   },
 };

@@ -31,6 +31,7 @@ const getDefaultState = function() {
     favoriteGyms: [],
     colors: [],
     activeGym: null,
+    loading: false,
   };
 };
 
@@ -103,6 +104,12 @@ export default createStore({
     addColor(state, color) {
       state.colors.push(color);
     },
+    /**
+     * Shows/hides the loading animation
+     */
+    setLoading(state, loading) {
+      state.loading = loading;
+    },
   },
   actions: {
     /**
@@ -150,8 +157,8 @@ export default createStore({
     /**
      * De-activates currently logged-in account
      */
-    deleteAccount({state, dispatch}) {
-      dispatch('requestWithJwt', {
+    async deleteAccount({state, dispatch}) {
+      await dispatch('requestWithJwt', {
         apiPath: `/registration/user/${state.user.id}/`,
         method: 'DELETE',
       });
@@ -159,8 +166,8 @@ export default createStore({
     /**
      * Calls deleteAccount and logout mutations
      */
-    deleteAccountAndLogout({commit, dispatch}) {
-      dispatch('deleteAccount');
+    async deleteAccountAndLogout({commit, dispatch}) {
+      await dispatch('deleteAccount');
       commit('logout');
     },
     /**
@@ -184,9 +191,11 @@ export default createStore({
      * the store. In case of error shows an error message.
      */
     async login({state, commit, dispatch}, form) {
+      let response;
       try {
-        const response = await state.axios.post(
-            '/registration/login/', form);
+        for (const _ of await dispatch('showingSpinner')) {
+          response = await state.axios.post('/registration/login/', form);
+        }
         const loginData = response.data;
         dispatch('setLoginData', loginData);
         dispatch('loadFavoriteGyms');
@@ -206,6 +215,7 @@ export default createStore({
      * @param store.state the vuex store's state
      * @param store.getters the vuex store's getters
      * @param store.commit the vuex store's mutations
+     * @param store.dispatch the vuex store's actions
      * @param options the request specification
      * @param options.apiPath the url to which to send the request to
      * @param [options.method=POST] the http method to use for the request
@@ -214,41 +224,57 @@ export default createStore({
      * specified in the contentType header
      * @returns {object} Promise for response
      */
-    async requestWithJwt({state, getters, commit}, options) {
-      // set options
-      const defaultOptions = {
-        apiPath: '/',
-        method: 'POST',
-        data: {},
-        contentType: 'application/json',
-      };
-      Object.keys(defaultOptions).forEach((key) => {
-        if (!(key in options)) {
-          options[key] = defaultOptions[key];
+    async requestWithJwt({state, getters, commit, dispatch}, options) {
+      let response;
+      for (const _ of await dispatch('showingSpinner')) {
+        // set options
+        const defaultOptions = {
+          apiPath: '/',
+          method: 'POST',
+          data: {},
+          contentType: 'application/json',
+        };
+        Object.keys(defaultOptions).forEach((key) => {
+          if (!(key in options)) {
+            options[key] = defaultOptions[key];
+          }
+        });
+        // if necessary, refresh authToken
+        if (!getters.hasValidAuthToken) {
+          if (getters.hasValidRefreshToken) {
+            const refreshResponse = await state.axios.post(
+                '/registration/token/refresh/', {
+                  refresh: state.refreshToken.token,
+                });
+            commit('setAuthToken', {
+              token: refreshResponse.data.access,
+              expiration: refreshResponse.data.access_token_expiration,
+            });
+          }
         }
-      });
-      // if necessary, refresh authToken
-      if (!getters.hasValidAuthToken) {
-        if (getters.hasValidRefreshToken) {
-          const refreshResponse = await state.axios.post(
-              '/registration/token/refresh/', {
-                refresh: state.refreshToken.token,
-              });
-          commit('setAuthToken', {
-            token: refreshResponse.data.access,
-            expiration: refreshResponse.data.access_token_expiration,
-          });
-        }
+        // make api call
+        response = await state.axios(options.apiPath, {
+          method: options.method,
+          data: options.data,
+          headers: {
+            'authorization': `Bearer ${state.authToken.token}`,
+            'content-type': options.contentType,
+          },
+        });
       }
-      // make api call
-      return state.axios(options.apiPath, {
-        method: options.method,
-        data: options.data,
-        headers: {
-          'authorization': `Bearer ${state.authToken.token}`,
-          'content-type': options.contentType,
-        },
-      });
+      return response;
+    },
+    /**
+     * Context manager for executing code while showing the loading spinner
+     * animation
+     */
+    * showingSpinner({commit}) {
+      commit('setLoading', true);
+      try {
+        yield;
+      } finally {
+        commit('setLoading', false);
+      }
     },
   },
   getters: {

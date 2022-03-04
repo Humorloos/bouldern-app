@@ -24,6 +24,12 @@
       </div>
     </slot>
     <v-spacer />
+    <v-progress-circular
+      v-show="loading"
+      indeterminate
+      :size="20"
+      :width="2"
+    />
     <slot name="app-bar-right" />
   </v-app-bar>
   <v-navigation-drawer
@@ -116,6 +122,7 @@ export default {
       isAuthenticated: computed(() => store.getters.isAuthenticated),
       favoriteGyms: computed(() => store.state.favoriteGyms),
       user: computed(() => store.state.user),
+      loading: computed(() => store.state.loading),
     };
   },
 };
