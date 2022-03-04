@@ -149,7 +149,6 @@
               />
             </v-col>
           </v-row>
-          <!--          todo: loading after register and reset password-->
           <v-btn @click="createBoulder">
             Save
           </v-btn>
@@ -851,28 +850,42 @@ export default {
     let timer;
 
     /**
-     * todo
+     * Gets the time that has passed since the provided timestamp
+     *
+     * @param timeStamp timestamp to get the delay for, has to be same unit as
+     * performance.now()
+     * @returns {number} time that has passed since the provided timestamp in
+     * milliseconds
      */
     function getDelay(timeStamp) {
       return performance.now() - timeStamp;
     }
 
     /**
-     * todo
+     * Gets the time that has passed since the provided event
+     *
+     * @param event openlayers map event to get the delay for
+     * @returns {number} time that has passed since the provided event in
+     * milliseconds
      */
     function getEventDelay(event) {
       return getDelay(event.originalEvent.timeStamp);
     }
 
     /**
-     * todo
+     * Sets the cursor's style on the map to the provided one
      */
     function setCursorStyle(style) {
       map.getViewport().style.cursor = style;
     }
 
     /**
-     * todo
+     * Gets the boulder feature at the provided pixel. Ignores invisible
+     * boulders
+     *
+     * @param pixel pixel at which to look for a boulder
+     * @returns {undefined | object} the boulder feature at the provided pixel
+     * if there is one, undefined otherwise
      */
     function getBoulderAtPixel(pixel) {
       const boulder = map
@@ -884,7 +897,8 @@ export default {
     }
 
     /**
-     * todo
+     * Sets the radius of the provided boulder's color style to the provided
+     * value
      */
     function setBoulderRadius(boulder, radius) {
       const style = boulder.getStyle();
