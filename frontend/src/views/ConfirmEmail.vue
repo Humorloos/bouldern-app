@@ -1,24 +1,32 @@
 <template>
-  <v-container>
-    <v-col>
-      <v-btn
-        id="id_confirm_email"
-        @click="confirmEmail"
-      >
-        Confirm E-Mail
-      </v-btn>
-    </v-col>
-  </v-container>
+  <app-view>
+    <template #main>
+      <v-container>
+        <v-col>
+          <v-btn
+            id="id_confirm_email"
+            @click="confirmEmail"
+          >
+            Confirm E-Mail
+          </v-btn>
+        </v-col>
+      </v-container>
+    </template>
+  </app-view>
 </template>
 
 <script>/** @file view for confirming one's email after registration */
-import {useRoute} from 'vue-router';
+import {useRoute, useRouter} from 'vue-router';
 import {useStore} from 'vuex';
+import AppView from '../components/AppView.vue';
+import {useI18n} from 'vue-i18n';
 
 
 export default {
+  components: {AppView},
   setup() {
     const route = useRoute();
+    const router = useRouter();
     const store = useStore();
 
     /**
@@ -29,6 +37,7 @@ export default {
         await store.state.axios.post(
             '/registration/verify-email/', {key: route.params.key});
       }
+      await router.push('/login');
     }
 
     return {confirmEmail};
