@@ -2,7 +2,6 @@
 
 import {createStore} from 'vuex';
 import http from '../http-common';
-import i18n from '../i18n';
 import createPersistedState from 'vuex-persistedstate';
 import {Colors} from '../constants/color.js';
 
@@ -26,7 +25,6 @@ const getDefaultState = function() {
       email: '',
       username: '',
     },
-    loginError: '',
     axios: http,
     favoriteGyms: [],
     colors: [],
@@ -53,18 +51,6 @@ export default createStore({
     },
     setAuthTokenToken(state, authTokenToken) {
       state.authToken.token = authTokenToken;
-    },
-    /**
-     * Sets the login error message
-     */
-    setLoginError(state) {
-      state.loginError = i18n.global.t('wrongCredentialsMsg');
-    },
-    /**
-     * clears the login error message
-     */
-    clearLoginError(state) {
-      state.loginError = '';
     },
     /**
      * Resets the state to default.
@@ -184,26 +170,20 @@ export default createStore({
         expiration: loginData.refresh_token_expiration,
       });
       commit('setUser', loginData.user);
-      commit('clearLoginError');
     },
     /**
      * Submits the login form to the login api and commits the returned data to
      * the store. In case of error shows an error message.
      */
-    async login({state, commit, dispatch}, form) {
+    async login({state, dispatch}, form) {
       let response;
-      try {
-        for (const _ of await dispatch('showingSpinner')) {
-          response = await state.axios.post('/registration/login/', form);
-        }
-        const loginData = response.data;
-        dispatch('setLoginData', loginData);
-        dispatch('loadFavoriteGyms');
-        dispatch('loadColors');
-      } catch (error) {
-        console.log(error);
-        commit('setLoginError');
+      for (const _ of await dispatch('showingSpinner')) {
+        response = await state.axios.post('/registration/login/', form);
       }
+      const loginData = response.data;
+      dispatch('setLoginData', loginData);
+      dispatch('loadFavoriteGyms');
+      dispatch('loadColors');
     },
     /**
      * Makes an authorized request to the specified path with the specified
