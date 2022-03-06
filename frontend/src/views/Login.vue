@@ -12,9 +12,6 @@
             <v-form>
               <v-container>
                 <v-row>
-                  <v-col>{{ loginError }}</v-col>
-                </v-row>
-                <v-row>
                   <v-text-field
                     id="id_email"
                     v-model="form.email"
@@ -69,6 +66,16 @@
             </v-btn>
           </v-col>
         </v-row>
+        <v-row>
+          <v-col>
+            <v-alert
+              v-model="loginError"
+              type="error"
+            >
+              {{ $t('wrongCredentialsMsg') }}
+            </v-alert>
+          </v-col>
+        </v-row>
       </v-container>
     </template>
   </app-view>
@@ -78,7 +85,7 @@
 
 import {useStore} from 'vuex';
 import AppView from '../components/AppView.vue';
-import {computed, ref} from 'vue';
+import {ref} from 'vue';
 import {useRouter} from 'vue-router';
 
 export default {
@@ -88,6 +95,7 @@ export default {
     const form = ref({email: '', password: ''});
     const store = useStore();
 
+    const loginError = ref(false);
     const router = useRouter();
 
     /**
@@ -95,7 +103,10 @@ export default {
      * and redirects to the home view
      */
     async function login() {
-      store.dispatch('login', form.value).then(() => {
+      store.dispatch('login', form.value).catch((error) => {
+        console.log(error);
+        loginError.value = true;
+      }).then(() => {
         Object.keys(form.value).forEach((key) => form.value[key] = '');
         router.push('/');
       });
@@ -104,7 +115,7 @@ export default {
     return {
       form,
       login,
-      loginError: computed(() => store.state.loginError),
+      loginError,
     };
   },
 };
