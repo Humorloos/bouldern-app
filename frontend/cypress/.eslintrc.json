@@ -25,6 +25,7 @@
     "constants": "readonly",
     "loginViaLogInLink": "readonly",
     "slugify": "readonly",
-    "waitingFor": "readonly"
+    "waitingFor": "readonly",
+    "atPixel": "readonly"
   }
 }

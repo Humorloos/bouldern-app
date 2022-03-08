@@ -21,7 +21,7 @@
 import './functions';
 import './constants';
 import 'cypress-file-upload';
-
+import 'cypress-wait-until';
 
 before(() => {
   // reset DB

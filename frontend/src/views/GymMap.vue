@@ -499,6 +499,7 @@ export default {
       style: invisible,
       pixelTolerance: 20,
       condition: (event) => {
+        if (creating.value) return false;
         // on touch screen, start moving only after holding for some time
         if (event.originalEvent.pointerType === 'touch') {
           return getEventDelay(event) >= modifyTouchThreshold;
@@ -732,6 +733,7 @@ export default {
       if (selectedBoulder.value.id === undefined) {
         featureCollection.pop();
       }
+      creating.value = false;
     }
 
     // Edit popover
@@ -744,7 +746,6 @@ export default {
      */
     function openEditPopover(feature) {
       overlay.value.close();
-      creating.value = false;
       selectedAscentResult.value = feature.ascent ?
           feature.ascent.result.toString() : null;
       selectedBoulder.value = feature;
@@ -904,7 +905,9 @@ export default {
     function getBoulderAtPixel(pixel) {
       const boulder = map
           .forEachFeatureAtPixel(pixel, (feature) => feature);
-      if (boulder && boulder.getStyle() !== invisible) {
+      if (boulder &&
+          boulder.getStyle() !== invisible &&
+          boulder.id !== undefined) {
         return boulder;
       }
       return undefined;
@@ -970,7 +973,7 @@ export default {
       map.on('pointerdown', (event) => {
         clickStart.value = event.originalEvent.timeStamp;
         const boulder = getBoulderAtPixel(event.pixel);
-        if (boulder) {
+        if (boulder && !creating.value) {
           if (event.originalEvent.pointerType === 'touch') {
             timer = setTimeout(() => {
               // fire event only once and only if not panning the map
@@ -995,6 +998,8 @@ export default {
         }
         clearTimeout(timer);
       });
+      // add handler for opening edit popover or resetting a boulder's style
+      // after moving
       map.on('click', (event) => {
         const boulder = getBoulderAtPixel(event.pixel);
         if (boulder) {
@@ -1129,6 +1134,8 @@ export default {
       // refresh button
       appView,
       refresh,
+      // expose map to cypress
+      map,
     };
   },
 };
