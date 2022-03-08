@@ -359,6 +359,7 @@ export default {
         }),
       });
     }
+
     const shadowStyle = new Style({
       image: new Icon({
         src: axios.defaults.baseURL +
@@ -541,6 +542,7 @@ export default {
       id: -1,
       color: -1,
     };
+
     /**
      * Sets the style of the provided boulder feature based on its color, grade,
      * and ascent result
@@ -832,8 +834,11 @@ export default {
      * calls close popover handler for create / edit popover
      */
     function onClosePopover() {
-      if (creating.value) onCloseCreatePopover();
-      else onCloseEditPopover();
+      if (creating.value) {
+        onCloseCreatePopover();
+      } else {
+        onCloseEditPopover();
+      }
     }
 
     // filtering by grade
@@ -848,7 +853,9 @@ export default {
     function selectGrades(allGradesActive) {
       if (allGradesActive) {
         activeGrades.value = gym.value.grade_set.map((grade) => grade.id);
-      } else activeGrades.value = [];
+      } else {
+        activeGrades.value = [];
+      }
     }
 
     const activeGrades = ref([]);
@@ -966,7 +973,7 @@ export default {
         } else {
           requestWithJwt({
             apiPath: `/bouldern/gym/${gym.value.id}/boulder/` +
-            `${boulder.id}/`,
+                `${boulder.id}/`,
             method: 'PATCH',
             data: {
               coordinates: jsonFormat.value
@@ -989,7 +996,7 @@ export default {
             timer = setTimeout(() => {
               // fire event only once and only if not panning the map
               if (getEventDelay(event) < 2 * modifyTouchThreshold &&
-                  !moving.value) {
+                      !moving.value) {
                 setBoulderRadius(boulder, 35);
                 map.mapBrowserEventHandler_.dispatchEvent(event);
               }
@@ -1050,8 +1057,11 @@ export default {
      */
     function setFavorite() {
       favorite.value = !favorite.value;
-      if (favorite.value) store.dispatch('addFavoriteGym', gymName.value);
-      else store.dispatch('removeFavoriteGym', gymName.value);
+      if (favorite.value) {
+        store.dispatch('addFavoriteGym', gymName.value);
+      } else {
+        store.dispatch('removeFavoriteGym', gymName.value);
+      }
     }
 
     // edit gym view
