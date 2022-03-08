@@ -905,7 +905,9 @@ export default {
     function getBoulderAtPixel(pixel) {
       const boulder = map
           .forEachFeatureAtPixel(pixel, (feature) => feature);
-      if (boulder && boulder.getStyle() !== invisible) {
+      if (boulder &&
+          boulder.getStyle() !== invisible &&
+          boulder.id !== undefined) {
         return boulder;
       }
       return undefined;
@@ -1000,7 +1002,7 @@ export default {
       // after moving
       map.on('click', (event) => {
         const boulder = getBoulderAtPixel(event.pixel);
-        if (boulder && !creating.value) {
+        if (boulder) {
           if (getDelay(clickStart.value) >= modifyTouchThreshold) {
             setBoulderRadius(boulder, boulderRadius);
           } else {
@@ -1010,7 +1012,7 @@ export default {
       });
       map.on('pointermove', (event) => {
         const pixel = map.getEventPixel(event.originalEvent);
-        const hit = hasBoulderAtPixel(pixel) && !creating.value;
+        const hit = hasBoulderAtPixel(pixel);
         setCursorStyle(hit ?
             grabbingBoulder.value ? 'grabbing' :
                 'pointer' : '');
