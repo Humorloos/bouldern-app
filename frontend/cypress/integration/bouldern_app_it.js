@@ -230,12 +230,16 @@ describe('The gym creation view', () => {
     cy.window().its(`${GymMapView.name}.loaded`).should('equal', true);
 
     cy.log('open create popover in newly created gym and submit it');
-    cy.get('#map-root').click(280, 240);
-    cy.get('#id-grade-select').click();
-    cy.contains('2').click();
-    cy.get('#id-color-select').click();
-    cy.contains('Red').click();
-    cy.contains('Save').click();
+    cy.window().its(`${GymMapView.name}.map`).then((map) => {
+      atPixel(map, constants.newBoulder2Coordinates, ([x, y]) => {
+        cy.get('#map-root').click(x, y);
+        cy.get('#id-grade-select').click();
+        cy.contains('2').click();
+        cy.get('#id-color-select').click();
+        cy.contains('Red').click();
+        cy.contains('Save').click();
+      });
+    });
   });
 
   it('allows navigating to color creation view', () => {
