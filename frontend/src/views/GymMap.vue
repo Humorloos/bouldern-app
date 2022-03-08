@@ -426,10 +426,7 @@ export default {
      * @returns {boolean} whether there is a boulder at the pixel or not
      */
     function hasBoulderAtPixel(pixel) {
-      return map.hasFeatureAtPixel(pixel, {
-        layerFilter: (layer) => layer
-            .getClassName() === vectorLayer.getClassName(),
-      });
+      return getBoulderAtPixel(pixel) !== undefined;
     }
 
     const jsonFormat = ref(new GeoJSON());
@@ -499,7 +496,6 @@ export default {
       style: invisible,
       pixelTolerance: 20,
       condition: (event) => {
-        if (creating.value) return false;
         // on touch screen, start moving only after holding for some time
         if (event.originalEvent.pointerType === 'touch') {
           return getEventDelay(event) >= modifyTouchThreshold;
@@ -905,7 +901,9 @@ export default {
     function getBoulderAtPixel(pixel) {
       const boulder = map
           .forEachFeatureAtPixel(pixel, (feature) => feature);
-      if (boulder && boulder.getStyle() !== invisible) {
+      if (boulder &&
+          boulder.getStyle() !== invisible &&
+          boulder.id !== undefined) {
         return boulder;
       }
       return undefined;
@@ -971,7 +969,7 @@ export default {
       map.on('pointerdown', (event) => {
         clickStart.value = event.originalEvent.timeStamp;
         const boulder = getBoulderAtPixel(event.pixel);
-        if (boulder && !creating.value) {
+        if (boulder) {
           if (event.originalEvent.pointerType === 'touch') {
             timer = setTimeout(() => {
               // fire event only once and only if not panning the map
@@ -1000,7 +998,7 @@ export default {
       // after moving
       map.on('click', (event) => {
         const boulder = getBoulderAtPixel(event.pixel);
-        if (boulder && !creating.value) {
+        if (boulder) {
           if (getDelay(clickStart.value) >= modifyTouchThreshold) {
             setBoulderRadius(boulder, boulderRadius);
           } else {
@@ -1010,7 +1008,7 @@ export default {
       });
       map.on('pointermove', (event) => {
         const pixel = map.getEventPixel(event.originalEvent);
-        const hit = hasBoulderAtPixel(pixel) && !creating.value;
+        const hit = hasBoulderAtPixel(pixel);
         setCursorStyle(hit ?
             grabbingBoulder.value ? 'grabbing' :
                 'pointer' : '');
