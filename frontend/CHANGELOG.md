@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.18](https://github.com/Humorloos/bouldern-app/compare/v0.1.17...v0.1.18) (2022-03-08)
+
+
+### Features
+
+* **ConfirmEmail:** redirect to login page after email confirmation ([816656c](https://github.com/Humorloos/bouldern-app/commit/816656c82183b81fc72ed5c423e2d943ae803d21))
+* **GymMap:** add refresh button to menu ([8bb6ce4](https://github.com/Humorloos/bouldern-app/commit/8bb6ce48022d78232badee04ebc8a70d383df113))
+* **Login:** show login error in alert ([7929fad](https://github.com/Humorloos/bouldern-app/commit/7929faddf015fc4372fb954d3c152add409497cb))
+
+
+### Bug Fixes
+
+* **GymMap:** fix edit popover opening when clicking creating boulder ([2dce7dd](https://github.com/Humorloos/bouldern-app/commit/2dce7dd0d22c2792a4ee1e70ec9f6162b8c9f271))
+
 ### [0.1.17](https://github.com/Humorloos/bouldern-app/compare/v0.1.16...v0.1.17) (2022-03-04)
 
 
