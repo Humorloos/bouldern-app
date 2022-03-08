@@ -733,6 +733,7 @@ export default {
       if (selectedBoulder.value.id === undefined) {
         featureCollection.pop();
       }
+      creating.value = false;
     }
 
     // Edit popover
@@ -745,7 +746,6 @@ export default {
      */
     function openEditPopover(feature) {
       overlay.value.close();
-      creating.value = false;
       selectedAscentResult.value = feature.ascent ?
           feature.ascent.result.toString() : null;
       selectedBoulder.value = feature;
