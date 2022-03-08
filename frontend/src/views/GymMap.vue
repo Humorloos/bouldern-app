@@ -359,6 +359,7 @@ export default {
         }),
       });
     }
+
     const shadowStyle = new Style({
       image: new Icon({
         src: axios.defaults.baseURL +
@@ -426,10 +427,7 @@ export default {
      * @returns {boolean} whether there is a boulder at the pixel or not
      */
     function hasBoulderAtPixel(pixel) {
-      return map.hasFeatureAtPixel(pixel, {
-        layerFilter: (layer) => layer
-            .getClassName() === vectorLayer.getClassName(),
-      });
+      return getBoulderAtPixel(pixel) !== undefined;
     }
 
     const jsonFormat = ref(new GeoJSON());
@@ -503,7 +501,9 @@ export default {
         if (event.originalEvent.pointerType === 'touch') {
           return getEventDelay(event) >= modifyTouchThreshold;
         } else {
-          return hasBoulderAtPixel(event.pixel);
+          const boulder = getBoulderAtPixel(event.pixel);
+          return boulder !== undefined &&
+              !isBeingEdited(boulder);
         }
       },
     });
@@ -542,6 +542,7 @@ export default {
       id: -1,
       color: -1,
     };
+
     /**
      * Sets the style of the provided boulder feature based on its color, grade,
      * and ascent result
@@ -732,10 +733,12 @@ export default {
       if (selectedBoulder.value.id === undefined) {
         featureCollection.pop();
       }
+      creating.value = false;
     }
 
     // Edit popover
     const selectedAscentResult = ref(null);
+    const editing = ref(false);
 
     /**
      * Opens the edit popover and closes the old one if still open.
@@ -744,7 +747,7 @@ export default {
      */
     function openEditPopover(feature) {
       overlay.value.close();
-      creating.value = false;
+      editing.value = true;
       selectedAscentResult.value = feature.ascent ?
           feature.ascent.result.toString() : null;
       selectedBoulder.value = feature;
@@ -798,9 +801,20 @@ export default {
     }
 
     /**
+     * Checks whether the specified boulder is currently being edited
+     *
+     * @param boulder the boulder to check
+     * @returns {boolean} whether the boulder is being edited
+     */
+    function isBeingEdited(boulder) {
+      return editing.value && boulder.id === selectedBoulder.value.id;
+    }
+
+    /**
      * Resets ascent status if it was changed.
      */
     function onCloseEditPopover() {
+      editing.value = false;
       if (selectedBoulder.value.ascent !== null) {
         if (selectedBoulder.value.ascent.result.toString() !==
             selectedAscentResult.value) {
@@ -820,8 +834,11 @@ export default {
      * calls close popover handler for create / edit popover
      */
     function onClosePopover() {
-      if (creating.value) onCloseCreatePopover();
-      else onCloseEditPopover();
+      if (creating.value) {
+        onCloseCreatePopover();
+      } else {
+        onCloseEditPopover();
+      }
     }
 
     // filtering by grade
@@ -836,7 +853,9 @@ export default {
     function selectGrades(allGradesActive) {
       if (allGradesActive) {
         activeGrades.value = gym.value.grade_set.map((grade) => grade.id);
-      } else activeGrades.value = [];
+      } else {
+        activeGrades.value = [];
+      }
     }
 
     const activeGrades = ref([]);
@@ -904,7 +923,9 @@ export default {
     function getBoulderAtPixel(pixel) {
       const boulder = map
           .forEachFeatureAtPixel(pixel, (feature) => feature);
-      if (boulder && boulder.getStyle() !== invisible) {
+      if (boulder &&
+          boulder.getStyle() !== invisible &&
+          boulder.id !== undefined) {
         return boulder;
       }
       return undefined;
@@ -952,7 +973,7 @@ export default {
         } else {
           requestWithJwt({
             apiPath: `/bouldern/gym/${gym.value.id}/boulder/` +
-            `${boulder.id}/`,
+                `${boulder.id}/`,
             method: 'PATCH',
             data: {
               coordinates: jsonFormat.value
@@ -970,12 +991,12 @@ export default {
       map.on('pointerdown', (event) => {
         clickStart.value = event.originalEvent.timeStamp;
         const boulder = getBoulderAtPixel(event.pixel);
-        if (boulder) {
+        if (boulder && !isBeingEdited(boulder)) {
           if (event.originalEvent.pointerType === 'touch') {
             timer = setTimeout(() => {
               // fire event only once and only if not panning the map
               if (getEventDelay(event) < 2 * modifyTouchThreshold &&
-                  !moving.value) {
+                      !moving.value) {
                 setBoulderRadius(boulder, 35);
                 map.mapBrowserEventHandler_.dispatchEvent(event);
               }
@@ -995,6 +1016,8 @@ export default {
         }
         clearTimeout(timer);
       });
+      // add handler for opening edit popover or resetting a boulder's style
+      // after moving
       map.on('click', (event) => {
         const boulder = getBoulderAtPixel(event.pixel);
         if (boulder) {
@@ -1034,8 +1057,11 @@ export default {
      */
     function setFavorite() {
       favorite.value = !favorite.value;
-      if (favorite.value) store.dispatch('addFavoriteGym', gymName.value);
-      else store.dispatch('removeFavoriteGym', gymName.value);
+      if (favorite.value) {
+        store.dispatch('addFavoriteGym', gymName.value);
+      } else {
+        store.dispatch('removeFavoriteGym', gymName.value);
+      }
     }
 
     // edit gym view
@@ -1129,6 +1155,8 @@ export default {
       // refresh button
       appView,
       refresh,
+      // expose map to cypress
+      map,
     };
   },
 };

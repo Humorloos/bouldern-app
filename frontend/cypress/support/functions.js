@@ -65,3 +65,20 @@ window.waitingFor = function* (method, url) {
     cy.wait('@request');
   }
 };
+
+/**
+ * Gets the x and y values corresponding to the specified coordinates in the
+ * specified map at the time this function is called and calls the provided
+ * function with them.
+ *
+ * @param map the map in which to get the values for the coordinates
+ * @param coordinates the coordinates for which to get the x and y values
+ * @param fn the function to call with the x and y values
+ */
+window.atPixel = function(map, coordinates, fn) {
+  cy.waitUntil(() => {
+    return map.getPixelFromCoordinate(coordinates);
+  }).then((pixel) => {
+    fn(pixel);
+  });
+};

@@ -11,4 +11,7 @@ window.constants = {
   newGymName: 'testGym',
   gymName: 'Generic Gym',
   greenGymName: 'Green Gym',
+  boulder1Coordinates: [799, 645],
+  newBoulderCoordinates: [500, 500],
+  newBoulder2Coordinates: [250, 500],
 };
