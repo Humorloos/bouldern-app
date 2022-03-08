@@ -179,6 +179,12 @@ describe('The gym map view', () => {
     // save
     cy.get('#id_save-gym').click();
   });
+
+  it('can refresh', () => {
+    cy.log('click refresh button');
+    cy.get('.mdi-menu').click();
+    cy.get('#id_refresh').click();
+  });
 });
 
 describe('The gym creation view', () => {

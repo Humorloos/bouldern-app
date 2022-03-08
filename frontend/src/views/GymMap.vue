@@ -61,6 +61,7 @@
   </app-view>
   <app-view
     v-else
+    ref="appView"
   >
     <template #app-bar-right>
       <v-btn
@@ -91,6 +92,19 @@
         icon="mdi-filter"
         @click="filtering=true"
       />
+    </template>
+    <template #app-drawer>
+      <v-divider />
+      <v-list-item
+        id="id_refresh"
+        @click="refresh"
+      >
+        <v-icon>mdi-refresh</v-icon>
+        <v-list-item-title class="pl-3">
+          Refresh
+        </v-list-item-title>
+      </v-list-item>
+      <v-divider />
     </template>
     <template #main>
       <map-overlay
@@ -1010,9 +1024,8 @@ export default {
     loadGymMap(onGymMapLoaded);
     // Load new gym map when gym name changes
     watch(gymName, (newGymName) => {
-      featureCollection.clear();
       if (newGymName !== null) {
-        loadGymMap();
+        refresh();
       }
     });
 
@@ -1059,6 +1072,17 @@ export default {
       });
     }
 
+    const appView = ref(null);
+
+    /**
+     * Refreshes the gym map
+     */
+    function refresh() {
+      featureCollection.clear();
+      loadGymMap();
+      appView.value.collapseDrawer();
+    }
+
     return {
       // colors
       getHexColor,
@@ -1102,6 +1126,9 @@ export default {
       updateGymGrades,
       // moving boulders
       modifyTouchThreshold,
+      // refresh button
+      appView,
+      refresh,
     };
   },
 };
