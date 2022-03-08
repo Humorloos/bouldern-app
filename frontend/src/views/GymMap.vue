@@ -146,7 +146,7 @@
               Grade:
               <color-select
                 id="id-grade-select"
-                v-model="selectedGrade"
+                v-model="selectedGradeColor"
                 :color-options="gradeColors"
                 @update:model-value="updateGrade($event)"
               />
@@ -620,7 +620,10 @@ export default {
     const selectedBoulder = ref({ascent: undefined});
     const selectedCoordinates = ref({});
     const selectedColor = ref(Colors.DEFAULT_COLOR);
-    const selectedGrade = ref(Colors.DEFAULT_COLOR);
+    const selectedGradeColor = ref(Colors.DEFAULT_COLOR);
+    const selectedGrade = computed(() => {
+      return getGrade(selectedGradeColor.value.id);
+    });
 
     /**
      * Opens the create popover and closes the old one if still open. Sets
@@ -640,7 +643,9 @@ export default {
       selectedCoordinates.value = jsonFormat.value
           .writeGeometryObject(geometry);
       feature.setStyle(getBoulderStyle(
-          selectedColor.value.color, selectedGrade.value.color, '0'));
+          selectedColor.value.color,
+          getHexColor(selectedGrade.value.color),
+          '0'));
 
       selectedBoulder.value = feature;
       overlay.value.open(geometry.getCoordinates());
@@ -648,7 +653,7 @@ export default {
 
     // reset selected colors and close popover when changing gym
     watch(gymName, () => {
-      selectedGrade.value = Colors.DEFAULT_COLOR;
+      selectedGrade.value = defaultGrade;
       selectedColor.value = Colors.DEFAULT_COLOR;
       overlay.value.close();
     });
@@ -659,7 +664,7 @@ export default {
      * @param holdColor the hold color to set
      * @param gradeColor the grade color to set
      */
-    function setColorStyle(holdColor, gradeColor) {
+    function setSelectedBoulderColorStyle(holdColor, gradeColor) {
       const style = selectedBoulder.value.getStyle();
       style[1] = getColorStyle(holdColor, gradeColor);
       selectedBoulder.value.setStyle(style);
@@ -673,7 +678,7 @@ export default {
      * @param selectedOption the selected color Option
      */
     function updateGrade(selectedOption) {
-      setColorStyle(selectedOption.color, selectedOption.color);
+      setSelectedBoulderColorStyle(selectedOption.color, selectedOption.color);
       selectedColor.value = colorOptions.value.filter(
           (colorOption) => colorOption.color === selectedOption.color)[0];
     }
@@ -685,7 +690,8 @@ export default {
      * @param selectedOption the selected color Option
      */
     function updateHoldColor(selectedOption) {
-      setColorStyle(selectedOption.color, selectedGrade.value.color);
+      setSelectedBoulderColorStyle(
+          selectedOption.color, getHexColor(selectedGrade.value.color));
     }
 
     /**
@@ -709,8 +715,8 @@ export default {
     function createBoulder() {
       const boulder = selectedBoulder.value;
       boulder.id = -1;
-      boulder.grade = selectedGrade.value;
-      boulder.color = selectedColor.value;
+      boulder.grade = selectedGrade.value.grade;
+      boulder.color = selectedColor.value.id;
       boulder.age = 0;
       requestWithJwt({
         apiPath: `/bouldern/gym/${gym.value.id}/boulder/`,
@@ -866,10 +872,11 @@ export default {
       featureCollection.forEach((boulder) => {
         // if boulder's grade is active and boulder is invisible, show it
         if (activeGrades.value.includes(boulder.grade)) {
+          // todo: check if we can do === invisible instead
           if (boulder.getStyle().length === undefined) {
             setBoulderStyle(boulder);
           }
-          //  if boulder's grade is inactive and boulder is visible, hide it
+          // if boulder's grade is inactive and boulder is visible, hide it
         } else {
           if (boulder.getStyle().length !== undefined) {
             boulder.setStyle(invisible);
@@ -1124,7 +1131,7 @@ export default {
       selectedCoordinates,
       selectedColor,
       gradeColors,
-      selectedGrade,
+      selectedGradeColor,
       updateGrade,
       updateHoldColor,
       createBoulder,
