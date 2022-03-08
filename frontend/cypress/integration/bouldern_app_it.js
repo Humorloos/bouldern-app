@@ -84,9 +84,6 @@ describe('The gym map view', () => {
       atPixel(map, constants.newBoulderCoordinates, ([x, y]) => {
         cy.log('open edit popover and close it');
         cy.get('#map-root').click(x, y);
-        // we have to click twice because there is a bug that the popover is not
-        // moved correctly the first time
-        // cy.get('#map-root').click(x, y);
         cy.contains('Added 0 day(s) ago');
         cy.contains($t('ascentResults[0]')).click();
         cy.get('#popup-closer').click();
