@@ -66,13 +66,13 @@ describe('The gym map view', () => {
 
   it('allows adding, editing, and retiring boulders', () => {
     cy.window().its(`${GymMapView.name}.map`).then((map) => {
-      atPixel(map, constants.newBoulderCoordainates, ([x, y]) => {
+      atPixel(map, constants.newBoulderCoordinates, ([x, y]) => {
         cy.log('open create popover and close it');
         cy.get('#map-root').click(x, y);
         cy.contains('Grade');
         cy.get('#popup-closer').click();
       });
-      atPixel(map, constants.newBoulderCoordainates, ([x, y]) => {
+      atPixel(map, constants.newBoulderCoordinates, ([x, y]) => {
         cy.log('open create popover and submit it');
         cy.get('#map-root').click(x, y);
         cy.get('#id-grade-select').click();
@@ -81,7 +81,7 @@ describe('The gym map view', () => {
         cy.contains('Yellow').click();
         cy.contains('Save').click();
       });
-      atPixel(map, constants.newBoulderCoordainates, ([x, y]) => {
+      atPixel(map, constants.newBoulderCoordinates, ([x, y]) => {
         cy.log('open edit popover and close it');
         cy.get('#map-root').click(x, y);
         // we have to click twice because there is a bug that the popover is not
@@ -91,13 +91,13 @@ describe('The gym map view', () => {
         cy.contains($t('ascentResults[0]')).click();
         cy.get('#popup-closer').click();
       });
-      atPixel(map, constants.newBoulderCoordainates, ([x, y]) => {
+      atPixel(map, constants.newBoulderCoordinates, ([x, y]) => {
         cy.log('open edit popover, edit and submit');
         cy.get('#map-root').click(x, y);
         cy.contains($t('ascentResults[0]')).click();
         cy.get('#save-boulder').click();
       });
-      atPixel(map, constants.newBoulderCoordainates, ([x, y]) => {
+      atPixel(map, constants.newBoulderCoordinates, ([x, y]) => {
         cy.log('open edit popover and retire boulder');
         cy.get('#map-root').click(x, y);
         cy.get('#retire-boulder').click();
@@ -106,34 +106,36 @@ describe('The gym map view', () => {
   });
 
   it('allows filtering by grade', () => {
-    cy.window().its(
-        `${GymMapView.name}.$refs.overlay.popover.autoPan.animation.duration`,
-    ).then((duration) => {
-      cy.wait(duration);
+    cy.window().its(`${GymMapView.name}.map`).then((map) => {
+      atPixel(map, constants.boulder1Coordinates, ([x, y]) => {
+        cy.log('check that boulder is clickable before filtering');
+        cy.get('#map-root').click(x, y);
+        cy.contains($t('ascentResults[0]'));
+        cy.get('#popup-closer').click();
+      });
+
+      cy.log('activate filter and check that boulder is not clickable');
+      cy.get('#filter').click();
+      cy.contains('1').click();
+      cy.get('#close-filter').click();
+
+      atPixel(map, constants.boulder1Coordinates, ([x, y]) => {
+        cy.get('#map-root').click(x, y);
+        cy.contains('Grade');
+        cy.get('#popup-closer').click();
+      });
+
+      cy.log('deactivate filter and check that boulder is clickable again');
+      cy.get('#filter').click();
+      cy.contains('1').click();
+      cy.get('#close-filter').click();
+
+      atPixel(map, constants.boulder1Coordinates, ([x, y]) => {
+        cy.get('#map-root').click(x, y);
+        cy.contains($t('ascentResults[0]'));
+        cy.get('#popup-closer').click();
+      });
     });
-
-    cy.log('check that boulder is clickable before filtering');
-    cy.get('#map-root').click(240, 340);
-    cy.contains($t('ascentResults[0]'));
-    cy.get('#popup-closer').click();
-
-    cy.log('activate filter and check that boulder is not clickable');
-    cy.get('#filter').click();
-    cy.contains('1').click();
-    cy.get('#close-filter').click();
-
-    cy.get('#map-root').click(50, 310);
-    cy.contains('Grade');
-    cy.get('#popup-closer').click();
-
-    cy.log('deactivate filter and check that boulder is clickable again');
-    cy.get('#filter').click();
-    cy.contains('1').click();
-    cy.get('#close-filter').click();
-
-    cy.get('#map-root').click(50, 370);
-    cy.contains($t('ascentResults[0]'));
-    cy.get('#popup-closer').click();
   });
 
   it('allows adding and removing favorite gyms', () => {
