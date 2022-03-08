@@ -500,7 +500,9 @@ export default {
         if (event.originalEvent.pointerType === 'touch') {
           return getEventDelay(event) >= modifyTouchThreshold;
         } else {
-          return hasBoulderAtPixel(event.pixel);
+          const boulder = getBoulderAtPixel(event.pixel);
+          return boulder !== undefined &&
+              !isBeingEdited(boulder);
         }
       },
     });
@@ -734,6 +736,7 @@ export default {
 
     // Edit popover
     const selectedAscentResult = ref(null);
+    const editing = ref(false);
 
     /**
      * Opens the edit popover and closes the old one if still open.
@@ -742,6 +745,7 @@ export default {
      */
     function openEditPopover(feature) {
       overlay.value.close();
+      editing.value = true;
       selectedAscentResult.value = feature.ascent ?
           feature.ascent.result.toString() : null;
       selectedBoulder.value = feature;
@@ -795,9 +799,20 @@ export default {
     }
 
     /**
+     * Checks whether the specified boulder is currently being edited
+     *
+     * @param boulder the boulder to check
+     * @returns {boolean} whether the boulder is being edited
+     */
+    function isBeingEdited(boulder) {
+      return editing.value && boulder.id === selectedBoulder.value.id;
+    }
+
+    /**
      * Resets ascent status if it was changed.
      */
     function onCloseEditPopover() {
+      editing.value = false;
       if (selectedBoulder.value.ascent !== null) {
         if (selectedBoulder.value.ascent.result.toString() !==
             selectedAscentResult.value) {
@@ -969,7 +984,7 @@ export default {
       map.on('pointerdown', (event) => {
         clickStart.value = event.originalEvent.timeStamp;
         const boulder = getBoulderAtPixel(event.pixel);
-        if (boulder) {
+        if (boulder && !isBeingEdited(boulder)) {
           if (event.originalEvent.pointerType === 'touch') {
             timer = setTimeout(() => {
               // fire event only once and only if not panning the map
