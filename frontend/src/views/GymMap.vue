@@ -499,6 +499,7 @@ export default {
       style: invisible,
       pixelTolerance: 20,
       condition: (event) => {
+        if (creating.value) return false;
         // on touch screen, start moving only after holding for some time
         if (event.originalEvent.pointerType === 'touch') {
           return getEventDelay(event) >= modifyTouchThreshold;
@@ -970,7 +971,7 @@ export default {
       map.on('pointerdown', (event) => {
         clickStart.value = event.originalEvent.timeStamp;
         const boulder = getBoulderAtPixel(event.pixel);
-        if (boulder) {
+        if (boulder && !creating.value) {
           if (event.originalEvent.pointerType === 'touch') {
             timer = setTimeout(() => {
               // fire event only once and only if not panning the map
@@ -995,9 +996,11 @@ export default {
         }
         clearTimeout(timer);
       });
+      // add handler for opening edit popover or resetting a boulder's style
+      // after moving
       map.on('click', (event) => {
         const boulder = getBoulderAtPixel(event.pixel);
-        if (boulder) {
+        if (boulder && !creating.value) {
           if (getDelay(clickStart.value) >= modifyTouchThreshold) {
             setBoulderRadius(boulder, boulderRadius);
           } else {
@@ -1007,7 +1010,7 @@ export default {
       });
       map.on('pointermove', (event) => {
         const pixel = map.getEventPixel(event.originalEvent);
-        const hit = hasBoulderAtPixel(pixel);
+        const hit = hasBoulderAtPixel(pixel) && !creating.value;
         setCursorStyle(hit ?
             grabbingBoulder.value ? 'grabbing' :
                 'pointer' : '');
