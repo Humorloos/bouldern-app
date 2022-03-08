@@ -65,3 +65,16 @@ window.waitingFor = function* (method, url) {
     cy.wait('@request');
   }
 };
+
+/**
+ * @param map
+ * @param coordinates
+ * @param fn
+ */
+window.atPixel = function(map, coordinates, fn) {
+  cy.waitUntil(() => {
+    return map.getPixelFromCoordinate(coordinates);
+  }).then((pixel) => {
+    fn(pixel);
+  });
+};

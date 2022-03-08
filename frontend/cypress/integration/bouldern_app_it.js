@@ -65,23 +65,14 @@ describe('The gym map view', () => {
   });
 
   it('allows adding, editing, and retiring boulders', () => {
-    let x;
-    let y;
     cy.window().its(`${GymMapView.name}.map`).then((map) => {
-      cy.waitUntil(() => {
-        return map.getPixelFromCoordinate(constants.newBoulderCoordainates);
-      }).then((pixel) => {
+      atPixel(map, constants.newBoulderCoordainates, ([x, y]) => {
         cy.log('open create popover and close it');
-        [x, y] = pixel;
-        console.log(pixel);
         cy.get('#map-root').click(x, y);
         cy.contains('Grade');
         cy.get('#popup-closer').click();
       });
-      cy.waitUntil(() => {
-        return map.getPixelFromCoordinate(constants.newBoulderCoordainates);
-      }).then((pixel) => {
-        [x, y] = pixel;
+      atPixel(map, constants.newBoulderCoordainates, ([x, y]) => {
         cy.log('open create popover and submit it');
         cy.get('#map-root').click(x, y);
         cy.get('#id-grade-select').click();
@@ -90,10 +81,7 @@ describe('The gym map view', () => {
         cy.contains('Yellow').click();
         cy.contains('Save').click();
       });
-      cy.waitUntil(() => {
-        return map.getPixelFromCoordinate(constants.newBoulderCoordainates);
-      }).then((pixel) => {
-        [x, y] = pixel;
+      atPixel(map, constants.newBoulderCoordainates, ([x, y]) => {
         cy.log('open edit popover and close it');
         cy.get('#map-root').click(x, y);
         // we have to click twice because there is a bug that the popover is not
@@ -103,19 +91,13 @@ describe('The gym map view', () => {
         cy.contains($t('ascentResults[0]')).click();
         cy.get('#popup-closer').click();
       });
-      cy.waitUntil(() => {
-        return map.getPixelFromCoordinate(constants.newBoulderCoordainates);
-      }).then((pixel) => {
-        [x, y] = pixel;
+      atPixel(map, constants.newBoulderCoordainates, ([x, y]) => {
         cy.log('open edit popover, edit and submit');
         cy.get('#map-root').click(x, y);
         cy.contains($t('ascentResults[0]')).click();
         cy.get('#save-boulder').click();
       });
-      cy.waitUntil(() => {
-        return map.getPixelFromCoordinate(constants.newBoulderCoordainates);
-      }).then((pixel) => {
-        [x, y] = pixel;
+      atPixel(map, constants.newBoulderCoordainates, ([x, y]) => {
         cy.log('open edit popover and retire boulder');
         cy.get('#map-root').click(x, y);
         cy.get('#retire-boulder').click();
