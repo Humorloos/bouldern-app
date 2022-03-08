@@ -59,6 +59,7 @@
             </v-row>
           </v-container>
         </v-list-item>
+        <slot name="app-drawer" />
         <v-list-subheader v-if="favoriteGyms.length > 0">
           Favorite Gyms
         </v-list-subheader>
@@ -110,9 +111,15 @@ export default {
     const drawer = ref(!display.mobile.value);
     // Close the app drawer when navigating to another view
     const route = useRoute();
-    watch(route, () => {
+
+    /**
+     * Closes the app drawer when on mobile
+     */
+    function collapseDrawer() {
       if (display.mobile.value) drawer.value = false;
-    });
+    }
+
+    watch(route, collapseDrawer);
 
     const store = useStore();
 
@@ -123,6 +130,7 @@ export default {
       favoriteGyms: computed(() => store.state.favoriteGyms),
       user: computed(() => store.state.user),
       loading: computed(() => store.state.loading),
+      collapseDrawer,
     };
   },
 };
