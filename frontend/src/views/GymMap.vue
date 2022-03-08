@@ -1132,6 +1132,8 @@ export default {
       // refresh button
       appView,
       refresh,
+      // expose map to cypress
+      map,
     };
   },
 };

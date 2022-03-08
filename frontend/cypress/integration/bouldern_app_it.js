@@ -63,37 +63,64 @@ describe('The gym map view', () => {
     cy.visit(`gym-map/${constants.gymName}`);
     cy.window().its(`${GymMapView.name}.loaded`).should('equal', true);
   });
+
   it('allows adding, editing, and retiring boulders', () => {
-    cy.log('open create popover and close it');
-    cy.get('#map-root').click(140, 270);
-    cy.contains('Grade');
-    cy.get('#popup-closer').click();
-
-    cy.log('open create popover and submit it');
-    cy.get('#map-root').click(280, 240);
-    cy.get('#id-grade-select').click();
-    cy.contains('5').click();
-    cy.get('#id-color-select').click();
-    cy.contains('Yellow').click();
-    cy.contains('Save').click();
-
-    cy.log('open edit popover and close it');
-    cy.get('#map-root').click(50, 300);
-    // we have to click twice because there is a bug that the popover is not
-    // moved correctly the first time
-    cy.get('#map-root').click(50, 300);
-    cy.contains('Added 0 day(s) ago');
-    cy.contains($t('ascentResults[0]')).click();
-    cy.get('#popup-closer').click();
-
-    cy.log('open edit popover, edit and submit');
-    cy.get('#map-root').click(60, 360);
-    cy.contains($t('ascentResults[0]')).click();
-    cy.get('#save-boulder').click();
-
-    cy.log('open edit popover and retire boulder');
-    cy.get('#map-root').click(50, 360);
-    cy.get('#retire-boulder').click();
+    let x;
+    let y;
+    cy.window().its(`${GymMapView.name}.map`).then((map) => {
+      cy.waitUntil(() => {
+        return map.getPixelFromCoordinate(constants.newBoulderCoordainates);
+      }).then((pixel) => {
+        cy.log('open create popover and close it');
+        [x, y] = pixel;
+        console.log(pixel);
+        cy.get('#map-root').click(x, y);
+        cy.contains('Grade');
+        cy.get('#popup-closer').click();
+      });
+      cy.waitUntil(() => {
+        return map.getPixelFromCoordinate(constants.newBoulderCoordainates);
+      }).then((pixel) => {
+        [x, y] = pixel;
+        cy.log('open create popover and submit it');
+        cy.get('#map-root').click(x, y);
+        cy.get('#id-grade-select').click();
+        cy.contains('5').click();
+        cy.get('#id-color-select').click();
+        cy.contains('Yellow').click();
+        cy.contains('Save').click();
+      });
+      cy.waitUntil(() => {
+        return map.getPixelFromCoordinate(constants.newBoulderCoordainates);
+      }).then((pixel) => {
+        [x, y] = pixel;
+        cy.log('open edit popover and close it');
+        cy.get('#map-root').click(x, y);
+        // we have to click twice because there is a bug that the popover is not
+        // moved correctly the first time
+        // cy.get('#map-root').click(x, y);
+        cy.contains('Added 0 day(s) ago');
+        cy.contains($t('ascentResults[0]')).click();
+        cy.get('#popup-closer').click();
+      });
+      cy.waitUntil(() => {
+        return map.getPixelFromCoordinate(constants.newBoulderCoordainates);
+      }).then((pixel) => {
+        [x, y] = pixel;
+        cy.log('open edit popover, edit and submit');
+        cy.get('#map-root').click(x, y);
+        cy.contains($t('ascentResults[0]')).click();
+        cy.get('#save-boulder').click();
+      });
+      cy.waitUntil(() => {
+        return map.getPixelFromCoordinate(constants.newBoulderCoordainates);
+      }).then((pixel) => {
+        [x, y] = pixel;
+        cy.log('open edit popover and retire boulder');
+        cy.get('#map-root').click(x, y);
+        cy.get('#retire-boulder').click();
+      });
+    });
   });
 
   it('allows filtering by grade', () => {
