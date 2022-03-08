@@ -872,13 +872,12 @@ export default {
       featureCollection.forEach((boulder) => {
         // if boulder's grade is active and boulder is invisible, show it
         if (activeGrades.value.includes(boulder.grade)) {
-          // todo: check if we can do === invisible instead
-          if (boulder.getStyle().length === undefined) {
+          if (boulder.getStyle() === invisible) {
             setBoulderStyle(boulder);
           }
           // if boulder's grade is inactive and boulder is visible, hide it
         } else {
-          if (boulder.getStyle().length !== undefined) {
+          if (boulder.getStyle() !== invisible) {
             boulder.setStyle(invisible);
           }
         }
