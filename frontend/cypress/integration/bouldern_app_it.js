@@ -197,37 +197,38 @@ describe('The gym map view', () => {
     cy.get('.mdi-menu').click();
     cy.contains(constants.gymName);
   });
+
   it('allows editing grades', () => {
-    // open edit view
+    cy.log('open edit view');
     cy.get('#id_edit_gym').click();
 
-    // change grade
+    cy.log('change grade');
     cy.get('#id_color-grade-1').click();
     cy.contains('Blue').click();
 
-    // add grade
+    cy.log('add grade');
     cy.contains('Add Grade').click();
     cy.get('#id_color-grade-8').click();
     cy.contains('Grey').click();
 
-    // remove grade
+    cy.log('remove grade');
     cy.get('#id_remove-grade-4').click();
 
-    // deactivate undefined grade
+    cy.log('deactivate undefined grade');
     cy.get('#id_undefined_grade_active').click();
 
-    // save
+    cy.log('save');
     cy.get('#id_save-gym').click();
 
-    // open edit view again
+    cy.log('open edit view again');
     cy.get('#id_edit_gym').click();
 
-    // activate undefined grade again
+    cy.log('activate undefined grade again');
     cy.get('#id_undefined_grade_active').click();
     cy.get('#id_color-undefined').click();
     cy.contains('Black').click();
 
-    // save
+    cy.log('save');
     cy.get('#id_save-gym').click();
   });
 
@@ -282,7 +283,7 @@ describe('The gym creation view', () => {
 
     cy.log('submit');
     for (const _ of waitingFor('POST', '/bouldern/gym')) {
-      cy.contains('Submit').click();
+      cy.get('#id_save-gym').click();
     }
 
     cy.log('open newly created gym');
@@ -311,6 +312,19 @@ describe('The gym creation view', () => {
   it('allows navigating to color creation view', () => {
     cy.contains('New Color').click();
     cy.get('#id_color');
+  });
+
+  it('shows errors for empty fields', () => {
+    cy.get('#id_save-gym').click();
+    ['lblName', 'lblMap'].forEach((key) => {
+      cy.contains($t('msgRequiredField', {field: $t(key)}));
+    });
+  });
+
+  it('shows an error when grades are missing', () => {
+    cy.get('#id_remove-grade-1').click();
+    cy.get('#id_save-gym').click();
+    cy.contains($t('msgNoGrades'));
   });
 });
 
