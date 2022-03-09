@@ -81,21 +81,24 @@ describe('The gym map view', () => {
         cy.contains('Yellow').click();
         cy.contains('Save').click();
       });
+
+      cy.log('open edit popover and close it');
       atPixel(map, constants.newBoulderCoordinates, ([x, y]) => {
-        cy.log('open edit popover and close it');
         cy.get('#map-root').click(x, y);
         cy.contains('Added 0 day(s) ago');
         cy.contains($t('ascentResults[0]')).click();
         cy.get('#popup-closer').click();
       });
+
+      cy.log('open edit popover, edit and submit');
       atPixel(map, constants.newBoulderCoordinates, ([x, y]) => {
-        cy.log('open edit popover, edit and submit');
         cy.get('#map-root').click(x, y);
         cy.contains($t('ascentResults[0]')).click();
         cy.get('#save-boulder').click();
       });
+
+      cy.log('open edit popover and retire boulder');
       atPixel(map, constants.newBoulderCoordinates, ([x, y]) => {
-        cy.log('open edit popover and retire boulder');
         cy.get('#map-root').click(x, y);
         cy.get('#retire-boulder').click();
       });
@@ -111,11 +114,12 @@ describe('The gym map view', () => {
         cy.get('#popup-closer').click();
       });
 
-      cy.log('activate filter and check that boulder is not clickable');
+      cy.log('activate filter');
       cy.get('#filter').click();
       cy.contains('1').click();
       cy.get('#close-filter').click();
 
+      cy.log('check that boulder is not clickable');
       atPixel(map, constants.boulder1Coordinates, ([x, y]) => {
         cy.get('#map-root').click(x, y);
         cy.contains('Grade');
@@ -131,6 +135,32 @@ describe('The gym map view', () => {
         cy.get('#map-root').click(x, y);
         cy.contains($t('ascentResults[0]'));
         cy.get('#popup-closer').click();
+      });
+    });
+  });
+
+  it('keeps newly created boulders when changing filter', () => {
+    cy.window().its(`${GymMapView.name}.map`).then((map) => {
+      const grade = '2';
+
+      cy.log('create new boulder');
+      atPixel(map, constants.newBoulder2Coordinates, ([x, y]) => {
+        cy.get('#map-root').click(x, y);
+        cy.get('#id-grade-select').click();
+        cy.contains(grade).click();
+        cy.contains('Save').click();
+      });
+
+      cy.log('activate filter');
+      cy.get('#filter').click();
+      cy.contains('all').click();
+      cy.contains(grade).click();
+      cy.get('#close-filter').click();
+
+      cy.log('open edit popover and retire boulder');
+      atPixel(map, constants.newBoulder2Coordinates, ([x, y]) => {
+        cy.get('#map-root').click(x, y);
+        cy.get('#retire-boulder').click();
       });
     });
   });
@@ -235,6 +265,12 @@ describe('The gym creation view', () => {
         cy.get('#id-color-select').click();
         cy.contains('Red').click();
         cy.contains('Save').click();
+      });
+
+      cy.log('open edit popover and retire boulder');
+      atPixel(map, constants.newBoulder2Coordinates, ([x, y]) => {
+        cy.get('#map-root').click(x, y);
+        cy.get('#retire-boulder').click();
       });
     });
   });
