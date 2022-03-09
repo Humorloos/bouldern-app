@@ -88,10 +88,42 @@ describe('The register app', () => {
         cy.contains($t('wrongCredentialsMsg'));
       });
 
+  it('allows resetting one\'s password', () => {
+    cy.visit('reset-password');
+    cy.get('#id_email').type(constants.email);
+    for (const _ of waitingFor('POST', '/registration/password/reset/')) {
+      cy.get('#id_send').click();
+    }
+    cy.task('readLastEmail')
+        .should('have.string', constants.email)
+        .then((mail) => {
+          const confirmationLink = /(https?:\/\/[^\s]+)/g
+              .exec(mail)[0]
+              .replace('localhost:8000', 'localhost:8080');
+          cy.visit(confirmationLink);
+        });
+    cy.get('#id_password1').type(constants.password);
+    cy.get('#id_password2').type(constants.password);
+    for (const _ of waitingFor('POST',
+        '/registration/password/reset/confirm/')) {
+      cy.get('#id_submit').click();
+    }
+  });
+
+  it('Redirects to login page when visiting gym map while logged out',
+      () => {
+        cy.visit(`gym-map/${constants.gymName}`);
+        cy.contains($t('notLoggedInMsg'));
+      });
+});
+describe('The register app', () => {
+  beforeEach(() => {
+    cy.visit('register');
+  });
+
   it('allows registering, logging in, and deleting one\'s account ' +
     'afterwards', () => {
     cy.log('register');
-    cy.visit('register');
     cy.get('#id_username')
         .type(constants.newUsername)
         .should('have.value', constants.newUsername);
@@ -136,31 +168,28 @@ describe('The register app', () => {
     cy.contains($t('wrongCredentialsMsg'));
   });
 
-  it('allows resetting one\'s password', () => {
-    cy.visit('reset-password');
-    cy.get('#id_email').type(constants.email);
-    for (const _ of waitingFor('POST', '/registration/password/reset/')) {
-      cy.get('#id_send').click();
-    }
-    cy.task('readLastEmail')
-        .should('have.string', constants.email)
-        .then((mail) => {
-          const confirmationLink = /(https?:\/\/[^\s]+)/g
-              .exec(mail)[0]
-              .replace('localhost:8000', 'localhost:8080');
-          cy.visit(confirmationLink);
-        });
-    cy.get('#id_password1').type(constants.password);
-    cy.get('#id_password2').type(constants.password);
-    for (const _ of waitingFor('POST',
-        '/registration/password/reset/confirm/')) {
-      cy.get('#id_submit').click();
-    }
+  it('shows errors when fields are empty', () => {
+    cy.get('#submit_button').click();
+    [
+      'lblUsername',
+      'lblConfirmPassword',
+      'lblPassword',
+      'lblEmail',
+    ].forEach((key) => {
+      cy.contains($t('msgRequiredField', {field: $t(key)}));
+    });
   });
 
-  it('Redirects to login page when visiting gym map while logged out',
-      () => {
-        cy.visit(`gym-map/${constants.gymName}`);
-        cy.contains($t('notLoggedInMsg'));
-      });
+  it('shows an error for invalid emails', () => {
+    cy.get('#id_email').type('thisIsNotAnEmail');
+    cy.get('#submit_button').click();
+    cy.contains($t('msgInvalidEmail'));
+  });
+
+  it('shows an error when passwords do not match', () => {
+    cy.get('#id_password1').type('password1');
+    cy.get('#id_password2').type('password2');
+    cy.get('#submit_button').click();
+    cy.contains($t('msgPasswordsDoNotMatch'));
+  });
 });
