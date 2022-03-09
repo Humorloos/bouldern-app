@@ -193,3 +193,16 @@ describe('The register app', () => {
     cy.contains($t('msgPasswordsDoNotMatch'));
   });
 });
+
+describe('The password change view', () => {
+  beforeEach(() => {
+    cy.visit('registration/password/reset/change/0/0');
+  });
+
+  it('shows an error when passwords do not match', () => {
+    cy.get('#id_password1').type('password1');
+    cy.get('#id_password2').type('password2');
+    cy.get('#id_submit').click();
+    cy.contains($t('msgPasswordsDoNotMatch'));
+  });
+});
