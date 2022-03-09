@@ -19,8 +19,17 @@ beforeEach(() => {
 });
 
 describe('The color creation view', () => {
-  it('allows adding colors', () => {
+  beforeEach(() => {
     cy.visit('create-color');
+  });
+
+  it('shows an error when name is missing', () => {
+    cy.get('.v-col > #submit_button').click();
+    cy.contains($t('msgRequiredField', {field: $t('lblName')}));
+  });
+
+  it('allows adding colors', () => {
+    cy.log('fill in form');
     cy.get('#id_name').type(constants.colorName);
     cy.get('#id_color').click();
     cy.get('div[style=' +
@@ -32,9 +41,13 @@ describe('The color creation view', () => {
           'cursor: crosshair;"]')
         .click(150, 50);
     cy.get('.v-main__wrap').click();
+
+    cy.log('submit form');
     for (const _ of waitingFor('POST', '/bouldern/color')) {
       cy.get('.v-col > #submit_button').click();
     }
+
+    cy.log('verify that created color can be selected when creating a new gym');
     cy.visit('create-gym');
     cy.get('#id_color-grade-1').click();
     cy.log('newly created color should be in selectable');
