@@ -79,15 +79,27 @@ describe('The register app', () => {
   });
 });
 
-describe('The register app', () => {
+describe('the login view', () => {
+  beforeEach(() => {
+    cy.visit('login');
+  });
+
   it('shows an error message when trying to log in with wrong crendentials',
       () => {
-        cy.visit('login');
         // try log in with non-existent user
         loginViaLogInLink(constants.newEmail, constants.newPassword);
         cy.contains($t('wrongCredentialsMsg'));
       });
 
+  it('shows errors when fields are empty', () => {
+    cy.get('#submit_button').click();
+    ['lblPassword', 'lblEmail'].forEach((key) => {
+      cy.contains($t('msgRequiredField', {field: $t(key)}));
+    });
+  });
+});
+
+describe('The register app', () => {
   it('allows resetting one\'s password', () => {
     cy.visit('reset-password');
     cy.get('#id_email').type(constants.email);
