@@ -17,5 +17,9 @@
   "lblConfirmPassword": "Confirm password",
   "lblEmail": "Email",
   "lblSave": "Save",
-  "lblName": "Name"
+  "lblUseUndefinedGrade": "Use undefined grade?",
+  "lblAddGrade": "Add Grade",
+  "lblNewColor": "New Color",
+  "lblName": "Name",
+  "grades": "Grades"
 }
