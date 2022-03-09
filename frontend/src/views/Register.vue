@@ -79,29 +79,18 @@
 import AppView from '../components/AppView.vue';
 import {ref} from 'vue';
 import {useStore} from 'vuex';
-import {useI18n} from 'vue-i18n';
+import {
+  emailRules,
+  requiredRule,
+  matchingPasswordsRule,
+} from '../helpers/rules.js';
 
 export default {
   name: 'Register',
   components: {AppView},
   setup() {
-    const {t} = useI18n();
-    const requiredRule = (label) => (v) => !!v ||
-        t('msgRequiredField', {field: label});
-    const matchingPasswordsRule = (password) => (v) => v === password ||
-        t('msgPasswordsDoNotMatch');
-
     const data = ref({password2: '', password1: '', email: '', username: ''});
 
-
-    const emailRules = [
-      requiredRule('Email'),
-      (v) => new RegExp([
-        /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))/,
-        /@([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}$/,
-      ].map((r) => r.source).join(''),
-      ).test(v) || t('msgInvalidEmail'),
-    ];
 
     const store = useStore();
     const axios = store.state.axios;
