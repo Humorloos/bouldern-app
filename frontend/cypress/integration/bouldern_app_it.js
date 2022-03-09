@@ -223,6 +223,26 @@ describe('The gym map view', () => {
     cy.get('.mdi-menu').click();
     cy.get('#id_refresh').click();
   });
+
+  it('keeps filters after refresh', () => {
+    cy.log('activate filter');
+    cy.get('#filter').click();
+    cy.contains('all').click();
+    cy.contains('1').click();
+    cy.get('.mdi-checkbox-marked + input[value="1"]');
+    cy.get('.mdi-checkbox-blank-outline + input[value="2"]');
+    cy.get('#close-filter').click();
+
+    cy.log('click refresh button');
+    cy.get('.mdi-menu').click();
+    cy.get('#id_refresh').click();
+
+    cy.log('check that filter is still the same');
+    cy.get('#filter').click();
+    cy.get('.mdi-checkbox-marked + input[value="1"]');
+    cy.log('checkbox for grade 2 should remain unchecked');
+    cy.get('.mdi-checkbox-blank-outline + input[value="2"]');
+  });
 });
 
 describe('The gym creation view', () => {

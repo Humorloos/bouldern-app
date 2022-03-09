@@ -565,14 +565,12 @@ export default {
      * Gets the gym data from the API, loads the gym map image, and deserializes
      * the gym's boulders into the feature collection
      */
-    function loadGymMap(onLoaded) {
+    function loadGymMap(onMapLoaded) {
       requestWithJwt({
         method: 'GET',
         apiPath: `/bouldern/gym-map-resources/?name=${gymName.value}`,
       }).then((response) => {
         gym.value = response.data['gym'];
-        // set all grades active
-        activeGrades.value = gym.value.grade_set.map((grade) => grade.id);
         // Load boulders
         response.data.boulder_features.forEach((featureData) => {
           const boulderData = featureData.boulder;
@@ -604,7 +602,7 @@ export default {
             zoom: 1,
             maxZoom: 8,
           }));
-          if (onLoaded) onLoaded();
+          if (onMapLoaded) onMapLoaded();
         };
         mapImage.src = gym.value.map;
       });
@@ -858,7 +856,7 @@ export default {
      */
     function selectGrades(allGradesActive) {
       if (allGradesActive) {
-        activeGrades.value = gym.value.grade_set.map((grade) => grade.id);
+        setAllGradesActive();
       } else {
         activeGrades.value = [];
       }
@@ -871,7 +869,7 @@ export default {
     watch(activeGrades, () => {
       featureCollection.forEach((boulder) => {
         // if boulder's grade is active and boulder is invisible, show it
-        if (activeGrades.value.includes(boulder.grade)) {
+        if (isActiveGrade(boulder.grade)) {
           if (boulder.getStyle() === invisible) {
             setBoulderStyle(boulder);
           }
@@ -883,6 +881,23 @@ export default {
         }
       });
     });
+
+    /**
+     * Adds all the gym's grades to the set of active grades
+     */
+    function setAllGradesActive() {
+      activeGrades.value = gym.value.grade_set.map(({id}) => id);
+    }
+
+    /**
+     * Checks whether the grade with the specified id is active
+     *
+     * @param gradeId id of the grade to check whether it's active
+     * @returns {boolean} whether the grade is active or not
+     */
+    function isActiveGrade(gradeId) {
+      return activeGrades.value.includes(gradeId);
+    }
 
     // loading gym map
     const grabbingBoulder = ref(false);
@@ -955,10 +970,14 @@ export default {
      * Sets the loaded flag and initializes the map
      */
     function onGymMapLoaded() {
+      setAllGradesActive();
+
+      // draw interaction
       drawInteraction.on('drawend', openCreatePopover);
       map.addInteraction(drawInteraction);
-      map.addInteraction(dragPanInteraction);
 
+      // modify interaction
+      map.addInteraction(dragPanInteraction);
       let initialBoulderCoordinates;
       modifyInteraction.on('modifystart', (event) => {
         initialBoulderCoordinates = event.features.getArray()[0]
@@ -1022,7 +1041,8 @@ export default {
         }
         clearTimeout(timer);
       });
-      // add handler for opening edit popover or resetting a boulder's style
+
+      // handler for opening edit popover or resetting a boulder's style
       // after moving
       map.on('click', (event) => {
         const boulder = getBoulderAtPixel(event.pixel);
@@ -1034,6 +1054,8 @@ export default {
           }
         }
       });
+
+      // cursor style
       map.on('pointermove', (event) => {
         const pixel = map.getEventPixel(event.originalEvent);
         const hit = hasBoulderAtPixel(pixel);
@@ -1041,6 +1063,7 @@ export default {
             grabbingBoulder.value ? 'grabbing' :
                 'pointer' : '');
       });
+
       map.on('movestart', () => {
         moving.value = true;
       });
@@ -1054,7 +1077,9 @@ export default {
     // Load new gym map when gym name changes
     watch(gymName, (newGymName) => {
       if (newGymName !== null) {
-        refresh();
+        featureCollection.clear();
+        loadGymMap(setAllGradesActive);
+        appView.value.collapseDrawer();
       }
     });
 
