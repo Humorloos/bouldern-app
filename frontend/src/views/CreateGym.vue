@@ -56,8 +56,7 @@ export default {
           method: 'PATCH',
           data: formData,
           contentType: 'multipart/form-data',
-        });
-        router.push('/');
+        }).then(() => router.push(`/gym-map/${gymForm.value.data.name}`));
       });
     }
     return {
