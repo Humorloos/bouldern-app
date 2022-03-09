@@ -15,5 +15,7 @@
   "lblUsername": "Username",
   "lblPassword": "Password",
   "lblConfirmPassword": "Confirm password",
-  "lblEmail": "Email"
+  "lblEmail": "Email",
+  "lblSave": "Save",
+  "lblName": "Name"
 }
