@@ -9,14 +9,43 @@
         </v-row>
         <v-row>
           <v-col>
-            <v-form>
+            <v-form
+              ref="form"
+              lazy-validation
+            >
               <v-text-field
-                v-for="(value, name) in form"
-                :id="`id_${name}`"
-                :key="name"
-                v-model="value.value"
-                :label="value.label"
-                :type="value.type"
+                id="id_username"
+                v-model="data.username"
+                :label="$t('lblUsername')"
+                type="text"
+                :rules="[ requiredRule( $t('lblUsername')) ]"
+              />
+              <v-text-field
+                id="id_email"
+                v-model="data.email"
+                :label="$t('lblEmail')"
+                type="text"
+                :rules="emailRules"
+              />
+              <v-text-field
+                id="id_password1"
+                v-model="data.password1"
+                :label="$t('lblPassword')"
+                type="password"
+                :rules="[
+                  requiredRule($t('lblPassword')),
+                  matchingPasswordsRule(data.password2),
+                ]"
+              />
+              <v-text-field
+                id="id_password2"
+                v-model="data.password2"
+                :label="$t('lblConfirmPassword')"
+                type="password"
+                :rules="[
+                  requiredRule($t('lblConfirmPassword')),
+                  matchingPasswordsRule(data.password1),
+                ]"
               />
               <v-btn
                 id="submit_button"
@@ -35,7 +64,7 @@
               type="info"
               transition="slide-y-reverse-transition"
             >
-              {{ $t('confirmationEmailAlert', {email: form.email.value}) }}
+              {{ $t('confirmationEmailAlert', {email: data.email}) }}
             </v-alert>
           </v-col>
         </v-row>
@@ -50,53 +79,59 @@
 import AppView from '../components/AppView.vue';
 import {ref} from 'vue';
 import {useStore} from 'vuex';
+import {useI18n} from 'vue-i18n';
 
 export default {
   name: 'Register',
   components: {AppView},
   setup() {
-    const form = ref({
-      username: {
-        type: 'text',
-        label: 'Username',
-        value: '',
-      },
-      email: {
-        type: 'text',
-        label: 'Email',
-        value: '',
-      },
-      password1: {
-        type: 'password',
-        label: 'Password',
-        value: '',
-      },
-      password2: {
-        type: 'password',
-        label: 'Confirm password',
-        value: '',
-      },
-    });
+    const {t} = useI18n();
+    const requiredRule = (label) => (v) => !!v ||
+        t('msgRequiredField', {field: label});
+    const matchingPasswordsRule = (password) => (v) => v === password ||
+        t('msgPasswordsDoNotMatch');
+
+    const data = ref({password2: '', password1: '', email: '', username: ''});
+
+
+    const emailRules = [
+      requiredRule('Email'),
+      (v) => new RegExp([
+        /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))/,
+        /@([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}$/,
+      ].map((r) => r.source).join(''),
+      ).test(v) || t('msgInvalidEmail'),
+    ];
+
     const store = useStore();
     const axios = store.state.axios;
 
     const confirmationMailSentAlert = ref(false);
 
+    const form = ref(null);
+
     /**
      * Posts the registration form to the registration api
      */
     async function submit() {
-      for (const _ of await store.dispatch('showingSpinner')) {
-        await axios.post('/registration/',
-            Object.keys(form.value).reduce((payload, key) => {
-              payload[key] = form.value[key].value;
-              return payload;
-            }, {}));
-        confirmationMailSentAlert.value = true;
+      const result = await form.value.validate();
+      if (result.valid) {
+        for (const _ of await store.dispatch('showingSpinner')) {
+          await axios.post('/registration/', data.value);
+          confirmationMailSentAlert.value = true;
+        }
       }
     }
 
-    return {form, submit, confirmationMailSentAlert};
+    return {
+      form,
+      data,
+      submit,
+      confirmationMailSentAlert,
+      emailRules,
+      matchingPasswordsRule,
+      requiredRule,
+    };
   },
 };
 </script>

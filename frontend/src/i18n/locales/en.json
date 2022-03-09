@@ -8,5 +8,12 @@
     "Flash"
   ],
   "resetPasswordInstructions": "Enter your user account's verified email address and we will send you a password reset link.",
-  "confirmationEmailAlert": "We have sent an email to {email}. You may need to check your spam folder."
+  "confirmationEmailAlert": "We have sent an email to {email}. You may need to check your spam folder.",
+  "msgRequiredField": "{field} is required",
+  "msgPasswordsDoNotMatch": "Passwords do not match",
+  "msgInvalidEmail": "Please enter a valid E-mail",
+  "lblUsername": "Username",
+  "lblPassword": "Password",
+  "lblConfirmPassword": "Confirm password",
+  "lblEmail": "Email"
 }
