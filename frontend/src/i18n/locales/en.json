@@ -12,6 +12,7 @@
   "msgRequiredField": "{field} is required",
   "msgPasswordsDoNotMatch": "Passwords do not match",
   "msgInvalidEmail": "Please enter a valid E-mail",
+  "msgNoGrades": "Please specify at least one grade",
   "lblUsername": "Username",
   "lblPassword": "Password",
   "lblConfirmPassword": "Confirm password",
@@ -21,5 +22,6 @@
   "lblAddGrade": "Add Grade",
   "lblNewColor": "New Color",
   "lblName": "Name",
+  "lblMap": "Map",
   "grades": "Grades"
 }

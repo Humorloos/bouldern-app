@@ -8,9 +8,10 @@
         <v-text-field
           id="id_name"
           v-model="gymName"
-          label="Name"
+          :label="$t('lblName')"
           type="text"
           :disabled="editing"
+          :rules="[requiredRule($t('lblName'))]"
         />
       </v-col>
     </v-row>
@@ -30,8 +31,9 @@
           id="id_map"
           v-model="map"
           accept="image/*"
-          label="Map"
+          :label="$t('lblMap')"
           :disabled="editing"
+          :rules="[requiredImageRule]"
         />
       </v-col>
     </v-row>
@@ -56,34 +58,45 @@
         </v-btn>
       </v-col>
     </v-row>
-    <v-row
-      v-for="(color, index) in colors"
-      :key="color.name"
-    >
-      <v-col
-        align-self="center"
-        class="flex-grow-0"
-      >
-        {{ index + 1 }}.
-      </v-col>
-      <v-col align-self="center">
-        <color-select
-          :id="`id_color-grade-${index + 1}`"
-          v-model="colors[index]"
-          :color-options="colorOptions"
-        />
-      </v-col>
-      <v-col
-        align-self="center"
-        class="flex-grow-0"
-      >
-        <v-btn
-          :id="`id_remove-grade-${index + 1}`"
-          icon="mdi-close"
-          flat
-          size="small"
-          @click="removeGradeSelect(index)"
-        />
+    <v-row>
+      <v-col>
+        <v-input
+          v-model="regularGradeColors"
+          :rules="[atLeastOneGradeRule]"
+        >
+          <v-container>
+            <v-row
+              v-for="(color, index) in regularGradeColors"
+              :key="color.name"
+            >
+              <v-col
+                align-self="center"
+                class="flex-grow-0"
+              >
+                {{ index + 1 }}.
+              </v-col>
+              <v-col align-self="center">
+                <color-select
+                  :id="`id_color-grade-${index + 1}`"
+                  v-model="regularGradeColors[index]"
+                  :color-options="colorOptions"
+                />
+              </v-col>
+              <v-col
+                align-self="center"
+                class="flex-grow-0"
+              >
+                <v-btn
+                  :id="`id_remove-grade-${index + 1}`"
+                  icon="mdi-close"
+                  flat
+                  size="small"
+                  @click="removeGradeSelect(index)"
+                />
+              </v-col>
+            </v-row>
+          </v-container>
+        </v-input>
       </v-col>
     </v-row>
     <v-row>
@@ -127,6 +140,11 @@ import {computed, ref} from 'vue';
 import ColorSelect from './ColorSelect.vue';
 import {useStore} from 'vuex';
 import {Colors} from '../constants/color';
+import {
+  atLeastOneGradeRule,
+  requiredImageRule,
+  requiredRule,
+} from '../helpers/rules.js';
 
 export default {
   name: 'GymForm',
@@ -190,7 +208,7 @@ export default {
     const regularGrades = props.initialData.grade_set
         .filter((grade) => grade.grade !== 'undefined');
     const gradeIds = ref(regularGrades.map((grade) => grade.id));
-    const colors = ref(regularGrades
+    const regularGradeColors = ref(regularGrades
         .map((grade) => store.getters.colorById(grade.color)));
 
     const extraGrade = props.initialData.grade_set.find(
@@ -216,7 +234,7 @@ export default {
      * Adds the default color to colors to create new grade select
      */
     function addGradeSelect() {
-      colors.value.push(Colors.DEFAULT_COLOR);
+      regularGradeColors.value.push(Colors.DEFAULT_COLOR);
     }
 
     /**
@@ -224,14 +242,14 @@ export default {
      * corresponding grade select
      */
     function removeGradeSelect(index) {
-      colors.value.splice(index, 1);
+      regularGradeColors.value.splice(index, 1);
       if (gradeIds[index] !== undefined) {
         gradeIds.value.splice(index, 1);
       }
     }
 
     const grades = computed(() => {
-      const grades = colors.value.map((color, index) => {
+      const grades = regularGradeColors.value.map((color, index) => {
         const grade = {
           color: color.id,
           grade: index + 1,
@@ -267,12 +285,15 @@ export default {
     return {
       form,
       validateForm,
+      requiredRule,
+      requiredImageRule,
+      atLeastOneGradeRule,
       // gym properties
       gymName,
       map,
       mapUrl,
       // grade properties
-      colors,
+      regularGradeColors,
       extraColor,
       activeExtraColor,
       toggleExtraColor,
