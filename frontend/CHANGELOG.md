@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.19](https://github.com/Humorloos/bouldern-app/compare/v0.1.18...v0.1.19) (2022-03-09)
+
+
+### Bug Fixes
+
+* **GymMap:** fix filter resetting after gym refresh ([fea3510](https://github.com/Humorloos/bouldern-app/commit/fea35106c06cd9e43e3a8e9d5460e4660f00ec54))
+* **GymMap:** fix new boulders disappearing after filtering ([6a8ce76](https://github.com/Humorloos/bouldern-app/commit/6a8ce7672f71747e48281c14a12c17200f2d3778))
+
 ### [0.1.18](https://github.com/Humorloos/bouldern-app/compare/v0.1.17...v0.1.18) (2022-03-08)
 
 
