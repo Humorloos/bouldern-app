@@ -2,52 +2,26 @@
   <app-view>
     <template #main>
       <v-container>
-        <v-form
-          ref="form"
-          lazy-validation
-        >
-          <v-row>
-            <v-col>Change password</v-col>
-          </v-row>
-          <v-row>
-            <v-col>
-              <v-text-field
-                id="id_password1"
-                v-model="password1"
-                :label="$t('lblPassword')"
-                type="password"
-                :rules="[
-                  requiredRule($t('lblPassword')),
-                  matchingPasswordsRule(password2)
-                ]"
-              />
-            </v-col>
-          </v-row>
-          <v-row>
-            <v-col>
-              <v-text-field
-                id="id_password2"
-                v-model="password2"
-                :label="$t('lblConfirmPassword')"
-                type="password"
-                :rules="[
-                  requiredRule($t('lblConfirmPassword')),
-                  matchingPasswordsRule(password1)
-                ]"
-              />
-            </v-col>
-          </v-row>
-          <v-row>
-            <v-col>
+        <v-row>
+          <v-col>Change password</v-col>
+        </v-row>
+        <v-row>
+          <v-col>
+            <v-form
+              ref="form"
+              lazy-validation
+            >
+              <password-fields v-model="password" />
+
               <v-btn
                 id="id_submit"
                 @click="changePassword"
               >
                 Change password
               </v-btn>
-            </v-col>
-          </v-row>
-        </v-form>
+            </v-form>
+          </v-col>
+        </v-row>
       </v-container>
     </template>
   </app-view>
@@ -61,15 +35,15 @@ import {ref} from 'vue';
 import {useStore} from 'vuex';
 import {useRoute} from 'vue-router';
 import {matchingPasswordsRule, requiredRule} from '../helpers/rules.js';
+import PasswordFields from '../components/PasswordFields.vue';
 
 export default {
   name: 'ChangePassword',
-  components: {AppView},
+  components: {PasswordFields, AppView},
   setup() {
     const form = ref(null);
 
-    const password1 = ref('');
-    const password2 = ref('');
+    const password = ref('');
 
     const store = useStore();
     const axios = store.state.axios;
@@ -85,8 +59,8 @@ export default {
               {
                 uid: route.params.uid,
                 token: route.params.token,
-                new_password1: password1.value,
-                new_password2: password2.value,
+                new_password1: password.value,
+                new_password2: password.value,
               });
         }
       });
@@ -94,8 +68,7 @@ export default {
 
     return {
       form,
-      password1,
-      password2,
+      password,
       changePassword,
       matchingPasswordsRule,
       requiredRule,

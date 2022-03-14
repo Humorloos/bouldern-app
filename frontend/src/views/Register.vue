@@ -27,26 +27,7 @@
                 type="text"
                 :rules="emailRules"
               />
-              <v-text-field
-                id="id_password1"
-                v-model="data.password1"
-                :label="$t('lblPassword')"
-                type="password"
-                :rules="[
-                  requiredRule($t('lblPassword')),
-                  matchingPasswordsRule(data.password2),
-                ]"
-              />
-              <v-text-field
-                id="id_password2"
-                v-model="data.password2"
-                :label="$t('lblConfirmPassword')"
-                type="password"
-                :rules="[
-                  requiredRule($t('lblConfirmPassword')),
-                  matchingPasswordsRule(data.password1),
-                ]"
-              />
+              <password-fields v-model="password" />
               <v-btn
                 id="submit_button"
                 type="submit"
@@ -84,13 +65,20 @@ import {
   requiredRule,
   matchingPasswordsRule,
 } from '../helpers/rules.js';
+import PasswordFields from '../components/PasswordFields.vue';
 
 export default {
   name: 'Register',
-  components: {AppView},
+  components: {PasswordFields, AppView},
   setup() {
-    const data = ref({password2: '', password1: '', email: '', username: ''});
+    const password = ref('');
 
+    const data = ref({
+      password2: password.value,
+      password1: password.value,
+      email: '',
+      username: '',
+    });
 
     const store = useStore();
     const axios = store.state.axios;
@@ -114,6 +102,7 @@ export default {
 
     return {
       form,
+      password,
       data,
       submit,
       confirmationMailSentAlert,
