@@ -1,4 +1,4 @@
-/** @file todo */
+/** @file rules for VForm fields validation */
 import i18n from '../i18n';
 
 
