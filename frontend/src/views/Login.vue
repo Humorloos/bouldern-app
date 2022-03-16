@@ -9,22 +9,27 @@
         </v-row>
         <v-row>
           <v-col>
-            <v-form>
+            <v-form
+              ref="form"
+              lazy-validation
+            >
               <v-container>
                 <v-row>
                   <v-text-field
                     id="id_email"
-                    v-model="form.email"
+                    v-model="data.email"
                     type="text"
-                    label="E-Mail"
+                    :label="$t('lblEmail')"
+                    :rules="emailRules"
                   />
                 </v-row>
                 <v-row>
                   <v-text-field
                     id="id_password"
-                    v-model="form.password"
+                    v-model="data.password"
                     type="password"
-                    label="Password"
+                    :label="$t('lblPassword')"
+                    :rules="[requiredRule($t('lblPassword'))]"
                   />
                 </v-row>
                 <v-row>
@@ -87,12 +92,15 @@ import {useStore} from 'vuex';
 import AppView from '../components/AppView.vue';
 import {ref} from 'vue';
 import {useRouter} from 'vue-router';
+import {emailRules, requiredRule} from '../helpers/rules.js';
 
 export default {
   name: 'Login',
   components: {AppView},
   setup() {
-    const form = ref({email: '', password: ''});
+    const form = ref(null);
+
+    const data = ref({email: '', password: ''});
     const store = useStore();
 
     const loginError = ref(false);
@@ -103,19 +111,26 @@ export default {
      * and redirects to the home view
      */
     async function login() {
-      store.dispatch('login', form.value).catch((error) => {
-        console.log(error);
-        loginError.value = true;
-      }).then(() => {
-        Object.keys(form.value).forEach((key) => form.value[key] = '');
-        router.push('/');
+      form.value.validate().then((result) => {
+        if (result.valid) {
+          store.dispatch('login', data.value).catch((error) => {
+            console.log(error);
+            loginError.value = true;
+          }).then(() => {
+            Object.keys(data.value).forEach((key) => data.value[key] = '');
+            router.push('/');
+          });
+        }
       });
     }
 
     return {
       form,
+      data,
       login,
       loginError,
+      emailRules,
+      requiredRule,
     };
   },
 };

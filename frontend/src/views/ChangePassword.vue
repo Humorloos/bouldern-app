@@ -7,32 +7,19 @@
         </v-row>
         <v-row>
           <v-col>
-            <v-text-field
-              id="id_password1"
-              v-model="password1"
-              label="Password"
-              type="password"
-            />
-          </v-col>
-        </v-row>
-        <v-row>
-          <v-col>
-            <v-text-field
-              id="id_password2"
-              v-model="password2"
-              label="Confirm password"
-              type="password"
-            />
-          </v-col>
-        </v-row>
-        <v-row>
-          <v-col>
-            <v-btn
-              id="id_submit"
-              @click="changePassword"
+            <v-form
+              ref="form"
+              lazy-validation
             >
-              Change password
-            </v-btn>
+              <password-fields v-model="password" />
+
+              <v-btn
+                id="id_submit"
+                @click="changePassword"
+              >
+                Change password
+              </v-btn>
+            </v-form>
           </v-col>
         </v-row>
       </v-container>
@@ -47,13 +34,16 @@ import AppView from '../components/AppView.vue';
 import {ref} from 'vue';
 import {useStore} from 'vuex';
 import {useRoute} from 'vue-router';
+import {matchingPasswordsRule, requiredRule} from '../helpers/rules.js';
+import PasswordFields from '../components/PasswordFields.vue';
 
 export default {
   name: 'ChangePassword',
-  components: {AppView},
+  components: {PasswordFields, AppView},
   setup() {
-    const password1 = ref('');
-    const password2 = ref('');
+    const form = ref(null);
+
+    const password = ref('');
 
     const store = useStore();
     const axios = store.state.axios;
@@ -63,15 +53,26 @@ export default {
      * Sends a change password request with the entered password to the backend
      */
     function changePassword() {
-      axios.post('/registration/password/reset/confirm/',
-          {
-            uid: route.params.uid,
-            token: route.params.token,
-            new_password1: password1.value,
-            new_password2: password2.value,
-          });
+      form.value.validate().then((result) => {
+        if (result.valid) {
+          axios.post('/registration/password/reset/confirm/',
+              {
+                uid: route.params.uid,
+                token: route.params.token,
+                new_password1: password.value,
+                new_password2: password.value,
+              });
+        }
+      });
     }
-    return {password1, password2, changePassword};
+
+    return {
+      form,
+      password,
+      changePassword,
+      matchingPasswordsRule,
+      requiredRule,
+    };
   },
 };
 </script>

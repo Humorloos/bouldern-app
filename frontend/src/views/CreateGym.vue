@@ -3,17 +3,14 @@
     <template #main>
       <v-container>
         <v-row>
-          <v-col><h1>Create Gym</h1></v-col>
+          <v-col>
+            <h1>Create Gym</h1>
+          </v-col>
         </v-row>
-        <vue-form
-          :form="form"
-          :api-path="apiPath"
-          @submitted="onSubmitted"
-        >
-          <gym-form
-            ref="gymForm"
-          />
-        </vue-form>
+        <gym-form
+          ref="gymForm"
+          @save="submit"
+        />
       </v-container>
     </template>
   </app-view>
@@ -22,10 +19,9 @@
 <script>
 /** @file view for creating gyms */
 
-import VueForm from '../components/VueForm.vue';
 import {useStore} from 'vuex';
 import AppView from '../components/AppView.vue';
-import {computed, ref} from 'vue';
+import {ref} from 'vue';
 import {useRouter} from 'vue-router';
 import GymForm from '../components/GymForm.vue';
 
@@ -34,7 +30,6 @@ export default {
   components: {
     GymForm,
     AppView,
-    VueForm,
   },
   setup() {
     const store = useStore();
@@ -45,31 +40,29 @@ export default {
     const router = useRouter();
     const apiPath = '/bouldern/gym/';
     /**
-     * Submits the gym map image after submitting the gym map form and redirects
-     * to index
-     *
-     * @param response the create response returned from the api after creating
-     * the gym
+     * Submits the gym and the gym map image and redirects to index
      */
-    function onSubmitted(response) {
-      const formData = new FormData();
-      formData.append('map', gymForm.value.map[0]);
+    function submit() {
+      // submit gym data
       requestWithJwt({
-        apiPath: `${apiPath}${response.data.id}/`,
-        method: 'PATCH',
-        data: formData,
-        contentType: 'multipart/form-data',
+        apiPath: apiPath,
+        data: gymForm.value.data,
+      }).then((response) =>{
+      // submit gym map
+        const formData = new FormData();
+        formData.append('map', gymForm.value.map[0]);
+        requestWithJwt({
+          apiPath: `${apiPath}${response.data.id}/`,
+          method: 'PATCH',
+          data: formData,
+          contentType: 'multipart/form-data',
+        }).then(() => router.push(`/gym-map/${gymForm.value.data.name}`));
       });
-      router.push('/');
     }
-    const form = computed(() => {
-      return gymForm.value !== null ? gymForm.value.form : {};
-    });
     return {
       apiPath,
-      onSubmitted,
+      submit,
       gymForm,
-      form,
     };
   },
 };

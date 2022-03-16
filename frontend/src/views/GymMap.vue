@@ -15,13 +15,8 @@
           ref="gymForm"
           :editing="true"
           :initial-data="gym"
+          @save="updateGymGrades"
         />
-        <v-btn
-          id="id_save-gym"
-          @click="updateGymGrades"
-        >
-          Save
-        </v-btn>
       </v-container>
     </template>
   </app-view>
