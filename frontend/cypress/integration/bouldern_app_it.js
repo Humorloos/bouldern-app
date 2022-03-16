@@ -256,6 +256,16 @@ describe('The gym map view', () => {
     cy.get('.mdi-checkbox-marked + input[value="1"]');
     cy.log('checkbox for grade 2 should remain unchecked');
     cy.get('.mdi-checkbox-blank-outline + input[value="2"]');
+    cy.get('#close-filter').click();
+
+    cy.log('check that boulder is not clickable');
+    cy.window().its(`${GymMapView.name}.map`).then((map) => {
+      atPixel(map, constants.boulder2Coordinates, ([x, y]) => {
+        cy.get('#map-root').click(x, y);
+        cy.contains('Grade');
+        cy.get('#popup-closer').click();
+      });
+    });
   });
 });
 

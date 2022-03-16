@@ -578,7 +578,14 @@ export default {
                 age,
                 ascent: featureData.ascent,
               }))(boulderData));
-          setBoulderStyle(boulder);
+
+          // set style according to activeness
+          if (isActiveGrade(boulder.grade)) {
+            setBoulderStyle(boulder);
+          } else {
+            boulder.setStyle(invisible);
+          }
+
           vectorSource.addFeature(boulder);
         });
         // load map
