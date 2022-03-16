@@ -9,14 +9,27 @@
         </v-row>
         <v-row>
           <v-col>
-            <v-form>
+            <v-form
+              ref="form"
+              lazy-validation
+            >
               <v-text-field
-                v-for="(value, name) in form"
-                :id="`id_${name}`"
-                :key="name"
-                v-model="value.value"
-                :label="value.label"
-                :type="value.type"
+                id="id_username"
+                v-model="username"
+                :label="$t('lblUsername')"
+                type="text"
+                :rules="[ requiredRule( $t('lblUsername')) ]"
+              />
+              <v-text-field
+                id="id_email"
+                v-model="email"
+                :label="$t('lblEmail')"
+                type="text"
+                :rules="emailRules"
+              />
+              <password-fields
+                v-model="password"
+                :error-messages="passwordErrorMessages"
               />
               <v-btn
                 id="submit_button"
@@ -35,7 +48,14 @@
               type="info"
               transition="slide-y-reverse-transition"
             >
-              {{ $t('confirmationEmailAlert', {email: form.email.value}) }}
+              {{ $t('confirmationEmailAlert', {email}) }}
+            </v-alert>
+            <v-alert
+              v-model="registrationErrorAlert"
+              type="error"
+              transition="slide-y-reverse-transition"
+            >
+              {{ registrationErrorMsg }}
             </v-alert>
           </v-col>
         </v-row>
@@ -50,53 +70,77 @@
 import AppView from '../components/AppView.vue';
 import {ref} from 'vue';
 import {useStore} from 'vuex';
+import {
+  emailRules,
+  requiredRule,
+  matchingPasswordsRule,
+} from '../helpers/rules.js';
+import PasswordFields from '../components/PasswordFields.vue';
 
 export default {
   name: 'Register',
-  components: {AppView},
+  components: {PasswordFields, AppView},
   setup() {
-    const form = ref({
-      username: {
-        type: 'text',
-        label: 'Username',
-        value: '',
-      },
-      email: {
-        type: 'text',
-        label: 'Email',
-        value: '',
-      },
-      password1: {
-        type: 'password',
-        label: 'Password',
-        value: '',
-      },
-      password2: {
-        type: 'password',
-        label: 'Confirm password',
-        value: '',
-      },
-    });
+    const password = ref('');
+    const email = ref('');
+    const username = ref('');
+
     const store = useStore();
     const axios = store.state.axios;
 
     const confirmationMailSentAlert = ref(false);
+    const registrationErrorAlert = ref(false);
+    const registrationErrorMsg = ref('');
+
+    const passwordErrorMessages = ref([]);
+
+    const form = ref(null);
 
     /**
      * Posts the registration form to the registration api
      */
     async function submit() {
-      for (const _ of await store.dispatch('showingSpinner')) {
-        await axios.post('/registration/',
-            Object.keys(form.value).reduce((payload, key) => {
-              payload[key] = form.value[key].value;
-              return payload;
-            }, {}));
-        confirmationMailSentAlert.value = true;
+      registrationErrorAlert.value = false;
+      passwordErrorMessages.value = [];
+      const result = await form.value.validate();
+      if (result.valid) {
+        for (const _ of await store.dispatch('showingSpinner')) {
+          try {
+            await axios.post('/registration/', {
+              email: email.value,
+              username: username.value,
+              password2: password.value,
+              password1: password.value,
+            });
+            confirmationMailSentAlert.value = true;
+          } catch (error) {
+            if (error.response.data.non_field_errors) {
+              registrationErrorAlert.value = true;
+              registrationErrorMsg.value = error.response.data.non_field_errors
+                  .join('\n');
+            }
+            if (error.response.data.password1) {
+              passwordErrorMessages.value = error.response.data.password1;
+            }
+          }
+        }
       }
     }
 
-    return {form, submit, confirmationMailSentAlert};
+    return {
+      form,
+      password,
+      email,
+      username,
+      submit,
+      confirmationMailSentAlert,
+      registrationErrorAlert,
+      registrationErrorMsg,
+      passwordErrorMessages,
+      emailRules,
+      matchingPasswordsRule,
+      requiredRule,
+    };
   },
 };
 </script>
