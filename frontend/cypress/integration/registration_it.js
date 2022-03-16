@@ -33,6 +33,50 @@ describe('The register app', () => {
     cy.contains('Log Out').click();
     cy.contains($t('notLoggedInMsg'));
   });
+
+  it('allows registering again after deleting one\'s account', () => {
+    cy.log('delete account');
+    cy.visit('profile');
+    for (const _ of waitingFor('DELETE', '/registration/user/2/')) {
+      cy.contains('Delete Account').click();
+    }
+
+    cy.log('check that logging in with deleted account leads to error message');
+    loginViaLogInLink(constants.email, constants.password);
+    cy.contains($t('wrongCredentialsMsg'));
+
+    cy.log('register');
+    cy.visit('register');
+    cy.get('#id_username').type(constants.username);
+    cy.get('#id_email').type(constants.email);
+    cy.get('#id_password1').type(constants.password);
+    cy.get('#id_password2').type(constants.password);
+    for (const _ of waitingFor('POST', '/registration/')) {
+      cy.get('#submit_button').click();
+    }
+    cy.contains($t('confirmationEmailAlert', {email: constants.email}));
+
+    cy.log('confirm email via confirmation link sent via email');
+    cy.task('readLastEmail')
+        .should('have.string', constants.email.toLowerCase())
+        .then((mail) => {
+          const confirmationLink = /(https?:\/\/[^\s]+)/g
+              .exec(mail)[0]
+              .replace('localhost:8000', 'localhost:8080');
+          cy.visit(confirmationLink);
+        });
+    for (const _ of waitingFor('POST', '/registration/verify-email/')) {
+      cy.get('#id_confirm_email').click();
+    }
+
+    cy.log('login with newly created credentials');
+    cy.visit('login');
+    loginViaLogInLink(constants.email, constants.password);
+
+    cy.log('check that user is logged in');
+    cy.visit('profile');
+    cy.contains($t('welcomeMsg', {user: constants.username}));
+  });
 });
 
 describe('The register app', () => {
