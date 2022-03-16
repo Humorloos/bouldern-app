@@ -203,6 +203,7 @@ ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
 ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 7
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_ADAPTER = 'python_anywhere.accounts.adapters.CustomAccountAdapter'
 
 JWT_AUTH_RETURN_EXPIRATION = True
 # only send jwt tokens via https
