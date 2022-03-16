@@ -54,7 +54,11 @@ class Command(BaseCommand):
         )
         boulder.created_at = timezone.now() - timedelta(days=15)
         boulder.save()
-        BoulderFactory(gym=generic_gym, coordinates=Point(1041, 716))
+        BoulderFactory(
+            gym=generic_gym,
+            coordinates=Point(1041, 716),
+            grade=generic_gym.grade_set.all()[1]
+        )
 
         # add ascent
         AscentFactory(boulder=boulder)
