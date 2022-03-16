@@ -16,4 +16,5 @@ class UserAPI(ReversibleViewSet, DestroyModelMixin):
 
     def perform_destroy(self, instance):
         instance.is_active = False
+        instance.emailaddress_set.all().delete()
         instance.save()
