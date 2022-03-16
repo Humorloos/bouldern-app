@@ -715,7 +715,7 @@ export default {
     function createBoulder() {
       const boulder = selectedBoulder.value;
       boulder.id = -1;
-      boulder.grade = selectedGrade.value.grade;
+      boulder.grade = selectedGrade.value.id;
       boulder.color = selectedColor.value.id;
       boulder.age = 0;
       requestWithJwt({
@@ -870,6 +870,7 @@ export default {
     // visible
     watch(activeGrades, () => {
       featureCollection.forEach((boulder) => {
+        console.log(boulder);
         // if boulder's grade is active and boulder is invisible, show it
         if (isActiveGrade(boulder.grade)) {
           if (boulder.getStyle() === invisible) {
