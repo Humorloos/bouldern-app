@@ -79,7 +79,7 @@ describe('The register app', () => {
   });
 });
 
-describe('the login view', () => {
+describe('The login view', () => {
   beforeEach(() => {
     cy.visit('login');
   });
@@ -122,7 +122,7 @@ describe('The register app', () => {
     }
   });
 
-  it('Redirects to login page when visiting gym map while logged out',
+  it('redirects to login page when visiting gym map while logged out',
       () => {
         cy.visit(`gym-map/${constants.gymName}`);
         cy.contains($t('notLoggedInMsg'));
@@ -203,6 +203,42 @@ describe('The register app', () => {
     cy.get('#id_password2').type('password2');
     cy.get('#submit_button').click();
     cy.contains($t('msgPasswordsDoNotMatch'));
+  });
+
+  it('shows an error when passwords are too short', () => {
+    cy.get('#id_password1').type('passwor');
+    cy.get('#id_password2').type('passwor');
+    cy.get('#submit_button').click();
+    cy.contains($t('msgPasswordTooShort'));
+  });
+
+  it('shows an error when passwords are numeric', () => {
+    cy.get('#id_password1').type('12345678');
+    cy.get('#id_password2').type('12345678');
+    cy.get('#submit_button').click();
+    cy.contains($t('msgNumericPassword'));
+  });
+
+  it('shows an error when password resembles user name', () => {
+    cy.get('#id_username').type(constants.newUsername);
+    cy.get('#id_email').type(constants.newEmail);
+    cy.get('#id_password1').type(constants.newUsername);
+    cy.get('#id_password2').type(constants.newUsername);
+    for (const _ of waitingFor('POST', '/registration/')) {
+      cy.get('#submit_button').click();
+    }
+    cy.contains('The password is too similar to the username.');
+  });
+
+  it('shows an error for common passwords', () => {
+    cy.get('#id_username').type(constants.newUsername);
+    cy.get('#id_email').type(constants.newEmail);
+    cy.get('#id_password1').type('bigpimpin1');
+    cy.get('#id_password2').type('bigpimpin1');
+    for (const _ of waitingFor('POST', '/registration/')) {
+      cy.get('#submit_button').click();
+    }
+    cy.contains('This password is too common.');
   });
 });
 
