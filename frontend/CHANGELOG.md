@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.20](https://github.com/Humorloos/bouldern-app/compare/v0.1.19...v0.1.20) (2022-03-16)
+
+
+### Features
+
+* **ChangePassword:** validate passwords ([f9ca3ca](https://github.com/Humorloos/bouldern-app/commit/f9ca3caebcbd57d4b9dc26d1cfb34e3c4a9cafc7))
+* **CreateColorView:** verify filled-in name field ([7af8d4b](https://github.com/Humorloos/bouldern-app/commit/7af8d4bbbac4f2af2c00358f8d5350aa28fdc6ed))
+* **CreateGymView:** redirect to gym after gym creation ([b5fa5db](https://github.com/Humorloos/bouldern-app/commit/b5fa5db3f4d8c1533b1a564863b3e60bf45e6888))
+* **GymForm:** validate form inputs ([2ce3508](https://github.com/Humorloos/bouldern-app/commit/2ce3508a3f590080d0c8b0233a337b4cdc0d09b7))
+* **Login:** validate form inputs ([49ed389](https://github.com/Humorloos/bouldern-app/commit/49ed389f97fbea155db2bbb51a94b6194cdc0b69))
+* **Register:** validate registration form ([1a41814](https://github.com/Humorloos/bouldern-app/commit/1a41814fb3715031e8d6ff9d706e1d9c30cd3236))
+
+
+### Bug Fixes
+
+* **GymMap:** fix new boulders disappearing after filtering ([3788392](https://github.com/Humorloos/bouldern-app/commit/378839257143731625aabdd624af7bf953b8d6a0))
+* **GymMap:** fix visible filtered boulders after refresh ([539c8c7](https://github.com/Humorloos/bouldern-app/commit/539c8c748137f3ffb10e9692f412dcfe457907ad))
+* **Registration:** allow registering again after deleting account ([bf8d059](https://github.com/Humorloos/bouldern-app/commit/bf8d059c0dc3190be5911eb74c9848948a454f27))
+* **UserAPI:** delete a user's email address when deleting a user ([7f7c1c4](https://github.com/Humorloos/bouldern-app/commit/7f7c1c43ac4e8e585eb03a43867d64e351668e7a))
+
 ### [0.1.19](https://github.com/Humorloos/bouldern-app/compare/v0.1.18...v0.1.19) (2022-03-09)
 
 
