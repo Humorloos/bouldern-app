@@ -1,109 +1,137 @@
 <template>
-  <v-row>
-    <v-col>
-      <v-text-field
-        id="id_name"
-        v-model="gymName"
-        label="Name"
-        type="text"
-        :disabled="editing"
-      />
-    </v-col>
-  </v-row>
-  <v-row>
-    <v-col>
-      <v-img
-        v-if="mapUrl !== ''"
-        :src="mapUrl"
-        max-height="300px"
-        transition="false"
-      />
-    </v-col>
-  </v-row>
-  <v-row>
-    <v-col align-self="center">
-      <v-file-input
-        id="id_map"
-        v-model="map"
-        accept="image/*"
-        label="Map"
-        :disabled="editing"
-      />
-    </v-col>
-  </v-row>
-  <v-row>
-    <v-col class="text-subtitle-1">
-      Grades
-    </v-col>
-    <v-col>
-      <v-btn
-        id="add-grade-button"
-        type="button"
-        @click="addGradeSelect"
-      >
-        Add Grade
-      </v-btn>
-    </v-col>
-    <v-col>
-      <v-btn
-        to="/create-color"
-      >
-        New Color
-      </v-btn>
-    </v-col>
-  </v-row>
-  <v-row
-    v-for="(color, index) in colors"
-    :key="color.name"
+  <v-form
+    ref="form"
+    lazy-validation
   >
-    <v-col
-      align-self="center"
-      class="flex-grow-0"
-    >
-      {{ index + 1 }}.
-    </v-col>
-    <v-col align-self="center">
-      <color-select
-        :id="`id_color-grade-${index + 1}`"
-        v-model="colors[index]"
-        :color-options="colorOptions"
-      />
-    </v-col>
-    <v-col
-      align-self="center"
-      class="flex-grow-0"
-    >
-      <v-btn
-        :id="`id_remove-grade-${index + 1}`"
-        icon="mdi-close"
-        flat
-        size="small"
-        @click="removeGradeSelect(index)"
-      />
-    </v-col>
-  </v-row>
-  <v-row>
-    <v-col
-      class="flex-grow-0"
-      align-self="center"
-    >
-      <v-checkbox
-        id="id_undefined_grade_active"
-        v-model="activeExtraColor"
-        hide-details
-        label="Use undefined grade?"
-        @click="toggleExtraColor"
-      />
-    </v-col>
-    <v-col align-self="center">
-      <color-select
-        id="id_color-undefined"
-        v-model="extraColor"
-        :disabled="!activeExtraColor"
-        :color-options="colorOptions"
-      />
-    </v-col>
-  </v-row>
+    <v-row>
+      <v-col>
+        <v-text-field
+          id="id_name"
+          v-model="gymName"
+          :label="$t('lblName')"
+          type="text"
+          :disabled="editing"
+          :rules="[requiredRule($t('lblName'))]"
+        />
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col>
+        <v-img
+          v-if="mapUrl !== ''"
+          :src="mapUrl"
+          max-height="300px"
+          transition="false"
+        />
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col align-self="center">
+        <v-file-input
+          id="id_map"
+          v-model="map"
+          accept="image/*"
+          :label="$t('lblMap')"
+          :disabled="editing"
+          :rules="[requiredImageRule]"
+        />
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col class="text-subtitle-1">
+        {{ $t('grades') }}
+      </v-col>
+      <v-col>
+        <v-btn
+          id="add-grade-button"
+          type="button"
+          @click="addGradeSelect"
+        >
+          {{ $t('lblAddGrade') }}
+        </v-btn>
+      </v-col>
+      <v-col>
+        <v-btn
+          to="/create-color"
+        >
+          {{ $t('lblNewColor') }}
+        </v-btn>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col>
+        <v-input
+          v-model="regularGradeColors"
+          :rules="[atLeastOneGradeRule]"
+        >
+          <v-container>
+            <v-row
+              v-for="(color, index) in regularGradeColors"
+              :key="color.name"
+            >
+              <v-col
+                align-self="center"
+                class="flex-grow-0"
+              >
+                {{ index + 1 }}.
+              </v-col>
+              <v-col align-self="center">
+                <color-select
+                  :id="`id_color-grade-${index + 1}`"
+                  v-model="regularGradeColors[index]"
+                  :color-options="colorOptions"
+                />
+              </v-col>
+              <v-col
+                align-self="center"
+                class="flex-grow-0"
+              >
+                <v-btn
+                  :id="`id_remove-grade-${index + 1}`"
+                  icon="mdi-close"
+                  flat
+                  size="small"
+                  @click="removeGradeSelect(index)"
+                />
+              </v-col>
+            </v-row>
+          </v-container>
+        </v-input>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col
+        class="flex-grow-0"
+        align-self="center"
+      >
+        <v-checkbox
+          id="id_undefined_grade_active"
+          v-model="activeExtraColor"
+          hide-details
+          :label="$t('lblUseUndefinedGrade')"
+          @click="toggleExtraColor"
+        />
+      </v-col>
+      <v-col align-self="center">
+        <color-select
+          id="id_color-undefined"
+          v-model="extraColor"
+          :disabled="!activeExtraColor"
+          :color-options="colorOptions"
+        />
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col>
+        <v-btn
+          id="id_save-gym"
+          @click="validateForm"
+        >
+          {{ $t('lblSave') }}
+        </v-btn>
+      </v-col>
+    </v-row>
+  </v-form>
 </template>
 <script>
 /** @file form for creating or editing Gyms */
@@ -112,6 +140,11 @@ import {computed, ref} from 'vue';
 import ColorSelect from './ColorSelect.vue';
 import {useStore} from 'vuex';
 import {Colors} from '../constants/color';
+import {
+  atLeastOneGradeRule,
+  requiredImageRule,
+  requiredRule,
+} from '../helpers/rules.js';
 
 export default {
   name: 'GymForm',
@@ -142,13 +175,31 @@ export default {
       default: Colors.DEFAULT_COLOR,
     },
   },
-  setup(props) {
+  emits: ['save'],
+  setup(props, {emit}) {
+    // form
+    const form = ref(null);
+
+    /**
+     * todo
+     */
+    function validateForm() {
+      form.value.validate().then((result) => {
+        if (result.valid) {
+          emit('save');
+        }
+      });
+    }
+
     // gym
     const gymName = ref(props.initialData.name);
     const map = ref([new File([], props.initialData.map.split('/').at(-1))]);
     const mapUrl = computed(() => {
-      if (map.value[0].size !== 0) return URL.createObjectURL(map.value[0]);
-      else return props.initialData.map;
+      if (map.value[0].size !== 0) {
+        return URL.createObjectURL(map.value[0]);
+      } else {
+        return props.initialData.map;
+      }
     });
 
     const store = useStore();
@@ -157,7 +208,7 @@ export default {
     const regularGrades = props.initialData.grade_set
         .filter((grade) => grade.grade !== 'undefined');
     const gradeIds = ref(regularGrades.map((grade) => grade.id));
-    const colors = ref(regularGrades
+    const regularGradeColors = ref(regularGrades
         .map((grade) => store.getters.colorById(grade.color)));
 
     const extraGrade = props.initialData.grade_set.find(
@@ -183,7 +234,7 @@ export default {
      * Adds the default color to colors to create new grade select
      */
     function addGradeSelect() {
-      colors.value.push(Colors.DEFAULT_COLOR);
+      regularGradeColors.value.push(Colors.DEFAULT_COLOR);
     }
 
     /**
@@ -191,14 +242,14 @@ export default {
      * corresponding grade select
      */
     function removeGradeSelect(index) {
-      colors.value.splice(index, 1);
+      regularGradeColors.value.splice(index, 1);
       if (gradeIds[index] !== undefined) {
         gradeIds.value.splice(index, 1);
       }
     }
 
     const grades = computed(() => {
-      const grades = colors.value.map((color, index) => {
+      const grades = regularGradeColors.value.map((color, index) => {
         const grade = {
           color: color.id,
           grade: index + 1,
@@ -224,7 +275,7 @@ export default {
      *
      * @returns {object} the gym form
      */
-    const form = computed(() => {
+    const data = computed(() => {
       return {
         name: gymName.value,
         grade_set: grades.value,
@@ -232,12 +283,17 @@ export default {
     });
 
     return {
+      form,
+      validateForm,
+      requiredRule,
+      requiredImageRule,
+      atLeastOneGradeRule,
       // gym properties
       gymName,
       map,
       mapUrl,
       // grade properties
-      colors,
+      regularGradeColors,
       extraColor,
       activeExtraColor,
       toggleExtraColor,
@@ -247,7 +303,7 @@ export default {
       grades,
       gradeIds,
       // general properties
-      form,
+      data,
     };
   },
 };

@@ -23,7 +23,7 @@ class Command(BaseCommand):
         call(manage_args + ['flush', '--no-input'], cwd=BASE_DIR)
 
         # create super user
-        UserFactory(email='admin@boulder-holder.com',
+        UserFactory(email='admin@boulderholder.com',
                     username='admin',
                     password='admin',
                     is_superuser=True,

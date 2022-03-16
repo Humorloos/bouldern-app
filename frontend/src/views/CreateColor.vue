@@ -2,18 +2,18 @@
   <app-view>
     <template #main>
       <v-container>
-        <vue-form
-          :form="form"
-          :api-path="'/bouldern/color/'"
-          @submitted="onSubmitted"
+        <v-form
+          ref="form"
+          lazy-validation
         >
           <v-row>
             <v-col>
               <v-text-field
                 id="id_name"
-                v-model="form.name"
-                label="Name"
+                v-model="data.name"
+                :label="$t('lblName')"
                 type="text"
+                :rules="[requiredRule($t('lblName'))]"
               />
             </v-col>
           </v-row>
@@ -21,13 +21,23 @@
             <v-col>
               <input
                 id="id_color"
-                v-model="form.color"
+                v-model="data.color"
                 data-jscolor=""
                 class="jscolor-input"
               >
             </v-col>
           </v-row>
-        </vue-form>
+          <v-row>
+            <v-col>
+              <v-btn
+                id="submit_button"
+                @click="submit"
+              >
+                {{ $t('lblSave') }}
+              </v-btn>
+            </v-col>
+          </v-row>
+        </v-form>
       </v-container>
     </template>
   </app-view>
@@ -36,33 +46,43 @@
 <script>
 /** @file view for creating colors */
 
-import VueForm from '../components/VueForm.vue';
 import jscolor from '@eastdesire/jscolor/jscolor';
 import AppView from '../components/AppView.vue';
 import {onMounted, ref} from 'vue';
 import {useRouter} from 'vue-router';
 import {useStore} from 'vuex';
+import {requiredRule} from '../helpers/rules.js';
 
 
 export default {
   name: 'CreateColor',
   components: {
     AppView,
-    VueForm,
   },
   setup() {
-    const form = ref({
+    const data = ref({
       name: '',
       color: '#FF7514',
     });
     const router = useRouter();
     const store = useStore();
+    const form = ref(null);
+
     /**
      * Redirects to index after form submission
      */
-    function onSubmitted(response) {
-      store.commit('addColor', response.data);
-      router.push('/');
+    function submit() {
+      form.value.validate().then((result) => {
+        if (result.valid) {
+          store.dispatch('requestWithJwt', {
+            apiPath: '/bouldern/color/',
+            data: data.value,
+          }).then((response) => {
+            store.commit('addColor', response.data);
+            router.push('/');
+          });
+        }
+      });
     }
 
     // Installs jscolor (required for jscolor widget to work)
@@ -70,7 +90,9 @@ export default {
 
     return {
       form,
-      onSubmitted,
+      data,
+      submit,
+      requiredRule,
     };
   },
 };
