@@ -15,19 +15,22 @@
             >
               <v-text-field
                 id="id_username"
-                v-model="data.username"
+                v-model="username"
                 :label="$t('lblUsername')"
                 type="text"
                 :rules="[ requiredRule( $t('lblUsername')) ]"
               />
               <v-text-field
                 id="id_email"
-                v-model="data.email"
+                v-model="email"
                 :label="$t('lblEmail')"
                 type="text"
                 :rules="emailRules"
               />
-              <password-fields v-model="password" />
+              <password-fields
+                v-model="password"
+                :error-messages="passwordErrorMessages"
+              />
               <v-btn
                 id="submit_button"
                 type="submit"
@@ -45,7 +48,14 @@
               type="info"
               transition="slide-y-reverse-transition"
             >
-              {{ $t('confirmationEmailAlert', {email: data.email}) }}
+              {{ $t('confirmationEmailAlert', {email}) }}
+            </v-alert>
+            <v-alert
+              v-model="registrationErrorAlert"
+              type="error"
+              transition="slide-y-reverse-transition"
+            >
+              {{ registrationErrorMsg }}
             </v-alert>
           </v-col>
         </v-row>
@@ -72,18 +82,17 @@ export default {
   components: {PasswordFields, AppView},
   setup() {
     const password = ref('');
-
-    const data = ref({
-      password2: password.value,
-      password1: password.value,
-      email: '',
-      username: '',
-    });
+    const email = ref('');
+    const username = ref('');
 
     const store = useStore();
     const axios = store.state.axios;
 
     const confirmationMailSentAlert = ref(false);
+    const registrationErrorAlert = ref(false);
+    const registrationErrorMsg = ref('');
+
+    const passwordErrorMessages = ref([]);
 
     const form = ref(null);
 
@@ -91,11 +100,29 @@ export default {
      * Posts the registration form to the registration api
      */
     async function submit() {
+      registrationErrorAlert.value = false;
+      passwordErrorMessages.value = [];
       const result = await form.value.validate();
       if (result.valid) {
         for (const _ of await store.dispatch('showingSpinner')) {
-          await axios.post('/registration/', data.value);
-          confirmationMailSentAlert.value = true;
+          try {
+            await axios.post('/registration/', {
+              email: email.value,
+              username: username.value,
+              password2: password.value,
+              password1: password.value,
+            });
+            confirmationMailSentAlert.value = true;
+          } catch (error) {
+            if (error.response.data.non_field_errors) {
+              registrationErrorAlert.value = true;
+              registrationErrorMsg.value = error.response.data.non_field_errors
+                  .join('\n');
+            }
+            if (error.response.data.password1) {
+              passwordErrorMessages.value = error.response.data.password1;
+            }
+          }
         }
       }
     }
@@ -103,9 +130,13 @@ export default {
     return {
       form,
       password,
-      data,
+      email,
+      username,
       submit,
       confirmationMailSentAlert,
+      registrationErrorAlert,
+      registrationErrorMsg,
+      passwordErrorMessages,
       emailRules,
       matchingPasswordsRule,
       requiredRule,

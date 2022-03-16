@@ -7,7 +7,10 @@
     :rules="[
       requiredRule($t('lblPassword')),
       matchingPasswordsRule(password2),
+      longEnoughPasswordRule,
+      nonNumericPasswordRule,
     ]"
+    :error-messages="errorMessages"
     @update:model-value="$emit('update:modelValue', $event)"
   />
   <v-text-field
@@ -18,14 +21,21 @@
     :rules="[
       requiredRule($t('lblConfirmPassword')),
       matchingPasswordsRule(modelValue),
+      longEnoughPasswordRule,
+      nonNumericPasswordRule,
     ]"
+    :error-messages="errorMessages"
   />
 </template>
 
 <script>
 /** @file password fields with validation */
 
-import {matchingPasswordsRule, requiredRule} from '../helpers/rules.js';
+import {
+  longEnoughPasswordRule,
+  matchingPasswordsRule, nonNumericPasswordRule,
+  requiredRule,
+} from '../helpers/rules.js';
 import {ref} from 'vue';
 
 export default {
@@ -34,6 +44,10 @@ export default {
     modelValue: {
       type: String,
       default: '',
+    },
+    errorMessages: {
+      type: Array,
+      default: () => [],
     },
   },
   emits: ['update:modelValue'],
@@ -44,6 +58,8 @@ export default {
       password2,
       requiredRule,
       matchingPasswordsRule,
+      longEnoughPasswordRule,
+      nonNumericPasswordRule,
     };
   },
 };

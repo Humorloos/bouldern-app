@@ -20,3 +20,9 @@ export const requiredImageRule = (v) => v[0].name !== '' ||
   t('msgRequiredField', {field: t('lblMap')});
 
 export const atLeastOneGradeRule = (v) => v.length > 0 || t('msgNoGrades');
+
+export const longEnoughPasswordRule = (v) => v.length >= 8 ||
+  t('msgPasswordTooShort');
+
+export const nonNumericPasswordRule = (v) => isNaN(v) ||
+  t('msgNumericPassword');
