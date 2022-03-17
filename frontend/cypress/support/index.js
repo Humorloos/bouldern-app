@@ -22,14 +22,15 @@ import './functions';
 import './constants';
 import 'cypress-file-upload';
 import 'cypress-wait-until';
+import {EMAIL, PASSWORD} from './constants.js';
 
 before(() => {
   // reset DB
   cy.exec('cd .. && python manage.py reset_db');
   // get login data
   cy.request('POST', 'https://localhost:8000/registration/login/', {
-    email: constants.email,
-    password: constants.password,
+    email: EMAIL,
+    password: PASSWORD,
   }).its('body')
       .then((res) => {
         cy.loginData = res;

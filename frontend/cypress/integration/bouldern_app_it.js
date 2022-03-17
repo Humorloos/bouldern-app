@@ -1,6 +1,16 @@
 /** @file bouldern app tests */
 
 import GymMapView from '../../src/views/GymMap.vue';
+import {
+  BOULDER_1_COORDINATES,
+  BOULDER_2_COORDINATES,
+  COLOR_NAME,
+  GREEN_GYM_NAME,
+  GYM_NAME,
+  NEW_BOULDER_2_COORDINATES,
+  NEW_BOULDER_COORDINATES,
+  NEW_GYM_NAME,
+} from '../support/constants.js';
 
 beforeEach(() => {
   cy.visit('login', {
@@ -30,7 +40,7 @@ describe('The color creation view', () => {
 
   it('allows adding colors', () => {
     cy.log('fill in form');
-    cy.get('#id_name').type(constants.colorName);
+    cy.get('#id_name').type(COLOR_NAME);
     cy.get('#id_color').click();
     cy.get('div[style=' +
           '"background: rgba(255, 0, 0, 0.2); ' +
@@ -51,20 +61,20 @@ describe('The color creation view', () => {
     cy.visit('create-gym');
     cy.get('#id_color-grade-1').click();
     cy.log('newly created color should be in selectable');
-    cy.contains(constants.colorName).click();
+    cy.contains(COLOR_NAME).click();
   });
 });
 
 describe('The boulder holder', () => {
   it('loads the last opened gym at root', () => {
     for (const _ of waitingFor(
-        'GET', `/bouldern/gym-map-resources/?name=${constants.greenGymName}`)) {
-      cy.visit(`gym-map/${constants.greenGymName}`);
+        'GET', `/bouldern/gym-map-resources/?name=${GREEN_GYM_NAME}`)) {
+      cy.visit(`gym-map/${GREEN_GYM_NAME}`);
       cy.visit('');
     }
     for (const _ of waitingFor(
-        'GET', `/bouldern/gym-map-resources/?name=${constants.gymName}`)) {
-      cy.visit(`gym-map/${constants.gymName}`);
+        'GET', `/bouldern/gym-map-resources/?name=${GYM_NAME}`)) {
+      cy.visit(`gym-map/${GYM_NAME}`);
     }
     cy.get('#id_home').click();
     cy.window().its(`${GymMapView.name}.loaded`).should('equal', true);
@@ -73,18 +83,18 @@ describe('The boulder holder', () => {
 
 describe('The gym map view', () => {
   beforeEach(() => {
-    cy.visit(`gym-map/${constants.gymName}`);
+    cy.visit(`gym-map/${GYM_NAME}`);
     cy.window().its(`${GymMapView.name}.loaded`).should('equal', true);
   });
 
   it('allows adding, editing, and retiring boulders', () => {
-    atGymMapCoordinates(constants.newBoulderCoordinates, ([x, y]) => {
+    atGymMapCoordinates(NEW_BOULDER_COORDINATES, ([x, y]) => {
       cy.log('open create popover and close it');
       cy.get('#map-root').click(x, y);
       cy.contains('Grade');
       cy.get('#popup-closer').click();
     });
-    atGymMapCoordinates(constants.newBoulderCoordinates, ([x, y]) => {
+    atGymMapCoordinates(NEW_BOULDER_COORDINATES, ([x, y]) => {
       cy.log('open create popover and submit it');
       cy.get('#map-root').click(x, y);
       cy.get('#id-grade-select').click();
@@ -95,7 +105,7 @@ describe('The gym map view', () => {
     });
 
     cy.log('open edit popover and close it');
-    atGymMapCoordinates(constants.newBoulderCoordinates, ([x, y]) => {
+    atGymMapCoordinates(NEW_BOULDER_COORDINATES, ([x, y]) => {
       cy.get('#map-root').click(x, y);
       cy.contains('Added 0 day(s) ago');
       cy.contains($t('ascentResults[0]')).click();
@@ -103,21 +113,21 @@ describe('The gym map view', () => {
     });
 
     cy.log('open edit popover, edit and submit');
-    atGymMapCoordinates(constants.newBoulderCoordinates, ([x, y]) => {
+    atGymMapCoordinates(NEW_BOULDER_COORDINATES, ([x, y]) => {
       cy.get('#map-root').click(x, y);
       cy.contains($t('ascentResults[0]')).click();
       cy.get('#save-boulder').click();
     });
 
     cy.log('open edit popover and retire boulder');
-    atGymMapCoordinates(constants.newBoulderCoordinates, ([x, y]) => {
+    atGymMapCoordinates(NEW_BOULDER_COORDINATES, ([x, y]) => {
       cy.get('#map-root').click(x, y);
       cy.get('#retire-boulder').click();
     });
   });
 
   it('allows filtering by grade', () => {
-    atGymMapCoordinates(constants.boulder1Coordinates, ([x, y]) => {
+    atGymMapCoordinates(BOULDER_1_COORDINATES, ([x, y]) => {
       cy.log('check that boulder is clickable before filtering');
       cy.get('#map-root').click(x, y);
       cy.contains($t('ascentResults[0]'));
@@ -130,7 +140,7 @@ describe('The gym map view', () => {
     cy.get('#close-filter').click();
 
     cy.log('check that boulder is not clickable');
-    atGymMapCoordinates(constants.boulder1Coordinates, ([x, y]) => {
+    atGymMapCoordinates(BOULDER_1_COORDINATES, ([x, y]) => {
       cy.get('#map-root').click(x, y);
       cy.contains('Grade');
       cy.get('#popup-closer').click();
@@ -141,7 +151,7 @@ describe('The gym map view', () => {
     cy.contains('1').click();
     cy.get('#close-filter').click();
 
-    atGymMapCoordinates(constants.boulder1Coordinates, ([x, y]) => {
+    atGymMapCoordinates(BOULDER_1_COORDINATES, ([x, y]) => {
       cy.get('#map-root').click(x, y);
       cy.contains($t('ascentResults[0]'));
       cy.get('#popup-closer').click();
@@ -152,7 +162,7 @@ describe('The gym map view', () => {
     const grade = '2';
 
     cy.log('create new boulder');
-    atGymMapCoordinates(constants.newBoulder2Coordinates, ([x, y]) => {
+    atGymMapCoordinates(NEW_BOULDER_2_COORDINATES, ([x, y]) => {
       cy.get('#map-root').click(x, y);
       cy.get('#id-grade-select').click();
       cy.contains(grade).click();
@@ -166,7 +176,7 @@ describe('The gym map view', () => {
     cy.get('#close-filter').click();
 
     cy.log('open edit popover and retire boulder');
-    atGymMapCoordinates(constants.newBoulder2Coordinates, ([x, y]) => {
+    atGymMapCoordinates(NEW_BOULDER_2_COORDINATES, ([x, y]) => {
       cy.get('#map-root').click(x, y);
       cy.get('#retire-boulder').click();
     });
@@ -175,21 +185,21 @@ describe('The gym map view', () => {
   it('allows adding and removing favorite gyms', () => {
     cy.log('by default, menu should show favorite');
     cy.get('.mdi-menu').click();
-    cy.contains(constants.gymName);
+    cy.contains(GYM_NAME);
 
     cy.log('after disabling favorite, menu should not show favorite anymore');
     cy.get('.mdi-menu').click();
     cy.get('#id_favorite').click();
 
     cy.get('.mdi-menu').click();
-    cy.contains(constants.gymName).should('not.exist');
+    cy.contains(GYM_NAME).should('not.exist');
 
     cy.log('after enabling favorite again, menu should show it again');
     cy.get('.mdi-menu').click();
     cy.get('#id_favorite').click();
 
     cy.get('.mdi-menu').click();
-    cy.contains(constants.gymName);
+    cy.contains(GYM_NAME);
   });
 
   it('allows editing grades', () => {
@@ -253,7 +263,7 @@ describe('The gym map view', () => {
     cy.get('#close-filter').click();
 
     cy.log('check that boulder is not clickable');
-    atGymMapCoordinates(constants.boulder2Coordinates, ([x, y]) => {
+    atGymMapCoordinates(BOULDER_2_COORDINATES, ([x, y]) => {
       cy.get('#map-root').click(x, y);
       cy.contains('Grade');
       cy.get('#popup-closer').click();
@@ -268,7 +278,7 @@ describe('The gym creation view', () => {
 
   it('allows adding gyms', () => {
     cy.log('set name and map');
-    cy.get('#id_name').type(constants.newGymName);
+    cy.get('#id_name').type(NEW_GYM_NAME);
     cy.get('#id_map').attachFile('generic_gym.png');
 
     cy.log('set grades');
@@ -289,11 +299,11 @@ describe('The gym creation view', () => {
     }
 
     cy.log('open newly created gym');
-    cy.visit(`gym-map/${constants.newGymName}`);
+    cy.visit(`gym-map/${NEW_GYM_NAME}`);
     cy.window().its(`${GymMapView.name}.loaded`).should('equal', true);
 
     cy.log('open create popover in newly created gym and submit it');
-    atGymMapCoordinates(constants.newBoulder2Coordinates, ([x, y]) => {
+    atGymMapCoordinates(NEW_BOULDER_2_COORDINATES, ([x, y]) => {
       cy.get('#map-root').click(x, y);
       cy.get('#id-grade-select').click();
       cy.contains('2').click();
@@ -303,7 +313,7 @@ describe('The gym creation view', () => {
     });
 
     cy.log('open edit popover and retire boulder');
-    atGymMapCoordinates(constants.newBoulder2Coordinates, ([x, y]) => {
+    atGymMapCoordinates(NEW_BOULDER_2_COORDINATES, ([x, y]) => {
       cy.get('#map-root').click(x, y);
       cy.get('#retire-boulder').click();
     });
@@ -346,13 +356,13 @@ describe('The app drawer', () => {
   });
 
   it('allows navigating to a gym map view', () => {
-    cy.get('#id_gym-name').type(constants.gymName);
+    cy.get('#id_gym-name').type(GYM_NAME);
     cy.get('#submit_button').click();
     cy.window().its(`${GymMapView.name}.loaded`).should('equal', true);
   });
 
   it('allows navigating to favorite gyms', () => {
-    cy.contains(constants.gymName).click();
+    cy.contains(GYM_NAME).click();
     cy.window().its(`${GymMapView.name}.loaded`).should('equal', true);
   });
 });

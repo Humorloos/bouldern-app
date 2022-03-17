@@ -1,6 +1,15 @@
 /** @file test for registration, login, logout, and account deletion */
 
 import GymMapView from '../../src/views/GymMap.vue';
+import {
+  EMAIL,
+  GYM_NAME,
+  NEW_EMAIL,
+  NEW_PASSWORD,
+  NEW_USERNAME,
+  PASSWORD,
+  USERNAME,
+} from '../support/constants.js';
 
 describe('The register app', () => {
   beforeEach(() => {
@@ -15,21 +24,21 @@ describe('The register app', () => {
   it('refreshes auth token after expiration', () => {
     // remove auth token
     cy.window().then((win) => win.$store.commit('setAuthTokenToken', ''));
-    cy.visit(`gym-map/${constants.gymName}`);
+    cy.visit(`gym-map/${GYM_NAME}`);
     cy.window().its(`${GymMapView.name}.loaded`).should('equal', true);
   });
 
   it('stays logged in after reloading the page', () => {
     cy.visit('profile');
     // log in with registered user
-    cy.contains($t('welcomeMsg', {user: constants.username}));
+    cy.contains($t('welcomeMsg', {user: USERNAME}));
     cy.reload();
-    cy.contains($t('welcomeMsg', {user: constants.username}));
+    cy.contains($t('welcomeMsg', {user: USERNAME}));
   });
 
   it('allows logging out', () => {
     cy.visit('profile');
-    cy.contains($t('welcomeMsg', {user: constants.username}));
+    cy.contains($t('welcomeMsg', {user: USERNAME}));
     cy.contains('Log Out').click();
     cy.contains($t('notLoggedInMsg'));
   });
@@ -42,23 +51,23 @@ describe('The register app', () => {
     }
 
     cy.log('check that logging in with deleted account leads to error message');
-    loginViaLogInLink(constants.email, constants.password);
+    loginViaLogInLink(EMAIL, PASSWORD);
     cy.contains($t('wrongCredentialsMsg'));
 
     cy.log('register');
     cy.visit('register');
-    cy.get('#id_username').type(constants.username);
-    cy.get('#id_email').type(constants.email);
-    cy.get('#id_password1').type(constants.password);
-    cy.get('#id_password2').type(constants.password);
+    cy.get('#id_username').type(USERNAME);
+    cy.get('#id_email').type(EMAIL);
+    cy.get('#id_password1').type(PASSWORD);
+    cy.get('#id_password2').type(PASSWORD);
     for (const _ of waitingFor('POST', '/registration/')) {
       cy.get('#submit_button').click();
     }
-    cy.contains($t('confirmationEmailAlert', {email: constants.email}));
+    cy.contains($t('confirmationEmailAlert', {email: EMAIL}));
 
     cy.log('confirm email via confirmation link sent via email');
     cy.task('readLastEmail')
-        .should('have.string', constants.email.toLowerCase())
+        .should('have.string', EMAIL.toLowerCase())
         .then((mail) => {
           const confirmationLink = /(https?:\/\/[^\s]+)/g
               .exec(mail)[0]
@@ -71,11 +80,11 @@ describe('The register app', () => {
 
     cy.log('login with newly created credentials');
     cy.visit('login');
-    loginViaLogInLink(constants.email, constants.password);
+    loginViaLogInLink(EMAIL, PASSWORD);
 
     cy.log('check that user is logged in');
     cy.visit('profile');
-    cy.contains($t('welcomeMsg', {user: constants.username}));
+    cy.contains($t('welcomeMsg', {user: USERNAME}));
   });
 });
 
@@ -87,7 +96,7 @@ describe('The login view', () => {
   it('shows an error message when trying to log in with wrong crendentials',
       () => {
         // try log in with non-existent user
-        loginViaLogInLink(constants.newEmail, constants.newPassword);
+        loginViaLogInLink(NEW_EMAIL, NEW_PASSWORD);
         cy.contains($t('wrongCredentialsMsg'));
       });
 
@@ -102,20 +111,20 @@ describe('The login view', () => {
 describe('The register app', () => {
   it('allows resetting one\'s password', () => {
     cy.visit('reset-password');
-    cy.get('#id_email').type(constants.email);
+    cy.get('#id_email').type(EMAIL);
     for (const _ of waitingFor('POST', '/registration/password/reset/')) {
       cy.get('#id_send').click();
     }
     cy.task('readLastEmail')
-        .should('have.string', constants.email)
+        .should('have.string', EMAIL)
         .then((mail) => {
           const confirmationLink = /(https?:\/\/[^\s]+)/g
               .exec(mail)[0]
               .replace('localhost:8000', 'localhost:8080');
           cy.visit(confirmationLink);
         });
-    cy.get('#id_password1').type(constants.password);
-    cy.get('#id_password2').type(constants.password);
+    cy.get('#id_password1').type(PASSWORD);
+    cy.get('#id_password2').type(PASSWORD);
     for (const _ of waitingFor('POST',
         '/registration/password/reset/confirm/')) {
       cy.get('#id_submit').click();
@@ -124,7 +133,7 @@ describe('The register app', () => {
 
   it('redirects to login page when visiting gym map while logged out',
       () => {
-        cy.visit(`gym-map/${constants.gymName}`);
+        cy.visit(`gym-map/${GYM_NAME}`);
         cy.contains($t('notLoggedInMsg'));
       });
 });
@@ -137,21 +146,21 @@ describe('The register app', () => {
     'afterwards', () => {
     cy.log('register');
     cy.get('#id_username')
-        .type(constants.newUsername)
-        .should('have.value', constants.newUsername);
+        .type(NEW_USERNAME)
+        .should('have.value', NEW_USERNAME);
     cy.get('#id_email')
-        .type(constants.newEmail)
-        .should('have.value', constants.newEmail);
-    cy.get('#id_password1').type(constants.newPassword);
-    cy.get('#id_password2').type(constants.newPassword);
+        .type(NEW_EMAIL)
+        .should('have.value', NEW_EMAIL);
+    cy.get('#id_password1').type(NEW_PASSWORD);
+    cy.get('#id_password2').type(NEW_PASSWORD);
     for (const _ of waitingFor('POST', '/registration/')) {
       cy.get('#submit_button').click();
     }
-    cy.contains($t('confirmationEmailAlert', {email: constants.newEmail}));
+    cy.contains($t('confirmationEmailAlert', {email: NEW_EMAIL}));
 
     cy.log('confirm email via confirmation link sent via email');
     cy.task('readLastEmail')
-        .should('have.string', constants.newEmail.toLowerCase())
+        .should('have.string', NEW_EMAIL.toLowerCase())
         .then((mail) => {
           const confirmationLink = /(https?:\/\/[^\s]+)/g
               .exec(mail)[0]
@@ -164,11 +173,11 @@ describe('The register app', () => {
 
     cy.log('login with newly created credentials');
     cy.visit('login');
-    loginViaLogInLink(constants.newEmail, constants.newPassword);
+    loginViaLogInLink(NEW_EMAIL, NEW_PASSWORD);
 
     cy.log('check that user is logged in');
     cy.visit('profile');
-    cy.contains($t('welcomeMsg', {user: constants.newUsername}));
+    cy.contains($t('welcomeMsg', {user: NEW_USERNAME}));
 
     cy.log('delete account');
     for (const _ of waitingFor('DELETE', '/registration/user/3/')) {
@@ -176,7 +185,7 @@ describe('The register app', () => {
     }
 
     cy.log('check that logging in with deleted account leads to error message');
-    loginViaLogInLink(constants.newEmail, constants.newPassword);
+    loginViaLogInLink(NEW_EMAIL, NEW_PASSWORD);
     cy.contains($t('wrongCredentialsMsg'));
   });
 
@@ -220,10 +229,10 @@ describe('The register app', () => {
   });
 
   it('shows an error when password resembles user name', () => {
-    cy.get('#id_username').type(constants.newUsername);
-    cy.get('#id_email').type(constants.newEmail);
-    cy.get('#id_password1').type(constants.newUsername);
-    cy.get('#id_password2').type(constants.newUsername);
+    cy.get('#id_username').type(NEW_USERNAME);
+    cy.get('#id_email').type(NEW_EMAIL);
+    cy.get('#id_password1').type(NEW_USERNAME);
+    cy.get('#id_password2').type(NEW_USERNAME);
     for (const _ of waitingFor('POST', '/registration/')) {
       cy.get('#submit_button').click();
     }
@@ -231,8 +240,8 @@ describe('The register app', () => {
   });
 
   it('shows an error for common passwords', () => {
-    cy.get('#id_username').type(constants.newUsername);
-    cy.get('#id_email').type(constants.newEmail);
+    cy.get('#id_username').type(NEW_USERNAME);
+    cy.get('#id_email').type(NEW_EMAIL);
     cy.get('#id_password1').type('bigpimpin1');
     cy.get('#id_password2').type('bigpimpin1');
     for (const _ of waitingFor('POST', '/registration/')) {
