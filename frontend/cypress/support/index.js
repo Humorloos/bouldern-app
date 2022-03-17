@@ -23,6 +23,7 @@ import './constants';
 import 'cypress-file-upload';
 import 'cypress-wait-until';
 import {EMAIL, PASSWORD} from './constants.js';
+import {slugify} from './functions.js';
 
 before(() => {
   // reset DB

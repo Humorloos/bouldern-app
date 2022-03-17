@@ -10,6 +10,7 @@ import {
   PASSWORD,
   USERNAME,
 } from '../support/constants.js';
+import {loginViaLogInLink, waitingFor} from '../support/functions.js';
 
 describe('The register app', () => {
   beforeEach(() => {

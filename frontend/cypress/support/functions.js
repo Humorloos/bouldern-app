@@ -10,7 +10,7 @@ window.$t = i18n.global.t;
  * @param email the user's email
  * @param password the user's password
  */
-window.loginViaLogInLink = (email, password) => {
+export function loginViaLogInLink(email, password) {
   cy.contains('You are not logged in');
   cy.url().should('include', '/login');
   cy.get('#id_email')
@@ -20,7 +20,7 @@ window.loginViaLogInLink = (email, password) => {
   for (const _ of waitingFor('POST', '/registration/login')) {
     cy.get('#submit_button').click();
   }
-};
+}
 
 /**
  * Converts the given string into a slug
@@ -29,7 +29,7 @@ window.loginViaLogInLink = (email, password) => {
  * @param str the string to convert
  * @returns {string} the slug
  */
-window.slugify = function(str) {
+export function slugify(str) {
   str = str.replace(/^\s+|\s+$/g, ''); // trim
   str = str.toLowerCase();
 
@@ -45,7 +45,7 @@ window.slugify = function(str) {
       .replace(/-+/g, '-'); // collapse dashes
 
   return str;
-};
+}
 
 /**
  * Utility for an API call to finish proceeding. The API call has to occur
@@ -56,7 +56,7 @@ window.slugify = function(str) {
  * @param method the method used in the API call
  * @param url the request's target url
  */
-window.waitingFor = function* (method, url) {
+export function* waitingFor(method, url) {
   // setup
   cy.intercept(method, encodeURI(url)).as(url);
   try {
@@ -65,7 +65,7 @@ window.waitingFor = function* (method, url) {
     // cleanup
     cy.wait(`@${url}`);
   }
-};
+}
 
 /**
  * Gets the x and y values corresponding to the specified coordinates in the
@@ -75,7 +75,7 @@ window.waitingFor = function* (method, url) {
  * @param coordinates the coordinates for which to get the x and y values
  * @param fn the function to call with the x and y values
  */
-window.atGymMapCoordinates = function(coordinates, fn) {
+export function atGymMapCoordinates(coordinates, fn) {
   cy.window().its(`${GymMapView.name}.map`).then((map) => {
     cy.waitUntil(() => {
       return map.getPixelFromCoordinate(coordinates);
@@ -83,4 +83,4 @@ window.atGymMapCoordinates = function(coordinates, fn) {
       fn(pixel);
     });
   });
-};
+}

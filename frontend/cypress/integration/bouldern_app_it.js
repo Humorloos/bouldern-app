@@ -11,6 +11,7 @@ import {
   NEW_BOULDER_COORDINATES,
   NEW_GYM_NAME,
 } from '../support/constants.js';
+import {atGymMapCoordinates, waitingFor} from '../support/functions.js';
 
 beforeEach(() => {
   cy.visit('login', {

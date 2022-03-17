@@ -21,11 +21,6 @@
   },
   "globals": {
     "$t": "readonly",
-    "$log": "readonly",
-    "constants": "readonly",
-    "loginViaLogInLink": "readonly",
-    "slugify": "readonly",
-    "waitingFor": "readonly",
-    "atGymMapCoordinates": "readonly"
+    "$log": "readonly"
   }
 }
