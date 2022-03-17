@@ -78,103 +78,97 @@ describe('The gym map view', () => {
   });
 
   it('allows adding, editing, and retiring boulders', () => {
-    cy.window().its(`${GymMapView.name}.map`).then((map) => {
-      atPixel(map, constants.newBoulderCoordinates, ([x, y]) => {
-        cy.log('open create popover and close it');
-        cy.get('#map-root').click(x, y);
-        cy.contains('Grade');
-        cy.get('#popup-closer').click();
-      });
-      atPixel(map, constants.newBoulderCoordinates, ([x, y]) => {
-        cy.log('open create popover and submit it');
-        cy.get('#map-root').click(x, y);
-        cy.get('#id-grade-select').click();
-        cy.contains('5').click();
-        cy.get('#id-color-select').click();
-        cy.contains('Yellow').click();
-        cy.contains('Save').click();
-      });
+    atGymMapCoordinates(constants.newBoulderCoordinates, ([x, y]) => {
+      cy.log('open create popover and close it');
+      cy.get('#map-root').click(x, y);
+      cy.contains('Grade');
+      cy.get('#popup-closer').click();
+    });
+    atGymMapCoordinates(constants.newBoulderCoordinates, ([x, y]) => {
+      cy.log('open create popover and submit it');
+      cy.get('#map-root').click(x, y);
+      cy.get('#id-grade-select').click();
+      cy.contains('5').click();
+      cy.get('#id-color-select').click();
+      cy.contains('Yellow').click();
+      cy.contains('Save').click();
+    });
 
-      cy.log('open edit popover and close it');
-      atPixel(map, constants.newBoulderCoordinates, ([x, y]) => {
-        cy.get('#map-root').click(x, y);
-        cy.contains('Added 0 day(s) ago');
-        cy.contains($t('ascentResults[0]')).click();
-        cy.get('#popup-closer').click();
-      });
+    cy.log('open edit popover and close it');
+    atGymMapCoordinates(constants.newBoulderCoordinates, ([x, y]) => {
+      cy.get('#map-root').click(x, y);
+      cy.contains('Added 0 day(s) ago');
+      cy.contains($t('ascentResults[0]')).click();
+      cy.get('#popup-closer').click();
+    });
 
-      cy.log('open edit popover, edit and submit');
-      atPixel(map, constants.newBoulderCoordinates, ([x, y]) => {
-        cy.get('#map-root').click(x, y);
-        cy.contains($t('ascentResults[0]')).click();
-        cy.get('#save-boulder').click();
-      });
+    cy.log('open edit popover, edit and submit');
+    atGymMapCoordinates(constants.newBoulderCoordinates, ([x, y]) => {
+      cy.get('#map-root').click(x, y);
+      cy.contains($t('ascentResults[0]')).click();
+      cy.get('#save-boulder').click();
+    });
 
-      cy.log('open edit popover and retire boulder');
-      atPixel(map, constants.newBoulderCoordinates, ([x, y]) => {
-        cy.get('#map-root').click(x, y);
-        cy.get('#retire-boulder').click();
-      });
+    cy.log('open edit popover and retire boulder');
+    atGymMapCoordinates(constants.newBoulderCoordinates, ([x, y]) => {
+      cy.get('#map-root').click(x, y);
+      cy.get('#retire-boulder').click();
     });
   });
 
   it('allows filtering by grade', () => {
-    cy.window().its(`${GymMapView.name}.map`).then((map) => {
-      atPixel(map, constants.boulder1Coordinates, ([x, y]) => {
-        cy.log('check that boulder is clickable before filtering');
-        cy.get('#map-root').click(x, y);
-        cy.contains($t('ascentResults[0]'));
-        cy.get('#popup-closer').click();
-      });
+    atGymMapCoordinates(constants.boulder1Coordinates, ([x, y]) => {
+      cy.log('check that boulder is clickable before filtering');
+      cy.get('#map-root').click(x, y);
+      cy.contains($t('ascentResults[0]'));
+      cy.get('#popup-closer').click();
+    });
 
-      cy.log('activate filter');
-      cy.get('#filter').click();
-      cy.contains('1').click();
-      cy.get('#close-filter').click();
+    cy.log('activate filter');
+    cy.get('#filter').click();
+    cy.contains('1').click();
+    cy.get('#close-filter').click();
 
-      cy.log('check that boulder is not clickable');
-      atPixel(map, constants.boulder1Coordinates, ([x, y]) => {
-        cy.get('#map-root').click(x, y);
-        cy.contains('Grade');
-        cy.get('#popup-closer').click();
-      });
+    cy.log('check that boulder is not clickable');
+    atGymMapCoordinates(constants.boulder1Coordinates, ([x, y]) => {
+      cy.get('#map-root').click(x, y);
+      cy.contains('Grade');
+      cy.get('#popup-closer').click();
+    });
 
-      cy.log('deactivate filter and check that boulder is clickable again');
-      cy.get('#filter').click();
-      cy.contains('1').click();
-      cy.get('#close-filter').click();
+    cy.log('deactivate filter and check that boulder is clickable again');
+    cy.get('#filter').click();
+    cy.contains('1').click();
+    cy.get('#close-filter').click();
 
-      atPixel(map, constants.boulder1Coordinates, ([x, y]) => {
-        cy.get('#map-root').click(x, y);
-        cy.contains($t('ascentResults[0]'));
-        cy.get('#popup-closer').click();
-      });
+    atGymMapCoordinates(constants.boulder1Coordinates, ([x, y]) => {
+      cy.get('#map-root').click(x, y);
+      cy.contains($t('ascentResults[0]'));
+      cy.get('#popup-closer').click();
     });
   });
 
   it('keeps newly created boulders when changing filter', () => {
-    cy.window().its(`${GymMapView.name}.map`).then((map) => {
-      const grade = '2';
+    const grade = '2';
 
-      cy.log('create new boulder');
-      atPixel(map, constants.newBoulder2Coordinates, ([x, y]) => {
-        cy.get('#map-root').click(x, y);
-        cy.get('#id-grade-select').click();
-        cy.contains(grade).click();
-        cy.contains('Save').click();
-      });
-
-      cy.log('activate filter');
-      cy.get('#filter').click();
-      cy.contains('all').click();
+    cy.log('create new boulder');
+    atGymMapCoordinates(constants.newBoulder2Coordinates, ([x, y]) => {
+      cy.get('#map-root').click(x, y);
+      cy.get('#id-grade-select').click();
       cy.contains(grade).click();
-      cy.get('#close-filter').click();
+      cy.contains('Save').click();
+    });
 
-      cy.log('open edit popover and retire boulder');
-      atPixel(map, constants.newBoulder2Coordinates, ([x, y]) => {
-        cy.get('#map-root').click(x, y);
-        cy.get('#retire-boulder').click();
-      });
+    cy.log('activate filter');
+    cy.get('#filter').click();
+    cy.contains('all').click();
+    cy.contains(grade).click();
+    cy.get('#close-filter').click();
+
+    cy.log('open edit popover and retire boulder');
+    atGymMapCoordinates(constants.newBoulder2Coordinates, ([x, y]) => {
+      cy.get('#map-root').click(x, y);
+      cy.get('#retire-boulder').click();
     });
   });
 
@@ -259,12 +253,10 @@ describe('The gym map view', () => {
     cy.get('#close-filter').click();
 
     cy.log('check that boulder is not clickable');
-    cy.window().its(`${GymMapView.name}.map`).then((map) => {
-      atPixel(map, constants.boulder2Coordinates, ([x, y]) => {
-        cy.get('#map-root').click(x, y);
-        cy.contains('Grade');
-        cy.get('#popup-closer').click();
-      });
+    atGymMapCoordinates(constants.boulder2Coordinates, ([x, y]) => {
+      cy.get('#map-root').click(x, y);
+      cy.contains('Grade');
+      cy.get('#popup-closer').click();
     });
   });
 });
@@ -301,21 +293,19 @@ describe('The gym creation view', () => {
     cy.window().its(`${GymMapView.name}.loaded`).should('equal', true);
 
     cy.log('open create popover in newly created gym and submit it');
-    cy.window().its(`${GymMapView.name}.map`).then((map) => {
-      atPixel(map, constants.newBoulder2Coordinates, ([x, y]) => {
-        cy.get('#map-root').click(x, y);
-        cy.get('#id-grade-select').click();
-        cy.contains('2').click();
-        cy.get('#id-color-select').click();
-        cy.contains('Red').click();
-        cy.contains('Save').click();
-      });
+    atGymMapCoordinates(constants.newBoulder2Coordinates, ([x, y]) => {
+      cy.get('#map-root').click(x, y);
+      cy.get('#id-grade-select').click();
+      cy.contains('2').click();
+      cy.get('#id-color-select').click();
+      cy.contains('Red').click();
+      cy.contains('Save').click();
+    });
 
-      cy.log('open edit popover and retire boulder');
-      atPixel(map, constants.newBoulder2Coordinates, ([x, y]) => {
-        cy.get('#map-root').click(x, y);
-        cy.get('#retire-boulder').click();
-      });
+    cy.log('open edit popover and retire boulder');
+    atGymMapCoordinates(constants.newBoulder2Coordinates, ([x, y]) => {
+      cy.get('#map-root').click(x, y);
+      cy.get('#retire-boulder').click();
     });
   });
 

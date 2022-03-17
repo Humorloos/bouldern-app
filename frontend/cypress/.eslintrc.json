@@ -26,6 +26,6 @@
     "loginViaLogInLink": "readonly",
     "slugify": "readonly",
     "waitingFor": "readonly",
-    "atPixel": "readonly"
+    "atGymMapCoordinates": "readonly"
   }
 }

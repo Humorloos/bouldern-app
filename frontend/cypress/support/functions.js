@@ -1,6 +1,7 @@
 /** @file utility functions for use over multiple e2e tests */
 
 import i18n from '../../src/i18n';
+import GymMapView from '../../src/views/GymMap.vue';
 
 window.$t = i18n.global.t;
 /**
@@ -68,17 +69,18 @@ window.waitingFor = function* (method, url) {
 
 /**
  * Gets the x and y values corresponding to the specified coordinates in the
- * specified map at the time this function is called and calls the provided
+ * gym map at the time this function is called and calls the provided
  * function with them.
  *
- * @param map the map in which to get the values for the coordinates
  * @param coordinates the coordinates for which to get the x and y values
  * @param fn the function to call with the x and y values
  */
-window.atPixel = function(map, coordinates, fn) {
-  cy.waitUntil(() => {
-    return map.getPixelFromCoordinate(coordinates);
-  }).then((pixel) => {
-    fn(pixel);
+window.atGymMapCoordinates = function(coordinates, fn) {
+  cy.window().its(`${GymMapView.name}.map`).then((map) => {
+    cy.waitUntil(() => {
+      return map.getPixelFromCoordinate(coordinates);
+    }).then((pixel) => {
+      fn(pixel);
+    });
   });
 };
