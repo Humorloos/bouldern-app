@@ -967,6 +967,7 @@ export default {
     }
 
     const clickStart = ref(NaN);
+    const modifyRadius = 35;
 
     /**
      * Sets the loaded flag and initializes the map
@@ -1024,7 +1025,7 @@ export default {
               // fire event only once and only if not panning the map
               if (getEventDelay(event) < 2 * modifyTouchThreshold &&
                       !moving.value) {
-                setBoulderRadius(boulder, 35);
+                setBoulderRadius(boulder, modifyRadius);
                 map.mapBrowserEventHandler_.dispatchEvent(event);
               }
             },
@@ -1190,6 +1191,9 @@ export default {
       refresh,
       // expose map to cypress
       map,
+      getBoulderAtPixel,
+      boulderRadius,
+      modifyRadius,
     };
   },
 };

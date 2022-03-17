@@ -12,6 +12,7 @@ import {
 } from '../support/constants.js';
 import {
   atGymMapCoordinates,
+  moveBoulder,
   waitForGymMap,
   waitingFor,
 } from '../support/functions.js';
@@ -160,6 +161,11 @@ describe('The gym map view', () => {
       cy.contains($t('ascentResults[0]'));
       cy.get('#popup-closer').click();
     });
+  });
+
+  it('allows moving boulders', () => {
+    moveBoulder(BOULDER_1_COORDINATES, NEW_BOULDER_COORDINATES);
+    moveBoulder(NEW_BOULDER_COORDINATES, BOULDER_1_COORDINATES);
   });
 
   it('keeps newly created boulders when changing filter', () => {

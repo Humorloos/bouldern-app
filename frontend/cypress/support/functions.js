@@ -2,8 +2,10 @@
 
 import i18n from '../../src/i18n';
 import GymMapView from '../../src/views/GymMap.vue';
+import {BOULDER_1_COORDINATES, NEW_BOULDER_COORDINATES} from './constants.js';
 
 window.$t = i18n.global.t;
+
 /**
  * Logs in user with given credentials when at login page
  *
@@ -80,6 +82,7 @@ export function atGymMapCoordinates(coordinates, fn) {
     cy.waitUntil(() => {
       return map.getPixelFromCoordinate(coordinates);
     }).then((pixel) => {
+      // debugger;
       fn(pixel);
     });
   });
@@ -90,4 +93,43 @@ export function atGymMapCoordinates(coordinates, fn) {
  */
 export function waitForGymMap() {
   cy.window().its(`${GymMapView.name}.loaded`).should('equal', true);
+}
+
+const touchPointerOptions = (x, y) => {
+  return {x: x, y: y, pointerType: 'touch', pointerId: 1};
+};
+
+/**
+ * @param gymMap
+ * @param x
+ * @param y
+ * @param radius
+ */
+function verifyBoulderRadius(gymMap, x, y, radius) {
+  cy.wrap(
+      gymMap.getBoulderAtPixel([x, y]).getStyle()[1].getImage().getRadius(),
+  ).should('equal', radius);
+}
+
+/**
+ * todo
+ *
+ * @param from
+ * @param to
+ */
+export function moveBoulder(from, to) {
+  cy.window().its(`${GymMapView.name}`).then((gymMap) => {
+    atGymMapCoordinates(from, ([x, y]) => {
+      cy.get('#map-root').trigger('pointerdown', touchPointerOptions(x, y));
+      cy.wait(gymMap.modifyTouchThreshold).then(() => {
+        verifyBoulderRadius(gymMap, x, y, gymMap.modifyRadius);
+      });
+    });
+    atGymMapCoordinates(to, ([x, y]) => {
+      cy.get('#map-root').trigger('pointermove', touchPointerOptions(x, y))
+          .trigger('pointerup', touchPointerOptions(x, y)).then(() => {
+            verifyBoulderRadius(gymMap, x, y, gymMap.boulderRadius);
+          });
+    });
+  });
 }
