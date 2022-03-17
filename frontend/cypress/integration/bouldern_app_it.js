@@ -1,6 +1,5 @@
 /** @file bouldern app tests */
 
-import GymMapView from '../../src/views/GymMap.vue';
 import {
   BOULDER_1_COORDINATES,
   BOULDER_2_COORDINATES,
@@ -11,7 +10,11 @@ import {
   NEW_BOULDER_COORDINATES,
   NEW_GYM_NAME,
 } from '../support/constants.js';
-import {atGymMapCoordinates, waitingFor} from '../support/functions.js';
+import {
+  atGymMapCoordinates,
+  waitForGymMap,
+  waitingFor,
+} from '../support/functions.js';
 
 beforeEach(() => {
   cy.visit('login', {
@@ -78,14 +81,14 @@ describe('The boulder holder', () => {
       cy.visit(`gym-map/${GYM_NAME}`);
     }
     cy.get('#id_home').click();
-    cy.window().its(`${GymMapView.name}.loaded`).should('equal', true);
+    waitForGymMap();
   });
 });
 
 describe('The gym map view', () => {
   beforeEach(() => {
     cy.visit(`gym-map/${GYM_NAME}`);
-    cy.window().its(`${GymMapView.name}.loaded`).should('equal', true);
+    waitForGymMap();
   });
 
   it('allows adding, editing, and retiring boulders', () => {
@@ -301,7 +304,7 @@ describe('The gym creation view', () => {
 
     cy.log('open newly created gym');
     cy.visit(`gym-map/${NEW_GYM_NAME}`);
-    cy.window().its(`${GymMapView.name}.loaded`).should('equal', true);
+    waitForGymMap();
 
     cy.log('open create popover in newly created gym and submit it');
     atGymMapCoordinates(NEW_BOULDER_2_COORDINATES, ([x, y]) => {
@@ -359,11 +362,11 @@ describe('The app drawer', () => {
   it('allows navigating to a gym map view', () => {
     cy.get('#id_gym-name').type(GYM_NAME);
     cy.get('#submit_button').click();
-    cy.window().its(`${GymMapView.name}.loaded`).should('equal', true);
+    waitForGymMap();
   });
 
   it('allows navigating to favorite gyms', () => {
     cy.contains(GYM_NAME).click();
-    cy.window().its(`${GymMapView.name}.loaded`).should('equal', true);
+    waitForGymMap();
   });
 });

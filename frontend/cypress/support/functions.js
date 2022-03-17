@@ -84,3 +84,10 @@ export function atGymMapCoordinates(coordinates, fn) {
     });
   });
 }
+
+/**
+ * Asserts that the gym map has finished loading
+ */
+export function waitForGymMap() {
+  cy.window().its(`${GymMapView.name}.loaded`).should('equal', true);
+}
