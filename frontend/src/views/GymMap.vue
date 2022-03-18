@@ -894,6 +894,7 @@ export default {
      * Adds all the gym's grades to the set of active grades
      */
     function setAllGradesActive() {
+      allGradesActive.value = true;
       activeGrades.value = gym.value.grade_set.map(({id}) => id);
     }
 
