@@ -311,6 +311,25 @@ describe('The gym map view', () => {
       cy.get('#popup-closer').click();
     });
   });
+
+  it('resets filters when changing gym', () => {
+    cy.log('activate filter');
+    cy.get('#id_filter').click();
+    cy.contains('all').click();
+    cy.contains('1').click();
+    cy.get('#close-filter').click();
+
+    cy.log('open green gym');
+    cy.get('.mdi-menu').click();
+    cy.get('#id_gym-name').type(GREEN_GYM_NAME);
+    cy.get('#submit_button').click();
+    waitForGymMap();
+
+    cy.log('check that filters are reset');
+    cy.get('#id_filter').click();
+    cy.get('.mdi-checkbox-marked + #id_filter-all');
+    cy.get('.mdi-checkbox-marked + #id_filter-1');
+  });
 });
 
 describe('The gym creation view', () => {
