@@ -105,7 +105,7 @@
         align-self="center"
       >
         <v-checkbox
-          id="id_undefined_grade_active"
+          id="id_undefined-grade-active"
           v-model="activeExtraColor"
           hide-details
           :label="$t('lblUseUndefinedGrade')"
