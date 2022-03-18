@@ -16,6 +16,7 @@ import {
   waitForGymMap,
   waitingFor,
 } from '../support/functions.js';
+import GymMapView from '../../src/views/GymMap.vue';
 
 beforeEach(() => {
   cy.visit('login', {
@@ -167,6 +168,37 @@ describe('The gym map view', () => {
     moveBoulder(BOULDER_1_COORDINATES, NEW_BOULDER_COORDINATES);
     moveBoulder(NEW_BOULDER_COORDINATES, BOULDER_1_COORDINATES);
   });
+
+  it('allows moving newly created boulders after refresh', () => {
+    cy.log('create new boulder');
+    atGymMapCoordinates(NEW_BOULDER_2_COORDINATES, ([x, y]) => {
+      cy.get('#map-root').click(x, y);
+    });
+    cy.get('#id-grade-select').click();
+    cy.contains('3').click();
+    cy.contains('Save').click();
+
+    cy.log('click refresh button');
+    cy.get('.mdi-menu').click();
+    cy.get('#id_refresh').click();
+
+    cy.log('move boulder');
+    cy.window().its(`${GymMapView.name}`).then((gymMap) => {
+      cy.waitUntil(() => {
+        return gymMap.map.frameState_.viewState.center[0] ===
+          gymMap.map.getView().getCenter()[0];
+      }).then(() => {
+        moveBoulder(NEW_BOULDER_2_COORDINATES, NEW_BOULDER_COORDINATES);
+      });
+    });
+
+    cy.log('open edit popover and retire boulder');
+    atGymMapCoordinates(NEW_BOULDER_COORDINATES, ([x, y]) => {
+      cy.get('#map-root').click(x, y);
+      cy.get('#retire-boulder').click();
+    });
+  });
+
 
   it('keeps newly created boulders when changing filter', () => {
     const grade = '2';
