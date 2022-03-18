@@ -181,7 +181,7 @@ export default {
     const form = ref(null);
 
     /**
-     * todo
+     * Validates the form and emits save signal if form is valid
      */
     function validateForm() {
       form.value.validate().then((result) => {

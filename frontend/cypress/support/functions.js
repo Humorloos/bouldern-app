@@ -95,15 +95,14 @@ export function waitForGymMap() {
   cy.window().its(`${GymMapView.name}.loaded`).should('equal', true);
 }
 
-const touchPointerOptions = (x, y) => {
-  return {x: x, y: y, pointerType: 'touch', pointerId: 1};
-};
-
 /**
- * @param gymMap
- * @param x
- * @param y
- * @param radius
+ * Checks that the boulder at the specified coordinates in the specified map has
+ * the specified radius in its color style
+ *
+ * @param gymMap the map in which to look up the boulder
+ * @param x the x coordinate at which to look up the boulder
+ * @param y the y coordinate at which to look up the boulder
+ * @param radius the radius the specified boulder is supposed to have
  */
 function verifyBoulderRadius(gymMap, x, y, radius) {
   cy.wrap(
@@ -111,11 +110,18 @@ function verifyBoulderRadius(gymMap, x, y, radius) {
   ).should('equal', radius);
 }
 
+// options for simulating touch pointer events
+const touchPointerOptions = (x, y) => {
+  return {x: x, y: y, pointerType: 'touch', pointerId: 1};
+};
+
 /**
- * todo
+ * Moves the boulder at coordinates "from" to coordinates "to" via touch pointer
+ * interaction and checks that the boulder's radius is changed correctly during
+ * the shift
  *
- * @param from
- * @param to
+ * @param from the coordinates of the boulder to move
+ * @param to the coordinates to which to move the boulder
  */
 export function moveBoulder(from, to) {
   cy.window().its(`${GymMapView.name}`).then((gymMap) => {
