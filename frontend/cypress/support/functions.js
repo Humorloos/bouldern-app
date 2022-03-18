@@ -1,15 +1,18 @@
 /** @file utility functions for use over multiple e2e tests */
 
 import i18n from '../../src/i18n';
+import GymMapView from '../../src/views/GymMap.vue';
+import {BOULDER_1_COORDINATES, NEW_BOULDER_COORDINATES} from './constants.js';
 
 window.$t = i18n.global.t;
+
 /**
  * Logs in user with given credentials when at login page
  *
  * @param email the user's email
  * @param password the user's password
  */
-window.loginViaLogInLink = (email, password) => {
+export function loginViaLogInLink(email, password) {
   cy.contains('You are not logged in');
   cy.url().should('include', '/login');
   cy.get('#id_email')
@@ -19,7 +22,7 @@ window.loginViaLogInLink = (email, password) => {
   for (const _ of waitingFor('POST', '/registration/login')) {
     cy.get('#submit_button').click();
   }
-};
+}
 
 /**
  * Converts the given string into a slug
@@ -28,7 +31,7 @@ window.loginViaLogInLink = (email, password) => {
  * @param str the string to convert
  * @returns {string} the slug
  */
-window.slugify = function(str) {
+export function slugify(str) {
   str = str.replace(/^\s+|\s+$/g, ''); // trim
   str = str.toLowerCase();
 
@@ -44,7 +47,7 @@ window.slugify = function(str) {
       .replace(/-+/g, '-'); // collapse dashes
 
   return str;
-};
+}
 
 /**
  * Utility for an API call to finish proceeding. The API call has to occur
@@ -55,7 +58,7 @@ window.slugify = function(str) {
  * @param method the method used in the API call
  * @param url the request's target url
  */
-window.waitingFor = function* (method, url) {
+export function* waitingFor(method, url) {
   // setup
   cy.intercept(method, encodeURI(url)).as(url);
   try {
@@ -64,21 +67,69 @@ window.waitingFor = function* (method, url) {
     // cleanup
     cy.wait(`@${url}`);
   }
-};
+}
 
 /**
  * Gets the x and y values corresponding to the specified coordinates in the
- * specified map at the time this function is called and calls the provided
+ * gym map at the time this function is called and calls the provided
  * function with them.
  *
- * @param map the map in which to get the values for the coordinates
  * @param coordinates the coordinates for which to get the x and y values
  * @param fn the function to call with the x and y values
  */
-window.atPixel = function(map, coordinates, fn) {
-  cy.waitUntil(() => {
-    return map.getPixelFromCoordinate(coordinates);
-  }).then((pixel) => {
-    fn(pixel);
+export function atGymMapCoordinates(coordinates, fn) {
+  cy.window().its(`${GymMapView.name}.map`).then((map) => {
+    cy.waitUntil(() => {
+      return map.getPixelFromCoordinate(coordinates);
+    }).then((pixel) => {
+      // debugger;
+      fn(pixel);
+    });
   });
+}
+
+/**
+ * Asserts that the gym map has finished loading
+ */
+export function waitForGymMap() {
+  cy.window().its(`${GymMapView.name}.loaded`).should('equal', true);
+}
+
+const touchPointerOptions = (x, y) => {
+  return {x: x, y: y, pointerType: 'touch', pointerId: 1};
 };
+
+/**
+ * @param gymMap
+ * @param x
+ * @param y
+ * @param radius
+ */
+function verifyBoulderRadius(gymMap, x, y, radius) {
+  cy.wrap(
+      gymMap.getBoulderAtPixel([x, y]).getStyle()[1].getImage().getRadius(),
+  ).should('equal', radius);
+}
+
+/**
+ * todo
+ *
+ * @param from
+ * @param to
+ */
+export function moveBoulder(from, to) {
+  cy.window().its(`${GymMapView.name}`).then((gymMap) => {
+    atGymMapCoordinates(from, ([x, y]) => {
+      cy.get('#map-root').trigger('pointerdown', touchPointerOptions(x, y));
+      cy.wait(gymMap.modifyTouchThreshold).then(() => {
+        verifyBoulderRadius(gymMap, x, y, gymMap.modifyRadius);
+      });
+    });
+    atGymMapCoordinates(to, ([x, y]) => {
+      cy.get('#map-root').trigger('pointermove', touchPointerOptions(x, y))
+          .trigger('pointerup', touchPointerOptions(x, y)).then(() => {
+            verifyBoulderRadius(gymMap, x, y, gymMap.boulderRadius);
+          });
+    });
+  });
+}
