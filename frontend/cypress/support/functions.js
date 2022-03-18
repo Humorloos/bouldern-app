@@ -2,7 +2,6 @@
 
 import i18n from '../../src/i18n';
 import GymMapView from '../../src/views/GymMap.vue';
-import {BOULDER_1_COORDINATES, NEW_BOULDER_COORDINATES} from './constants.js';
 
 window.$t = i18n.global.t;
 
