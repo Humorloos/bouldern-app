@@ -42,6 +42,11 @@ class Command(BaseCommand):
             name='Generic Gym',
             map=ImageField(from_path=RESOURCES_DIR / 'generic_gym.png'))
 
+        # add green gym
+        GymFactory(
+            name='Green Gym',
+            map=ImageField(from_path=RESOURCES_DIR / 'green_gym.png'))
+
         # add undefined grade
         GradeFactory(gym=generic_gym, grade=None,
                      color=Color.objects.filter(name='Grey').first())
@@ -62,11 +67,6 @@ class Command(BaseCommand):
 
         # add ascent
         AscentFactory(boulder=boulder)
-
-        # add green gym
-        GymFactory(
-            name='Green Gym',
-            map=ImageField(from_path=RESOURCES_DIR / 'green_gym.png'))
 
         # add favorite gym
         FavoriteGymFactory(gym=generic_gym)

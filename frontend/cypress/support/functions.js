@@ -125,13 +125,13 @@ const touchPointerOptions = (x, y) => {
 export function moveBoulder(from, to) {
   cy.window().its(`${GymMapView.name}`).then((gymMap) => {
     atGymMapCoordinates(from, ([x, y]) => {
-      cy.get('#map-root').trigger('pointerdown', touchPointerOptions(x, y));
-      cy.wait(gymMap.modifyTouchThreshold).then(() => {
+      cy.get('#id_map-root').trigger('pointerdown', touchPointerOptions(x, y));
+      cy.wait(gymMap.modifyTouchThreshold + 100).then(() => {
         verifyBoulderRadius(gymMap, x, y, gymMap.modifyRadius);
       });
     });
     atGymMapCoordinates(to, ([x, y]) => {
-      cy.get('#map-root').trigger('pointermove', touchPointerOptions(x, y))
+      cy.get('#id_map-root').trigger('pointermove', touchPointerOptions(x, y))
           .trigger('pointerup', touchPointerOptions(x, y)).then(() => {
             verifyBoulderRadius(gymMap, x, y, gymMap.boulderRadius);
           });
