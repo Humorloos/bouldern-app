@@ -35,13 +35,15 @@
         <v-row>
           <v-col cols="1">
             <v-checkbox
+              id="id_filter-all"
               v-model="allGradesActive"
               label="all"
               hide-details
               @update:model-value="selectGrades"
             />
             <v-checkbox
-              v-for="grade in gym.grade_set"
+              v-for="(grade, index) in gym.grade_set"
+              :id="`id_filter-${index + 1}`"
               :key="grade.id"
               v-model="activeGrades"
               :value="grade.id"
@@ -82,7 +84,7 @@
         </v-icon>
       </v-btn>
       <v-btn
-        id="filter"
+        id="id_filter"
         flat
         icon="mdi-filter"
         @click="filtering=true"
@@ -124,7 +126,7 @@
         >
           <v-col cols="2">
             <v-btn
-              id="retire-boulder"
+              id="id_retire-boulder"
               flat
               size="small"
               icon="mdi-package-down"
@@ -140,7 +142,7 @@
             <v-col>
               Grade:
               <color-select
-                id="id-grade-select"
+                id="id_grade-select"
                 v-model="selectedGradeColor"
                 :color-options="gradeColors"
                 @update:model-value="updateGrade($event)"
@@ -151,7 +153,7 @@
             <v-col>
               Hold-Color:
               <color-select
-                id="id-color-select"
+                id="id_color-select"
                 v-model="selectedColor"
                 :color-options="colorOptions"
                 @update:model-value="updateHoldColor($event)"
@@ -196,7 +198,7 @@
         </template>
       </map-overlay>
       <div
-        id="map-root"
+        id="id_map-root"
         ref="mapRoot"
       />
     </template>
@@ -1211,7 +1213,7 @@ export default {
 <style>
 @import '../../node_modules/ol/ol.css';
 
-#map-root {
+#id_map-root {
   width: 100%;
   height: 100%;
 }

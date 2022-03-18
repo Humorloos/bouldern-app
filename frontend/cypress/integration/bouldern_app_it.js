@@ -96,23 +96,23 @@ describe('The gym map view', () => {
   it('allows adding, editing, and retiring boulders', () => {
     atGymMapCoordinates(NEW_BOULDER_COORDINATES, ([x, y]) => {
       cy.log('open create popover and close it');
-      cy.get('#map-root').click(x, y);
+      cy.get('#id_map-root').click(x, y);
       cy.contains('Grade');
       cy.get('#popup-closer').click();
     });
     atGymMapCoordinates(NEW_BOULDER_COORDINATES, ([x, y]) => {
       cy.log('open create popover and submit it');
-      cy.get('#map-root').click(x, y);
-      cy.get('#id-grade-select').click();
+      cy.get('#id_map-root').click(x, y);
+      cy.get('#id_grade-select').click();
       cy.contains('5').click();
-      cy.get('#id-color-select').click();
+      cy.get('#id_color-select').click();
       cy.contains('Yellow').click();
       cy.contains('Save').click();
     });
 
     cy.log('open edit popover and close it');
     atGymMapCoordinates(NEW_BOULDER_COORDINATES, ([x, y]) => {
-      cy.get('#map-root').click(x, y);
+      cy.get('#id_map-root').click(x, y);
       cy.contains('Added 0 day(s) ago');
       cy.contains($t('ascentResults[0]')).click();
       cy.get('#popup-closer').click();
@@ -120,45 +120,45 @@ describe('The gym map view', () => {
 
     cy.log('open edit popover, edit and submit');
     atGymMapCoordinates(NEW_BOULDER_COORDINATES, ([x, y]) => {
-      cy.get('#map-root').click(x, y);
+      cy.get('#id_map-root').click(x, y);
       cy.contains($t('ascentResults[0]')).click();
       cy.get('#save-boulder').click();
     });
 
     cy.log('open edit popover and retire boulder');
     atGymMapCoordinates(NEW_BOULDER_COORDINATES, ([x, y]) => {
-      cy.get('#map-root').click(x, y);
-      cy.get('#retire-boulder').click();
+      cy.get('#id_map-root').click(x, y);
+      cy.get('#id_retire-boulder').click();
     });
   });
 
   it('allows filtering by grade', () => {
     atGymMapCoordinates(BOULDER_1_COORDINATES, ([x, y]) => {
       cy.log('check that boulder is clickable before filtering');
-      cy.get('#map-root').click(x, y);
+      cy.get('#id_map-root').click(x, y);
       cy.contains($t('ascentResults[0]'));
       cy.get('#popup-closer').click();
     });
 
     cy.log('activate filter');
-    cy.get('#filter').click();
+    cy.get('#id_filter').click();
     cy.contains('1').click();
     cy.get('#close-filter').click();
 
     cy.log('check that boulder is not clickable');
     atGymMapCoordinates(BOULDER_1_COORDINATES, ([x, y]) => {
-      cy.get('#map-root').click(x, y);
+      cy.get('#id_map-root').click(x, y);
       cy.contains('Grade');
       cy.get('#popup-closer').click();
     });
 
     cy.log('deactivate filter and check that boulder is clickable again');
-    cy.get('#filter').click();
+    cy.get('#id_filter').click();
     cy.contains('1').click();
     cy.get('#close-filter').click();
 
     atGymMapCoordinates(BOULDER_1_COORDINATES, ([x, y]) => {
-      cy.get('#map-root').click(x, y);
+      cy.get('#id_map-root').click(x, y);
       cy.contains($t('ascentResults[0]'));
       cy.get('#popup-closer').click();
     });
@@ -172,9 +172,9 @@ describe('The gym map view', () => {
   it('allows moving newly created boulders after refresh', () => {
     cy.log('create new boulder');
     atGymMapCoordinates(NEW_BOULDER_2_COORDINATES, ([x, y]) => {
-      cy.get('#map-root').click(x, y);
+      cy.get('#id_map-root').click(x, y);
     });
-    cy.get('#id-grade-select').click();
+    cy.get('#id_grade-select').click();
     cy.contains('3').click();
     cy.contains('Save').click();
 
@@ -194,8 +194,8 @@ describe('The gym map view', () => {
 
     cy.log('open edit popover and retire boulder');
     atGymMapCoordinates(NEW_BOULDER_COORDINATES, ([x, y]) => {
-      cy.get('#map-root').click(x, y);
-      cy.get('#retire-boulder').click();
+      cy.get('#id_map-root').click(x, y);
+      cy.get('#id_retire-boulder').click();
     });
   });
 
@@ -205,22 +205,22 @@ describe('The gym map view', () => {
 
     cy.log('create new boulder');
     atGymMapCoordinates(NEW_BOULDER_2_COORDINATES, ([x, y]) => {
-      cy.get('#map-root').click(x, y);
-      cy.get('#id-grade-select').click();
+      cy.get('#id_map-root').click(x, y);
+      cy.get('#id_grade-select').click();
       cy.contains(grade).click();
       cy.contains('Save').click();
     });
 
     cy.log('activate filter');
-    cy.get('#filter').click();
+    cy.get('#id_filter').click();
     cy.contains('all').click();
     cy.contains(grade).click();
     cy.get('#close-filter').click();
 
     cy.log('open edit popover and retire boulder');
     atGymMapCoordinates(NEW_BOULDER_2_COORDINATES, ([x, y]) => {
-      cy.get('#map-root').click(x, y);
-      cy.get('#retire-boulder').click();
+      cy.get('#id_map-root').click(x, y);
+      cy.get('#id_retire-boulder').click();
     });
   });
 
@@ -261,7 +261,7 @@ describe('The gym map view', () => {
     cy.get('#id_remove-grade-4').click();
 
     cy.log('deactivate undefined grade');
-    cy.get('#id_undefined_grade_active').click();
+    cy.get('#id_undefined-grade-active').click();
 
     cy.log('save');
     cy.get('#id_save-gym').click();
@@ -270,7 +270,7 @@ describe('The gym map view', () => {
     cy.get('#id_edit_gym').click();
 
     cy.log('activate undefined grade again');
-    cy.get('#id_undefined_grade_active').click();
+    cy.get('#id_undefined-grade-active').click();
     cy.get('#id_color-undefined').click();
     cy.contains('Black').click();
 
@@ -286,11 +286,11 @@ describe('The gym map view', () => {
 
   it('keeps filters after refresh', () => {
     cy.log('activate filter');
-    cy.get('#filter').click();
+    cy.get('#id_filter').click();
     cy.contains('all').click();
     cy.contains('1').click();
-    cy.get('.mdi-checkbox-marked + input[value="1"]');
-    cy.get('.mdi-checkbox-blank-outline + input[value="2"]');
+    cy.get('.mdi-checkbox-marked + #id_filter-1');
+    cy.get('.mdi-checkbox-blank-outline + #id_filter-2');
     cy.get('#close-filter').click();
 
     cy.log('click refresh button');
@@ -298,15 +298,15 @@ describe('The gym map view', () => {
     cy.get('#id_refresh').click();
 
     cy.log('check that filter is still the same');
-    cy.get('#filter').click();
-    cy.get('.mdi-checkbox-marked + input[value="1"]');
+    cy.get('#id_filter').click();
+    cy.get('.mdi-checkbox-marked + #id_filter-1');
     cy.log('checkbox for grade 2 should remain unchecked');
-    cy.get('.mdi-checkbox-blank-outline + input[value="2"]');
+    cy.get('.mdi-checkbox-blank-outline + #id_filter-2');
     cy.get('#close-filter').click();
 
     cy.log('check that boulder is not clickable');
     atGymMapCoordinates(BOULDER_2_COORDINATES, ([x, y]) => {
-      cy.get('#map-root').click(x, y);
+      cy.get('#id_map-root').click(x, y);
       cy.contains('Grade');
       cy.get('#popup-closer').click();
     });
@@ -331,7 +331,7 @@ describe('The gym creation view', () => {
     cy.contains('Yellow').click();
 
     cy.log('set undefined grade');
-    cy.get('#id_undefined_grade_active').click();
+    cy.get('#id_undefined-grade-active').click();
     cy.get('#id_color-undefined').click();
     cy.contains('Grey').click();
 
@@ -346,18 +346,18 @@ describe('The gym creation view', () => {
 
     cy.log('open create popover in newly created gym and submit it');
     atGymMapCoordinates(NEW_BOULDER_2_COORDINATES, ([x, y]) => {
-      cy.get('#map-root').click(x, y);
-      cy.get('#id-grade-select').click();
+      cy.get('#id_map-root').click(x, y);
+      cy.get('#id_grade-select').click();
       cy.contains('2').click();
-      cy.get('#id-color-select').click();
+      cy.get('#id_color-select').click();
       cy.contains('Red').click();
       cy.contains('Save').click();
     });
 
     cy.log('open edit popover and retire boulder');
     atGymMapCoordinates(NEW_BOULDER_2_COORDINATES, ([x, y]) => {
-      cy.get('#map-root').click(x, y);
-      cy.get('#retire-boulder').click();
+      cy.get('#id_map-root').click(x, y);
+      cy.get('#id_retire-boulder').click();
     });
   });
 
