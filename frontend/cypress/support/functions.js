@@ -126,7 +126,7 @@ export function moveBoulder(from, to) {
   cy.window().its(`${GymMapView.name}`).then((gymMap) => {
     atGymMapCoordinates(from, ([x, y]) => {
       cy.get('#id_map-root').trigger('pointerdown', touchPointerOptions(x, y));
-      cy.wait(gymMap.modifyTouchThreshold).then(() => {
+      cy.wait(gymMap.modifyTouchThreshold + 100).then(() => {
         verifyBoulderRadius(gymMap, x, y, gymMap.modifyRadius);
       });
     });
