@@ -742,6 +742,7 @@ export default {
         featureCollection.pop();
       }
       creating.value = false;
+      selectedBoulder = null;
     }
 
     // Edit popover
@@ -837,6 +838,7 @@ export default {
           setAscentStyle();
         }
       }
+      selectedBoulder = null;
     }
 
     /**
