@@ -107,7 +107,7 @@
         @close="onClosePopover"
       >
         <template
-          v-if="!creating"
+          v-if="editing"
           #toolbar-left
         >
           <v-col
@@ -115,7 +115,7 @@
             cols="8"
             align-self="center"
           >
-            Added {{ selectedBoulder.age }} day(s) ago
+            Added {{ selectedBoulderAge }} day(s) ago
           </v-col>
         </template>
         <template
@@ -617,7 +617,9 @@ export default {
 
     const creating = ref(false);
 
-    const selectedBoulder = ref({ascent: undefined});
+    // selected boulder cannot be reactive because it breaks openlayers
+    let selectedBoulder = {ascent: undefined};
+    const selectedBoulderAge = ref(0);
     const selectedCoordinates = ref({});
     const selectedColor = ref(Colors.DEFAULT_COLOR);
     const selectedGradeColor = ref(Colors.DEFAULT_COLOR);
@@ -647,7 +649,7 @@ export default {
           getHexColor(selectedGrade.value.color),
           '0'));
 
-      selectedBoulder.value = feature;
+      selectedBoulder = feature;
       overlay.value.open(geometry.getCoordinates());
     }
 
@@ -665,9 +667,9 @@ export default {
      * @param gradeColor the grade color to set
      */
     function setSelectedBoulderColorStyle(holdColor, gradeColor) {
-      const style = selectedBoulder.value.getStyle();
+      const style = selectedBoulder.getStyle();
       style[1] = getColorStyle(holdColor, gradeColor);
-      selectedBoulder.value.setStyle(style);
+      selectedBoulder.setStyle(style);
     }
 
     /**
@@ -713,7 +715,7 @@ export default {
      * created one's and closes the create popover
      */
     function createBoulder() {
-      const boulder = selectedBoulder.value;
+      const boulder = selectedBoulder;
       boulder.id = -1;
       boulder.grade = selectedGrade.value.id;
       boulder.color = selectedColor.value.id;
@@ -736,10 +738,11 @@ export default {
      * Removes the popover's feature from the featureCollection
      */
     function onCloseCreatePopover() {
-      if (selectedBoulder.value.id === undefined) {
+      if (selectedBoulder.id === undefined) {
         featureCollection.pop();
       }
       creating.value = false;
+      selectedBoulder = null;
     }
 
     // Edit popover
@@ -756,7 +759,8 @@ export default {
       editing.value = true;
       selectedAscentResult.value = feature.ascent ?
           feature.ascent.result.toString() : null;
-      selectedBoulder.value = feature;
+      selectedBoulder = feature;
+      selectedBoulderAge.value = feature.age;
       overlay.value.open(feature.getGeometry().getCoordinates());
     }
 
@@ -765,18 +769,18 @@ export default {
      * selected ascent status
      */
     function setAscentStyle() {
-      const style = selectedBoulder.value.getStyle();
+      const style = selectedBoulder.getStyle();
       style[2] = new Style({
         image: ascentIcons[selectedAscentResult.value],
       });
-      selectedBoulder.value.setStyle(style);
+      selectedBoulder.setStyle(style);
     }
 
     /**
      * Submits the selected ascent result and closes the edit popover.
      */
     function reportAscent() {
-      const boulder = selectedBoulder.value;
+      const boulder = selectedBoulder;
       const ascent = {'result': selectedAscentResult.value};
       requestWithJwt({
         apiPath: `/bouldern/gym/${gym.value.id}/boulder/` +
@@ -798,11 +802,11 @@ export default {
     function retireBoulder() {
       requestWithJwt({
         apiPath: `/bouldern/gym/${gym.value.id}/boulder/` +
-            `${selectedBoulder.value.id}/`,
+            `${selectedBoulder.id}/`,
         method: 'DELETE',
       });
       featureCollection.remove(featureCollection.getArray()
-          .find((feature) => feature.id === selectedBoulder.value.id));
+          .find((feature) => feature.id === selectedBoulder.id));
       overlay.value.close();
     }
 
@@ -813,7 +817,7 @@ export default {
      * @returns {boolean} whether the boulder is being edited
      */
     function isBeingEdited(boulder) {
-      return editing.value && boulder.id === selectedBoulder.value.id;
+      return editing.value && boulder.id === selectedBoulder.id;
     }
 
     /**
@@ -821,11 +825,11 @@ export default {
      */
     function onCloseEditPopover() {
       editing.value = false;
-      if (selectedBoulder.value.ascent !== null) {
-        if (selectedBoulder.value.ascent.result.toString() !==
+      if (selectedBoulder.ascent !== null) {
+        if (selectedBoulder.ascent.result.toString() !==
             selectedAscentResult.value) {
           selectedAscentResult.value =
-              selectedBoulder.value.ascent.result.toString();
+              selectedBoulder.ascent.result.toString();
           setAscentStyle();
         }
       } else {
@@ -834,6 +838,7 @@ export default {
           setAscentStyle();
         }
       }
+      selectedBoulder = null;
     }
 
     /**
@@ -968,6 +973,7 @@ export default {
     }
 
     const clickStart = ref(NaN);
+    const modifyRadius = 35;
 
     /**
      * Sets the loaded flag and initializes the map
@@ -1025,7 +1031,7 @@ export default {
               // fire event only once and only if not panning the map
               if (getEventDelay(event) < 2 * modifyTouchThreshold &&
                       !moving.value) {
-                setBoulderRadius(boulder, 35);
+                setBoulderRadius(boulder, modifyRadius);
                 map.mapBrowserEventHandler_.dispatchEvent(event);
               }
             },
@@ -1154,6 +1160,7 @@ export default {
       colorOptions,
       overlay,
       creating,
+      editing,
       // create popover
       selectedCoordinates,
       selectedColor,
@@ -1164,6 +1171,7 @@ export default {
       createBoulder,
       // edit popover
       selectedBoulder,
+      selectedBoulderAge,
       selectedAscentResult,
       setAscentStyle,
       retireBoulder,
@@ -1191,6 +1199,9 @@ export default {
       refresh,
       // expose map to cypress
       map,
+      getBoulderAtPixel,
+      boulderRadius,
+      modifyRadius,
     };
   },
 };
