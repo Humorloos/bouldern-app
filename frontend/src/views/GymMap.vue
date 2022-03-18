@@ -107,7 +107,7 @@
         @close="onClosePopover"
       >
         <template
-          v-if="!creating"
+          v-if="editing"
           #toolbar-left
         >
           <v-col
@@ -1157,6 +1157,7 @@ export default {
       colorOptions,
       overlay,
       creating,
+      editing,
       // create popover
       selectedCoordinates,
       selectedColor,
