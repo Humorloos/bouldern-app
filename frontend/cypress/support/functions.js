@@ -95,6 +95,18 @@ export function waitForGymMap() {
 }
 
 /**
+ * Gets the radius of the color style of the boulder at the specified
+ * coordinates in the specified map
+ *
+ * @param gymMap map in which to look for the boulder
+ * @param x the x coordinate at which to lok up the boulder
+ * @param y the y coordinate at which to lok up the boulder
+ */
+function getBoulderRadius(gymMap, x, y) {
+  return gymMap.getBoulderAtPixel([x, y]).getStyle()[1].getImage().getRadius();
+}
+
+/**
  * Checks that the boulder at the specified coordinates in the specified map has
  * the specified radius in its color style
  *
@@ -104,9 +116,7 @@ export function waitForGymMap() {
  * @param radius the radius the specified boulder is supposed to have
  */
 function verifyBoulderRadius(gymMap, x, y, radius) {
-  cy.wrap(
-      gymMap.getBoulderAtPixel([x, y]).getStyle()[1].getImage().getRadius(),
-  ).should('equal', radius);
+  cy.wrap(getBoulderRadius(gymMap, x, y)).should('equal', radius);
 }
 
 // options for simulating touch pointer events
@@ -126,9 +136,8 @@ export function moveBoulder(from, to) {
   cy.window().its(`${GymMapView.name}`).then((gymMap) => {
     atGymMapCoordinates(from, ([x, y]) => {
       cy.get('#id_map-root').trigger('pointerdown', touchPointerOptions(x, y));
-      cy.wait(gymMap.modifyTouchThreshold + 100).then(() => {
-        verifyBoulderRadius(gymMap, x, y, gymMap.modifyRadius);
-      });
+      cy.waitUntil(() =>
+        getBoulderRadius(gymMap, x, y) === gymMap.modifyRadius);
     });
     atGymMapCoordinates(to, ([x, y]) => {
       cy.get('#id_map-root').trigger('pointermove', touchPointerOptions(x, y))
