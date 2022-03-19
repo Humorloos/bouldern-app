@@ -77,7 +77,7 @@ export function* waitingFor(method, url) {
  * @param fn the function to call with the x and y values
  */
 export function atGymMapCoordinates(coordinates, fn) {
-  cy.window().its(`${GymMapView.name}.map`).then((map) => {
+  return cy.window().its(`${GymMapView.name}.map`).then((map) => {
     cy.waitUntil(() => {
       return map.getPixelFromCoordinate(coordinates);
     }).then((pixel) => {
