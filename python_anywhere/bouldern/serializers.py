@@ -56,6 +56,14 @@ class BoulderSerializer(ModelSerializer):
         }
 
 
+class GymNameSerializer(ModelSerializer):
+    """Serializer for listing Gym names"""
+
+    class Meta:
+        model = Gym
+        fields = ['name']
+
+
 class GymSerializer(ModelSerializer):
     """Serializer for Gym instances"""
     grade_set = SerializerMethodField()

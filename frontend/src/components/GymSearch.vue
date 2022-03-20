@@ -1,22 +1,15 @@
 <template>
-  <v-list-subheader>
-    Find Gym
-  </v-list-subheader>
   <v-list-item v-if="isAuthenticated">
-    <v-text-field
-      id="id_gym-name"
+    <v-autocomplete
+      id="id_find-gym"
       v-model="gymName"
-      label="Gym Name"
-      @keyup.enter="openGymMap"
+      label="Find Gym"
+      :items="gymNames"
+      hide-details
+      auto-select-first
+      flat
+      @update:model-value="openGymMap"
     />
-  </v-list-item>
-  <v-list-item v-if="isAuthenticated">
-    <v-btn
-      id="submit_button"
-      @click="openGymMap"
-    >
-      Open
-    </v-btn>
   </v-list-item>
 </template>
 
@@ -44,6 +37,7 @@ export default {
 
     return {
       isAuthenticated: computed(() => store.getters.isAuthenticated),
+      gymNames: computed(() => store.state.gymNames),
       gymName,
       openGymMap,
     };

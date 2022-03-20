@@ -75,6 +75,7 @@ export function* waitingFor(method, url) {
  *
  * @param coordinates the coordinates for which to get the x and y values
  * @param fn the function to call with the x and y values
+ * @returns {object} cypress chainable
  */
 export function atGymMapCoordinates(coordinates, fn) {
   return cy.window().its(`${GymMapView.name}.map`).then((map) => {
