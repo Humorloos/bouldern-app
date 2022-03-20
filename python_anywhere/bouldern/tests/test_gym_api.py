@@ -123,3 +123,19 @@ def test_update_gym_grades(logged_in_client_rest, colors):
     assert all(grade.modified_by == gym_author for grade in grades[:-1])
     assert updated_grade.modified_by == user
 
+
+def test_gym_api_list(logged_in_client_rest, colors):
+    # Given
+    from python_anywhere.bouldern.factories import GymFactory
+    gyms = GymFactory.create_batch(3)
+    inactive_gym = GymFactory(is_active=False)
+
+    client, user = logged_in_client_rest
+    # When
+    response = client.get(GymAPI().reverse_action('list'))
+
+    # Then
+    assert response.status_code == HTTP_200_OK
+    gym_names = {i['name'] for i in response.data}
+    assert all(gym.name in gym_names for gym in gyms)
+    assert inactive_gym.name not in gym_names

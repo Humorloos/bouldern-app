@@ -27,6 +27,7 @@ const getDefaultState = function() {
     },
     axios: http,
     favoriteGyms: [],
+    gymNames: [],
     colors: [],
     activeGym: null,
     loading: false,
@@ -89,6 +90,12 @@ export default createStore({
       state.favoriteGyms = loadedFavorites;
     },
     /**
+     * Sets the favorite gyms to the provided ones
+     */
+    setGymNames(state, loadedNames) {
+      state.gymNames = loadedNames;
+    },
+    /**
      * Sets the colors to the provided ones
      */
     setColors(state, loadedColors) {
@@ -141,6 +148,16 @@ export default createStore({
       commit('setFavoriteGyms', response.data.map(({gym}) => gym));
     },
     /**
+     * Loads all favorite gyms via API and saves them to the favorite gym list
+     */
+    async loadGymNames({dispatch, commit}) {
+      const response = await dispatch('requestWithJwt', {
+        apiPath: '/bouldern/gym/',
+        method: 'GET',
+      });
+      commit('setGymNames', response.data.map(({name}) => name));
+    },
+    /**
      * Loads all available colors from the API and saves them
      */
     async loadColors({dispatch, commit}) {
@@ -189,6 +206,7 @@ export default createStore({
       }
       const loginData = response.data;
       dispatch('setLoginData', loginData);
+      dispatch('loadGymNames');
       dispatch('loadFavoriteGyms');
       dispatch('loadColors');
     },
