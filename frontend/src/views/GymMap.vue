@@ -877,7 +877,6 @@ export default {
     // visible
     watch(activeGrades, () => {
       featureCollection.forEach((boulder) => {
-        console.log(boulder);
         // if boulder's grade is active and boulder is invisible, show it
         if (isActiveGrade(boulder.grade)) {
           if (boulder.getStyle() === invisible) {
