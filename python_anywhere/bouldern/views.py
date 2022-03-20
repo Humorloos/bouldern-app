@@ -10,7 +10,7 @@ from python_anywhere.bouldern.models import Boulder, Gym, Color, Ascent, \
     FavoriteGym
 from python_anywhere.bouldern.serializers import GymSerializer, ColorSerializer, \
     BoulderSerializer, AscentSerializer, GymMapResourcesSerializer, \
-    FavoriteGymSerializer
+    FavoriteGymSerializer, GymNameSerializer
 from python_anywhere.views import ReversibleViewSet
 
 
@@ -40,13 +40,18 @@ class ColorAPI(ReversibleViewSet, ListModelMixin, CreateUGCMixin):
 
 
 class GymAPI(ReversibleViewSet, CreateUGCMixin, UpdateModelMixin):
-    """Rest API for adding gyms"""
+    """Rest API for adding and updating gyms, and listing gym names"""
     basename = 'gym'
-    queryset = Gym.objects.all()
+    queryset = Gym.objects.filter(is_active=True)
     serializer_class = GymSerializer
 
     def perform_update(self, serializer):
         serializer.save(modified_by=self.request.user)
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        serializer = GymNameSerializer(queryset, many=True)
+        return Response(serializer.data)
 
 
 class FavoriteGymAPI(ReversibleViewSet, CreateUGCMixin, DestroyUGCMixin,
