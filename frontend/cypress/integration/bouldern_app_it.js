@@ -16,6 +16,7 @@ import {
   getCenter,
   getCurrentCenter,
   moveBoulder,
+  refreshGymMap,
   waitForGymMap,
   waitingFor,
 } from '../support/functions.js';
@@ -178,8 +179,7 @@ describe('The gym map view', () => {
     createBoulder(NEW_BOULDER_2_COORDINATES, '3');
 
     cy.log('click refresh button');
-    cy.get('.mdi-menu').click();
-    cy.get('#id_refresh').click();
+    refreshGymMap();
 
     cy.log('move boulder');
     cy.window().its(`${GymMapView.name}`).then((gymMap) => {
@@ -273,8 +273,7 @@ describe('The gym map view', () => {
 
   it('can refresh', () => {
     cy.log('click refresh button');
-    cy.get('.mdi-menu').click();
-    cy.get('#id_refresh').click();
+    refreshGymMap();
   });
 
   it('keeps filters after refresh', () => {
@@ -287,8 +286,7 @@ describe('The gym map view', () => {
     cy.get('#close-filter').click();
 
     cy.log('click refresh button');
-    cy.get('.mdi-menu').click();
-    cy.get('#id_refresh').click();
+    refreshGymMap();
 
     cy.log('check that filter is still the same');
     cy.get('#id_filter').click();
