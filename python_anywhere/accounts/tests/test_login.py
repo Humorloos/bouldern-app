@@ -1,3 +1,6 @@
+import datetime
+
+import pandas as pd
 from dj_rest_auth.jwt_auth import JWTCookieAuthentication
 from django.http import HttpRequest
 from faker import Faker
@@ -22,8 +25,13 @@ def test_login(db):
 
     # Then
     assert response.status_code == HTTP_200_OK
-    assert response.data['user']['username'] == user.username
-    assert response.data['user']['email'] == user.email
+    user_data = response.data['user']
+    assert user_data['username'] == user.username
+    assert user_data['email'] == user.email
+
+    assert (pd.Timestamp(response.data['refresh_token_expiration']).date() -
+            datetime.date.today()).days == 7
+
     request = HttpRequest()
     request.META['HTTP_AUTHORIZATION'] = \
         f"Bearer {response.data['access_token']}"
