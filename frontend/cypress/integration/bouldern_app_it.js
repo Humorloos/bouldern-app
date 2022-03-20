@@ -34,6 +34,7 @@ beforeEach(() => {
         .then((store) => {
           store.dispatch('loadFavoriteGyms');
           store.dispatch('loadColors');
+          store.dispatch('loadGymNames');
         });
   }
 });
@@ -311,9 +312,7 @@ describe('The gym map view', () => {
     cy.get('#close-filter').click();
 
     cy.log('open green gym');
-    cy.get('.mdi-menu').click();
-    cy.get('#id_gym-name').type(GREEN_GYM_NAME);
-    cy.get('#submit_button').click();
+    cy.visit(`gym-map/${GREEN_GYM_NAME}`);
     waitForGymMap();
 
     cy.log('check that filters are reset');
@@ -410,8 +409,8 @@ describe('The app drawer', () => {
   });
 
   it('allows navigating to a gym map view', () => {
-    cy.get('#id_gym-name').type(GYM_NAME);
-    cy.get('#submit_button').click();
+    cy.get('#id_find-gym').click();
+    cy.contains(GREEN_GYM_NAME).click();
     waitForGymMap();
   });
 
