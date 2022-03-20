@@ -11,12 +11,13 @@ import {
   NEW_GYM_NAME,
 } from '../support/constants.js';
 import {
-  atGymMapCoordinates,
+  atGymMapCoordinates, getCurrentCenter,
   moveBoulder,
   waitForGymMap,
   waitingFor,
 } from '../support/functions.js';
 import GymMapView from '../../src/views/GymMap.vue';
+import {getCenter} from 'ol/extent';
 
 beforeEach(() => {
   cy.visit('login', {
@@ -186,8 +187,7 @@ describe('The gym map view', () => {
     cy.log('move boulder');
     cy.window().its(`${GymMapView.name}`).then((gymMap) => {
       cy.waitUntil(() => {
-        return gymMap.map.frameState_.viewState.center[0] ===
-          gymMap.map.getView().getCenter()[0];
+        return getCurrentCenter(gymMap)[0] === (getCenter(gymMap))[0];
       }).then(() => {
         moveBoulder(NEW_BOULDER_2_COORDINATES, NEW_BOULDER_COORDINATES);
       });
