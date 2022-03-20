@@ -150,3 +150,23 @@ export function moveBoulder(from, to) {
     });
   });
 }
+
+/**
+ * Gets the current center of the provided map
+ *
+ * @param gymMap map to get the center of
+ * @returns {number[]} the current map center
+ */
+export function getCurrentCenter(gymMap) {
+  return gymMap.map.frameState_.viewState.center;
+}
+
+/**
+ * Gets the original center of the provided map
+ *
+ * @param gymMap map to get the center of
+ * @returns {number[]} the original map center
+ */
+export function getCenter(gymMap) {
+  return gymMap.map.getView().getCenter();
+}
