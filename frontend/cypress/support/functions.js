@@ -187,3 +187,14 @@ export function createBoulder(coordinates, grade) {
     cy.contains('Save').click();
   }
 }
+
+/**
+ * Refreshes the gym map via refresh button
+ */
+export function refreshGymMap() {
+  cy.get('.mdi-menu').click();
+  for (const _ of waitingFor(
+      'GET', '/bouldern/gym-map-resources/?name=Generic Gym')) {
+    cy.get('#id_refresh').click();
+  }
+}
