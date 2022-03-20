@@ -49,6 +49,11 @@ class GymAPI(ReversibleViewSet, CreateUGCMixin, UpdateModelMixin):
         serializer.save(modified_by=self.request.user)
 
     def list(self, request, *args, **kwargs):
+        """
+        Gets the names of all active gyms
+        :param request: the gym names GET request
+        :return: the gym names
+        """
         queryset = self.filter_queryset(self.get_queryset())
         serializer = GymNameSerializer(queryset, many=True)
         return Response(serializer.data)
