@@ -47,7 +47,17 @@ export default createStore({
       state.authToken = authToken;
     },
     setRefreshToken(state, refreshToken) {
-      state.refreshToken = refreshToken;
+      const expiration = JSON.parse(decodeURIComponent(atob(refreshToken
+          .split('.')[1]
+          .replace(/-/g, '+')
+          .replace(/_/g, '/'))
+          .split('')
+          .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+          .join(''))).exp * 1000;
+      state.refreshToken = {
+        token: refreshToken,
+        expiration: expiration,
+      };
     },
     setAuthTokenToken(state, authTokenToken) {
       state.authToken.token = authTokenToken;
@@ -165,10 +175,7 @@ export default createStore({
         token: loginData.access_token,
         expiration: loginData.access_token_expiration,
       });
-      commit('setRefreshToken', {
-        token: loginData.refresh_token,
-        expiration: loginData.refresh_token_expiration,
-      });
+      commit('setRefreshToken', loginData.refresh_token);
       commit('setUser', loginData.user);
     },
     /**
@@ -230,6 +237,7 @@ export default createStore({
               token: refreshResponse.data.access,
               expiration: refreshResponse.data.access_token_expiration,
             });
+            commit('setRefreshToken', refreshResponse.data.refresh);
           }
         }
         // make api call

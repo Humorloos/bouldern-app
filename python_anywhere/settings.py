@@ -9,6 +9,8 @@ https://docs.djangoproject.com/en/3.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
+from datetime import timedelta
+
 import sys
 from pathlib import Path
 
@@ -209,6 +211,11 @@ JWT_AUTH_RETURN_EXPIRATION = True
 # only send jwt tokens via https
 JWT_AUTH_SECURE = True
 REST_SESSION_LOGIN = False
+
+SIMPLE_JWT = {
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
+    'ROTATE_REFRESH_TOKENS': True,
+}
 
 # Logging
 if PIPELINE:
