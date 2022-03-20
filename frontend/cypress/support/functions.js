@@ -137,6 +137,8 @@ export function moveBoulder(from, to) {
   cy.window().its(`${GymMapView.name}`).then((gymMap) => {
     atGymMapCoordinates(from, ([x, y]) => {
       cy.get('#id_map-root').trigger('pointerdown', touchPointerOptions(x, y));
+      cy.log(`original center: ${getCenter(gymMap)}`);
+      cy.log(`current center: ${getCurrentCenter(gymMap)}`);
       cy.waitUntil(() =>
         getBoulderRadius(gymMap, x, y) === gymMap.modifyRadius);
     });

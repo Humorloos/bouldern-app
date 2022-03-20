@@ -73,5 +73,6 @@ module.exports = (on, config) => {
       return fs.readFileSync(`${emailPath}/${filename}`, 'utf8');
     },
   });
+  require('cypress-terminal-report/src/installLogsPrinter')(on);
   return config;
 };
