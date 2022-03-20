@@ -134,8 +134,10 @@ const touchPointerOptions = (x, y) => {
  * @param to the coordinates to which to move the boulder
  */
 export function moveBoulder(from, to) {
+  cy.log(`Moving boulder from [${from}] to [${to}]`);
   cy.window().its(`${GymMapView.name}`).then((gymMap) => {
     atGymMapCoordinates(from, ([x, y]) => {
+      cy.log(`Triggering pointerdown at [${x},${y}]`);
       cy.get('#id_map-root').trigger('pointerdown', touchPointerOptions(x, y));
       cy.log(`original center: ${getCenter(gymMap)}`);
       cy.log(`current center: ${getCurrentCenter(gymMap)}`);

@@ -955,12 +955,19 @@ export default {
     function getBoulderAtPixel(pixel) {
       const boulder = map
           .forEachFeatureAtPixel(pixel, (feature) => feature);
-      if (boulder &&
-          boulder.getStyle() !== invisible &&
-          boulder.id !== undefined) {
-        return boulder;
+      if (!boulder) {
+        console.log(`There is no feature at "${pixel}"`);
+        return undefined;
       }
-      return undefined;
+      if (boulder.getStyle() === invisible) {
+        console.log(`Boulder at "${pixel}" is invisible`);
+        return undefined;
+      }
+      if (boulder.id === undefined) {
+        console.log(`Boulder at "${pixel}" does not have an id`);
+        return undefined;
+      }
+      return boulder;
     }
 
     /**
