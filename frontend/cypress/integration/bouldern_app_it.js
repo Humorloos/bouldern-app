@@ -12,6 +12,7 @@ import {
 } from '../support/constants.js';
 import {
   atGymMapCoordinates,
+  createBoulder,
   getCenter,
   getCurrentCenter,
   moveBoulder,
@@ -174,12 +175,7 @@ describe('The gym map view', () => {
 
   it('allows moving newly created boulders after refresh', () => {
     cy.log('create new boulder');
-    atGymMapCoordinates(NEW_BOULDER_2_COORDINATES, ([x, y]) => {
-      cy.get('#id_map-root').click(x, y);
-    });
-    cy.get('#id_grade-select').click();
-    cy.contains('3').click();
-    cy.contains('Save').click();
+    createBoulder(NEW_BOULDER_2_COORDINATES, '3');
 
     cy.log('click refresh button');
     cy.get('.mdi-menu').click();
@@ -206,12 +202,7 @@ describe('The gym map view', () => {
     const grade = '2';
 
     cy.log('create new boulder');
-    atGymMapCoordinates(NEW_BOULDER_2_COORDINATES, ([x, y]) => {
-      cy.get('#id_map-root').click(x, y);
-      cy.get('#id_grade-select').click();
-      cy.contains(grade).click();
-      cy.contains('Save').click();
-    });
+    createBoulder(NEW_BOULDER_2_COORDINATES, grade);
 
     cy.log('activate filter');
     cy.get('#id_filter').click();

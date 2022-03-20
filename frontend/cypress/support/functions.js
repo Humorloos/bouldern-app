@@ -170,3 +170,20 @@ export function getCurrentCenter(gymMap) {
 export function getCenter(gymMap) {
   return gymMap.map.getView().getCenter();
 }
+
+/**
+ * Creates a new boulder with the specified grade at the specified coordinates
+ *
+ * @param coordinates the coordinates at which to create the boulder
+ * @param grade the boulder's grade
+ */
+export function createBoulder(coordinates, grade) {
+  atGymMapCoordinates(coordinates, ([x, y]) => {
+    cy.get('#id_map-root').click(x, y);
+  });
+  cy.get('#id_grade-select').click();
+  cy.contains(grade).click();
+  for (const _ of waitingFor('POST', '/bouldern/gym/1/boulder/')) {
+    cy.contains('Save').click();
+  }
+}
