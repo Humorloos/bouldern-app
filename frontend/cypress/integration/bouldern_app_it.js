@@ -187,7 +187,7 @@ describe('The gym map view', () => {
     cy.log('move boulder');
     cy.window().its(`${GymMapView.name}`).then((gymMap) => {
       cy.waitUntil(() => {
-        return getCurrentCenter(gymMap)[0] === (getCenter(gymMap))[0];
+        return getCurrentCenter(gymMap)[0] === getCenter(gymMap)[0];
       }).then(() => {
         moveBoulder(NEW_BOULDER_2_COORDINATES, NEW_BOULDER_COORDINATES);
       });
