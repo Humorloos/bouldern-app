@@ -12,6 +12,8 @@ import {
 } from '../support/constants.js';
 import {
   atGymMapCoordinates,
+  getCenter,
+  getCurrentCenter,
   moveBoulder,
   waitForGymMap,
   waitingFor,
@@ -49,12 +51,12 @@ describe('The color creation view', () => {
     cy.get('#id_name').type(COLOR_NAME);
     cy.get('#id_color').click();
     cy.get('div[style=' +
-          '"background: rgba(255, 0, 0, 0.2); ' +
-          'opacity: 0; position: absolute; ' +
-          'left: 0px; top: 0px; ' +
-          'width: 201px; ' +
-          'height: 127px; ' +
-          'cursor: crosshair;"]')
+      '"background: rgba(255, 0, 0, 0.2); ' +
+      'opacity: 0; position: absolute; ' +
+      'left: 0px; top: 0px; ' +
+      'width: 201px; ' +
+      'height: 127px; ' +
+      'cursor: crosshair;"]')
         .click(150, 50);
     cy.get('.v-main__wrap').click();
 
@@ -99,36 +101,37 @@ describe('The gym map view', () => {
       cy.get('#id_map-root').click(x, y);
       cy.contains('Grade');
       cy.get('#popup-closer').click();
-    });
-    atGymMapCoordinates(NEW_BOULDER_COORDINATES, ([x, y]) => {
+    }).then(() => {
       cy.log('open create popover and submit it');
-      cy.get('#id_map-root').click(x, y);
-      cy.get('#id_grade-select').click();
-      cy.contains('5').click();
-      cy.get('#id_color-select').click();
-      cy.contains('Yellow').click();
-      cy.contains('Save').click();
-    });
-
-    cy.log('open edit popover and close it');
-    atGymMapCoordinates(NEW_BOULDER_COORDINATES, ([x, y]) => {
-      cy.get('#id_map-root').click(x, y);
-      cy.contains('Added 0 day(s) ago');
-      cy.contains($t('ascentResults[0]')).click();
-      cy.get('#popup-closer').click();
-    });
-
-    cy.log('open edit popover, edit and submit');
-    atGymMapCoordinates(NEW_BOULDER_COORDINATES, ([x, y]) => {
-      cy.get('#id_map-root').click(x, y);
-      cy.contains($t('ascentResults[0]')).click();
-      cy.get('#save-boulder').click();
-    });
-
-    cy.log('open edit popover and retire boulder');
-    atGymMapCoordinates(NEW_BOULDER_COORDINATES, ([x, y]) => {
-      cy.get('#id_map-root').click(x, y);
-      cy.get('#id_retire-boulder').click();
+      atGymMapCoordinates(NEW_BOULDER_COORDINATES, ([x, y]) => {
+        cy.get('#id_map-root').click(x, y);
+        cy.get('#id_grade-select').click();
+        cy.contains('5').click();
+        cy.get('#id_color-select').click();
+        cy.contains('Yellow').click();
+        cy.contains('Save').click();
+      });
+    }).then(() => {
+      cy.log('open edit popover and close it');
+      atGymMapCoordinates(NEW_BOULDER_COORDINATES, ([x, y]) => {
+        cy.get('#id_map-root').click(x, y);
+        cy.contains('Added 0 day(s) ago');
+        cy.contains($t('ascentResults[0]')).click();
+        cy.get('#popup-closer').click();
+      });
+    }).then(() => {
+      cy.log('open edit popover, edit and submit');
+      atGymMapCoordinates(NEW_BOULDER_COORDINATES, ([x, y]) => {
+        cy.get('#id_map-root').click(x, y);
+        cy.contains($t('ascentResults[0]')).click();
+        cy.get('#save-boulder').click();
+      });
+    }).then(() => {
+      cy.log('open edit popover and retire boulder');
+      atGymMapCoordinates(NEW_BOULDER_COORDINATES, ([x, y]) => {
+        cy.get('#id_map-root').click(x, y);
+        cy.get('#id_retire-boulder').click();
+      });
     });
   });
 
@@ -185,8 +188,7 @@ describe('The gym map view', () => {
     cy.log('move boulder');
     cy.window().its(`${GymMapView.name}`).then((gymMap) => {
       cy.waitUntil(() => {
-        return gymMap.map.frameState_.viewState.center[0] ===
-          gymMap.map.getView().getCenter()[0];
+        return getCurrentCenter(gymMap)[0] === getCenter(gymMap)[0];
       }).then(() => {
         moveBoulder(NEW_BOULDER_2_COORDINATES, NEW_BOULDER_COORDINATES);
       });
