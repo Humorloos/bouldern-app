@@ -25,6 +25,8 @@ import 'cypress-wait-until';
 import {EMAIL, PASSWORD} from './constants.js';
 import {slugify} from './functions.js';
 
+require('cypress-terminal-report/src/installLogsCollector')();
+
 before(() => {
   // reset DB
   cy.exec('cd .. && python manage.py reset_db');
