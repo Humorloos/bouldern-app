@@ -13,3 +13,4 @@ def test_refresh(logged_in_client_rest):
     # then
     assert response.status_code == HTTP_200_OK
     assert 'access' in response.data
+    assert 'refresh' in response.data

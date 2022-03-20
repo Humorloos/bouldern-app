@@ -347,7 +347,9 @@ describe('The gym creation view', () => {
 
     cy.log('submit');
     for (const _ of waitingFor('POST', '/bouldern/gym')) {
-      cy.get('#id_save-gym').click();
+      for (const _ of waitingFor('PATCH', '/bouldern/gym/3')) {
+        cy.get('#id_save-gym').click();
+      }
     }
 
     cy.log('open newly created gym');
