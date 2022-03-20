@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.21](https://github.com/Humorloos/bouldern-app/compare/v0.1.20...v0.1.21) (2022-03-20)
+
+
+### Features
+
+* **GymAPI:** add support for listing all gym names ([07146ab](https://github.com/Humorloos/bouldern-app/commit/07146ab3fc591b879cbb8ed55712e8aa4b2fb315))
+* **GymSearch:** use autocomplete for gym search ([30331a9](https://github.com/Humorloos/bouldern-app/commit/30331a96c49eb73f709a98eb3bcca995ae7173c0))
+* **Login:** stay logged in if active within 7 days ([c2e2ee3](https://github.com/Humorloos/bouldern-app/commit/c2e2ee3b5ff467952d37bcdd43caf26b701934df))
+
+
+### Bug Fixes
+
+* **GymMap:** fix boulder shift problems after refresh ([5d84ebe](https://github.com/Humorloos/bouldern-app/commit/5d84ebe94ac38492217a5bce5fc5ca1c42954ae5))
+* **GymMap:** reset all filter checkbox when switching gym ([41682c8](https://github.com/Humorloos/bouldern-app/commit/41682c8cbe4c50ea532f5475aa6779c6eda49738))
+
 ### [0.1.20](https://github.com/Humorloos/bouldern-app/compare/v0.1.19...v0.1.20) (2022-03-16)
 
 
