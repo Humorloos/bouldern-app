@@ -301,7 +301,7 @@ export default createStore({
     colorById(state) {
       return (colorId) => {
         return state.colors.find((c) => c.id === colorId) ||
-            Colors.DEFAULT_COLOR;
+          Colors.DEFAULT_COLOR;
       };
     },
     state: (state) => state,
