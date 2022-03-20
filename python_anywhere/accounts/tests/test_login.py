@@ -28,9 +28,10 @@ def test_login(db):
     user_data = response.data['user']
     assert user_data['username'] == user.username
     assert user_data['email'] == user.email
-
-    assert (pd.Timestamp(response.data['refresh_token_expiration']).date() -
-            datetime.date.today()).days == 7
+    refresh_expiration = pd.Timestamp(response.data['refresh_token_expiration'])
+    # days are floored, so it's 6 for 7 days
+    assert (refresh_expiration - pd.Timestamp.now(refresh_expiration.tzinfo))\
+        .days == 6
 
     request = HttpRequest()
     request.META['HTTP_AUTHORIZATION'] = \
