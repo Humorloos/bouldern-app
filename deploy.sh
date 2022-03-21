@@ -29,4 +29,4 @@ python manage.py migrate
 python manage.py collectstatic --noinput
 
 # restart web application
-touch /var/www/humorloos_pythonanywhere_com_wsgi.py
+touch /var/www/boulderholder_com_wsgi.py
