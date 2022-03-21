@@ -92,6 +92,12 @@ export default createStore({
     /**
      * Sets the favorite gyms to the provided ones
      */
+    addGymName(state, gymName) {
+      state.gymNames.push(gymName);
+    },
+    /**
+     * Sets the favorite gyms to the provided ones
+     */
     setGymNames(state, loadedNames) {
       state.gymNames = loadedNames;
     },

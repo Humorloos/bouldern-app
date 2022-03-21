@@ -350,10 +350,13 @@ describe('The gym creation view', () => {
         cy.get('#id_save-gym').click();
       }
     }
-
-    cy.log('open newly created gym');
-    cy.visit(`gym-map/${NEW_GYM_NAME}`);
     waitForGymMap();
+
+    cy.log('check that new gym can be selected in gym search');
+    cy.get('.mdi-menu').click();
+    cy.get('#id_find-gym').click();
+    cy.contains(NEW_GYM_NAME).click();
+    cy.get('.mdi-menu').click();
 
     cy.log('open create popover in newly created gym and submit it');
     atGymMapCoordinates(NEW_BOULDER_2_COORDINATES, ([x, y]) => {
