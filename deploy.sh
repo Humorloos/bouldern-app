@@ -12,7 +12,7 @@ nvm use node
 export NODE_OPTIONS=--openssl-legacy-provider
 cd frontend || exit
 echo "installing node packages"
-npm install
+npm ci
 echo "compiling vue files"
 npx vite build
 cd ..
