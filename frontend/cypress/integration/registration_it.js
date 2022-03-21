@@ -64,7 +64,7 @@ describe('The register app', () => {
     for (const _ of waitingFor('POST', '/registration/')) {
       cy.get('#submit_button').click();
     }
-    cy.contains($t('confirmationEmailAlert', {email: EMAIL}));
+    cy.contains($t('msgConfirmationEmailSent', {email: EMAIL}));
 
     cy.log('confirm email via confirmation link sent via email');
     cy.task('readLastEmail')
@@ -157,7 +157,7 @@ describe('The register app', () => {
     for (const _ of waitingFor('POST', '/registration/')) {
       cy.get('#submit_button').click();
     }
-    cy.contains($t('confirmationEmailAlert', {email: NEW_EMAIL}));
+    cy.contains($t('msgConfirmationEmailSent', {email: NEW_EMAIL}));
 
     cy.log('confirm email via confirmation link sent via email');
     cy.task('readLastEmail')

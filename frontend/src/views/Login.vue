@@ -1,5 +1,7 @@
 <template>
-  <app-view>
+  <app-view
+    v-model:localAlerts="alerts"
+  >
     <template #main>
       <v-container>
         <v-row>
@@ -71,16 +73,6 @@
             </v-btn>
           </v-col>
         </v-row>
-        <v-row>
-          <v-col>
-            <v-alert
-              v-model="loginError"
-              type="error"
-            >
-              {{ $t('wrongCredentialsMsg') }}
-            </v-alert>
-          </v-col>
-        </v-row>
       </v-container>
     </template>
   </app-view>
@@ -93,6 +85,7 @@ import AppView from '../components/AppView.vue';
 import {ref} from 'vue';
 import {useRouter} from 'vue-router';
 import {emailRules, requiredRule} from '../helpers/rules.js';
+import {useI18n} from 'vue-i18n';
 
 export default {
   name: 'Login',
@@ -105,6 +98,8 @@ export default {
 
     const loginError = ref(false);
     const router = useRouter();
+    const alerts = ref([]);
+    const {t} = useI18n();
 
     /**
      * Submits the login form and in case of success, empties email and password
@@ -115,9 +110,14 @@ export default {
         if (result.valid) {
           store.dispatch('login', data.value).catch((error) => {
             console.log(error);
-            loginError.value = true;
+            const alert = {
+              type: 'error',
+              message: t('wrongCredentialsMsg'),
+            };
+            if (alerts.value.indexOf(alert) === -1) alerts.value.push(alert);
           }).then(() => {
             Object.keys(data.value).forEach((key) => data.value[key] = '');
+            store.commit('clearAlerts');
             router.push('/');
           });
         }
@@ -131,6 +131,7 @@ export default {
       loginError,
       emailRules,
       requiredRule,
+      alerts,
     };
   },
 };

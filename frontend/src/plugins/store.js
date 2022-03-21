@@ -31,6 +31,8 @@ const getDefaultState = function() {
     colors: [],
     activeGym: null,
     loading: false,
+    notifications: [],
+    globalAlerts: [],
   };
 };
 
@@ -78,6 +80,40 @@ export default createStore({
       state.favoriteGyms.push(gymName);
     },
     /**
+     * todo
+     */
+    addNotification(state, notification) {
+      state.notifications.push(notification);
+    },
+    /**
+     * todo
+     */
+    removeNotification(state, notification) {
+      const index = state.notifications.indexOf(notification);
+      state.notifications.splice(index, 1);
+    },
+    /**
+     * todo
+     */
+    removeAlert(state, alert) {
+      const index = state.globalAlerts.indexOf(alert);
+      state.globalAlerts.splice(index, 1);
+    },
+    /**
+     * todo
+     */
+    showAlert(state, alert) {
+      if (state.globalAlerts.indexOf(alert) === -1) {
+        state.globalAlerts.push(alert);
+      }
+    },
+    /**
+     * todo
+     */
+    clearAlerts(state) {
+      state.globalAlerts = [];
+    },
+    /**
      * Removes the gym with the given name from the favorite gyms
      */
     removeFavoriteGym(state, gymName) {
@@ -90,13 +126,13 @@ export default createStore({
       state.favoriteGyms = loadedFavorites;
     },
     /**
-     * Sets the favorite gyms to the provided ones
+     * todo
      */
     addGymName(state, gymName) {
       state.gymNames.push(gymName);
     },
     /**
-     * Sets the favorite gyms to the provided ones
+     * todo
      */
     setGymNames(state, loadedNames) {
       state.gymNames = loadedNames;
@@ -287,6 +323,13 @@ export default createStore({
       } finally {
         commit('setLoading', false);
       }
+    },
+    /**
+     * todo
+     */
+    showTemporaryNotification({commit}, notification) {
+      commit('addNotification', notification);
+      setTimeout(() => commit('removeNotification', notification), 5000);
     },
   },
   getters: {
