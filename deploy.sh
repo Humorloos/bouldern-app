@@ -12,7 +12,7 @@ nvm use node
 export NODE_OPTIONS=--openssl-legacy-provider
 cd frontend || exit
 echo "installing node packages"
-npm install
+npm ci
 echo "compiling vue files"
 npx vite build
 cd ..
@@ -29,4 +29,4 @@ python manage.py migrate
 python manage.py collectstatic --noinput
 
 # restart web application
-touch /var/www/humorloos_pythonanywhere_com_wsgi.py
+touch /var/www/boulderholder_com_wsgi.py
