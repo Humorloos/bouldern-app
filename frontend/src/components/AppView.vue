@@ -166,7 +166,8 @@ export default {
       globalAlerts.value.concat(props.localAlerts));
 
     /**
-     * todo
+     * Closes the alert with the provided index by removing it either from the
+     * global alerts or from the local alerts
      */
     function closeAlert(index) {
       const alert2close = alerts.value[index];
