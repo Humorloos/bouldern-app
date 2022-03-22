@@ -13,6 +13,7 @@
   "msgInvalidEmail": "Please enter a valid E-mail",
   "msgNoGrades": "Please specify at least one grade",
   "msgNumericPassword": "Your password can't be entirely numeric",
+  "msgPasswordChanged": "Password changed.",
   "msgPasswordsDoNotMatch": "Passwords do not match",
   "msgPasswordTooShort": "This password is too short. It must contain at least 8 characters",
   "msgRequiredField": "{field} is required",
