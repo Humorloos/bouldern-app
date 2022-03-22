@@ -81,6 +81,39 @@
     </v-list>
   </v-navigation-drawer>
   <v-main>
+    <v-alert
+      v-for="(alert, index) in alerts"
+      :id="`id_alert-${index}`"
+      :key="index"
+      rounded="0"
+      :type="alert.type"
+      closable
+      @update:model-value="closeAlert(index)"
+    >
+      {{ alert.message }}
+    </v-alert>
+    <v-snackbar
+      v-for="(message, index) in notifications"
+      :key="index"
+      :color="message.type"
+      :model-value="true"
+      :style="{'margin-bottom':`${60*index}px`}"
+      bottom
+    >
+      {{ message.message }}
+      <template
+        v-if="message.closable"
+        #actions
+      >
+        <v-btn
+          color="primary"
+          variant="text"
+          @click="removeNotification(message)"
+        >
+          Close
+        </v-btn>
+      </template>
+    </v-snackbar>
     <slot name="main" />
   </v-main>
 </template>
@@ -104,8 +137,13 @@ export default {
       type: Boolean,
       default: true,
     },
+    localAlerts: {
+      type: Array,
+      default: () => [],
+    },
   },
-  setup() {
+  emits: ['update:localAlerts'],
+  setup(props, {emit}) {
     // close the app drawer on mobile when loading app
     const display = useDisplay();
     const drawer = ref(!display.mobile.value);
@@ -122,6 +160,25 @@ export default {
     watch(route, collapseDrawer);
 
     const store = useStore();
+    const globalAlerts = computed(() => store.state.globalAlerts);
+
+    const alerts = computed(() =>
+      globalAlerts.value.concat(props.localAlerts));
+
+    /**
+     * todo
+     */
+    function closeAlert(index) {
+      const alert2close = alerts.value[index];
+      if (globalAlerts.value.includes(alert2close)) {
+        store.commit('removeAlert', alert2close);
+      }
+      if (props.localAlerts.includes(alert2close)) {
+        const newAlerts = props.localAlerts.slice();
+        newAlerts.splice(newAlerts.indexOf(alert), 1);
+        emit('update:localAlerts', newAlerts);
+      }
+    }
 
     return {
       display,
@@ -130,7 +187,12 @@ export default {
       favoriteGyms: computed(() => store.state.favoriteGyms),
       user: computed(() => store.state.user),
       loading: computed(() => store.state.loading),
+      notifications: computed(() => store.state.notifications),
+      removeNotification: (notification) =>
+        store.commit('removeNotification', notification),
       collapseDrawer,
+      closeAlert,
+      alerts,
     };
   },
 };
