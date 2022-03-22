@@ -78,7 +78,7 @@ export default {
     const {t} = useI18n();
 
     /**
-     * todo
+     * Adds the provided alert to the list of alerts if it is not in there yet.
      */
     function showAlert(alert) {
       if (alerts.value.indexOf(alert) === -1) alerts.value.push(alert);
