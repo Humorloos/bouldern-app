@@ -82,6 +82,7 @@ describe('The register app', () => {
     cy.log('login with newly created credentials');
     cy.visit('login');
     loginViaLogInLink(EMAIL, PASSWORD);
+    cy.contains($t('msgEmailConfirmed')).should('not.exist');
 
     cy.log('check that user is logged in');
     cy.visit('profile');
@@ -130,6 +131,7 @@ describe('The register app', () => {
         '/registration/password/reset/confirm/')) {
       cy.get('#id_submit').click();
     }
+    cy.contains($t('msgPasswordChanged'));
   });
 
   it('redirects to login page when visiting gym map while logged out',
@@ -171,6 +173,10 @@ describe('The register app', () => {
     for (const _ of waitingFor('POST', '/registration/verify-email/')) {
       cy.get('#id_confirm_email').click();
     }
+    cy.contains($t('msgEmailConfirmed'));
+    cy.get('#id_alert-0 > .v-alert__close').click();
+    cy.contains($t('msgEmailConfirmed')).should('not.exist');
+
 
     cy.log('login with newly created credentials');
     cy.visit('login');
