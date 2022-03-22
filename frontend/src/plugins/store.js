@@ -31,6 +31,8 @@ const getDefaultState = function() {
     colors: [],
     activeGym: null,
     loading: false,
+    notifications: [],
+    globalAlerts: [],
   };
 };
 
@@ -78,6 +80,40 @@ export default createStore({
       state.favoriteGyms.push(gymName);
     },
     /**
+     * Adds the provided notification to the list of notifications
+     */
+    addNotification(state, notification) {
+      state.notifications.push(notification);
+    },
+    /**
+     * Removes the provided notification from the list of notifications
+     */
+    removeNotification(state, notification) {
+      const index = state.notifications.indexOf(notification);
+      state.notifications.splice(index, 1);
+    },
+    /**
+     * Removes the provided alert from the list of global alerts
+     */
+    removeAlert(state, alert) {
+      const index = state.globalAlerts.indexOf(alert);
+      state.globalAlerts.splice(index, 1);
+    },
+    /**
+     * Adds the provided alert to the list of global alerts
+     */
+    showAlert(state, alert) {
+      if (state.globalAlerts.indexOf(alert) === -1) {
+        state.globalAlerts.push(alert);
+      }
+    },
+    /**
+     * Clears all global alerts
+     */
+    clearAlerts(state) {
+      state.globalAlerts = [];
+    },
+    /**
      * Removes the gym with the given name from the favorite gyms
      */
     removeFavoriteGym(state, gymName) {
@@ -90,13 +126,13 @@ export default createStore({
       state.favoriteGyms = loadedFavorites;
     },
     /**
-     * Sets the favorite gyms to the provided ones
+     * Adds the provided gym name to the list of gym names
      */
     addGymName(state, gymName) {
       state.gymNames.push(gymName);
     },
     /**
-     * Sets the favorite gyms to the provided ones
+     * Sets the list of gym names to the provided value
      */
     setGymNames(state, loadedNames) {
       state.gymNames = loadedNames;
@@ -287,6 +323,14 @@ export default createStore({
       } finally {
         commit('setLoading', false);
       }
+    },
+    /**
+     * Adds the provided notification to the list of notifications for 5 seconds
+     * and removes it afterwards
+     */
+    showTemporaryNotification({commit}, notification) {
+      commit('addNotification', notification);
+      setTimeout(() => commit('removeNotification', notification), 5000);
     },
   },
   getters: {
