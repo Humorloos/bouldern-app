@@ -79,6 +79,20 @@
         </v-list-item>
       </div>
     </v-list>
+    <template #append>
+      <v-container>
+        <v-row>
+          <v-col>
+            <v-btn
+              variant="plain"
+              to="/privacy"
+            >
+              {{ $t('appView.privacyPolicy') }}
+            </v-btn>
+          </v-col>
+        </v-row>
+      </v-container>
+    </template>
   </v-navigation-drawer>
   <v-main>
     <v-alert
