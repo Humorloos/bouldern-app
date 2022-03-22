@@ -29,6 +29,8 @@ export default {
     const router = useRouter();
     const store = useStore();
 
+    const {t} = useI18n();
+
     /**
      * Sends the email confirmation key to the validation api
      */
@@ -37,6 +39,11 @@ export default {
         await store.state.axios.post(
             '/registration/verify-email/', {key: route.params.key});
       }
+      store.commit('showAlert', {
+        type: 'success',
+        message: t('msgEmailConfirmed'),
+        closable: true,
+      });
       await router.push('/login');
     }
 
