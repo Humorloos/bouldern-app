@@ -13,6 +13,7 @@ import HomeView from '../views/HomeView.vue';
 import ResetPassword from '../views/ResetPassword.vue';
 import ChangePassword from '../views/ChangePassword.vue';
 import Profile from '../views/Profile.vue';
+import PrivacyPolicy from '../views/PrivacyPolicy.vue';
 
 const router = createRouter({
   history: createWebHistory(),
@@ -38,6 +39,10 @@ const router = createRouter({
     {
       path: '/reset-password',
       component: ResetPassword,
+    },
+    {
+      path: '/privacy',
+      component: PrivacyPolicy,
     },
     {
       path: '/create-color',
