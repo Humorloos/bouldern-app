@@ -270,3 +270,15 @@ describe('The password change view', () => {
     cy.contains($t('msgPasswordsDoNotMatch'));
   });
 });
+
+describe('The app drawer', () => {
+  beforeEach(() => {
+    cy.visit('login');
+    cy.get('.mdi-menu').click();
+  });
+
+  it.only('allows opening the privacy policy page', () => {
+    cy.contains($t('appView.privacyPolicy')).click();
+    cy.contains($t('privacyPolicy.introduction'));
+  });
+});
