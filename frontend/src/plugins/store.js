@@ -80,27 +80,27 @@ export default createStore({
       state.favoriteGyms.push(gymName);
     },
     /**
-     * todo
+     * Adds the provided notification to the list of notifications
      */
     addNotification(state, notification) {
       state.notifications.push(notification);
     },
     /**
-     * todo
+     * Removes the provided notification from the list of notifications
      */
     removeNotification(state, notification) {
       const index = state.notifications.indexOf(notification);
       state.notifications.splice(index, 1);
     },
     /**
-     * todo
+     * Removes the provided alert from the list of global alerts
      */
     removeAlert(state, alert) {
       const index = state.globalAlerts.indexOf(alert);
       state.globalAlerts.splice(index, 1);
     },
     /**
-     * todo
+     * Adds the provided alert to the list of global alerts
      */
     showAlert(state, alert) {
       if (state.globalAlerts.indexOf(alert) === -1) {
@@ -108,7 +108,7 @@ export default createStore({
       }
     },
     /**
-     * todo
+     * Clears all global alerts
      */
     clearAlerts(state) {
       state.globalAlerts = [];
@@ -126,13 +126,13 @@ export default createStore({
       state.favoriteGyms = loadedFavorites;
     },
     /**
-     * todo
+     * Adds the provided gym name to the list of gym names
      */
     addGymName(state, gymName) {
       state.gymNames.push(gymName);
     },
     /**
-     * todo
+     * Sets the list of gym names to the provided value
      */
     setGymNames(state, loadedNames) {
       state.gymNames = loadedNames;
@@ -325,7 +325,8 @@ export default createStore({
       }
     },
     /**
-     * todo
+     * Adds the provided notification to the list of notifications for 5 seconds
+     * and removes it afterwards
      */
     showTemporaryNotification({commit}, notification) {
       commit('addNotification', notification);
