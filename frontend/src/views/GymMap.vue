@@ -522,6 +522,12 @@ export default {
       return store.getters.colorById(colorId).color;
     }
 
+    const defaultGrade = {
+      grade: -1,
+      id: -1,
+      color: -1,
+    };
+
     /**
      * Gets the grade object associated to the provided ID.
      *
@@ -533,12 +539,6 @@ export default {
       if (grade === undefined) return defaultGrade;
       return grade;
     }
-
-    const defaultGrade = {
-      grade: -1,
-      id: -1,
-      color: -1,
-    };
 
     /**
      * Sets the style of the provided boulder feature based on its color, grade,
@@ -657,7 +657,7 @@ export default {
 
     // reset selected colors and close popover when changing gym
     watch(gymName, () => {
-      selectedGrade.value = defaultGrade;
+      selectedGradeColor.value = Colors.DEFAULT_COLOR;
       selectedColor.value = Colors.DEFAULT_COLOR;
       overlay.value.close();
     });

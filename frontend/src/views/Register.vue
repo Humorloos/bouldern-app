@@ -1,5 +1,5 @@
 <template>
-  <app-view>
+  <app-view v-model:local-alerts="alerts">
     <template #main>
       <v-container>
         <v-row>
@@ -41,24 +41,6 @@
             </v-form>
           </v-col>
         </v-row>
-        <v-row>
-          <v-col>
-            <v-alert
-              v-model="confirmationMailSentAlert"
-              type="info"
-              transition="slide-y-reverse-transition"
-            >
-              {{ $t('confirmationEmailAlert', {email}) }}
-            </v-alert>
-            <v-alert
-              v-model="registrationErrorAlert"
-              type="error"
-              transition="slide-y-reverse-transition"
-            >
-              {{ registrationErrorMsg }}
-            </v-alert>
-          </v-col>
-        </v-row>
       </v-container>
     </template>
   </app-view>
@@ -76,6 +58,7 @@ import {
   matchingPasswordsRule,
 } from '../helpers/rules.js';
 import PasswordFields from '../components/PasswordFields.vue';
+import {useI18n} from 'vue-i18n';
 
 export default {
   name: 'Register',
@@ -88,19 +71,23 @@ export default {
     const store = useStore();
     const axios = store.state.axios;
 
-    const confirmationMailSentAlert = ref(false);
-    const registrationErrorAlert = ref(false);
-    const registrationErrorMsg = ref('');
-
     const passwordErrorMessages = ref([]);
 
     const form = ref(null);
+    const alerts = ref([]);
+    const {t} = useI18n();
+
+    /**
+     * Adds the provided alert to the list of alerts if it is not in there yet.
+     */
+    function showAlert(alert) {
+      if (alerts.value.indexOf(alert) === -1) alerts.value.push(alert);
+    }
 
     /**
      * Posts the registration form to the registration api
      */
     async function submit() {
-      registrationErrorAlert.value = false;
       passwordErrorMessages.value = [];
       const result = await form.value.validate();
       if (result.valid) {
@@ -112,12 +99,16 @@ export default {
               password2: password.value,
               password1: password.value,
             });
-            confirmationMailSentAlert.value = true;
+            showAlert({
+              type: 'success',
+              message: t('msgConfirmationEmailSent', {email: email.value}),
+            });
           } catch (error) {
             if (error.response.data.non_field_errors) {
-              registrationErrorAlert.value = true;
-              registrationErrorMsg.value = error.response.data.non_field_errors
-                  .join('\n');
+              showAlert({
+                type: 'error',
+                message: error.response.data.non_field_errors.join('\n'),
+              });
             }
             if (error.response.data.password1) {
               passwordErrorMessages.value = error.response.data.password1;
@@ -133,9 +124,7 @@ export default {
       email,
       username,
       submit,
-      confirmationMailSentAlert,
-      registrationErrorAlert,
-      registrationErrorMsg,
+      alerts,
       passwordErrorMessages,
       emailRules,
       matchingPasswordsRule,

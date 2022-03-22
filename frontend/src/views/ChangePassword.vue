@@ -33,9 +33,10 @@
 import AppView from '../components/AppView.vue';
 import {ref} from 'vue';
 import {useStore} from 'vuex';
-import {useRoute} from 'vue-router';
+import {useRoute, useRouter} from 'vue-router';
 import {matchingPasswordsRule, requiredRule} from '../helpers/rules.js';
 import PasswordFields from '../components/PasswordFields.vue';
+import {useI18n} from 'vue-i18n';
 
 export default {
   name: 'ChangePassword',
@@ -48,22 +49,29 @@ export default {
     const store = useStore();
     const axios = store.state.axios;
     const route = useRoute();
+    const router = useRouter();
+    const {t} = useI18n();
 
     /**
      * Sends a change password request with the entered password to the backend
      */
-    function changePassword() {
-      form.value.validate().then((result) => {
-        if (result.valid) {
-          axios.post('/registration/password/reset/confirm/',
-              {
-                uid: route.params.uid,
-                token: route.params.token,
-                new_password1: password.value,
-                new_password2: password.value,
-              });
-        }
-      });
+    async function changePassword() {
+      const result = await form.value.validate();
+      if (result.valid) {
+        await axios.post('/registration/password/reset/confirm/',
+            {
+              uid: route.params.uid,
+              token: route.params.token,
+              new_password1: password.value,
+              new_password2: password.value,
+            });
+        await store.dispatch('showTemporaryNotification', {
+          type: 'success',
+          message: t('msgPasswordChanged'),
+          closable: true,
+        });
+        await router.push('/login');
+      }
     }
 
     return {
