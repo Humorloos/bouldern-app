@@ -106,7 +106,7 @@
         #actions
       >
         <v-btn
-          color="primary"
+          color="primary-darken-1"
           variant="text"
           @click="removeNotification(message)"
         >
