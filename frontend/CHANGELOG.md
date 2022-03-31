@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.22](https://github.com/Humorloos/bouldern-app/compare/v0.1.21...v0.1.22) (2022-03-31)
+
+
+### Features
+
+* **ChangePassword:** show notification after changing password ([6a8c6c6](https://github.com/Humorloos/bouldern-app/commit/6a8c6c6f5b03fb5ac1696ff50fcbc2efbbee588e))
+* **ConfirmEmail:** show message after email confirmation ([dce296f](https://github.com/Humorloos/bouldern-app/commit/dce296f7895b57573b2a7278ec19d66c8b0f16f3))
+* **frontend:** add privacy policy view ([a2f5660](https://github.com/Humorloos/bouldern-app/commit/a2f5660bd600618eaa84a0d09699815fbab90daa))
+* **frontend:** improve style of messages and notifications ([f22fc4c](https://github.com/Humorloos/bouldern-app/commit/f22fc4cf9a693a65c5d36e9d85f966848a703892))
+
+
+### Bug Fixes
+
+* **GymSearch:** fix newly created gyms not appearing in list ([848c53a](https://github.com/Humorloos/bouldern-app/commit/848c53a23b9aeea11c7a0ea1cc7e85becffae7d9))
+* **webApp:** fix gym search not displaying properly on web ([1150aad](https://github.com/Humorloos/bouldern-app/commit/1150aadff009217b05d0dc316f5b3efaf726ad58))
+
 ### [0.1.21](https://github.com/Humorloos/bouldern-app/compare/v0.1.20...v0.1.21) (2022-03-20)
 
 
