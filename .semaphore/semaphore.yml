@@ -173,3 +173,5 @@ promotions:
       when: branch = 'master' AND result = 'passed'
   - name: Deploy to google playstore internal track
     pipeline_file: deploy_play.yml
+  - name: Deploy to google playstore alpha track
+    pipeline_file: deploy_play_alpha.yml
