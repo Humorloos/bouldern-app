@@ -392,6 +392,11 @@ describe('The gym creation view', () => {
     cy.get('#id_save-gym').click();
     cy.contains($t('msgNoGrades'));
   });
+
+  it('allows clearing the gym map', () => {
+    cy.get('#id_map').attachFile('generic_gym.png');
+    cy.get('.v-file-input .mdi-close-circle').click();
+  });
 });
 
 describe('The home view', () => {
