@@ -30,8 +30,8 @@ class Command(BaseCommand):
                     is_superuser=True,
                     is_staff=True, )
         # create test user
-        test_user = UserFactory(email='wetbonez@web.de',
-                                username='wetBonez',
+        test_user = UserFactory(email='testUser@web.de',
+                                username='myUsername',
                                 password='youcantknowthispassword123')
 
         # add default colors
