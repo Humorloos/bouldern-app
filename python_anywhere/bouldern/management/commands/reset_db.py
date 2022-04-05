@@ -1,7 +1,9 @@
 """Custom django command for resetting database to default state"""
-import pandas as pd
 from datetime import timedelta
 from subprocess import call
+
+import pandas as pd
+
 from django.core.management import BaseCommand
 from django.utils import timezone
 from factory.django import ImageField
