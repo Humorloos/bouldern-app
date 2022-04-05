@@ -1,10 +1,10 @@
 /** @file constants for global use in different e2e tests */
 
-export const NEW_USERNAME = 'testUser';
-export const NEW_EMAIL = 'testEmail@mailprovider.com';
+export const NEW_USERNAME = 'newUser';
+export const NEW_EMAIL = 'newUser@mailprovider.com';
 export const NEW_PASSWORD = 'testPassword';
-export const USERNAME = 'wetBonez';
-export const EMAIL = 'wetBonez@web.de';
+export const USERNAME = 'myUsername';
+export const EMAIL = 'testUser@web.de';
 export const PASSWORD = 'youcantknowthispassword123';
 export const COLOR_NAME = 'TestColor';
 export const NEW_GYM_NAME = 'My Gym';
