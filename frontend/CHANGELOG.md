@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.24](https://github.com/Humorloos/bouldern-app/compare/v0.1.22...v0.1.24) (2022-04-05)
+
+
+### Features
+
+* **GymMap:** hide vertical scrollbar ([0e9dcec](https://github.com/Humorloos/bouldern-app/commit/0e9dcec41510e649c9abbdb8e6e6418fdcfe05b4))
+* **icon:** replace ionic icon with placeholder ([dfc9ac7](https://github.com/Humorloos/bouldern-app/commit/dfc9ac79834172c6a0298ea3c3b9da24833b7a7d))
+* **splashScreen:** replace ionic splash screen with placeholder ([04895bb](https://github.com/Humorloos/bouldern-app/commit/04895bbbba0ab3e8aacc8089ad9a73de2ea8bde4))
+
+
+### Bug Fixes
+
+* **GymForm:** fix map input field not being clearable ([c8aa60a](https://github.com/Humorloos/bouldern-app/commit/c8aa60a997bdb29d3ebec1efe8533b303a4d38ca))
+
 ### [0.1.23](https://github.com/Humorloos/bouldern-app/compare/v0.1.21...v0.1.23) (2022-04-02)
 
 
