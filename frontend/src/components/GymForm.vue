@@ -195,7 +195,7 @@ export default {
     const gymName = ref(props.initialData.name);
     const map = ref([new File([], props.initialData.map.split('/').at(-1))]);
     const mapUrl = computed(() => {
-      if (map.value[0].size !== 0) {
+      if (map.value.length > 0 && map.value[0].size !== 0) {
         return URL.createObjectURL(map.value[0]);
       } else {
         return props.initialData.map;

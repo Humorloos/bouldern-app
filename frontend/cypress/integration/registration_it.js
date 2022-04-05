@@ -277,7 +277,7 @@ describe('The app drawer', () => {
     cy.get('.mdi-menu').click();
   });
 
-  it.only('allows opening the privacy policy page', () => {
+  it('allows opening the privacy policy page', () => {
     cy.contains($t('appView.privacyPolicy')).click();
     cy.contains($t('privacyPolicy.introduction'));
   });
