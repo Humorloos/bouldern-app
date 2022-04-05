@@ -1,15 +1,18 @@
 """Custom django command for resetting database to default state"""
 from datetime import timedelta
 from subprocess import call
-from django.contrib.gis.geos import Point
+
+import pandas as pd
+
 from django.core.management import BaseCommand
 from django.utils import timezone
 from factory.django import ImageField
+from rest_framework_gis.fields import GeometryField
 
 from python_anywhere.accounts.factories import UserFactory
 from python_anywhere.bouldern.factories import ColorFactory, GymFactory, \
     BoulderFactory, AscentFactory, FavoriteGymFactory, GradeFactory
-from python_anywhere.bouldern.models import Color
+from python_anywhere.bouldern.models import Color, Grade, Boulder
 from python_anywhere.bouldern.tests.conftest import default_colors
 from python_anywhere.settings import BASE_DIR, RESOURCES_DIR
 
@@ -29,8 +32,8 @@ class Command(BaseCommand):
                     is_superuser=True,
                     is_staff=True, )
         # create test user
-        test_user = UserFactory(email='wetbonez@web.de',
-                                username='wetBonez',
+        test_user = UserFactory(email='testuser@web.de',
+                                username='myUsername',
                                 password='youcantknowthispassword123')
 
         # add default colors
@@ -52,21 +55,28 @@ class Command(BaseCommand):
                      color=Color.objects.filter(name='Grey').first())
 
         # add boulders
-        boulder = BoulderFactory(
+        boulder_data = pd.read_csv(RESOURCES_DIR / 'boulders.csv')
+        geometry_field = GeometryField()
+        boulders = [BoulderFactory(
+            id=boulder.id,
             gym=generic_gym,
-            coordinates=Point(799, 645),
-            grade=generic_gym.grade_set.first()
-        )
-        boulder.created_at = timezone.now() - timedelta(days=15)
-        boulder.save()
-        BoulderFactory(
-            gym=generic_gym,
-            coordinates=Point(1041, 716),
-            grade=generic_gym.grade_set.all()[1]
-        )
+            coordinates=geometry_field.to_internal_value(boulder.coordinates),
+            grade=Grade.objects.get(pk=boulder.grade),
+            color=Color.objects.get(pk=boulder.color),
+        ) for _, boulder in boulder_data.iterrows()]
+        older_boulder = boulders[0]
+        older_boulder.created_at = timezone.now() - timedelta(days=15)
+        older_boulder.save()
 
-        # add ascent
-        AscentFactory(boulder=boulder)
+        # add ascents
+        ascent_data = pd.read_csv(RESOURCES_DIR / 'ascents.csv')
+        for _, ascent in ascent_data.iterrows():
+            AscentFactory(
+                id=ascent.id,
+                boulder=Boulder.objects.get(pk=ascent.boulder),
+                result=ascent.result,
+                created_by=test_user,
+            )
 
         # add favorite gym
         FavoriteGymFactory(gym=generic_gym)

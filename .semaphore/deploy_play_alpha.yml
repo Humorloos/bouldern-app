@@ -1,0 +1,77 @@
+version: v1.0
+name: Deploy app to playstore alpha track
+agent:
+  machine:
+    type: e1-standard-2
+  containers:
+    - name: main
+      image: 'docker.io/humorloos/boulder-holder:latest'
+
+global_job_config:
+  secrets:
+    - name: gpp-key
+    - name: release-keystore
+    - name: github-push-key
+    - name: env
+    - name: private-repo
+  prologue:
+    commands:
+      - checkout
+      - PROJECT_DIR=$(pwd)
+      - FRONTEND_DIR="$PROJECT_DIR"/frontend
+      - ANDROID_APP_DIR="$FRONTEND_DIR"/android/app
+      - mv /root/release-keystore.jks "$ANDROID_APP_DIR"/release-keystore.jks
+      - mv /root/gpp-key.json "$ANDROID_APP_DIR"/gpp-key.json
+      - . /root/.env
+blocks:
+  - name: Deploy app to playstore alpha track
+    task:
+      prologue:
+        commands_file: e2e_prologue.sh
+      jobs:
+        - name: Deploy app to playstore alpha track
+          commands:
+            # Generate Screenshots
+            - python manage.py runsslserver &
+            - cd frontend || exit
+            # wait for vite dev server to be ready before starting e2e tests
+            - VUE_LOGFILE=vue_server.log
+            - SEARCH_PATTERN='ready'
+            - npx vite > ${VUE_LOGFILE} &
+            - tail -f -n0 ${VUE_LOGFILE} | grep -qe "${SEARCH_PATTERN}"
+            # setup virtual framebuffer for running cypress without display
+            - Xvfb -ac :99 -screen 0 1280x1024x16 &
+            - export DISPLAY=:99
+            - npm run screenshots
+            # Generate release and push to github
+            - git config user.email semaphore@boulder-holder.com
+            - git config user.name semaphore
+            - npm run release
+            # Correct permissions since they are too open by default:
+            - chmod 0600 ~/.ssh/id_rsa_semaphoreci_push
+            # Add the github key to the ssh agent:
+            - ssh-add ~/.ssh/id_rsa_semaphoreci_push
+            # ${<variable>-fallback} evaluates to fallback if variable is not set and to variable otherwise
+            - git push origin HEAD:${SEMAPHORE_GIT_PR_BRANCH-master}
+            - git push origin $(git describe --tags --abbrev=0)
+            # Publish to google play alpha track
+            - npx vite build
+            - npx cap copy
+            - npx cap update android
+            - cd "$FRONTEND_DIR"/android
+            - . /root/.env
+            # make gradlew executable
+            - chmod +x gradlew
+            - SCREENSHOTS_DIR=app/src/main/play/listings/en-US/graphics/phone-screenshots
+            - mkdir "$SCREENSHOTS_DIR"
+            - cp ../cypress/screenshots/demo.js/* "$SCREENSHOTS_DIR"
+            - ./gradlew publishReleaseBundle --track alpha
+            - ./gradlew publishListing
+      epilogue:
+        always:
+          commands:
+            - SCREENSHOTS_DIR="$FRONTEND_DIR"/cypress/screenshots
+            - |
+              if [ -d "$SCREENSHOTS_DIR" ]; then
+                artifact push job "$SCREENSHOTS_DIR";
+              fi
