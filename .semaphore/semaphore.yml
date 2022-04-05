@@ -151,7 +151,6 @@ blocks:
           commands:
             - artifact push job "$PROJECT_DIR"/django_server.log
             - artifact push job "$FRONTEND_DIR"/vue_server.log
-            - artifact push job "$FRONTEND_DIR"/cypress/videos
             - SCREENSHOTS_DIR="$FRONTEND_DIR"/cypress/screenshots
             - |
               if [ -d "$SCREENSHOTS_DIR" ]; then
@@ -173,3 +172,5 @@ promotions:
       when: branch = 'master' AND result = 'passed'
   - name: Deploy to google playstore internal track
     pipeline_file: deploy_play.yml
+  - name: Deploy to google playstore alpha track
+    pipeline_file: deploy_play_alpha.yml
