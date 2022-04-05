@@ -13,6 +13,7 @@ global_job_config:
     - name: release-keystore
     - name: github-push-key
     - name: env
+    - name: private-repo
   prologue:
     commands:
       - checkout
