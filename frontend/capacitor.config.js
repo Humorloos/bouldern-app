@@ -2,7 +2,7 @@
 
 const config = {
   appId: 'com.boulderholder',
-  appName: 'Bouldern App',
+  appName: 'Boulder Holder',
   webDir: 'dist',
   bundledWebRuntime: false,
 };
