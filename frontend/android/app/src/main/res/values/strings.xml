@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">Bouldern App</string>
-    <string name="title_activity_main">Bouldern App</string>
+    <string name="app_name">Boulder Holder</string>
+    <string name="title_activity_main">Boulder Holder</string>
     <string name="package_name">com.boulderholder</string>
     <string name="custom_url_scheme">com.boulderholder</string>
 </resources>

@@ -1,0 +1,4 @@
+With the Boulder Holder you can keep track of your progress in any bouldering gym:
+- Register your gym by uploading an image of its walls
+- Add boulders to your gym in an interactive map
+- Keep track of your tops and projects by marking the boulders in the map

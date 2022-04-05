@@ -1,9 +1,10 @@
 {
   "baseUrl": "https://localhost:8080",
   "viewportWidth": 360,
-  "viewportHeight": 740,
+  "viewportHeight": 640,
   "reporter": "cypress-multi-reporters",
   "reporterOptions": {
     "configFile": "reporter-config.json"
-  }
+  },
+  "video": false
 }
