@@ -66,3 +66,11 @@ blocks:
             - cp ../cypress/screenshots/demo.js/* "$SCREENSHOTS_DIR"
             - ./gradlew publishReleaseBundle --track alpha
             - ./gradlew publishListing
+      epilogue:
+        always:
+          commands:
+            - SCREENSHOTS_DIR="$FRONTEND_DIR"/cypress/screenshots
+            - |
+              if [ -d "$SCREENSHOTS_DIR" ]; then
+                artifact push job "$SCREENSHOTS_DIR";
+              fi
