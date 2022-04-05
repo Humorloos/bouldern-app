@@ -92,7 +92,13 @@ export function atGymMapCoordinates(coordinates, fn) {
  * Asserts that the gym map has finished loading
  */
 export function waitForGymMap() {
-  cy.window().its(`${GymMapView.name}.loaded`).should('equal', true);
+  cy.window().its(`${GymMapView.name}`).then((map) => {
+    cy.waitUntil(() => {
+      const loaded = map.loaded;
+      map.map.updateSize();
+      return loaded;
+    });
+  });
 }
 
 /**
