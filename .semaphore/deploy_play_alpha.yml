@@ -26,14 +26,24 @@ blocks:
   - name: Deploy app to playstore alpha track
     task:
       prologue:
-        commands_file: frontend_prologue.sh
+        commands_file: e2e_prologue.sh
       jobs:
         - name: Deploy app to playstore alpha track
           commands:
-            - npx vite build
-            - npx cap copy
-            - npx cap update android
+            # Generate Screenshots
             - cd "$FRONTEND_DIR"
+            - python manage.py runsslserver &
+            - cd frontend || exit
+            # wait for vite dev server to be ready before starting e2e tests
+            - VUE_LOGFILE=vue_server.log
+            - SEARCH_PATTERN='ready'
+            - npx vite > ${VUE_LOGFILE} &
+            - tail -f -n0 ${VUE_LOGFILE} | grep -qe "${SEARCH_PATTERN}"
+            # setup virtual framebuffer for running cypress without display
+            - Xvfb -ac :99 -screen 0 1280x1024x16 &
+            - export DISPLAY=:99
+            - npm run screenshots
+            # Generate release and push to github
             - git config user.email semaphore@boulder-holder.com
             - git config user.name semaphore
             - npm run release
@@ -44,8 +54,16 @@ blocks:
             # ${<variable>-fallback} evaluates to fallback if variable is not set and to variable otherwise
             - git push origin HEAD:${SEMAPHORE_GIT_PR_BRANCH-master}
             - git push origin $(git describe --tags --abbrev=0)
+            # Publish to google play alpha track
+            - npx vite build
+            - npx cap copy
+            - npx cap update android
             - cd "$FRONTEND_DIR"/android
             - . /root/.env
             # make gradlew executable
             - chmod +x gradlew
+            - SCREENSHOTS_DIR=app/src/main/play/listings/en-US/graphics/phone-screenshots
+            - mkdir "$SCREENSHOTS_DIR"
+            - cp ../cypress/screenshots/demo.js/* "$SCREENSHOTS_DIR"
             - ./gradlew publishReleaseBundle --track alpha
+            - ./gradlew publishListing
