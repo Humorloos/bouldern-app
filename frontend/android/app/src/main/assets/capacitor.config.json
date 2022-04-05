@@ -1,6 +1,0 @@
-{
-	"appId": "com.boulderholder",
-	"appName": "Bouldern App",
-	"webDir": "dist",
-	"bundledWebRuntime": false
-}
