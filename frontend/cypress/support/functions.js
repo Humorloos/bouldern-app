@@ -158,6 +158,26 @@ export function moveBoulder(from, to) {
 }
 
 /**
+ * Pans the gym map from its center by the provided number of pixels
+ *
+ * @param x number of pixels to pan in direction x
+ * @param y number of pixels to pan in direction y
+ */
+export function panMap(x, y) {
+  cy.window().then((win) => {
+    const xFrom = win.innerWidth / 2;
+    const yFrom = win.innerHeight / 2 + 50;
+    const xTo = xFrom - x;
+    const yTo = yFrom - y;
+    cy.get('#id_map-root')
+        .trigger('pointerdown', touchPointerOptions(xFrom, yFrom))
+        .trigger('pointermove', touchPointerOptions(xFrom + 5, yFrom))
+        .trigger('pointermove', touchPointerOptions(xTo, yTo))
+        .trigger('pointerup', touchPointerOptions(xTo, yTo));
+  });
+}
+
+/**
  * Gets the current center of the provided map
  *
  * @param gymMap map to get the center of
@@ -202,5 +222,25 @@ export function refreshGymMap() {
   for (const _ of waitingFor(
       'GET', '/bouldern/gym-map-resources/?name=Generic Gym')) {
     cy.get('#id_refresh').click();
+  }
+}
+
+/**
+ * Logs in the user and loads the master data
+ */
+export function login() {
+  cy.visit('login', {
+    onLoad: (win) => {
+      win.$store.dispatch('setLoginData', cy.loginData);
+    },
+  });
+  cy.window().its('$store.state.authToken.token').should('not.be.empty');
+  for (const _ of waitingFor('GET', '/bouldern/favorite-gym')) {
+    cy.window().its('$store')
+        .then((store) => {
+          store.dispatch('loadFavoriteGyms');
+          store.dispatch('loadColors');
+          store.dispatch('loadGymNames');
+        });
   }
 }
