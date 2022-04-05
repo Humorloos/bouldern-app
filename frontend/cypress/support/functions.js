@@ -93,6 +93,9 @@ export function atGymMapCoordinates(coordinates, fn) {
  */
 export function waitForGymMap() {
   cy.window().its(`${GymMapView.name}.loaded`).should('equal', true);
+  cy.window().its(`${GymMapView.name}.map`).then((map) => {
+    map.updateSize();
+  });
 }
 
 /**
