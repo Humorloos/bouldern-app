@@ -15,6 +15,7 @@ import {
   createBoulder,
   getCenter,
   getCurrentCenter,
+  login,
   moveBoulder,
   refreshGymMap,
   waitForGymMap,
@@ -23,20 +24,7 @@ import {
 import GymMapView from '../../src/views/GymMap.vue';
 
 beforeEach(() => {
-  cy.visit('login', {
-    onLoad: (win) => {
-      win.$store.dispatch('setLoginData', cy.loginData);
-    },
-  });
-  cy.window().its('$store.state.authToken.token').should('not.be.empty');
-  for (const _ of waitingFor('GET', '/bouldern/favorite-gym')) {
-    cy.window().its('$store')
-        .then((store) => {
-          store.dispatch('loadFavoriteGyms');
-          store.dispatch('loadColors');
-          store.dispatch('loadGymNames');
-        });
-  }
+  login();
 });
 
 describe('The color creation view', () => {
