@@ -2,6 +2,38 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.24](https://github.com/Humorloos/bouldern-app/compare/v0.1.22...v0.1.24) (2022-04-05)
+
+
+### Features
+
+* **GymMap:** hide vertical scrollbar ([0e9dcec](https://github.com/Humorloos/bouldern-app/commit/0e9dcec41510e649c9abbdb8e6e6418fdcfe05b4))
+* **icon:** replace ionic icon with placeholder ([dfc9ac7](https://github.com/Humorloos/bouldern-app/commit/dfc9ac79834172c6a0298ea3c3b9da24833b7a7d))
+* **splashScreen:** replace ionic splash screen with placeholder ([04895bb](https://github.com/Humorloos/bouldern-app/commit/04895bbbba0ab3e8aacc8089ad9a73de2ea8bde4))
+
+
+### Bug Fixes
+
+* **GymForm:** fix map input field not being clearable ([c8aa60a](https://github.com/Humorloos/bouldern-app/commit/c8aa60a997bdb29d3ebec1efe8533b303a4d38ca))
+
+### [0.1.23](https://github.com/Humorloos/bouldern-app/compare/v0.1.21...v0.1.23) (2022-04-02)
+
+
+### Features
+
+* **ChangePassword:** show notification after changing password ([6a8c6c6](https://github.com/Humorloos/bouldern-app/commit/6a8c6c6f5b03fb5ac1696ff50fcbc2efbbee588e))
+* **ConfirmEmail:** show message after email confirmation ([dce296f](https://github.com/Humorloos/bouldern-app/commit/dce296f7895b57573b2a7278ec19d66c8b0f16f3))
+* **frontend:** add privacy policy view ([a2f5660](https://github.com/Humorloos/bouldern-app/commit/a2f5660bd600618eaa84a0d09699815fbab90daa))
+* **frontend:** improve style of messages and notifications ([f22fc4c](https://github.com/Humorloos/bouldern-app/commit/f22fc4cf9a693a65c5d36e9d85f966848a703892))
+* **icon:** replace ionic icon with placeholder ([839a7d2](https://github.com/Humorloos/bouldern-app/commit/839a7d24de4805fe1c9d1bf57ce620d72230e903))
+* **splashScreen:** replace ionic splash screen with placeholder ([54d5bad](https://github.com/Humorloos/bouldern-app/commit/54d5bad17d2bf0e34572e88df0d2318c9275804f))
+
+
+### Bug Fixes
+
+* **GymSearch:** fix newly created gyms not appearing in list ([848c53a](https://github.com/Humorloos/bouldern-app/commit/848c53a23b9aeea11c7a0ea1cc7e85becffae7d9))
+* **webApp:** fix gym search not displaying properly on web ([1150aad](https://github.com/Humorloos/bouldern-app/commit/1150aadff009217b05d0dc316f5b3efaf726ad58))
+
 ### [0.1.22](https://github.com/Humorloos/bouldern-app/compare/v0.1.21...v0.1.22) (2022-03-31)
 
 

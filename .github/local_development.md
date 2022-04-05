@@ -9,3 +9,12 @@
 
 ### debugging android with devtools:
 - visit chrome://inspect/#devices and devtools by clicking inspect for the device
+
+### locally publishing android release via cli
+- set environment variables `RELEASE_KEY_ALIAS`, `RELEASE_KEYSTORE_PASSWORD`, and `RELEASE_KEY_PASSWORD` from .env 
+- copy keystore and gpp-key from secrets dir to `frontend/android/app`
+- execute `gradle.bat publishReleaseBundle --track <alpha|internal>` in terminal from android dir
+
+### editing gym maps
+- either use drawio extension for jetbrains IDEs
+- or edit the maps by opening them in https://app.diagrams.net/
