@@ -1,12 +1,9 @@
 """Custom django command for generating test db resources"""
 from django.core.management import BaseCommand
 import pandas as pd
-from rest_framework_gis.serializers import GeoFeatureModelSerializer
 
-from python_anywhere.bouldern.models import Boulder, Ascent
-from python_anywhere.bouldern.serializers import BoulderSerializer
+from python_anywhere.bouldern.models import Boulder
 from python_anywhere.settings import RESOURCES_DIR
-from django.contrib.gis.geos import Point
 
 
 class Command(BaseCommand):
