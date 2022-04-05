@@ -113,7 +113,8 @@ blocks:
           - value: 2
             when: "true"
           commands:
-            - pylint python_anywhere --load-plugins=pylint_django
+            # init-hook needed because of this issue: https://github.com/PyCQA/pylint/issues/4577
+            - pylint python_anywhere --load-plugins=pylint_django --init-hook "import astroid; astroid.context.InferenceContext.max_inferred = 500"
         - name: Integration tests
           priority:
           - value: 3
@@ -151,7 +152,6 @@ blocks:
           commands:
             - artifact push job "$PROJECT_DIR"/django_server.log
             - artifact push job "$FRONTEND_DIR"/vue_server.log
-            - artifact push job "$FRONTEND_DIR"/cypress/videos
             - SCREENSHOTS_DIR="$FRONTEND_DIR"/cypress/screenshots
             - |
               if [ -d "$SCREENSHOTS_DIR" ]; then
@@ -173,3 +173,5 @@ promotions:
       when: branch = 'master' AND result = 'passed'
   - name: Deploy to google playstore internal track
     pipeline_file: deploy_play.yml
+  - name: Deploy to google playstore alpha track
+    pipeline_file: deploy_play_alpha.yml

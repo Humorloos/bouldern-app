@@ -74,5 +74,14 @@ module.exports = (on, config) => {
     },
   });
   require('cypress-terminal-report/src/installLogsPrinter')(on);
+
+  // increase resolution for sharper screenshots in headless mode
+  on('before:browser:launch', (browser, launchOptions) => {
+    if (browser.isHeadless) {
+      // force screen to be non-retina and just use our given resolution
+      launchOptions.args.push('--force-device-scale-factor=3');
+    }
+    return launchOptions;
+  });
   return config;
 };
