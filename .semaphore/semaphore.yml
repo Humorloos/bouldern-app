@@ -113,7 +113,8 @@ blocks:
           - value: 2
             when: "true"
           commands:
-            - pylint python_anywhere --load-plugins=pylint_django
+            # init-hook needed because of this issue: https://github.com/PyCQA/pylint/issues/4577
+            - pylint python_anywhere --load-plugins=pylint_django --init-hook "import astroid; astroid.context.InferenceContext.max_inferred = 500"
         - name: Integration tests
           priority:
           - value: 3
