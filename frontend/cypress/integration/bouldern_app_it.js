@@ -64,22 +64,6 @@ describe('The color creation view', () => {
   });
 });
 
-describe('The boulder holder', () => {
-  it('loads the last opened gym at root', () => {
-    for (const _ of waitingFor(
-        'GET', `/bouldern/gym-map-resources/?name=${GREEN_GYM_NAME}`)) {
-      cy.visit(`gym-map/${GREEN_GYM_NAME}`);
-      cy.visit('');
-    }
-    for (const _ of waitingFor(
-        'GET', `/bouldern/gym-map-resources/?name=${GYM_NAME}`)) {
-      cy.visit(`gym-map/${GYM_NAME}`);
-    }
-    cy.get('#id_home').click();
-    waitForGymMap();
-  });
-});
-
 describe('The gym map view', () => {
   beforeEach(() => {
     cy.visit(`gym-map/${GYM_NAME}`);
