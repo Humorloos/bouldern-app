@@ -5,23 +5,13 @@
         v-if="display.mobile.value"
         @click.stop="drawer = !drawer"
       />
-      <div
-        id="id_home"
-        @click="$router.push('/')"
+      <v-app-bar-title
+        v-if="display.smAndUp.value"
       >
-        <v-btn
-          v-if="display.xs.value"
-          icon="mdi-home"
-        />
-        <v-app-bar-title
-          v-else
-          style="cursor:pointer"
-        >
-          <p>
-            Boulder Holder
-          </p>
-        </v-app-bar-title>
-      </div>
+        <p>
+          Boulder Holder
+        </p>
+      </v-app-bar-title>
     </slot>
     <v-spacer />
     <v-progress-circular
