@@ -224,6 +224,7 @@ import AppView from '../components/AppView.vue';
 import {
   computed,
   getCurrentInstance,
+  nextTick,
   onMounted,
   ref,
   watch,
@@ -625,10 +626,10 @@ export default {
      *
      * @param event the draw event
      */
-    function openCreatePopover(event) {
+    async function openCreatePopover(event) {
       overlay.value.close();
       creating.value = true;
-
+      await nextTick();
       const feature = event.feature;
       feature.ascent = null;
       const geometry = feature.getGeometry();
@@ -746,9 +747,10 @@ export default {
      *
      * @param feature the clicked boulder
      */
-    function openAscentPopover(feature) {
+    async function openAscentPopover(feature) {
       overlay.value.close();
       reportingAscent.value = true;
+      await nextTick();
       selectedAscentResult.value = feature.ascent ?
           feature.ascent.result.toString() : null;
       selectedBoulder = feature;
