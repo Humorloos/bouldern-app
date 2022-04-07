@@ -109,19 +109,19 @@
         @close="onClosePopover"
       >
         <template
-          v-if="editing"
+          v-if="reportingAscent"
           #toolbar-left
         >
           <v-col
             class="text-caption"
-            cols="8"
+            cols="6"
             align-self="center"
           >
             Added {{ selectedBoulderAge }} day(s) ago
           </v-col>
         </template>
         <template
-          v-if="!creating"
+          v-if="reportingAscent"
           #toolbar-right
         >
           <v-col cols="2">
@@ -133,39 +133,31 @@
               @click="retireBoulder"
             />
           </v-col>
+          <v-col cols="2">
+            <v-btn
+              id="id_edit-boulder"
+              flat
+              size="small"
+              icon="mdi-pencil"
+              @click="openEditPopover"
+            />
+          </v-col>
         </template>
         <template
-          v-if="creating"
+          v-if="creating || editingBoulder"
           #content
         >
-          <v-row>
-            <v-col>
-              Grade:
-              <color-select
-                id="id_grade-select"
-                v-model="selectedGradeColor"
-                :color-options="gradeColors"
-                @update:model-value="updateGrade($event)"
-              />
-            </v-col>
-          </v-row>
-          <v-row>
-            <v-col>
-              Hold-Color:
-              <color-select
-                id="id_color-select"
-                v-model="selectedColor"
-                :color-options="colorOptions"
-                @update:model-value="updateHoldColor($event)"
-              />
-            </v-col>
-          </v-row>
-          <v-btn @click="createBoulder">
-            Save
-          </v-btn>
+          <boulder-form
+            :hold-color="selectedColor"
+            :grade-color="selectedGradeColor"
+            :grade-color-options="gradeColors"
+            @update:hold-color="updateHoldColor($event)"
+            @update:grade-color="updateGrade($event)"
+            @save="createOrUpdateBoulder"
+          />
         </template>
         <template
-          v-else
+          v-else-if="reportingAscent"
           #content
         >
           <v-row>
@@ -227,12 +219,12 @@ import {Projection} from 'ol/proj';
 import {ImageStatic, Vector as VectorSource} from 'ol/source';
 import {Circle, Fill, Icon, Stroke, Style, Text} from 'ol/style';
 import View from 'ol/View';
-import ColorSelect from '../components/ColorSelect.vue';
 import MapOverlay from '../components/MapOverlay.vue';
 import AppView from '../components/AppView.vue';
 import {
   computed,
   getCurrentInstance,
+  nextTick,
   onMounted,
   ref,
   watch,
@@ -240,14 +232,15 @@ import {
 } from 'vue';
 import GymForm from '../components/GymForm.vue';
 import {Colors} from '../constants/color.js';
+import BoulderForm from '../components/BoulderForm.vue';
 
 export default {
   name: 'GymMap',
   components: {
     AppView,
     MapOverlay,
-    ColorSelect,
     GymForm,
+    BoulderForm,
   },
   setup() {
     const store = useStore();
@@ -285,9 +278,6 @@ export default {
         window[instance.type.name] = instance.proxy;
       }
     });
-
-    // colors
-    const colorOptions = computed(() => store.state.colors);
 
     // gym map
     const gym = ref({
@@ -546,7 +536,7 @@ export default {
      *
      * @param boulder the boulder to set the style of
      */
-    function setBoulderStyle(boulder) {
+    function resetBoulderStyle(boulder) {
       boulder.setStyle(getBoulderStyle(
           getHexColor(boulder.color),
           getHexColor(getGrade(boulder.grade).color),
@@ -583,7 +573,7 @@ export default {
 
           // set style according to activeness
           if (isActiveGrade(boulder.grade)) {
-            setBoulderStyle(boulder);
+            resetBoulderStyle(boulder);
           } else {
             boulder.setStyle(invisible);
           }
@@ -636,10 +626,10 @@ export default {
      *
      * @param event the draw event
      */
-    function openCreatePopover(event) {
+    async function openCreatePopover(event) {
       overlay.value.close();
       creating.value = true;
-
+      await nextTick();
       const feature = event.feature;
       feature.ascent = null;
       const geometry = feature.getGeometry();
@@ -682,9 +672,8 @@ export default {
      * @param selectedOption the selected color Option
      */
     function updateGrade(selectedOption) {
+      selectedGradeColor.value = selectedOption;
       setSelectedBoulderColorStyle(selectedOption.color, selectedOption.color);
-      selectedColor.value = colorOptions.value.filter(
-          (colorOption) => colorOption.color === selectedOption.color)[0];
     }
 
     /**
@@ -694,6 +683,7 @@ export default {
      * @param selectedOption the selected color Option
      */
     function updateHoldColor(selectedOption) {
+      selectedColor.value = selectedOption;
       setSelectedBoulderColorStyle(
           selectedOption.color, getHexColor(selectedGrade.value.color));
     }
@@ -735,7 +725,6 @@ export default {
       overlay.value.close();
     }
 
-
     /**
      * Removes the popover's feature from the featureCollection
      */
@@ -747,22 +736,31 @@ export default {
       selectedBoulder = null;
     }
 
-    // Edit popover
+    // Ascent popover
     const selectedAscentResult = ref(null);
-    const editing = ref(false);
+    const reportingAscent = ref(false);
+
+    const colorOptions = computed(() => store.state.colors);
 
     /**
-     * Opens the edit popover and closes the old one if still open.
+     * Opens the ascent popover and closes the old one if still open.
      *
      * @param feature the clicked boulder
      */
-    function openEditPopover(feature) {
+    async function openAscentPopover(feature) {
       overlay.value.close();
-      editing.value = true;
+      reportingAscent.value = true;
+      await nextTick();
       selectedAscentResult.value = feature.ascent ?
           feature.ascent.result.toString() : null;
       selectedBoulder = feature;
       selectedBoulderAge.value = feature.age;
+
+      selectedColor.value = colorOptions.value
+          .filter((colorOption) => colorOption.id === feature.color)[0];
+      selectedGradeColor.value = gradeColors.value
+          .filter((colorOption) => colorOption.id === feature.grade)[0];
+
       overlay.value.open(feature.getGeometry().getCoordinates());
     }
 
@@ -779,7 +777,7 @@ export default {
     }
 
     /**
-     * Submits the selected ascent result and closes the edit popover.
+     * Submits the selected ascent result and closes the ascent popover.
      */
     function reportAscent() {
       const boulder = selectedBoulder;
@@ -799,7 +797,7 @@ export default {
 
     /**
      * Sets the selected boulder inactive via an api call, removes it from the
-     * feature collection, and closes the edit popover
+     * feature collection, and closes the ascent popover
      */
     function retireBoulder() {
       requestWithJwt({
@@ -819,14 +817,14 @@ export default {
      * @returns {boolean} whether the boulder is being edited
      */
     function isBeingEdited(boulder) {
-      return editing.value && boulder.id === selectedBoulder.id;
+      return reportingAscent.value && boulder.id === selectedBoulder.id;
     }
 
     /**
      * Resets ascent status if it was changed.
      */
-    function onCloseEditPopover() {
-      editing.value = false;
+    function onCloseAscentPopover() {
+      reportingAscent.value = false;
       if (selectedBoulder.ascent !== null) {
         if (selectedBoulder.ascent.result.toString() !==
             selectedAscentResult.value) {
@@ -843,13 +841,66 @@ export default {
       selectedBoulder = null;
     }
 
+    // edit popover
+    const editingBoulder = ref(false);
+
+    // colors
     /**
-     * calls close popover handler for create / edit popover
+     * Switches the popover content from ascent reporting to boulder editing
+     */
+    function openEditPopover() {
+      reportingAscent.value = false;
+      editingBoulder.value = true;
+    }
+
+    /**
+     * If changes made to boulder were not saved, reverts them and closes the
+     * edit popover.
+     */
+    function onCloseEditPopover() {
+      if (selectedBoulder.grade !== selectedGradeColor.value.id ||
+          selectedBoulder.color !== selectedColor.value.id) {
+        resetBoulderStyle(selectedBoulder);
+      }
+      editingBoulder.value = false;
+      selectedGradeColor.value = Colors.DEFAULT_COLOR;
+      selectedColor.value = Colors.DEFAULT_COLOR;
+    }
+
+    /**
+     * Creates a new boulder via API call, sets the selected boulder's id to the
+     * created one's and closes the create popover
+     */
+    function editSelectedBoulder() {
+      const boulder = selectedBoulder;
+      boulder.grade = selectedGrade.value.id;
+      boulder.color = selectedColor.value.id;
+      updateBoulder(boulder, (({color, grade}) => ({color, grade}))(boulder));
+      overlay.value.close();
+    }
+
+
+    /**
+     * Creates the selected boulder if in create mode, or updates it when in
+     * edit mode
+     */
+    function createOrUpdateBoulder() {
+      if (creating.value) {
+        createBoulder();
+      } else if (editingBoulder.value) {
+        editSelectedBoulder();
+      }
+    }
+
+    /**
+     * calls close popover handler for create / ascent popover
      */
     function onClosePopover() {
       if (creating.value) {
         onCloseCreatePopover();
-      } else {
+      } else if (reportingAscent.value) {
+        onCloseAscentPopover();
+      } else if (editingBoulder.value) {
         onCloseEditPopover();
       }
     }
@@ -880,7 +931,7 @@ export default {
         // if boulder's grade is active and boulder is invisible, show it
         if (isActiveGrade(boulder.grade)) {
           if (boulder.getStyle() === invisible) {
-            setBoulderStyle(boulder);
+            resetBoulderStyle(boulder);
           }
           // if boulder's grade is inactive and boulder is visible, hide it
         } else {
@@ -978,6 +1029,20 @@ export default {
     const modifyRadius = 35;
 
     /**
+     * Updates the provided boulder with the provided data via boulder api
+     *
+     * @param boulder the boulder for which to send the update
+     * @param data boulder properties to update
+     */
+    function updateBoulder(boulder, data) {
+      requestWithJwt({
+        apiPath: `/bouldern/gym/${gym.value.id}/boulder/${boulder.id}/`,
+        method: 'PATCH',
+        data: data,
+      });
+    }
+
+    /**
      * Sets the loaded flag and initializes the map
      */
     function onGymMapLoaded() {
@@ -1007,14 +1072,8 @@ export default {
         if (!containsCoordinate(extent, boulderGeometry.getCoordinates())) {
           boulderGeometry.setCoordinates(initialBoulderCoordinates);
         } else {
-          requestWithJwt({
-            apiPath: `/bouldern/gym/${gym.value.id}/boulder/` +
-                `${boulder.id}/`,
-            method: 'PATCH',
-            data: {
-              coordinates: jsonFormat.value
-                  .writeGeometryObject(boulderGeometry),
-            },
+          updateBoulder(boulder, {
+            coordinates: jsonFormat.value.writeGeometryObject(boulderGeometry),
           });
         }
         dragPanInteraction.setActive(true);
@@ -1053,7 +1112,7 @@ export default {
         clearTimeout(timer);
       });
 
-      // handler for opening edit popover or resetting a boulder's style
+      // handler for opening ascent popover or resetting a boulder's style
       // after moving
       map.on('click', (event) => {
         const boulder = getBoulderAtPixel(event.pixel);
@@ -1061,7 +1120,7 @@ export default {
           if (getDelay(clickStart.value) >= modifyTouchThreshold) {
             setBoulderRadius(boulder, boulderRadius);
           } else {
-            openEditPopover(boulder);
+            openAscentPopover(boulder);
           }
         }
       });
@@ -1131,7 +1190,7 @@ export default {
         gym.value = response.data;
         vectorSource.forEachFeature((boulder) => {
           if (gymForm.value.gradeIds.includes(boulder.grade)) {
-            setBoulderStyle(boulder);
+            resetBoulderStyle(boulder);
           } else {
             vectorSource.removeFeature(boulder);
           }
@@ -1159,10 +1218,9 @@ export default {
       ascentResults,
       mapRoot,
       loaded,
-      colorOptions,
       overlay,
       creating,
-      editing,
+      reportingAscent,
       // create popover
       selectedCoordinates,
       selectedColor,
@@ -1170,8 +1228,8 @@ export default {
       selectedGradeColor,
       updateGrade,
       updateHoldColor,
-      createBoulder,
-      // edit popover
+      createOrUpdateBoulder,
+      // ascent popover
       selectedBoulder,
       selectedBoulderAge,
       selectedAscentResult,
@@ -1179,6 +1237,9 @@ export default {
       retireBoulder,
       reportAscent,
       onClosePopover,
+      // ascent popover
+      editingBoulder,
+      openEditPopover,
       // filter
       filtering,
       allGradesActive,
