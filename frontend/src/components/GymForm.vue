@@ -8,10 +8,10 @@
         <v-text-field
           id="id_name"
           v-model="gymName"
-          :label="$t('lblName')"
+          :label="$t('gymForm.lblName')"
           type="text"
           :disabled="editing"
-          :rules="[requiredRule($t('lblName'))]"
+          :rules="[requiredRule($t('gymForm.lblName'))]"
         />
       </v-col>
     </v-row>
@@ -31,10 +31,16 @@
           id="id_map"
           v-model="map"
           accept="image/*"
-          :label="$t('lblMap')"
+          :label="$t('gymForm.lblMap')"
           :disabled="editing"
           :rules="[requiredImageRule]"
-        />
+          :hint="$t('gymForm.createMapHint', {link: mapHintLinkElement})"
+          persistent-hint
+        >
+          <template #message="{ message }">
+            <span v-html="message" />
+          </template>
+        </v-file-input>
       </v-col>
     </v-row>
     <v-row>
@@ -47,14 +53,14 @@
           type="button"
           @click="addGradeSelect"
         >
-          {{ $t('lblAddGrade') }}
+          {{ $t('gymForm.lblAddGrade') }}
         </v-btn>
       </v-col>
       <v-col>
         <v-btn
           to="/create-color"
         >
-          {{ $t('lblNewColor') }}
+          {{ $t('gymForm.lblNewColor') }}
         </v-btn>
       </v-col>
     </v-row>
@@ -108,7 +114,7 @@
           id="id_undefined-grade-active"
           v-model="activeExtraColor"
           hide-details
-          :label="$t('lblUseUndefinedGrade')"
+          :label="$t('gymForm.lblUseUndefinedGrade')"
           @click="toggleExtraColor"
         />
       </v-col>
@@ -127,7 +133,7 @@
           id="id_save-gym"
           @click="validateForm"
         >
-          {{ $t('lblSave') }}
+          {{ $t('gymForm.lblSave') }}
         </v-btn>
       </v-col>
     </v-row>
@@ -145,6 +151,7 @@ import {
   requiredImageRule,
   requiredRule,
 } from '../helpers/rules.js';
+import {useI18n} from 'vue-i18n';
 
 export default {
   name: 'GymForm',
@@ -281,6 +288,16 @@ export default {
         grade_set: grades.value,
       };
     });
+    const {t} = useI18n();
+    const gymTemplateLink = 'https://viewer.diagrams.net/?tags=%7B%7D&' +
+        'highlight=0000ff&edit=_blank&layers=1&nav=1&title=generic_gym.png#U' +
+        'https%3A%2F%2Fraw.githubusercontent.com%2FHumorloos%2' +
+        'Fbouldern-app%2Fmaster%2Ffrontend%2Fcypress%2Ffixtures%2F' +
+        'generic_gym.png';
+    const mapHintLinkElement = `<a
+href="${gymTemplateLink}"
+target="_blank"
+>${t('gymForm.templateLinkText')}</a>`;
 
     return {
       form,
@@ -304,6 +321,7 @@ export default {
       gradeIds,
       // general properties
       data,
+      mapHintLinkElement,
     };
   },
 };
