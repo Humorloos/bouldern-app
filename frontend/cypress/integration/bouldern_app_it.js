@@ -354,7 +354,7 @@ describe('The gym creation view', () => {
 
   it('shows errors for empty fields', () => {
     cy.get('#id_save-gym').click();
-    ['lblName', 'lblMap'].forEach((key) => {
+    ['gymForm.lblName', 'gymForm.lblName'].forEach((key) => {
       cy.contains($t('msgRequiredField', {field: $t(key)}));
     });
   });
