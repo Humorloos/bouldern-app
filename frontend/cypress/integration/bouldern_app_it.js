@@ -369,6 +369,15 @@ describe('The gym creation view', () => {
     cy.get('#id_map').attachFile('generic_gym.png');
     cy.get('.v-file-input .mdi-close-circle').click();
   });
+
+  it('gives a hint how to create a map', () => {
+    cy.get('.v-file-input .v-messages')
+        .contains($t('gymForm.createMapHint',
+            {link: $t('gymForm.templateLinkText')}))
+        .find('a')
+        .should('have.attr', 'href')
+        .and('include', 'diagrams.net');
+  });
 });
 
 describe('The home view', () => {
