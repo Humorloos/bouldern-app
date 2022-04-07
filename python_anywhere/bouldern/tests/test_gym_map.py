@@ -79,6 +79,27 @@ def test_boulder_api_move(logged_in_client_rest, colors):
     assert boulder.coordinates.geojson == new_position
 
 
+def test_boulder_api_edit(logged_in_client_rest, colors):
+    boulder_creator = UserFactory()
+    client, user = logged_in_client_rest
+    from python_anywhere.bouldern.factories import BoulderFactory
+    boulder = BoulderFactory(created_by=boulder_creator)
+    new_color_id = 5
+    new_grade_id = 3
+    data = {'color': new_color_id, 'grade': new_grade_id}
+    # when
+    response = client.patch(
+        BoulderAPI().reverse_action(
+            'detail', args=[boulder.gym.pk, boulder.pk]),
+        data=data, format='json')
+    # then
+    assert response.status_code == HTTP_200_OK
+    boulder.refresh_from_db()
+    assert boulder.modified_by == user
+    assert boulder.grade.pk == new_grade_id
+    assert boulder.color.pk == new_color_id
+
+
 def test_ascent_api_post_new_ascent(logged_in_client_rest, colors):
     """Test that post method creates new ascents"""
     # Given
