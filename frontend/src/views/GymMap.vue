@@ -114,7 +114,7 @@
         >
           <v-col
             class="text-caption"
-            cols="8"
+            cols="6"
             align-self="center"
           >
             Added {{ selectedBoulderAge }} day(s) ago
@@ -133,9 +133,18 @@
               @click="retireBoulder"
             />
           </v-col>
+          <v-col cols="2">
+            <v-btn
+              id="id_edit-boulder"
+              flat
+              size="small"
+              icon="mdi-pencil"
+              @click="openEditPopover"
+            />
+          </v-col>
         </template>
         <template
-          v-if="creating"
+          v-if="creating || editingBoulder"
           #content
         >
           <boulder-form
@@ -144,11 +153,11 @@
             :grade-color-options="gradeColors"
             @update:hold-color="updateHoldColor($event)"
             @update:grade-color="updateGrade($event)"
-            @save="createBoulder"
+            @save="createOrUpdateBoulder"
           />
         </template>
         <template
-          v-else
+          v-else-if="reportingAscent"
           #content
         >
           <v-row>
@@ -268,9 +277,6 @@ export default {
         window[instance.type.name] = instance.proxy;
       }
     });
-
-    // colors
-    const colorOptions = computed(() => store.state.colors);
 
     // gym map
     const gym = ref({
@@ -718,7 +724,6 @@ export default {
       overlay.value.close();
     }
 
-
     /**
      * Removes the popover's feature from the featureCollection
      */
@@ -734,6 +739,8 @@ export default {
     const selectedAscentResult = ref(null);
     const reportingAscent = ref(false);
 
+    const colorOptions = computed(() => store.state.colors);
+
     /**
      * Opens the ascent popover and closes the old one if still open.
      *
@@ -746,6 +753,12 @@ export default {
           feature.ascent.result.toString() : null;
       selectedBoulder = feature;
       selectedBoulderAge.value = feature.age;
+
+      selectedColor.value = colorOptions.value
+          .filter((colorOption) => colorOption.id === feature.color)[0];
+      selectedGradeColor.value = gradeColors.value
+          .filter((colorOption) => colorOption.id === feature.grade)[0];
+
       overlay.value.open(feature.getGeometry().getCoordinates());
     }
 
@@ -826,14 +839,67 @@ export default {
       selectedBoulder = null;
     }
 
+    // edit popover
+    const editingBoulder = ref(false);
+
+    // colors
+    /**
+     * Switches the popover content from ascent reporting to boulder editing
+     */
+    function openEditPopover() {
+      reportingAscent.value = false;
+      editingBoulder.value = true;
+    }
+
+    /**
+     * If changes made to boulder were not saved, reverts them and closes the
+     * edit popover.
+     */
+    function onCloseEditPopover() {
+      if (selectedBoulder.grade !== selectedGradeColor.value.id ||
+          selectedBoulder.color !== selectedColor.value.id) {
+        setBoulderStyle(selectedBoulder);
+      }
+      editingBoulder.value = false;
+      selectedGradeColor.value = Colors.DEFAULT_COLOR;
+      selectedColor.value = Colors.DEFAULT_COLOR;
+    }
+
+    /**
+     * Creates a new boulder via API call, sets the selected boulder's id to the
+     * created one's and closes the create popover
+     */
+    function editSelectedBoulder() {
+      const boulder = selectedBoulder;
+      boulder.grade = selectedGrade.value.id;
+      boulder.color = selectedColor.value.id;
+      updateBoulder(boulder, (({color, grade}) => ({color, grade}))(boulder));
+      overlay.value.close();
+    }
+
+
+    /**
+     * Creates the selected boulder if in create mode, or updates it when in
+     * edit mode
+     */
+    function createOrUpdateBoulder() {
+      if (creating.value) {
+        createBoulder();
+      } else if (editingBoulder.value) {
+        editSelectedBoulder();
+      }
+    }
+
     /**
      * calls close popover handler for create / ascent popover
      */
     function onClosePopover() {
       if (creating.value) {
         onCloseCreatePopover();
-      } else {
+      } else if (reportingAscent.value) {
         onCloseAscentPopover();
+      } else if (editingBoulder.value) {
+        onCloseEditPopover();
       }
     }
 
@@ -961,6 +1027,20 @@ export default {
     const modifyRadius = 35;
 
     /**
+     * Updates the provided boulder with the provided data via boulder api
+     *
+     * @param boulder the boulder for which to send the update
+     * @param data boulder properties to update
+     */
+    function updateBoulder(boulder, data) {
+      requestWithJwt({
+        apiPath: `/bouldern/gym/${gym.value.id}/boulder/${boulder.id}/`,
+        method: 'PATCH',
+        data: data,
+      });
+    }
+
+    /**
      * Sets the loaded flag and initializes the map
      */
     function onGymMapLoaded() {
@@ -990,14 +1070,8 @@ export default {
         if (!containsCoordinate(extent, boulderGeometry.getCoordinates())) {
           boulderGeometry.setCoordinates(initialBoulderCoordinates);
         } else {
-          requestWithJwt({
-            apiPath: `/bouldern/gym/${gym.value.id}/boulder/` +
-                `${boulder.id}/`,
-            method: 'PATCH',
-            data: {
-              coordinates: jsonFormat.value
-                  .writeGeometryObject(boulderGeometry),
-            },
+          updateBoulder(boulder, {
+            coordinates: jsonFormat.value.writeGeometryObject(boulderGeometry),
           });
         }
         dragPanInteraction.setActive(true);
@@ -1142,7 +1216,6 @@ export default {
       ascentResults,
       mapRoot,
       loaded,
-      colorOptions,
       overlay,
       creating,
       reportingAscent,
@@ -1153,7 +1226,7 @@ export default {
       selectedGradeColor,
       updateGrade,
       updateHoldColor,
-      createBoulder,
+      createOrUpdateBoulder,
       // ascent popover
       selectedBoulder,
       selectedBoulderAge,
@@ -1162,6 +1235,9 @@ export default {
       retireBoulder,
       reportAscent,
       onClosePopover,
+      // ascent popover
+      editingBoulder,
+      openEditPopover,
       // filter
       filtering,
       allGradesActive,
