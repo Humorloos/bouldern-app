@@ -109,7 +109,7 @@
         @close="onClosePopover"
       >
         <template
-          v-if="editing"
+          v-if="reportingAscent"
           #toolbar-left
         >
           <v-col
@@ -121,7 +121,7 @@
           </v-col>
         </template>
         <template
-          v-if="!creating"
+          v-if="reportingAscent"
           #toolbar-right
         >
           <v-col cols="2">
@@ -747,18 +747,18 @@ export default {
       selectedBoulder = null;
     }
 
-    // Edit popover
+    // Ascent popover
     const selectedAscentResult = ref(null);
-    const editing = ref(false);
+    const reportingAscent = ref(false);
 
     /**
-     * Opens the edit popover and closes the old one if still open.
+     * Opens the ascent popover and closes the old one if still open.
      *
      * @param feature the clicked boulder
      */
-    function openEditPopover(feature) {
+    function openAscentPopover(feature) {
       overlay.value.close();
-      editing.value = true;
+      reportingAscent.value = true;
       selectedAscentResult.value = feature.ascent ?
           feature.ascent.result.toString() : null;
       selectedBoulder = feature;
@@ -779,7 +779,7 @@ export default {
     }
 
     /**
-     * Submits the selected ascent result and closes the edit popover.
+     * Submits the selected ascent result and closes the ascent popover.
      */
     function reportAscent() {
       const boulder = selectedBoulder;
@@ -799,7 +799,7 @@ export default {
 
     /**
      * Sets the selected boulder inactive via an api call, removes it from the
-     * feature collection, and closes the edit popover
+     * feature collection, and closes the ascent popover
      */
     function retireBoulder() {
       requestWithJwt({
@@ -819,14 +819,14 @@ export default {
      * @returns {boolean} whether the boulder is being edited
      */
     function isBeingEdited(boulder) {
-      return editing.value && boulder.id === selectedBoulder.id;
+      return reportingAscent.value && boulder.id === selectedBoulder.id;
     }
 
     /**
      * Resets ascent status if it was changed.
      */
-    function onCloseEditPopover() {
-      editing.value = false;
+    function onCloseAscentPopover() {
+      reportingAscent.value = false;
       if (selectedBoulder.ascent !== null) {
         if (selectedBoulder.ascent.result.toString() !==
             selectedAscentResult.value) {
@@ -844,13 +844,13 @@ export default {
     }
 
     /**
-     * calls close popover handler for create / edit popover
+     * calls close popover handler for create / ascent popover
      */
     function onClosePopover() {
       if (creating.value) {
         onCloseCreatePopover();
       } else {
-        onCloseEditPopover();
+        onCloseAscentPopover();
       }
     }
 
@@ -1053,7 +1053,7 @@ export default {
         clearTimeout(timer);
       });
 
-      // handler for opening edit popover or resetting a boulder's style
+      // handler for opening ascent popover or resetting a boulder's style
       // after moving
       map.on('click', (event) => {
         const boulder = getBoulderAtPixel(event.pixel);
@@ -1061,7 +1061,7 @@ export default {
           if (getDelay(clickStart.value) >= modifyTouchThreshold) {
             setBoulderRadius(boulder, boulderRadius);
           } else {
-            openEditPopover(boulder);
+            openAscentPopover(boulder);
           }
         }
       });
@@ -1162,7 +1162,7 @@ export default {
       colorOptions,
       overlay,
       creating,
-      editing,
+      reportingAscent,
       // create popover
       selectedCoordinates,
       selectedColor,
@@ -1171,7 +1171,7 @@ export default {
       updateGrade,
       updateHoldColor,
       createBoulder,
-      // edit popover
+      // ascent popover
       selectedBoulder,
       selectedBoulderAge,
       selectedAscentResult,
