@@ -18,6 +18,11 @@
     "templateLinkText": "this template",
     "grades": "Grades"
   },
+  "boulderForm": {
+    "grade": "Grade:",
+    "holdColor": "Hold-Color:",
+    "lblSave": "@:gymForm.lblSave"
+  },
   "resetPasswordInstructions": "Enter your user account's verified email address and we will send you a password reset link.",
   "lblUsername": "Username",
   "lblPassword": "Password",

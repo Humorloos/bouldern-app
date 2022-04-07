@@ -9,3 +9,4 @@
 /frontend/cypress/logs/
 /frontend/cypress/screenshots/
 /production_db/
+/env/
