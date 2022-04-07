@@ -4,6 +4,7 @@ from django.contrib.gis.db.models import PointField
 from django.db.models import Model, CharField, ImageField, ForeignKey, \
     SET_NULL, PositiveSmallIntegerField, DateTimeField, PROTECT, BooleanField
 from django.utils import timezone
+from simple_history.models import HistoricalRecords
 
 from python_anywhere.accounts.models import User
 
@@ -19,6 +20,7 @@ class UGC(Model):
         User, on_delete=SET_NULL, null=True, related_name='modified_%(class)ss',
         related_query_name='modified_%(class)s')
     is_active = BooleanField(default=True)
+    history = HistoricalRecords(inherit=True)
 
     class Meta:
         abstract = True
