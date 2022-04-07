@@ -354,7 +354,7 @@ describe('The gym creation view', () => {
 
   it('shows errors for empty fields', () => {
     cy.get('#id_save-gym').click();
-    ['lblName', 'lblMap'].forEach((key) => {
+    ['gymForm.lblName', 'gymForm.lblName'].forEach((key) => {
       cy.contains($t('msgRequiredField', {field: $t(key)}));
     });
   });
@@ -368,6 +368,15 @@ describe('The gym creation view', () => {
   it('allows clearing the gym map', () => {
     cy.get('#id_map').attachFile('generic_gym.png');
     cy.get('.v-file-input .mdi-close-circle').click();
+  });
+
+  it('gives a hint how to create a map', () => {
+    cy.get('.v-file-input .v-messages')
+        .contains($t('gymForm.createMapHint',
+            {link: $t('gymForm.templateLinkText')}))
+        .find('a')
+        .should('have.attr', 'href')
+        .and('include', 'diagrams.net');
   });
 });
 
