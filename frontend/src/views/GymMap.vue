@@ -138,31 +138,14 @@
           v-if="creating"
           #content
         >
-          <v-row>
-            <v-col>
-              Grade:
-              <color-select
-                id="id_grade-select"
-                v-model="selectedGradeColor"
-                :color-options="gradeColors"
-                @update:model-value="updateGrade($event)"
-              />
-            </v-col>
-          </v-row>
-          <v-row>
-            <v-col>
-              Hold-Color:
-              <color-select
-                id="id_color-select"
-                v-model="selectedColor"
-                :color-options="colorOptions"
-                @update:model-value="updateHoldColor($event)"
-              />
-            </v-col>
-          </v-row>
-          <v-btn @click="createBoulder">
-            Save
-          </v-btn>
+          <boulder-form
+            :hold-color="selectedColor"
+            :grade-color="selectedGradeColor"
+            :grade-color-options="gradeColors"
+            @update:hold-color="updateHoldColor($event)"
+            @update:grade-color="updateGrade($event)"
+            @save="createBoulder"
+          />
         </template>
         <template
           v-else
@@ -227,7 +210,6 @@ import {Projection} from 'ol/proj';
 import {ImageStatic, Vector as VectorSource} from 'ol/source';
 import {Circle, Fill, Icon, Stroke, Style, Text} from 'ol/style';
 import View from 'ol/View';
-import ColorSelect from '../components/ColorSelect.vue';
 import MapOverlay from '../components/MapOverlay.vue';
 import AppView from '../components/AppView.vue';
 import {
@@ -240,14 +222,15 @@ import {
 } from 'vue';
 import GymForm from '../components/GymForm.vue';
 import {Colors} from '../constants/color.js';
+import BoulderForm from '../components/BoulderForm.vue';
 
 export default {
   name: 'GymMap',
   components: {
     AppView,
     MapOverlay,
-    ColorSelect,
     GymForm,
+    BoulderForm,
   },
   setup() {
     const store = useStore();
@@ -682,9 +665,8 @@ export default {
      * @param selectedOption the selected color Option
      */
     function updateGrade(selectedOption) {
+      selectedGradeColor.value = selectedOption;
       setSelectedBoulderColorStyle(selectedOption.color, selectedOption.color);
-      selectedColor.value = colorOptions.value.filter(
-          (colorOption) => colorOption.color === selectedOption.color)[0];
     }
 
     /**
@@ -694,6 +676,7 @@ export default {
      * @param selectedOption the selected color Option
      */
     function updateHoldColor(selectedOption) {
+      selectedColor.value = selectedOption;
       setSelectedBoulderColorStyle(
           selectedOption.color, getHexColor(selectedGrade.value.color));
     }
