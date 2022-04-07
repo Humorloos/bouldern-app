@@ -21,7 +21,10 @@
       />
     </v-col>
   </v-row>
-  <v-btn @click="$emit('save')">
+  <v-btn
+    id="id_save-boulder"
+    @click="$emit('save')"
+  >
     {{ $t('boulderForm.lblSave') }}
   </v-btn>
 </template>
