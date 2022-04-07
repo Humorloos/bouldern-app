@@ -17,7 +17,7 @@ export const emailRules = [
   ).test(v) || t('msgInvalidEmail'),
 ];
 export const requiredImageRule = (v) => v[0].name !== '' ||
-  t('msgRequiredField', {field: t('lblMap')});
+  t('msgRequiredField', {field: t('gymForm.lblMap')});
 
 export const atLeastOneGradeRule = (v) => v.length > 0 || t('msgNoGrades');
 
