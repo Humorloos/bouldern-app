@@ -535,7 +535,7 @@ export default {
      *
      * @param boulder the boulder to set the style of
      */
-    function setBoulderStyle(boulder) {
+    function resetBoulderStyle(boulder) {
       boulder.setStyle(getBoulderStyle(
           getHexColor(boulder.color),
           getHexColor(getGrade(boulder.grade).color),
@@ -572,7 +572,7 @@ export default {
 
           // set style according to activeness
           if (isActiveGrade(boulder.grade)) {
-            setBoulderStyle(boulder);
+            resetBoulderStyle(boulder);
           } else {
             boulder.setStyle(invisible);
           }
@@ -858,7 +858,7 @@ export default {
     function onCloseEditPopover() {
       if (selectedBoulder.grade !== selectedGradeColor.value.id ||
           selectedBoulder.color !== selectedColor.value.id) {
-        setBoulderStyle(selectedBoulder);
+        resetBoulderStyle(selectedBoulder);
       }
       editingBoulder.value = false;
       selectedGradeColor.value = Colors.DEFAULT_COLOR;
@@ -929,7 +929,7 @@ export default {
         // if boulder's grade is active and boulder is invisible, show it
         if (isActiveGrade(boulder.grade)) {
           if (boulder.getStyle() === invisible) {
-            setBoulderStyle(boulder);
+            resetBoulderStyle(boulder);
           }
           // if boulder's grade is inactive and boulder is visible, hide it
         } else {
@@ -1188,7 +1188,7 @@ export default {
         gym.value = response.data;
         vectorSource.forEachFeature((boulder) => {
           if (gymForm.value.gradeIds.includes(boulder.grade)) {
-            setBoulderStyle(boulder);
+            resetBoulderStyle(boulder);
           } else {
             vectorSource.removeFeature(boulder);
           }
