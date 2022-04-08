@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.25](https://github.com/Humorloos/bouldern-app/compare/v0.1.22...v0.1.25) (2022-04-08)
+
+
+### Features
+
+* **AppView:** remove useless home button ([b312df9](https://github.com/Humorloos/bouldern-app/commit/b312df96a0b92863830df6a6f52bee5b2b044d52))
+* **GymForm:** add hint at how to create gym maps ([3698d74](https://github.com/Humorloos/bouldern-app/commit/3698d74f08632810d4baafc7deb286cd398d4b57))
+* **gymMap:** allow editing boulder grades and colors ([e9a5cbd](https://github.com/Humorloos/bouldern-app/commit/e9a5cbd61d17bcd6c4e707c3c243d4854408833d))
+* **GymMap:** hide vertical scrollbar ([0e9dcec](https://github.com/Humorloos/bouldern-app/commit/0e9dcec41510e649c9abbdb8e6e6418fdcfe05b4))
+* **icon:** replace ionic icon with placeholder ([dfc9ac7](https://github.com/Humorloos/bouldern-app/commit/dfc9ac79834172c6a0298ea3c3b9da24833b7a7d))
+* **splashScreen:** replace ionic splash screen with placeholder ([04895bb](https://github.com/Humorloos/bouldern-app/commit/04895bbbba0ab3e8aacc8089ad9a73de2ea8bde4))
+
+
+### Bug Fixes
+
+* **GymForm:** fix map input field not being clearable ([c8aa60a](https://github.com/Humorloos/bouldern-app/commit/c8aa60a997bdb29d3ebec1efe8533b303a4d38ca))
+* **gymMap:** fix map not panning correctly when opening popover ([ee83521](https://github.com/Humorloos/bouldern-app/commit/ee83521b92849cb6fa3970fd6e16dceb454d8975))
+
 ### [0.1.24](https://github.com/Humorloos/bouldern-app/compare/v0.1.22...v0.1.24) (2022-04-05)
 
 
