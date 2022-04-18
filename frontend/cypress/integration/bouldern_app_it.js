@@ -92,14 +92,14 @@ describe('The gym map view', () => {
           atGymMapCoordinates(NEW_BOULDER_COORDINATES, ([x, y]) => {
             cy.get('#id_map-root').click(x, y);
             cy.contains('Added 0 day(s) ago');
-            cy.contains($t('ascentResults[0]')).click();
+            cy.contains($t('gymMap.ascentResults[0]')).click();
             cy.get('#popup-closer').click();
           });
         }).then(() => {
           cy.log('open ascent popover, edit and submit');
           atGymMapCoordinates(NEW_BOULDER_COORDINATES, ([x, y]) => {
             cy.get('#id_map-root').click(x, y);
-            cy.contains($t('ascentResults[0]')).click();
+            cy.contains($t('gymMap.ascentResults[0]')).click();
             cy.get('#save-boulder').click();
           });
         }).then(() => {
@@ -115,7 +115,7 @@ describe('The gym map view', () => {
     atGymMapCoordinates(BOULDER_1_COORDINATES, ([x, y]) => {
       cy.log('check that boulder is clickable before filtering');
       cy.get('#id_map-root').click(x, y);
-      cy.contains($t('ascentResults[0]'));
+      cy.contains($t('gymMap.ascentResults[0]'));
       cy.get('#popup-closer').click();
     });
 
@@ -138,7 +138,7 @@ describe('The gym map view', () => {
 
     atGymMapCoordinates(BOULDER_1_COORDINATES, ([x, y]) => {
       cy.get('#id_map-root').click(x, y);
-      cy.contains($t('ascentResults[0]'));
+      cy.contains($t('gymMap.ascentResults[0]'));
       cy.get('#popup-closer').click();
     });
   });
@@ -263,7 +263,8 @@ describe('The gym map view', () => {
 
   it('allows editing grades', () => {
     cy.log('open edit view');
-    cy.get('#id_edit_gym').click();
+    cy.get('#id_menu').click();
+    cy.contains($t('gymMap.edit')).click();
 
     cy.log('change grade');
     cy.get('#id_color-grade-1').click();
@@ -284,7 +285,8 @@ describe('The gym map view', () => {
     cy.get('#id_save-gym').click();
 
     cy.log('open edit view again');
-    cy.get('#id_edit_gym').click();
+    cy.get('#id_menu').click();
+    cy.contains($t('gymMap.edit')).click();
 
     cy.log('activate undefined grade again');
     cy.get('#id_undefined-grade-active').click();
