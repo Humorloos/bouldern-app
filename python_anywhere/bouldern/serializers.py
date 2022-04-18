@@ -70,7 +70,7 @@ class GymSerializer(ModelSerializer):
 
     class Meta:
         model = Gym
-        fields = ['name', 'map', 'id', 'grade_set']
+        fields = ['name', 'map', 'id', 'grade_set', 'created_by']
 
     @staticmethod
     def get_grade_set(obj):
