@@ -48,16 +48,11 @@ def test_create_gym(logged_in_client_rest, colors):
     # Then
     assert response.status_code == HTTP_201_CREATED
     # When
-    multipart_payload = {'map': gym_stub.map}
-    response = client.patch(
-        GymAPI().reverse_action('detail', args=[response.data['id']]),
-        data=multipart_payload, format='multipart')
+    multipart_payload, response = patch_gym_map(
+        client, gym_stub.map, response.data['id'])
     # Then
-    assert response.status_code == HTTP_200_OK
+    verify_created_gym(json_payload | multipart_payload, response, user)
 
-    gym = Gym.objects.first()
-    assert gym.name == gym_stub.name
-    assert_correct_gym(gym, json_payload | multipart_payload, user)
     grades = list(Grade.objects.all())
     assert grades[-1].grade is None
     assert len(grades) == n_grades + 1
@@ -176,7 +171,6 @@ def test_destroy(logged_in_client_rest, colors):
     for boulder in boulders:
         AscentFactory(created_by=other_user, boulder=boulder)
 
-
     # When
     response = client.delete(GymAPI().reverse_action('detail', args=[gym.pk]))
 
@@ -192,3 +186,45 @@ def test_destroy(logged_in_client_rest, colors):
     assert not any(favorite.is_active
                    for favorite in gym.favoritegym_set.all())
     assert not any(grade.is_active for grade in gym.grade_set.all())
+
+
+def test_can_create_again_after_deleting(logged_in_client_rest, colors):
+    # Given
+    client, user = logged_in_client_rest
+
+    from python_anywhere.bouldern.factories import GymFactory
+    old_gym = GymFactory(created_by=user)
+    json_payload = {
+        'name': old_gym.name,
+        'grade_set': [{
+            'color': grade.color.pk,
+            'grade': grade.grade
+        } for grade in old_gym.grade_set.all()]
+    }
+    client.delete(GymAPI().reverse_action('detail', args=[old_gym.pk]))
+
+    # When
+    response = client.post(GymAPI().reverse_action('list'),
+                           data=json_payload, format='json')
+    # Then
+    assert response.status_code == HTTP_201_CREATED
+    # When
+    multipart_payload, response = patch_gym_map(
+        client, old_gym.map, response.data['id'])
+    # Then
+    verify_created_gym(json_payload | multipart_payload, response, user)
+
+
+def verify_created_gym(payload, response, user):
+    assert response.status_code == HTTP_200_OK
+    gym = Gym.objects.first()
+    assert gym.name == payload['name']
+    assert_correct_gym(gym, payload, user)
+
+
+def patch_gym_map(client, map, gym_id):
+    multipart_payload = {'map': map}
+    response = client.patch(
+        GymAPI().reverse_action('detail', args=[gym_id]),
+        data=multipart_payload, format='multipart')
+    return multipart_payload, response
