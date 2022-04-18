@@ -1,7 +1,9 @@
 /** @file bouldern app tests */
 
 import {
-  BOULDER_1_COORDINATES, BOULDER_1_GRADE, BOULDER_1_HOLD_COLOR,
+  BOULDER_1_COORDINATES,
+  BOULDER_1_GRADE,
+  BOULDER_1_HOLD_COLOR,
   BOULDER_2_COORDINATES,
   COLOR_NAME,
   GREEN_GYM_NAME,
@@ -13,6 +15,7 @@ import {
 import {
   atGymMapCoordinates,
   createBoulder,
+  createNewGym,
   getCenter,
   getCurrentCenter,
   login,
@@ -368,30 +371,9 @@ describe('The gym creation view', () => {
     cy.visit('create-gym');
   });
 
-  it('allows adding gyms', () => {
-    cy.log('set name and map');
-    cy.get('#id_name').type(NEW_GYM_NAME);
-    cy.get('#id_map').attachFile('generic_gym.png');
-
-    cy.log('set grades');
-    cy.get('#id_color-grade-1').click();
-    cy.contains('Blue').click();
-    cy.contains('Add Grade').click();
-    cy.get('#id_color-grade-2').click();
-    cy.contains('Yellow').click();
-
-    cy.log('set undefined grade');
-    cy.get('#id_undefined-grade-active').click();
-    cy.get('#id_color-undefined').click();
-    cy.contains('Grey').click();
-
-    cy.log('submit');
-    for (const _ of waitingFor('POST', '/bouldern/gym')) {
-      for (const _ of waitingFor('PATCH', '/bouldern/gym/3')) {
-        cy.get('#id_save-gym').click();
-      }
-    }
-    waitForGymMap();
+  it('allows creating, deleting, and creating gyms again', () => {
+    cy.log('create gym');
+    createNewGym();
 
     cy.log('check that new gym can be selected in gym search');
     cy.get('.mdi-menu').click();
@@ -414,6 +396,20 @@ describe('The gym creation view', () => {
       cy.get('#id_map-root').click(x, y);
       cy.get('#id_retire-boulder').click();
     });
+
+    cy.log('delete gym');
+    cy.get('#id_menu').click();
+    cy.contains($t('gymMap.deleteGym')).click();
+    cy.contains($t('gymMap.deleteWarning', {gym: NEW_GYM_NAME}));
+    for (const _ of waitingFor('DELETE', '/bouldern/gym/3/')) {
+      cy.contains($t('gymMap.deleteGym')).click();
+    }
+    cy.contains($t('gymMap.gymDeleted'));
+    cy.get('#id_close-notification-0').click();
+
+    cy.log('create gym again');
+    cy.visit('create-gym');
+    createNewGym();
   });
 
   it('allows navigating to color creation view', () => {
