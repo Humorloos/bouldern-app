@@ -1,4 +1,22 @@
 <template>
+  <v-dialog v-model="deleteDialog">
+    <v-card>
+      <v-card-text>
+        {{ $t('gymMap.deleteWarning', {gym: gym.name}) }}
+      </v-card-text>
+      <v-card-actions>
+        <v-btn @click="deleteDialog=false">
+          {{ $t('gymMap.cancel') }}
+        </v-btn>
+        <v-btn
+          color="error"
+          @click="deleteGym"
+        >
+          {{ $t('gymMap.deleteGym') }}
+        </v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
   <app-view v-if="editingGym">
     <template #app-bar-left>
       <v-btn
@@ -62,12 +80,6 @@
   >
     <template #app-bar-right>
       <v-btn
-        id="id_edit_gym"
-        flat
-        icon="mdi-pencil"
-        @click="editGym"
-      />
-      <v-btn
         id="id_favorite"
         flat
         icon
@@ -89,6 +101,29 @@
         icon="mdi-filter"
         @click="filtering=true"
       />
+      <v-menu
+        v-model="menu"
+        anchor="bottom end"
+      >
+        <template #activator="{ props }">
+          <v-btn
+            id="id_menu"
+            flat
+            icon="mdi-dots-vertical"
+            v-bind="props"
+          />
+        </template>
+
+        <v-list>
+          <v-list-item
+            v-for="(item, i) in menuItems"
+            :key="i"
+            @click="item.callback()"
+          >
+            <v-list-item-title>{{ item.title }}</v-list-item-title>
+          </v-list-item>
+        </v-list>
+      </v-menu>
     </template>
     <template #app-drawer>
       <v-divider />
@@ -201,7 +236,7 @@
 /** @file view with interactive gym map */
 
 import {useStore} from 'vuex';
-import {useRoute} from 'vue-router';
+import {useRoute, useRouter} from 'vue-router';
 import {useI18n} from 'vue-i18n';
 import {Collection, Kinetic} from 'ol';
 import {containsCoordinate, getCenter} from 'ol/extent';
@@ -280,7 +315,8 @@ export default {
     });
 
     // gym map
-    const gym = ref({
+    const defaultGym = {
+      name: null,
       map: '',
       id: 0,
       grade_set: [{
@@ -288,7 +324,8 @@ export default {
         grade: 0,
         color: 0,
       }],
-    });
+    };
+    const gym = ref(defaultGym);
     const route = useRoute();
     /**
      * Gets the name of the gym to show the map of and sets it as the active gym
@@ -297,13 +334,7 @@ export default {
      * @returns {string} the name of the gym of which to show the map
      */
     const gymName = computed(() => {
-      if (route.matched.some(({name}) => name === 'gymMap')) {
-        const gymName = route.params.gymName;
-        store.commit('setActiveGym', gymName);
-        return gymName;
-      } else {
-        return store.state.activeGym;
-      }
+      return route.params.gymName;
     });
     const featureCollection = new Collection();
     // Vector source to draw boulders on
@@ -362,7 +393,7 @@ export default {
       {name: 'check-underline-circle', scale: 0.7},
     ].map(({name, scale}) => new Icon({
       src: axios.defaults.baseURL +
-          `static/bouldern/images/${name}.svg`,
+          `static/boulvdern/images/${name}.svg`,
       color: '#FFFFFF',
       anchor: [0, 0],
       scale: scale,
@@ -793,7 +824,7 @@ export default {
 
     const {t} = useI18n();
     // Selectable options for the result of an attempt to ascend a boulder.
-    const ascentResults = [0, 1, 2].map((i) => t(`ascentResults[${i}]`));
+    const ascentResults = [0, 1, 2].map((i) => t(`gymMap.ascentResults[${i}]`));
 
     /**
      * Sets the selected boulder inactive via an api call, removes it from the
@@ -1146,7 +1177,7 @@ export default {
     loadGymMap(onGymMapLoaded);
     // Load new gym map when gym name changes
     watch(gymName, (newGymName) => {
-      if (newGymName !== null) {
+      if (newGymName !== null && newGymName !== undefined) {
         featureCollection.clear();
         loadGymMap(setAllGradesActive);
         appView.value.collapseDrawer();
@@ -1154,7 +1185,7 @@ export default {
     });
 
     /**
-     * Creates/removes a favorite gym entry for this gym
+     * Creates/removes a favorite gym entry for thfis gym
      */
     function setFavorite() {
       favorite.value = !favorite.value;
@@ -1174,6 +1205,7 @@ export default {
      * Opens the edit gym view
      */
     function editGym() {
+      menu.value = false;
       editingGym.value = true;
     }
 
@@ -1209,6 +1241,44 @@ export default {
       loadGymMap();
       appView.value.collapseDrawer();
     }
+
+    const menu = ref(false);
+    const deleteDialog = ref(false);
+
+    /**
+     * Opens the gym deletion dialog
+     */
+    function openDeleteDialog() {
+      menu.value = false;
+      deleteDialog.value = true;
+    }
+
+    const router = useRouter();
+
+    /**
+     * Calls the gym deletion action and redirects to home view
+     */
+    function deleteGym() {
+      store.dispatch('deleteGym', gym.value);
+      gym.value = defaultGym;
+      router.push('/');
+    }
+
+    const menuItems = computed(() => {
+      const items = [
+        {
+          title: t('gymMap.edit'),
+          callback: editGym,
+        },
+      ];
+      if (store.state.user.id === gym.value.created_by) {
+        items.push({
+          title: t('gymMap.deleteGym'),
+          callback: openDeleteDialog,
+        });
+      }
+      return items;
+    });
 
     return {
       // colors
@@ -1265,6 +1335,11 @@ export default {
       getBoulderAtPixel,
       boulderRadius,
       modifyRadius,
+      // menu
+      menu,
+      menuItems,
+      deleteDialog,
+      deleteGym,
     };
   },
 };
