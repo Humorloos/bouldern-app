@@ -1,8 +1,9 @@
 from collections import OrderedDict
 
-from rest_framework.status import HTTP_201_CREATED, HTTP_200_OK
+from rest_framework.status import HTTP_201_CREATED, HTTP_200_OK, \
+    HTTP_403_FORBIDDEN
 
-from python_anywhere.bouldern.models import Gym, Grade, Color
+from python_anywhere.bouldern.models import Gym, Grade
 from python_anywhere.bouldern.serializers import GradeSerializer
 from python_anywhere.bouldern.views import GymAPI
 
@@ -140,3 +141,16 @@ def test_gym_api_list(logged_in_client_rest, colors):
     gym_names = {i['name'] for i in response.data}
     assert all(gym.name in gym_names for gym in gyms)
     assert inactive_gym.name not in gym_names
+
+
+def test_cant_destroy_others_gyms(logged_in_client_rest, colors):
+    # Given
+    from python_anywhere.bouldern.factories import GymFactory
+    gym = GymFactory()
+    client, user = logged_in_client_rest
+
+    # When
+    response = client.delete(GymAPI().reverse_action('detail', args=[gym.pk]))
+
+    # Then
+    assert response.status_code == HTTP_403_FORBIDDEN
