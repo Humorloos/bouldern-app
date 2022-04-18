@@ -58,19 +58,7 @@ class Command(BaseCommand):
                      created_by=test_user)
 
         # add boulders
-        boulder_data = pd.read_csv(RESOURCES_DIR / 'boulders.csv')
-        geometry_field = GeometryField()
-        boulders = [BoulderFactory(
-            id=boulder.id,
-            gym=generic_gym,
-            coordinates=geometry_field.to_internal_value(boulder.coordinates),
-            grade=Grade.objects.get(pk=boulder.grade),
-            color=Color.objects.get(pk=boulder.color),
-            created_by=test_user,
-        ) for _, boulder in boulder_data.iterrows()]
-        older_boulder = boulders[0]
-        older_boulder.created_at = timezone.now() - timedelta(days=15)
-        older_boulder.save()
+        self.load_boulders(generic_gym, test_user)
 
         # add ascents
         ascent_data = pd.read_csv(RESOURCES_DIR / 'ascents.csv')
@@ -84,3 +72,24 @@ class Command(BaseCommand):
 
         # add favorite gym
         FavoriteGymFactory(created_by=test_user, gym=generic_gym)
+
+    @staticmethod
+    def load_boulders(gym, user):
+        """
+        Loads test boulders from csv
+        :param gym: the boulders' gym
+        :param user: the boulders' creator
+        """
+        boulder_data = pd.read_csv(RESOURCES_DIR / 'boulders.csv')
+        geometry_field = GeometryField()
+        boulders = [BoulderFactory(
+            id=boulder.id,
+            gym=gym,
+            coordinates=geometry_field.to_internal_value(boulder.coordinates),
+            grade=Grade.objects.get(pk=boulder.grade),
+            color=Color.objects.get(pk=boulder.color),
+            created_by=user,
+        ) for _, boulder in boulder_data.iterrows()]
+        older_boulder = boulders[0]
+        older_boulder.created_at = timezone.now() - timedelta(days=15)
+        older_boulder.save()

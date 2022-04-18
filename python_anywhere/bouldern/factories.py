@@ -8,7 +8,6 @@ from factory import Iterator, Faker, LazyAttribute, RelatedFactoryList, \
 from factory.django import DjangoModelFactory, ImageField
 
 from python_anywhere.accounts.factories import UserFactory
-from python_anywhere.accounts.models import User
 from python_anywhere.bouldern.models import Color, Gym, Grade, UGC, \
     Boulder, Ascent, FavoriteGym
 from python_anywhere.bouldern.providers import GeoProvider
