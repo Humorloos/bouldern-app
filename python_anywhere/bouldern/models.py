@@ -7,10 +7,13 @@ from django.utils import timezone
 from simple_history.models import HistoricalRecords
 
 from python_anywhere.accounts.models import User
+from python_anywhere.bouldern.managers import UGCManager
 
 
 class UGC(Model):
     """Abstract model for user-generated content"""
+    objects = UGCManager()
+
     created_at = DateTimeField(auto_now_add=True)
     created_by = ForeignKey(
         User, on_delete=SET_NULL, null=True, related_name='created_%(class)ss',
@@ -24,6 +27,7 @@ class UGC(Model):
 
     class Meta:
         abstract = True
+        base_manager_name = 'objects'
 
 
 class Color(UGC):

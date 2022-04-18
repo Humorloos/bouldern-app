@@ -110,6 +110,7 @@
         #actions
       >
         <v-btn
+          :id="`id_close-notification-${index}`"
           color="primary-darken-1"
           variant="text"
           @click="removeNotification(message)"

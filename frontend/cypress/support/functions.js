@@ -2,6 +2,7 @@
 
 import i18n from '../../src/i18n';
 import GymMapView from '../../src/views/GymMap.vue';
+import {NEW_GYM_NAME} from './constants.js';
 
 window.$t = i18n.global.t;
 
@@ -246,4 +247,33 @@ export function login() {
           store.dispatch('loadGymNames');
         });
   }
+}
+
+/**
+ * Creates a new gym via the UI
+ */
+export function createNewGym() {
+  cy.log('set name and map');
+  cy.get('#id_name').type(NEW_GYM_NAME);
+  cy.get('#id_map').attachFile('generic_gym.png');
+
+  cy.log('set grades');
+  cy.get('#id_color-grade-1').click();
+  cy.contains('Blue').click();
+  cy.contains('Add Grade').click();
+  cy.get('#id_color-grade-2').click();
+  cy.contains('Yellow').click();
+
+  cy.log('set undefined grade');
+  cy.get('#id_undefined-grade-active').click();
+  cy.get('#id_color-undefined').click();
+  cy.contains('Grey').click();
+
+  cy.log('submit');
+  for (const _ of waitingFor('POST', '/bouldern/gym')) {
+    for (const _ of waitingFor('PATCH', '/bouldern/gym/3')) {
+      cy.get('#id_save-gym').click();
+    }
+  }
+  waitForGymMap();
 }
