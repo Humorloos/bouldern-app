@@ -345,6 +345,22 @@ describe('The gym map view', () => {
     cy.get('.mdi-checkbox-marked + #id_filter-all');
     cy.get('.mdi-checkbox-marked + #id_filter-1');
   });
+
+  it('only allows deleting gyms a user has created', () => {
+    cy.log('generic gym was created by admin and should not be deletable');
+    cy.get('#id_menu').click();
+    cy.contains($t('gymMap.deleteGym')).should('not.exist');
+
+    cy.log('green gym was created by test user and should be deletable');
+    cy.visit(`gym-map/${GREEN_GYM_NAME}`);
+    waitForGymMap();
+    cy.get('#id_menu').click();
+    cy.contains($t('gymMap.deleteGym')).click();
+    cy.contains($t('gymMap.deleteWarning', {gym: GREEN_GYM_NAME}));
+    cy.contains($t('gymMap.cancel')).click();
+    cy.contains($t('gymMap.deleteWarning', {gym: GREEN_GYM_NAME}))
+        .should('not.exist');
+  });
 });
 
 describe('The gym creation view', () => {
