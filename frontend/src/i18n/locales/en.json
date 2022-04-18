@@ -2,11 +2,18 @@
   "notLoggedInMsg": "You are not logged in.",
   "wrongCredentialsMsg": "Please enter a correct email and password. Note that both fields may be case-sensitive.",
   "welcomeMsg": "Hello, {user}. This is your profile page.",
-  "ascentResults": [
-    "Project",
-    "Top",
-    "Flash"
-  ],
+  "gymMap": {
+    "ascentResults": [
+      "Project",
+      "Top",
+      "Flash"
+    ],
+    "edit": "Edit Gym",
+    "deleteGym": "Delete Gym",
+    "deleteWarning": "Are you sure you want to remove {gym}? You'll no longer have access to this gym nor will other people. This can not be undone.",
+    "cancel": "Cancel",
+    "gymDeleted": "Gym Deleted"
+  },
   "gymForm": {
     "lblAddGrade": "Add Grade",
     "lblName": "Name",

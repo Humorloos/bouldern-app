@@ -47,7 +47,7 @@ describe('The boulder holder', () => {
     cy.log('take screenshot of edit popover');
     atGymMapCoordinates(NEW_BOULDER_2_COORDINATES, ([x, y]) => {
       cy.get('#id_map-root').click(x, y);
-      cy.contains($t('ascentResults[0]')).click();
+      cy.contains($t('gymMap.ascentResults[0]')).click();
       cy.screenshot('3-report-ascent', {
         capture: 'viewport',
         overwrite: true,

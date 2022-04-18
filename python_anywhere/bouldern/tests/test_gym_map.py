@@ -20,7 +20,7 @@ def test_boulder_api_post(logged_in_client_rest, colors):
     gym = GymFactory()
 
     from python_anywhere.bouldern.factories import BoulderFactory
-    boulder_stub = BoulderFactory.stub(gym=gym)
+    boulder_stub = BoulderFactory.build(gym=gym)
     payload = {f'coordinates': boulder_stub.coordinates.geojson}
     payload.update({
         'color': boulder_stub.color.pk,
@@ -109,7 +109,7 @@ def test_ascent_api_post_new_ascent(logged_in_client_rest, colors):
     boulder = BoulderFactory()
 
     from python_anywhere.bouldern.factories import AscentFactory
-    ascent_stub = AscentFactory.stub(boulder=boulder)
+    ascent_stub = AscentFactory.build(boulder=boulder)
 
     # When
     response = client.post(
@@ -133,7 +133,7 @@ def test_ascent_api_post_existing_ascent(logged_in_client_rest, colors):
     client, user = logged_in_client_rest
 
     from python_anywhere.bouldern.factories import AscentFactory
-    existing_ascent = AscentFactory(result=Ascent.PROJECT)
+    existing_ascent = AscentFactory(result=Ascent.PROJECT, created_by=user)
 
     boulder = existing_ascent.boulder
 
@@ -157,7 +157,7 @@ def test_gym_map_resources_api_get(colors, logged_in_client_rest):
     incorrect_user = UserFactory()
 
     from python_anywhere.bouldern.factories import GymFactory
-    correct_gym = GymFactory()
+    correct_gym = GymFactory(created_by=user)
     from python_anywhere.bouldern.factories import GradeFactory
     incorrect_gym = GymFactory()
     undefined_grade = GradeFactory(gym=correct_gym, grade=None)
@@ -188,7 +188,9 @@ def test_gym_map_resources_api_get(colors, logged_in_client_rest):
     # verify gym
     response_data = response.data.serializer.instance
     assert response_data['gym'] == correct_gym
-    response_grade_set = response.data['gym']['grade_set']
+    response_gym_data = response.data['gym']
+    assert response_gym_data['created_by'] == user.pk
+    response_grade_set = response_gym_data['grade_set']
     assert response_grade_set[-1]['grade'] == 'undefined'
     assert grade_2_dict(inactive_grade) not in response_grade_set
     # verify boulder features

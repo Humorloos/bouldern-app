@@ -1,8 +1,10 @@
 """Module containing the views of the bouldern app"""
 from django.shortcuts import render
+from rest_framework.exceptions import PermissionDenied
 from rest_framework.mixins import CreateModelMixin, ListModelMixin, \
     UpdateModelMixin, DestroyModelMixin
 from rest_framework.response import Response
+from rest_framework.status import HTTP_201_CREATED
 from rest_framework.viewsets import GenericViewSet
 from url_filter.integrations.drf import DjangoFilterBackend
 
@@ -39,11 +41,27 @@ class ColorAPI(ReversibleViewSet, ListModelMixin, CreateUGCMixin):
     serializer_class = ColorSerializer
 
 
-class GymAPI(ReversibleViewSet, CreateUGCMixin, UpdateModelMixin):
+class GymAPI(ReversibleViewSet, CreateUGCMixin, UpdateModelMixin,
+             DestroyUGCMixin):
     """Rest API for adding and updating gyms, and listing gym names"""
     basename = 'gym'
     queryset = Gym.objects.filter(is_active=True)
     serializer_class = GymSerializer
+
+    def create(self, request, *args, **kwargs):
+        instance = Gym.objects\
+            .filter(is_active=False, name=request.data['name']).first()
+        if instance is not None:
+            instance.is_active = True
+            serializer = self.get_serializer(instance, data=request.data)
+            serializer.is_valid(raise_exception=True)
+            self.perform_update(serializer)
+        else:
+            serializer = self.get_serializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            self.perform_create(serializer)
+        return Response(serializer.data, status=HTTP_201_CREATED,
+                        headers=self.get_success_headers(serializer.data))
 
     def perform_update(self, serializer):
         serializer.save(modified_by=self.request.user)
@@ -57,6 +75,16 @@ class GymAPI(ReversibleViewSet, CreateUGCMixin, UpdateModelMixin):
         queryset = self.filter_queryset(self.get_queryset())
         serializer = GymNameSerializer(queryset, many=True)
         return Response(serializer.data)
+
+    def perform_destroy(self, instance):
+        if self.request.user != instance.created_by:
+            raise PermissionDenied()
+        super().perform_destroy(instance)
+        for boulder in instance.boulder_set.active():
+            super().perform_destroy(boulder)
+            boulder.ascent_set.deactivate_all(self.request.user)
+        instance.favoritegym_set.deactivate_all(self.request.user)
+        instance.grade_set.deactivate_all(self.request.user)
 
 
 class FavoriteGymAPI(ReversibleViewSet, CreateUGCMixin, DestroyUGCMixin,

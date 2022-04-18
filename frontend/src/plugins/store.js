@@ -4,6 +4,9 @@ import {createStore} from 'vuex';
 import http from '../http-common';
 import createPersistedState from 'vuex-persistedstate';
 import {Colors} from '../constants/color.js';
+import i18n from '../i18n';
+
+const $t = i18n.global.t;
 
 /**
  * Generates default state of store for initialization
@@ -29,7 +32,6 @@ const getDefaultState = function() {
     favoriteGyms: [],
     gymNames: [],
     colors: [],
-    activeGym: null,
     loading: false,
     notifications: [],
     globalAlerts: [],
@@ -40,9 +42,6 @@ export default createStore({
   plugins: [createPersistedState()],
   state: getDefaultState(),
   mutations: {
-    setActiveGym(state, gymName) {
-      state.activeGym = gymName;
-    },
     setUser(state, user) {
       state.user = user;
     },
@@ -117,7 +116,15 @@ export default createStore({
      * Removes the gym with the given name from the favorite gyms
      */
     removeFavoriteGym(state, gymName) {
-      state.favoriteGyms.splice(state.favoriteGyms.indexOf(gymName), 1);
+      if (state.favoriteGyms.includes(gymName)) {
+        state.favoriteGyms.splice(state.favoriteGyms.indexOf(gymName), 1);
+      }
+    },
+    /**
+     * Removes the gym with the given name from the favorite gyms
+     */
+    removeGym(state, gymName) {
+      state.gymNames.splice(state.gymNames.indexOf(gymName), 1);
     },
     /**
      * Sets the favorite gyms to the provided ones
@@ -178,6 +185,22 @@ export default createStore({
         method: 'DELETE',
       });
       commit('removeFavoriteGym', gymName);
+    },
+    /**
+     * Deletes the gym with provided name via API and removes it from favorites
+     * and gym list
+     */
+    async deleteGym({dispatch, commit}, {name, id}) {
+      await dispatch('requestWithJwt', {
+        apiPath: `/bouldern/gym/${id}/`,
+        method: 'DELETE',
+      });
+      commit('removeGym', name);
+      commit('removeFavoriteGym', name);
+      dispatch('showTemporaryNotification', {
+        message: $t('gymMap.gymDeleted'),
+        closable: true,
+      });
     },
     /**
      * Loads all favorite gyms via API and saves them to the favorite gym list

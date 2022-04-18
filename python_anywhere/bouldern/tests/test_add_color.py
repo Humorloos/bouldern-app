@@ -12,7 +12,7 @@ def test_color_api_post(logged_in_client_rest):
     client, user = logged_in_client_rest
 
     from python_anywhere.bouldern.factories import ColorFactory
-    payload = {key: ColorFactory.stub().__dict__[key]
+    payload = {key: ColorFactory.build().__dict__[key]
                for key in ['color', 'name']}
 
     # When
