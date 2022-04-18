@@ -157,7 +157,7 @@ def test_gym_map_resources_api_get(colors, logged_in_client_rest):
     incorrect_user = UserFactory()
 
     from python_anywhere.bouldern.factories import GymFactory
-    correct_gym = GymFactory()
+    correct_gym = GymFactory(created_by=user)
     from python_anywhere.bouldern.factories import GradeFactory
     incorrect_gym = GymFactory()
     undefined_grade = GradeFactory(gym=correct_gym, grade=None)
@@ -188,7 +188,9 @@ def test_gym_map_resources_api_get(colors, logged_in_client_rest):
     # verify gym
     response_data = response.data.serializer.instance
     assert response_data['gym'] == correct_gym
-    response_grade_set = response.data['gym']['grade_set']
+    response_gym_data = response.data['gym']
+    assert response_gym_data['created_by'] == user.pk
+    response_grade_set = response_gym_data['grade_set']
     assert response_grade_set[-1]['grade'] == 'undefined'
     assert grade_2_dict(inactive_grade) not in response_grade_set
     # verify boulder features
