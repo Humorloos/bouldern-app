@@ -1,7 +1,7 @@
 from collections import OrderedDict
 
 from rest_framework.status import HTTP_201_CREATED, HTTP_200_OK, \
-    HTTP_403_FORBIDDEN
+    HTTP_403_FORBIDDEN, HTTP_204_NO_CONTENT
 
 from python_anywhere.bouldern.models import Gym, Grade
 from python_anywhere.bouldern.serializers import GradeSerializer
@@ -154,3 +154,41 @@ def test_cant_destroy_others_gyms(logged_in_client_rest, colors):
 
     # Then
     assert response.status_code == HTTP_403_FORBIDDEN
+
+
+def test_destroy(logged_in_client_rest, colors):
+    # Given
+    client, user = logged_in_client_rest
+
+    from python_anywhere.bouldern.factories import GymFactory
+    gym = GymFactory(created_by=user)
+    from python_anywhere.bouldern.factories import FavoriteGymFactory
+    FavoriteGymFactory(created_by=user, gym=gym)
+    from python_anywhere.bouldern.factories import BoulderFactory
+    boulders = BoulderFactory.create_batch(5, created_by=user, gym=gym)
+    from python_anywhere.bouldern.factories import AscentFactory
+    for boulder in boulders:
+        AscentFactory(created_by=user, boulder=boulder)
+
+    from python_anywhere.accounts.factories import UserFactory
+    other_user = UserFactory()
+    FavoriteGymFactory(created_by=other_user, gym=gym)
+    for boulder in boulders:
+        AscentFactory(created_by=other_user, boulder=boulder)
+
+
+    # When
+    response = client.delete(GymAPI().reverse_action('detail', args=[gym.pk]))
+
+    # Then
+    assert response.status_code == HTTP_204_NO_CONTENT
+    gym.refresh_from_db()
+    assert not gym.is_active
+    boulders = gym.boulder_set.all()
+    assert not any(boulder.is_active for boulder in boulders)
+    assert not any(ascent.is_active
+                   for boulder in boulders
+                   for ascent in boulder.ascent_set.all())
+    assert not any(favorite.is_active
+                   for favorite in gym.favoritegym_set.all())
+    assert not any(grade.is_active for grade in gym.grade_set.all())
