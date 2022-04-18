@@ -26,11 +26,11 @@ class Command(BaseCommand):
         call(manage_args + ['flush', '--no-input'], cwd=BASE_DIR)
 
         # create super user
-        UserFactory(email='admin@boulderholder.com',
-                    username='admin',
-                    password='admin',
-                    is_superuser=True,
-                    is_staff=True, )
+        admin = UserFactory(email='admin@boulderholder.com',
+                            username='admin',
+                            password='admin',
+                            is_superuser=True,
+                            is_staff=True, )
         # create test user
         test_user = UserFactory(email='testuser@web.de',
                                 username='myUsername',
@@ -38,21 +38,24 @@ class Command(BaseCommand):
 
         # add default colors
         for name, color in default_colors.items():
-            ColorFactory(name=name, color=color)
+            ColorFactory(name=name, color=color, created_by=test_user)
 
         # add generic gym
         generic_gym = GymFactory(
             name='Generic Gym',
-            map=ImageField(from_path=RESOURCES_DIR / 'generic_gym.png'))
+            map=ImageField(from_path=RESOURCES_DIR / 'generic_gym.png'),
+            created_by=admin)
 
         # add green gym
         GymFactory(
             name='Green Gym',
-            map=ImageField(from_path=RESOURCES_DIR / 'green_gym.png'))
+            map=ImageField(from_path=RESOURCES_DIR / 'green_gym.png'),
+            created_by=test_user)
 
         # add undefined grade
         GradeFactory(gym=generic_gym, grade=None,
-                     color=Color.objects.filter(name='Grey').first())
+                     color=Color.objects.filter(name='Grey').first(),
+                     created_by=test_user)
 
         # add boulders
         boulder_data = pd.read_csv(RESOURCES_DIR / 'boulders.csv')
@@ -63,6 +66,7 @@ class Command(BaseCommand):
             coordinates=geometry_field.to_internal_value(boulder.coordinates),
             grade=Grade.objects.get(pk=boulder.grade),
             color=Color.objects.get(pk=boulder.color),
+            created_by=test_user,
         ) for _, boulder in boulder_data.iterrows()]
         older_boulder = boulders[0]
         older_boulder.created_at = timezone.now() - timedelta(days=15)
@@ -79,5 +83,4 @@ class Command(BaseCommand):
             )
 
         # add favorite gym
-        FavoriteGymFactory(gym=generic_gym)
         FavoriteGymFactory(created_by=test_user, gym=generic_gym)

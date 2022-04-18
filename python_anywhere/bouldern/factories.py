@@ -7,6 +7,7 @@ from factory import Iterator, Faker, LazyAttribute, RelatedFactoryList, \
     SubFactory, SelfAttribute
 from factory.django import DjangoModelFactory, ImageField
 
+from python_anywhere.accounts.factories import UserFactory
 from python_anywhere.accounts.models import User
 from python_anywhere.bouldern.models import Color, Gym, Grade, UGC, \
     Boulder, Ascent, FavoriteGym
@@ -23,8 +24,8 @@ class UGCFactory(DjangoModelFactory):
         model = UGC
         abstract = True
 
-    created_by = User.objects.first()
-    modified_by = User.objects.first()
+    created_by = SubFactory(UserFactory)
+    modified_by = LazyAttribute(lambda o: o.created_by)
 
 
 class ColorFactory(UGCFactory):

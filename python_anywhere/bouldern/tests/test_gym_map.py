@@ -20,7 +20,7 @@ def test_boulder_api_post(logged_in_client_rest, colors):
     gym = GymFactory()
 
     from python_anywhere.bouldern.factories import BoulderFactory
-    boulder_stub = BoulderFactory.stub(gym=gym)
+    boulder_stub = BoulderFactory.build(gym=gym)
     payload = {f'coordinates': boulder_stub.coordinates.geojson}
     payload.update({
         'color': boulder_stub.color.pk,
@@ -109,7 +109,7 @@ def test_ascent_api_post_new_ascent(logged_in_client_rest, colors):
     boulder = BoulderFactory()
 
     from python_anywhere.bouldern.factories import AscentFactory
-    ascent_stub = AscentFactory.stub(boulder=boulder)
+    ascent_stub = AscentFactory.build(boulder=boulder)
 
     # When
     response = client.post(
@@ -133,7 +133,7 @@ def test_ascent_api_post_existing_ascent(logged_in_client_rest, colors):
     client, user = logged_in_client_rest
 
     from python_anywhere.bouldern.factories import AscentFactory
-    existing_ascent = AscentFactory(result=Ascent.PROJECT)
+    existing_ascent = AscentFactory(result=Ascent.PROJECT, created_by=user)
 
     boulder = existing_ascent.boulder
 

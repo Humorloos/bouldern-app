@@ -30,10 +30,10 @@ def test_add_favorite_gym(logged_in_client_rest, colors):
 
 def test_remove_favorite_gym(logged_in_client_rest, colors):
     # given
-    from python_anywhere.bouldern.factories import FavoriteGymFactory
-    favorite_gym = FavoriteGymFactory()
-
     client, user = logged_in_client_rest
+
+    from python_anywhere.bouldern.factories import FavoriteGymFactory
+    favorite_gym = FavoriteGymFactory(created_by=user)
 
     # when
     response = client.delete(
@@ -47,14 +47,16 @@ def test_remove_favorite_gym(logged_in_client_rest, colors):
 
 def test_get_favorite_gyms(logged_in_client_rest, colors):
     # given
+    client, user = logged_in_client_rest
+
     from python_anywhere.bouldern.factories import FavoriteGymFactory
-    favorite_gyms = FavoriteGymFactory.create_batch(5)
-    old_favorites = FavoriteGymFactory.create_batch(2, is_active=False)
+    favorite_gyms = FavoriteGymFactory.create_batch(5, created_by=user)
+    old_favorites = FavoriteGymFactory.create_batch(
+        2, created_by=user, is_active=False)
     other_user = UserFactory()
     favorites_by_other_user = FavoriteGymFactory.create_batch(
         2, created_by=other_user)
 
-    client, user = logged_in_client_rest
 
     # when
     response = client.get(FavoriteGymAPI().reverse_action('list'))
