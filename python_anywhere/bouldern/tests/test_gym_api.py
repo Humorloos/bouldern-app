@@ -21,20 +21,18 @@ def assert_correct_gym(gym, payload, user):
     assert gym.created_by == user
 
 
-def test_create_gym(logged_in_client, colors):
+def test_create_gym(logged_in_client, colors, gym, grade):
     """Test that post method works correctly"""
     # Given
     client, user = logged_in_client
 
-    from python_anywhere.bouldern.factories import GymFactory
-    gym_stub = GymFactory.build()
+    gym_stub = gym.build()
     n_grades = 3
     grade_range = range(1, n_grades + 1)
-    from python_anywhere.bouldern.factories import GradeFactory
     grade_stubs = [
-        GradeFactory.build(gym=gym_stub, grade=i)
+        grade.build(gym=gym_stub, grade=i)
         for i in grade_range]
-    grade_stubs += [GradeFactory.build(gym=gym_stub, grade='undefined')]
+    grade_stubs += [grade.build(gym=gym_stub, grade='undefined')]
     json_payload = {
         'name': gym_stub.name,
         'grade_set': [{

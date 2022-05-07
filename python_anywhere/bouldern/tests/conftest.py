@@ -42,3 +42,9 @@ def boulder():
 def ascent():
     from python_anywhere.bouldern.factories import AscentFactory
     yield AscentFactory
+
+
+@pytest.fixture
+def grade():
+    from python_anywhere.bouldern.factories import GradeFactory
+    yield GradeFactory
