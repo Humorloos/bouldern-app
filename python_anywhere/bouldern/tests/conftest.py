@@ -18,3 +18,9 @@ def colors(db):
     from python_anywhere.bouldern.factories import ColorFactory
     yield [ColorFactory(name=name, color=color) for name, color in
            default_colors.items()]
+
+
+@pytest.fixture
+def get_favorite_gym():
+    from python_anywhere.bouldern.factories import FavoriteGymFactory
+    yield FavoriteGymFactory
