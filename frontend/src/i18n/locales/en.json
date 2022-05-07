@@ -10,6 +10,7 @@
     "deleteAccount": "Delete Account",
     "welcomeMsg": "Hello, {user}. This is your profile page.",
     "deleteWarning": "Are you sure you want to delete your account?",
+    "accountDeleted": "Account Deleted",
     "cancel": "@:generics.cancel"
   },
   "gymMap": {
