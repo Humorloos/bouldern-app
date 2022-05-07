@@ -1,8 +1,16 @@
 {
+  "generics": {
+    "cancel": "Cancel",
+    "save": "Save",
+    "privacyPolicy": "Privacy Policy"
+  },
   "notLoggedInMsg": "You are not logged in.",
   "wrongCredentialsMsg": "Please enter a correct email and password. Note that both fields may be case-sensitive.",
   "profile": {
-    "welcomeMsg": "Hello, {user}. This is your profile page."
+    "deleteAccount": "Delete Account",
+    "welcomeMsg": "Hello, {user}. This is your profile page.",
+    "deleteWarning": "Are you sure you want to delete your account?",
+    "cancel": "@:generics.cancel"
   },
   "gymMap": {
     "ascentResults": [
@@ -13,7 +21,7 @@
     "edit": "Edit Gym",
     "deleteGym": "Delete Gym",
     "deleteWarning": "Are you sure you want to remove {gym}? You'll no longer have access to this gym nor will other people. This can not be undone.",
-    "cancel": "Cancel",
+    "cancel": "@:generics.cancel",
     "gymDeleted": "Gym Deleted"
   },
   "gymForm": {
@@ -22,7 +30,7 @@
     "lblNewColor": "New Color",
     "lblMap": "Map",
     "lblUseUndefinedGrade": "Use undefined grade?",
-    "lblSave": "Save",
+    "lblSave": "@:generics.save",
     "createMapHint": "Don't have a map? Use {link} to create one",
     "templateLinkText": "this template",
     "grades": "Grades"
@@ -30,7 +38,7 @@
   "boulderForm": {
     "grade": "Grade:",
     "holdColor": "Hold-Color:",
-    "lblSave": "@:gymForm.lblSave"
+    "lblSave": "@:generics.save"
   },
   "resetPasswordInstructions": "Enter your user account's verified email address and we will send you a password reset link.",
   "lblUsername": "Username",
@@ -47,10 +55,10 @@
   "msgPasswordTooShort": "This password is too short. It must contain at least 8 characters",
   "msgRequiredField": "{field} is required",
   "appView": {
-    "privacyPolicy": "@:privacyPolicy.title"
+    "privacyPolicy": "@:generics.privacyPolicy"
   },
   "privacyPolicy": {
-    "title": "Privacy Policy",
+    "title": "@:generics.privacyPolicy",
     "introduction": "Lukas M. Loos built the Boulder Holder app as an Open Source app. This SERVICE is provided by Lukas M. Loos at no cost and is intended for use as is. This page is used to inform visitors regarding my policies with the collection, use, and disclosure of Personal Information if anyone decided to use my Service. If you choose to use my Service, then you agree to the collection and use of information in relation to this policy. The Personal Information that I collect is used for providing and improving the Service. I will not use or share your information with anyone except as described in this Privacy Policy. The terms used in this Privacy Policy have the same meanings as in our Terms and Conditions, which are accessible at Boulder Holder unless otherwise defined in this Privacy Policy.",
     "informationCollection": {
       "title": "Information Collection and Use",
