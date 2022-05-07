@@ -3,6 +3,7 @@ from collections import OrderedDict
 from rest_framework.status import HTTP_201_CREATED, HTTP_200_OK, \
     HTTP_403_FORBIDDEN, HTTP_204_NO_CONTENT
 
+from python_anywhere.accounts.factories import UserFactory
 from python_anywhere.bouldern.models import Gym, Grade
 from python_anywhere.bouldern.serializers import GradeSerializer
 from python_anywhere.bouldern.views import GymAPI
@@ -151,41 +152,39 @@ def test_cant_destroy_others_gyms(logged_in_client, colors):
     assert response.status_code == HTTP_403_FORBIDDEN
 
 
-def test_destroy(logged_in_client, colors):
+def test_destroy(logged_in_client, colors, gym, favorite_gym,
+                 boulder, ascent):
     # Given
     client, user = logged_in_client
 
-    from python_anywhere.bouldern.factories import GymFactory
-    gym = GymFactory(created_by=user)
-    from python_anywhere.bouldern.factories import FavoriteGymFactory
-    FavoriteGymFactory(created_by=user, gym=gym)
-    from python_anywhere.bouldern.factories import BoulderFactory
-    boulders = BoulderFactory.create_batch(5, created_by=user, gym=gym)
-    from python_anywhere.bouldern.factories import AscentFactory
-    for boulder in boulders:
-        AscentFactory(created_by=user, boulder=boulder)
+    gym_2_destroy = gym(created_by=user)
+    favorite_gym(created_by=user, gym=gym_2_destroy)
+    boulders = boulder.create_batch(5, created_by=user, gym=gym_2_destroy)
+    for gym_boulder in boulders:
+        ascent(created_by=user, boulder=gym_boulder)
 
-    from python_anywhere.accounts.factories import UserFactory
     other_user = UserFactory()
-    FavoriteGymFactory(created_by=other_user, gym=gym)
+    favorite_gym(created_by=other_user, gym=gym_2_destroy)
     for boulder in boulders:
-        AscentFactory(created_by=other_user, boulder=boulder)
+        ascent(created_by=other_user, boulder=boulder)
 
     # When
-    response = client.delete(GymAPI().reverse_action('detail', args=[gym.pk]))
+    response = client.delete(
+        GymAPI().reverse_action('detail', args=[gym_2_destroy.pk])
+    )
 
     # Then
     assert response.status_code == HTTP_204_NO_CONTENT
-    gym.refresh_from_db()
-    assert not gym.is_active
-    boulders = gym.boulder_set.all()
+    gym_2_destroy.refresh_from_db()
+    assert not gym_2_destroy.is_active
+    boulders = gym_2_destroy.boulder_set.all()
     assert not any(boulder.is_active for boulder in boulders)
     assert not any(ascent.is_active
                    for boulder in boulders
                    for ascent in boulder.ascent_set.all())
     assert not any(favorite.is_active
-                   for favorite in gym.favoritegym_set.all())
-    assert not any(grade.is_active for grade in gym.grade_set.all())
+                   for favorite in gym_2_destroy.favoritegym_set.all())
+    assert not any(grade.is_active for grade in gym_2_destroy.grade_set.all())
 
 
 def test_can_create_again_after_deleting(logged_in_client, colors):
