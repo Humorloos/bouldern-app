@@ -32,14 +32,14 @@ describe('The register app', () => {
   it('stays logged in after reloading the page', () => {
     cy.visit('profile');
     // log in with registered user
-    cy.contains($t('welcomeMsg', {user: USERNAME}));
+    cy.contains($t('profile.welcomeMsg', {user: USERNAME}));
     cy.reload();
-    cy.contains($t('welcomeMsg', {user: USERNAME}));
+    cy.contains($t('profile.welcomeMsg', {user: USERNAME}));
   });
 
   it('allows logging out', () => {
     cy.visit('profile');
-    cy.contains($t('welcomeMsg', {user: USERNAME}));
+    cy.contains($t('profile.welcomeMsg', {user: USERNAME}));
     cy.contains('Log Out').click();
     cy.contains($t('notLoggedInMsg'));
   });
@@ -86,7 +86,7 @@ describe('The register app', () => {
 
     cy.log('check that user is logged in');
     cy.visit('profile');
-    cy.contains($t('welcomeMsg', {user: USERNAME}));
+    cy.contains($t('profile.welcomeMsg', {user: USERNAME}));
   });
 });
 
@@ -183,7 +183,7 @@ describe('The register app', () => {
 
     cy.log('check that user is logged in');
     cy.visit('profile');
-    cy.contains($t('welcomeMsg', {user: NEW_USERNAME}));
+    cy.contains($t('profile.welcomeMsg', {user: NEW_USERNAME}));
 
     cy.log('delete account');
     for (const _ of waitingFor('/registration/user/3/')) {

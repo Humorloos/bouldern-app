@@ -1,7 +1,9 @@
 {
   "notLoggedInMsg": "You are not logged in.",
   "wrongCredentialsMsg": "Please enter a correct email and password. Note that both fields may be case-sensitive.",
-  "welcomeMsg": "Hello, {user}. This is your profile page.",
+  "profile": {
+    "welcomeMsg": "Hello, {user}. This is your profile page."
+  },
   "gymMap": {
     "ascentResults": [
       "Project",
