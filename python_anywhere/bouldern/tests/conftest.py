@@ -21,6 +21,6 @@ def colors(db):
 
 
 @pytest.fixture
-def get_favorite_gym():
+def favorite_gym():
     from python_anywhere.bouldern.factories import FavoriteGymFactory
     yield FavoriteGymFactory
