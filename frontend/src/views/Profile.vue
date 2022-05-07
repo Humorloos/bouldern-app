@@ -4,7 +4,7 @@
       <v-container>
         <v-row>
           <v-col>
-            {{ $t('welcomeMsg', {user: user.username}) }}
+            {{ $t('profile.welcomeMsg', {user: user.username}) }}
           </v-col>
         </v-row>
 
