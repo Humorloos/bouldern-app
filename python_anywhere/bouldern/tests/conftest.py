@@ -13,7 +13,7 @@ default_colors = {
 }
 
 
-@pytest.fixture()
+@pytest.fixture
 def colors(db):
     from python_anywhere.bouldern.factories import ColorFactory
     yield [ColorFactory(name=name, color=color) for name, color in
