@@ -6,14 +6,12 @@ from python_anywhere.bouldern.models import FavoriteGym
 from python_anywhere.bouldern.views import FavoriteGymAPI
 
 
-def test_add_favorite_gym(logged_in_client, colors):
+def test_add_favorite_gym(logged_in_client, colors, gym, favorite_gym):
     # given
-    from python_anywhere.bouldern.factories import GymFactory
-    gym = GymFactory()
-    from python_anywhere.bouldern.factories import FavoriteGymFactory
-    favorite_gym = FavoriteGymFactory.build(gym=gym)
+    target_gym = gym()
+    new_favorite_gym = favorite_gym.build(gym=target_gym)
 
-    payload = {'gym': favorite_gym.gym.name}
+    payload = {'gym': new_favorite_gym.gym.name}
 
     client, user = logged_in_client
 
@@ -24,7 +22,7 @@ def test_add_favorite_gym(logged_in_client, colors):
     # then
     assert response.status_code == HTTP_201_CREATED
     created_favorite = response.data.serializer.instance
-    assert created_favorite.gym == gym
+    assert created_favorite.gym == target_gym
     assert created_favorite.created_by == user
 
 
