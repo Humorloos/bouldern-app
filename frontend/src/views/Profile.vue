@@ -9,6 +9,7 @@
           {{ $t('profile.cancel') }}
         </v-btn>
         <v-btn
+          id="id_delete-account"
           color="error"
           @click="deleteAccount"
         >

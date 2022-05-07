@@ -10,7 +10,11 @@ import {
   PASSWORD,
   USERNAME,
 } from '../support/constants.js';
-import {loginViaLogInLink, waitingFor} from '../support/functions.js';
+import {
+  deleteAccount,
+  loginViaLogInLink,
+  waitingFor,
+} from '../support/functions.js';
 
 describe('The register app', () => {
   beforeEach(() => {
@@ -44,12 +48,10 @@ describe('The register app', () => {
     cy.contains($t('notLoggedInMsg'));
   });
 
-  it('allows registering again after deleting one\'s account', () => {
+  it.only('allows registering again after deleting one\'s account', () => {
     cy.log('delete account');
     cy.visit('profile');
-    for (const _ of waitingFor('/registration/user/2/')) {
-      cy.contains('Delete Account').click();
-    }
+    deleteAccount();
 
     cy.log('check that logging in with deleted account leads to error message');
     loginViaLogInLink(EMAIL, PASSWORD, false);
@@ -139,6 +141,7 @@ describe('The register app', () => {
         cy.contains($t('notLoggedInMsg'));
       });
 });
+
 describe('The register app', () => {
   beforeEach(() => {
     cy.visit('register');
@@ -186,9 +189,7 @@ describe('The register app', () => {
     cy.contains($t('profile.welcomeMsg', {user: NEW_USERNAME}));
 
     cy.log('delete account');
-    for (const _ of waitingFor('/registration/user/3/')) {
-      cy.contains('Delete Account').click();
-    }
+    deleteAccount();
 
     cy.log('check that logging in with deleted account leads to error message');
     loginViaLogInLink(NEW_EMAIL, NEW_PASSWORD, false);
