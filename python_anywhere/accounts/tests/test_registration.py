@@ -30,6 +30,7 @@ def test_register(db):
     assert created_user.check_password(password)
 
 
+# noinspection DuplicatedCode
 def test_lower_case_email(db):
     """
     Test that emails used in registration are transformed to lower case.
@@ -50,6 +51,7 @@ def test_lower_case_email(db):
     assert created_user.email == payload['email'].lower()
 
 
+# noinspection DuplicatedCode
 def test_inactive_user(db):
     """Test that users that were deleted can register again"""
     # Given
