@@ -11,10 +11,10 @@ from python_anywhere.bouldern.views import BoulderAPI, AscentAPI, \
     GymMapResourcesAPI
 
 
-def test_boulder_api_post(logged_in_client_rest, colors):
+def test_boulder_api_post(logged_in_client, colors):
     """Test that post method works correctly"""
     # Given
-    client, user = logged_in_client_rest
+    client, user = logged_in_client
 
     from python_anywhere.bouldern.factories import GymFactory
     gym = GymFactory()
@@ -39,9 +39,9 @@ def test_boulder_api_post(logged_in_client_rest, colors):
     assert boulder.grade == boulder_stub.grade
 
 
-def test_boulder_api_retire(logged_in_client_rest, colors):
+def test_boulder_api_retire(logged_in_client, colors):
     boulder_creator = UserFactory()
-    client, user = logged_in_client_rest
+    client, user = logged_in_client
     from python_anywhere.bouldern.factories import BoulderFactory
     boulder_2_retire = BoulderFactory(created_by=boulder_creator)
     active_boulders = {BoulderFactory(gym=boulder_2_retire.gym)
@@ -60,9 +60,9 @@ def test_boulder_api_retire(logged_in_client_rest, colors):
         pk__in={b.pk for b in active_boulders}))
 
 
-def test_boulder_api_move(logged_in_client_rest, colors):
+def test_boulder_api_move(logged_in_client, colors):
     boulder_creator = UserFactory()
-    client, user = logged_in_client_rest
+    client, user = logged_in_client
     from python_anywhere.bouldern.factories import BoulderFactory
     boulder = BoulderFactory(created_by=boulder_creator)
     new_position = Point(799, 645).geojson
@@ -79,9 +79,9 @@ def test_boulder_api_move(logged_in_client_rest, colors):
     assert boulder.coordinates.geojson == new_position
 
 
-def test_boulder_api_edit(logged_in_client_rest, colors):
+def test_boulder_api_edit(logged_in_client, colors):
     boulder_creator = UserFactory()
-    client, user = logged_in_client_rest
+    client, user = logged_in_client
     from python_anywhere.bouldern.factories import BoulderFactory
     boulder = BoulderFactory(created_by=boulder_creator)
     new_color_id = 5
@@ -100,10 +100,10 @@ def test_boulder_api_edit(logged_in_client_rest, colors):
     assert boulder.color.pk == new_color_id
 
 
-def test_ascent_api_post_new_ascent(logged_in_client_rest, colors):
+def test_ascent_api_post_new_ascent(logged_in_client, colors):
     """Test that post method creates new ascents"""
     # Given
-    client, user = logged_in_client_rest
+    client, user = logged_in_client
 
     from python_anywhere.bouldern.factories import BoulderFactory
     boulder = BoulderFactory()
@@ -124,13 +124,13 @@ def test_ascent_api_post_new_ascent(logged_in_client_rest, colors):
     assert ascent.boulder == boulder
 
 
-def test_ascent_api_post_existing_ascent(logged_in_client_rest, colors):
+def test_ascent_api_post_existing_ascent(logged_in_client, colors):
     """
     Test that post method sets existing ascents inactive when posting to
     the same boulder for the same user
     """
     # Given
-    client, user = logged_in_client_rest
+    client, user = logged_in_client
 
     from python_anywhere.bouldern.factories import AscentFactory
     existing_ascent = AscentFactory(result=Ascent.PROJECT, created_by=user)
@@ -152,8 +152,8 @@ def test_ascent_api_post_existing_ascent(logged_in_client_rest, colors):
     assert existing_ascent.boulder == boulder
 
 
-def test_gym_map_resources_api_get(colors, logged_in_client_rest):
-    client, user = logged_in_client_rest
+def test_gym_map_resources_api_get(colors, logged_in_client):
+    client, user = logged_in_client
     incorrect_user = UserFactory()
 
     from python_anywhere.bouldern.factories import GymFactory

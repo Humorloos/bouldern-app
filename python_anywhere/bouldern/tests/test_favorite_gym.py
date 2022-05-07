@@ -6,7 +6,7 @@ from python_anywhere.bouldern.models import FavoriteGym
 from python_anywhere.bouldern.views import FavoriteGymAPI
 
 
-def test_add_favorite_gym(logged_in_client_rest, colors):
+def test_add_favorite_gym(logged_in_client, colors):
     # given
     from python_anywhere.bouldern.factories import GymFactory
     gym = GymFactory()
@@ -15,7 +15,7 @@ def test_add_favorite_gym(logged_in_client_rest, colors):
 
     payload = {'gym': favorite_gym.gym.name}
 
-    client, user = logged_in_client_rest
+    client, user = logged_in_client
 
     # when
     response = client.post(FavoriteGymAPI().reverse_action('list'),
@@ -28,9 +28,9 @@ def test_add_favorite_gym(logged_in_client_rest, colors):
     assert created_favorite.created_by == user
 
 
-def test_remove_favorite_gym(logged_in_client_rest, colors):
+def test_remove_favorite_gym(logged_in_client, colors):
     # given
-    client, user = logged_in_client_rest
+    client, user = logged_in_client
 
     from python_anywhere.bouldern.factories import FavoriteGymFactory
     favorite_gym = FavoriteGymFactory(created_by=user)
@@ -45,9 +45,9 @@ def test_remove_favorite_gym(logged_in_client_rest, colors):
     assert not deleted_favorite.is_active
 
 
-def test_get_favorite_gyms(logged_in_client_rest, colors):
+def test_get_favorite_gyms(logged_in_client, colors):
     # given
-    client, user = logged_in_client_rest
+    client, user = logged_in_client
 
     from python_anywhere.bouldern.factories import FavoriteGymFactory
     favorite_gyms = FavoriteGymFactory.create_batch(5, created_by=user)
