@@ -1,8 +1,4 @@
 import pytest
-from faker import Faker
-from rest_framework.test import APIClient
-
-from python_anywhere.accounts.factories import UserFactory
 
 default_colors = {
     'Yellow': '#f6c026',
@@ -15,16 +11,6 @@ default_colors = {
     'Black': '#000000',
     'Grey': '#848284',
 }
-
-
-@pytest.fixture()
-def logged_in_client(db):
-    # login
-    password = Faker().password()
-    user = UserFactory(password=password)
-    client = APIClient()
-    client.login(username=user.email, password=password)
-    yield client, user
 
 
 @pytest.fixture()
