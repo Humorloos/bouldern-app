@@ -67,15 +67,13 @@ def grade_2_dict(grade):
     return OrderedDict(GradeSerializer(grade).data)
 
 
-def test_update_gym_grades(logged_in_client, colors):
+def test_update_gym_grades(logged_in_client, colors, gym):
     # Given
-    from python_anywhere.accounts.factories import UserFactory
     gym_author = UserFactory()
-    from python_anywhere.bouldern.factories import GymFactory
-    gym = GymFactory(created_by=gym_author, modified_by=gym_author)
+    target_gym = gym(created_by=gym_author, modified_by=gym_author)
 
     # unchanged grades
-    grades = list(gym.grade_set.all())
+    grades = list(target_gym.grade_set.all())
 
     # removed grades
     removed_grades = [grades.pop() for _ in range(2)]
@@ -99,7 +97,7 @@ def test_update_gym_grades(logged_in_client, colors):
 
     # When
     response = client.patch(
-        GymAPI().reverse_action('detail', args=[gym.pk]),
+        GymAPI().reverse_action('detail', args=[target_gym.pk]),
         data={'grade_set': grade_payload}, format='json')
 
     # Then
@@ -120,11 +118,10 @@ def test_update_gym_grades(logged_in_client, colors):
     assert updated_grade.modified_by == user
 
 
-def test_gym_api_list(logged_in_client, colors):
+def test_gym_api_list(logged_in_client, colors, gym):
     # Given
-    from python_anywhere.bouldern.factories import GymFactory
-    gyms = GymFactory.create_batch(3)
-    inactive_gym = GymFactory(is_active=False)
+    gyms = gym.create_batch(3)
+    inactive_gym = gym(is_active=False)
 
     client, user = logged_in_client
     # When
@@ -137,14 +134,15 @@ def test_gym_api_list(logged_in_client, colors):
     assert inactive_gym.name not in gym_names
 
 
-def test_cant_destroy_others_gyms(logged_in_client, colors):
+def test_cant_destroy_others_gyms(logged_in_client, colors, gym):
     # Given
-    from python_anywhere.bouldern.factories import GymFactory
-    gym = GymFactory()
+    gym_by_other_user = gym()
     client, user = logged_in_client
 
     # When
-    response = client.delete(GymAPI().reverse_action('detail', args=[gym.pk]))
+    response = client.delete(GymAPI().reverse_action(
+        'detail', args=[gym_by_other_user.pk])
+    )
 
     # Then
     assert response.status_code == HTTP_403_FORBIDDEN
@@ -185,12 +183,11 @@ def test_destroy(logged_in_client, colors, gym, favorite_gym,
     assert not any(grade.is_active for grade in gym_2_destroy.grade_set.all())
 
 
-def test_can_create_again_after_deleting(logged_in_client, colors):
+def test_can_create_again_after_deleting(logged_in_client, colors, gym):
     # Given
     client, user = logged_in_client
 
-    from python_anywhere.bouldern.factories import GymFactory
-    old_gym = GymFactory(created_by=user)
+    old_gym = gym(created_by=user)
     json_payload = {
         'name': old_gym.name,
         'grade_set': [{
