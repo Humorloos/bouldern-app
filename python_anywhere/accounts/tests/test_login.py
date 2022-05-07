@@ -40,6 +40,7 @@ def test_login(db):
     assert logged_in_user == user
 
 
+# noinspection DuplicatedCode
 def test_cannot_login_with_inactive_user(db):
     """Test that users whose account was deactivated cannot login"""
     # Given
@@ -56,6 +57,7 @@ def test_cannot_login_with_inactive_user(db):
     assert response.status_code == HTTP_400_BAD_REQUEST
 
 
+# noinspection DuplicatedCode
 def test_cannot_login_with_unverified_user(db):
     """Test that users whose email has not been verified cannot log in"""
     # Given

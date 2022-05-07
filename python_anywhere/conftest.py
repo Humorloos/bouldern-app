@@ -9,7 +9,7 @@ from python_anywhere.accounts.factories import UserFactory
 
 @pytest.fixture()
 # pylint:disable=unused-argument
-def logged_in_client_rest(db):
+def logged_in_client(db):
     """
     Creates an APIclient and user with valid JWT token
     :return: the client and user
