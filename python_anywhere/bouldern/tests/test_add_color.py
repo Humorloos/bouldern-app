@@ -6,10 +6,10 @@ from python_anywhere.bouldern.models import Color
 from python_anywhere.bouldern.views import ColorAPI
 
 
-def test_color_api_post(logged_in_client_rest):
+def test_color_api_post(logged_in_client):
     """Test that post method works correctly"""
     # Given
-    client, user = logged_in_client_rest
+    client, user = logged_in_client
 
     from python_anywhere.bouldern.factories import ColorFactory
     payload = {key: ColorFactory.build().__dict__[key]
@@ -26,10 +26,10 @@ def test_color_api_post(logged_in_client_rest):
     assert color.created_by == user
 
 
-def test_color_api_get(logged_in_client_rest):
+def test_color_api_get(logged_in_client):
     """Test that post method works correctly"""
     # Given
-    client, user = logged_in_client_rest
+    client, user = logged_in_client
 
     from python_anywhere.bouldern.factories import ColorFactory
     faker = Faker()

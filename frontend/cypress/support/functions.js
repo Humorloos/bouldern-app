@@ -11,15 +11,16 @@ window.$t = i18n.global.t;
  *
  * @param email the user's email
  * @param password the user's password
+ * @param success whether the login is supposed to be successful
  */
-export function loginViaLogInLink(email, password) {
+export function loginViaLogInLink(email, password, success=true) {
   cy.contains('You are not logged in');
   cy.url().should('include', '/login');
   cy.get('#id_email')
       .type(email)
       .should('have.value', email);
   cy.get('#id_password').type(password);
-  for (const _ of waitingFor('POST', '/registration/login')) {
+  for (const _ of waitingFor('/registration/login', success)) {
     cy.get('#submit_button').click();
   }
 }
@@ -50,22 +51,27 @@ export function slugify(str) {
 }
 
 /**
- * Utility for an API call to finish proceeding. The API call has to occur
- * within a for block using this function.
- * Usage: for (const _ of waitingFor(..., ...)) {...}
+ * Utility for waiting for API calls to finish before proceeding. The API call
+ * has to occur within a for block using this function.
+ * Usage: for (const _ of waitingFor(...)) {...}
  * Source: https://stackoverflow.com/questions/62879698/any-tips-on-context-manager-similar-to-python-in-javascript
  *
- * @param method the method used in the API call
- * @param url the request's target url
+ * @param url the request's target url or an array of target urls to intercept
+ * @param success whether the request is supposed to be successful
  */
-export function* waitingFor(method, url) {
+export function* waitingFor(url, success = true) {
   // setup
-  cy.intercept(method, encodeURI(url)).as(url);
+  if (!Array.isArray(url)) {
+    url = [url];
+  }
+  const statusCodeRegex = success ? /^2\d{2}/ : /^4\d{2}/;
+  url.forEach((u) => cy.intercept(encodeURI(u)).as(u));
   try {
     yield;
   } finally {
     // cleanup
-    cy.wait(`@${url}`);
+    url.forEach((u) => cy.wait(`@${u}`).its('response.statusCode')
+        .should('match', statusCodeRegex));
   }
 }
 
@@ -83,7 +89,6 @@ export function atGymMapCoordinates(coordinates, fn) {
     cy.waitUntil(() => {
       return map.getPixelFromCoordinate(coordinates);
     }).then((pixel) => {
-      // debugger;
       fn(pixel);
     });
   });
@@ -213,7 +218,7 @@ export function createBoulder(coordinates, grade) {
   });
   cy.get('#id_grade-select').click();
   cy.contains(grade).click();
-  for (const _ of waitingFor('POST', '/bouldern/gym/1/boulder/')) {
+  for (const _ of waitingFor('/bouldern/gym/1/boulder/')) {
     cy.contains('Save').click();
   }
 }
@@ -223,8 +228,7 @@ export function createBoulder(coordinates, grade) {
  */
 export function refreshGymMap() {
   cy.get('.mdi-menu').click();
-  for (const _ of waitingFor(
-      'GET', '/bouldern/gym-map-resources/?name=Generic Gym')) {
+  for (const _ of waitingFor('/bouldern/gym-map-resources/?name=Generic Gym')) {
     cy.get('#id_refresh').click();
   }
 }
@@ -239,7 +243,11 @@ export function login() {
     },
   });
   cy.window().its('$store.state.authToken.token').should('not.be.empty');
-  for (const _ of waitingFor('GET', '/bouldern/favorite-gym')) {
+  for (const _ of waitingFor([
+    '/bouldern/favorite-gym',
+    '/bouldern/color',
+    '/bouldern/gym',
+  ])) {
     cy.window().its('$store')
         .then((store) => {
           store.dispatch('loadFavoriteGyms');
@@ -270,8 +278,8 @@ export function createNewGym() {
   cy.contains('Grey').click();
 
   cy.log('submit');
-  for (const _ of waitingFor('POST', '/bouldern/gym')) {
-    for (const _ of waitingFor('PATCH', '/bouldern/gym/3')) {
+  for (const _ of waitingFor('/bouldern/gym')) {
+    for (const _ of waitingFor('/bouldern/gym/3')) {
       cy.get('#id_save-gym').click();
     }
   }
