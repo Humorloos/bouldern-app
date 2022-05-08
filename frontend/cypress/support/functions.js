@@ -50,21 +50,24 @@ export function slugify(str) {
 }
 
 /**
- * Utility for an API call to finish proceeding. The API call has to occur
- * within a for block using this function.
+ * Utility for waiting for API calls to finish before proceeding. The API call
+ * has to occur within a for block using this function.
  * Usage: for (const _ of waitingFor(...)) {...}
  * Source: https://stackoverflow.com/questions/62879698/any-tips-on-context-manager-similar-to-python-in-javascript
  *
- * @param url the request's target url
+ * @param url the request's target url or an array of target urls to intercept
  */
 export function* waitingFor(url) {
   // setup
-  cy.intercept(encodeURI(url)).as(url);
+  if (!Array.isArray(url)) {
+    url = [url];
+  }
+  url.forEach((u) => cy.intercept(encodeURI(u)).as(u));
   try {
     yield;
   } finally {
     // cleanup
-    cy.wait(`@${url}`);
+    url.forEach((u) => cy.wait(`@${u}`));
   }
 }
 
