@@ -3,10 +3,10 @@ from rest_framework.reverse import reverse
 from rest_framework.status import HTTP_200_OK
 
 
-def test_refresh(logged_in_client_rest):
+def test_refresh(logged_in_client):
     """Test that access token refresh endpoint works"""
     # given
-    client, user = logged_in_client_rest
+    client, user = logged_in_client
     # when
     response = client.post(reverse('token_refresh'),
                            data={'refresh': str(jwt_encode(user)[1])})

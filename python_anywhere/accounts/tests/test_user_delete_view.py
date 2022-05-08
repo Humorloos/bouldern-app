@@ -6,9 +6,9 @@ from python_anywhere.accounts.models import User
 from python_anywhere.accounts.views import UserAPI
 
 
-def test_delete(logged_in_client_rest):
+def test_delete(logged_in_client):
     # given
-    client, user = logged_in_client_rest
+    client, user = logged_in_client
     # when
     response = client.delete(
         UserAPI().reverse_action('detail', args=[user.id]))

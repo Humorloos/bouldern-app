@@ -47,12 +47,12 @@ describe('The register app', () => {
   it('allows registering again after deleting one\'s account', () => {
     cy.log('delete account');
     cy.visit('profile');
-    for (const _ of waitingFor('DELETE', '/registration/user/2/')) {
+    for (const _ of waitingFor('/registration/user/2/')) {
       cy.contains('Delete Account').click();
     }
 
     cy.log('check that logging in with deleted account leads to error message');
-    loginViaLogInLink(EMAIL, PASSWORD);
+    loginViaLogInLink(EMAIL, PASSWORD, false);
     cy.contains($t('wrongCredentialsMsg'));
 
     cy.log('register');
@@ -61,7 +61,7 @@ describe('The register app', () => {
     cy.get('#id_email').type(EMAIL);
     cy.get('#id_password1').type(PASSWORD);
     cy.get('#id_password2').type(PASSWORD);
-    for (const _ of waitingFor('POST', '/registration/')) {
+    for (const _ of waitingFor('/registration/')) {
       cy.get('#submit_button').click();
     }
     cy.contains($t('msgConfirmationEmailSent', {email: EMAIL}));
@@ -75,7 +75,7 @@ describe('The register app', () => {
               .replace('localhost:8000', 'localhost:8080');
           cy.visit(confirmationLink);
         });
-    for (const _ of waitingFor('POST', '/registration/verify-email/')) {
+    for (const _ of waitingFor('/registration/verify-email/')) {
       cy.get('#id_confirm_email').click();
     }
 
@@ -98,7 +98,7 @@ describe('The login view', () => {
   it('shows an error message when trying to log in with wrong crendentials',
       () => {
         // try log in with non-existent user
-        loginViaLogInLink(NEW_EMAIL, NEW_PASSWORD);
+        loginViaLogInLink(NEW_EMAIL, NEW_PASSWORD, false);
         cy.contains($t('wrongCredentialsMsg'));
       });
 
@@ -114,7 +114,7 @@ describe('The register app', () => {
   it('allows resetting one\'s password', () => {
     cy.visit('reset-password');
     cy.get('#id_email').type(EMAIL);
-    for (const _ of waitingFor('POST', '/registration/password/reset/')) {
+    for (const _ of waitingFor('/registration/password/reset/')) {
       cy.get('#id_send').click();
     }
     cy.task('readLastEmail')
@@ -127,8 +127,7 @@ describe('The register app', () => {
         });
     cy.get('#id_password1').type(PASSWORD);
     cy.get('#id_password2').type(PASSWORD);
-    for (const _ of waitingFor('POST',
-        '/registration/password/reset/confirm/')) {
+    for (const _ of waitingFor('/registration/password/reset/confirm/')) {
       cy.get('#id_submit').click();
     }
     cy.contains($t('msgPasswordChanged'));
@@ -156,7 +155,7 @@ describe('The register app', () => {
         .should('have.value', NEW_EMAIL);
     cy.get('#id_password1').type(NEW_PASSWORD);
     cy.get('#id_password2').type(NEW_PASSWORD);
-    for (const _ of waitingFor('POST', '/registration/')) {
+    for (const _ of waitingFor('/registration/')) {
       cy.get('#submit_button').click();
     }
     cy.contains($t('msgConfirmationEmailSent', {email: NEW_EMAIL}));
@@ -170,7 +169,7 @@ describe('The register app', () => {
               .replace('localhost:8000', 'localhost:8080');
           cy.visit(confirmationLink);
         });
-    for (const _ of waitingFor('POST', '/registration/verify-email/')) {
+    for (const _ of waitingFor('/registration/verify-email/')) {
       cy.get('#id_confirm_email').click();
     }
     cy.contains($t('msgEmailConfirmed'));
@@ -187,12 +186,12 @@ describe('The register app', () => {
     cy.contains($t('welcomeMsg', {user: NEW_USERNAME}));
 
     cy.log('delete account');
-    for (const _ of waitingFor('DELETE', '/registration/user/3/')) {
+    for (const _ of waitingFor('/registration/user/3/')) {
       cy.contains('Delete Account').click();
     }
 
     cy.log('check that logging in with deleted account leads to error message');
-    loginViaLogInLink(NEW_EMAIL, NEW_PASSWORD);
+    loginViaLogInLink(NEW_EMAIL, NEW_PASSWORD, false);
     cy.contains($t('wrongCredentialsMsg'));
   });
 
@@ -240,7 +239,7 @@ describe('The register app', () => {
     cy.get('#id_email').type(NEW_EMAIL);
     cy.get('#id_password1').type(NEW_USERNAME);
     cy.get('#id_password2').type(NEW_USERNAME);
-    for (const _ of waitingFor('POST', '/registration/')) {
+    for (const _ of waitingFor('/registration/', false)) {
       cy.get('#submit_button').click();
     }
     cy.contains('The password is too similar to the username.');
@@ -251,7 +250,7 @@ describe('The register app', () => {
     cy.get('#id_email').type(NEW_EMAIL);
     cy.get('#id_password1').type('bigpimpin1');
     cy.get('#id_password2').type('bigpimpin1');
-    for (const _ of waitingFor('POST', '/registration/')) {
+    for (const _ of waitingFor('/registration/', false)) {
       cy.get('#submit_button').click();
     }
     cy.contains('This password is too common.');
