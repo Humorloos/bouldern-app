@@ -78,8 +78,8 @@ describe('The boulder holder', () => {
       overwrite: true,
     });
     cy.get('#id_remove-grade-3').click();
-    for (const _ of waitingFor('POST', '/bouldern/gym')) {
-      for (const _ of waitingFor('PATCH', '/bouldern/gym/3')) {
+    for (const _ of waitingFor('/bouldern/gym')) {
+      for (const _ of waitingFor('/bouldern/gym/3')) {
         cy.get('#id_save-gym').click();
       }
     }

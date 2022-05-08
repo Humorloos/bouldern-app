@@ -19,7 +19,7 @@ export function loginViaLogInLink(email, password) {
       .type(email)
       .should('have.value', email);
   cy.get('#id_password').type(password);
-  for (const _ of waitingFor('POST', '/registration/login')) {
+  for (const _ of waitingFor('/registration/login')) {
     cy.get('#submit_button').click();
   }
 }
@@ -52,15 +52,14 @@ export function slugify(str) {
 /**
  * Utility for an API call to finish proceeding. The API call has to occur
  * within a for block using this function.
- * Usage: for (const _ of waitingFor(..., ...)) {...}
+ * Usage: for (const _ of waitingFor(...)) {...}
  * Source: https://stackoverflow.com/questions/62879698/any-tips-on-context-manager-similar-to-python-in-javascript
  *
- * @param method the method used in the API call
  * @param url the request's target url
  */
-export function* waitingFor(method, url) {
+export function* waitingFor(url) {
   // setup
-  cy.intercept(method, encodeURI(url)).as(url);
+  cy.intercept(encodeURI(url)).as(url);
   try {
     yield;
   } finally {
@@ -213,7 +212,7 @@ export function createBoulder(coordinates, grade) {
   });
   cy.get('#id_grade-select').click();
   cy.contains(grade).click();
-  for (const _ of waitingFor('POST', '/bouldern/gym/1/boulder/')) {
+  for (const _ of waitingFor('/bouldern/gym/1/boulder/')) {
     cy.contains('Save').click();
   }
 }
@@ -223,8 +222,7 @@ export function createBoulder(coordinates, grade) {
  */
 export function refreshGymMap() {
   cy.get('.mdi-menu').click();
-  for (const _ of waitingFor(
-      'GET', '/bouldern/gym-map-resources/?name=Generic Gym')) {
+  for (const _ of waitingFor('/bouldern/gym-map-resources/?name=Generic Gym')) {
     cy.get('#id_refresh').click();
   }
 }
@@ -239,7 +237,7 @@ export function login() {
     },
   });
   cy.window().its('$store.state.authToken.token').should('not.be.empty');
-  for (const _ of waitingFor('GET', '/bouldern/favorite-gym')) {
+  for (const _ of waitingFor('/bouldern/favorite-gym')) {
     cy.window().its('$store')
         .then((store) => {
           store.dispatch('loadFavoriteGyms');
@@ -270,8 +268,8 @@ export function createNewGym() {
   cy.contains('Grey').click();
 
   cy.log('submit');
-  for (const _ of waitingFor('POST', '/bouldern/gym')) {
-    for (const _ of waitingFor('PATCH', '/bouldern/gym/3')) {
+  for (const _ of waitingFor('/bouldern/gym')) {
+    for (const _ of waitingFor('/bouldern/gym/3')) {
       cy.get('#id_save-gym').click();
     }
   }

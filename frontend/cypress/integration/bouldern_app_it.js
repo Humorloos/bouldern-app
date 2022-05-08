@@ -55,7 +55,7 @@ describe('The color creation view', () => {
     cy.get('.v-main__wrap').click();
 
     cy.log('submit form');
-    for (const _ of waitingFor('POST', '/bouldern/color')) {
+    for (const _ of waitingFor('/bouldern/color')) {
       cy.get('.v-col > #submit_button').click();
     }
 
@@ -401,7 +401,7 @@ describe('The gym creation view', () => {
     cy.get('#id_menu').click();
     cy.contains($t('gymMap.deleteGym')).click();
     cy.contains($t('gymMap.deleteWarning', {gym: NEW_GYM_NAME}));
-    for (const _ of waitingFor('DELETE', '/bouldern/gym/3/')) {
+    for (const _ of waitingFor('/bouldern/gym/3/')) {
       cy.contains($t('gymMap.deleteGym')).click();
     }
     cy.contains($t('gymMap.gymDeleted'));
