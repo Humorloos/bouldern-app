@@ -405,6 +405,7 @@ describe('The gym creation view', () => {
       cy.contains($t('gymMap.deleteGym')).click();
     }
     cy.contains($t('gymMap.gymDeleted'));
+    cy.url().should('not.match', /.*gym-map.*/);
     cy.get('#id_close-notification-0').click();
 
     cy.log('create gym again');
