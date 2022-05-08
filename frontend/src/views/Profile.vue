@@ -1,10 +1,29 @@
 <template>
+  <v-dialog v-model="deleteDialog">
+    <v-card>
+      <v-card-text>
+        {{ $t('profile.deleteWarning') }}
+      </v-card-text>
+      <v-card-actions>
+        <v-btn @click="deleteDialog=false">
+          {{ $t('profile.cancel') }}
+        </v-btn>
+        <v-btn
+          id="id_delete-account"
+          color="error"
+          @click="deleteAccount"
+        >
+          {{ $t('profile.deleteAccount') }}
+        </v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
   <app-view>
     <template #main>
       <v-container>
         <v-row>
           <v-col>
-            {{ $t('welcomeMsg', {user: user.username}) }}
+            {{ $t('profile.welcomeMsg', {user: user.username}) }}
           </v-col>
         </v-row>
 
@@ -20,9 +39,9 @@
             <v-btn
               color="error"
               size="small"
-              @click="deleteAccount"
+              @click="openDeleteDialog"
             >
-              Delete Account
+              {{ $t('profile.deleteAccount') }}
             </v-btn>
           </v-col>
         </v-row>
@@ -38,6 +57,7 @@ import AppView from '../components/AppView.vue';
 import {computed} from 'vue';
 import {useStore} from 'vuex';
 import {useRouter} from 'vue-router';
+import {ref} from 'vue';
 
 export default {
   name: 'Profile',
@@ -62,9 +82,20 @@ export default {
       router.push('/login');
     }
 
+    const deleteDialog = ref(false);
+
+    /**
+     * Opens the account deletion dialog
+     */
+    function openDeleteDialog() {
+      deleteDialog.value = true;
+    }
+
     return {
       user: computed(() => store.state.user),
       logout,
+      openDeleteDialog,
+      deleteDialog,
       deleteAccount,
     };
   },

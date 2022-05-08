@@ -247,6 +247,10 @@ export default createStore({
     async deleteAccountAndLogout({commit, dispatch}) {
       await dispatch('deleteAccount');
       commit('logout');
+      dispatch('showTemporaryNotification', {
+        message: $t('profile.accountDeleted'),
+        closable: true,
+      });
     },
     /**
      * Sets jwt tokens and user data from the provided payload which contains
