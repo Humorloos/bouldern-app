@@ -89,7 +89,6 @@ export function atGymMapCoordinates(coordinates, fn) {
     cy.waitUntil(() => {
       return map.getPixelFromCoordinate(coordinates);
     }).then((pixel) => {
-      // debugger;
       fn(pixel);
     });
   });
