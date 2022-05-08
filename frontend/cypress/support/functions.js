@@ -240,7 +240,11 @@ export function login() {
     },
   });
   cy.window().its('$store.state.authToken.token').should('not.be.empty');
-  for (const _ of waitingFor('/bouldern/favorite-gym')) {
+  for (const _ of waitingFor([
+    '/bouldern/favorite-gym',
+    '/bouldern/color',
+    '/bouldern/gym',
+  ])) {
     cy.window().its('$store')
         .then((store) => {
           store.dispatch('loadFavoriteGyms');
