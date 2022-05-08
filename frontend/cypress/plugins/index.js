@@ -73,6 +73,9 @@ module.exports = (on, config) => {
       return fs.readFileSync(`${emailPath}/${filename}`, 'utf8');
     },
   });
+
+  // Register service for more readable logs:
+  // see https://github.com/archfz/cypress-terminal-report
   require('cypress-terminal-report/src/installLogsPrinter')(on);
 
   // increase resolution for sharper screenshots in headless mode
