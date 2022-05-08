@@ -52,7 +52,7 @@ describe('The register app', () => {
     }
 
     cy.log('check that logging in with deleted account leads to error message');
-    loginViaLogInLink(EMAIL, PASSWORD);
+    loginViaLogInLink(EMAIL, PASSWORD, false);
     cy.contains($t('wrongCredentialsMsg'));
 
     cy.log('register');
@@ -98,7 +98,7 @@ describe('The login view', () => {
   it('shows an error message when trying to log in with wrong crendentials',
       () => {
         // try log in with non-existent user
-        loginViaLogInLink(NEW_EMAIL, NEW_PASSWORD);
+        loginViaLogInLink(NEW_EMAIL, NEW_PASSWORD, false);
         cy.contains($t('wrongCredentialsMsg'));
       });
 
@@ -191,7 +191,7 @@ describe('The register app', () => {
     }
 
     cy.log('check that logging in with deleted account leads to error message');
-    loginViaLogInLink(NEW_EMAIL, NEW_PASSWORD);
+    loginViaLogInLink(NEW_EMAIL, NEW_PASSWORD, false);
     cy.contains($t('wrongCredentialsMsg'));
   });
 
@@ -239,7 +239,7 @@ describe('The register app', () => {
     cy.get('#id_email').type(NEW_EMAIL);
     cy.get('#id_password1').type(NEW_USERNAME);
     cy.get('#id_password2').type(NEW_USERNAME);
-    for (const _ of waitingFor('/registration/')) {
+    for (const _ of waitingFor('/registration/', false)) {
       cy.get('#submit_button').click();
     }
     cy.contains('The password is too similar to the username.');
@@ -250,7 +250,7 @@ describe('The register app', () => {
     cy.get('#id_email').type(NEW_EMAIL);
     cy.get('#id_password1').type('bigpimpin1');
     cy.get('#id_password2').type('bigpimpin1');
-    for (const _ of waitingFor('/registration/')) {
+    for (const _ of waitingFor('/registration/', false)) {
       cy.get('#submit_button').click();
     }
     cy.contains('This password is too common.');

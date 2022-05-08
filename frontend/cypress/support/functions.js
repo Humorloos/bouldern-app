@@ -11,15 +11,16 @@ window.$t = i18n.global.t;
  *
  * @param email the user's email
  * @param password the user's password
+ * @param success whether the login is supposed to be successful
  */
-export function loginViaLogInLink(email, password) {
+export function loginViaLogInLink(email, password, success=true) {
   cy.contains('You are not logged in');
   cy.url().should('include', '/login');
   cy.get('#id_email')
       .type(email)
       .should('have.value', email);
   cy.get('#id_password').type(password);
-  for (const _ of waitingFor('/registration/login')) {
+  for (const _ of waitingFor('/registration/login', success)) {
     cy.get('#submit_button').click();
   }
 }
@@ -56,18 +57,21 @@ export function slugify(str) {
  * Source: https://stackoverflow.com/questions/62879698/any-tips-on-context-manager-similar-to-python-in-javascript
  *
  * @param url the request's target url or an array of target urls to intercept
+ * @param success whether the request is supposed to be successful
  */
-export function* waitingFor(url) {
+export function* waitingFor(url, success = true) {
   // setup
   if (!Array.isArray(url)) {
     url = [url];
   }
+  const statusCodeRegex = success ? /^2\d{2}/ : /^4\d{2}/;
   url.forEach((u) => cy.intercept(encodeURI(u)).as(u));
   try {
     yield;
   } finally {
     // cleanup
-    url.forEach((u) => cy.wait(`@${u}`));
+    url.forEach((u) => cy.wait(`@${u}`).its('response.statusCode')
+        .should('match', statusCodeRegex));
   }
 }
 
