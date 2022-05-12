@@ -285,3 +285,17 @@ export function createNewGym() {
   }
   waitForGymMap();
 }
+
+/**
+ * Deletes an account from the profile view
+ */
+export function deleteAccount() {
+  cy.contains($t('profile.deleteAccount')).click();
+  cy.contains($t('profile.deleteWarning'));
+  cy.contains($t('profile.deleteAccount'));
+  for (const _ of waitingFor('/registration/user/*/')) {
+    cy.get('#id_delete-account').click();
+  }
+  cy.contains($t('profile.accountDeleted'));
+  cy.get('#id_close-notification-0').click();
+}
